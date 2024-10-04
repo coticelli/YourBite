@@ -75,7 +75,7 @@ app.post('/utenti', (req, res) => {
         const nuovoUtente = {user, pwd, ruolo};
         utenti.push(nuovoUtente);
 
-        fs.writeFile('utenti.json', JSON.stringify(utenti, null, 2), (err) => {
+        fs.writeFile('server/utenti.json', JSON.stringify(utenti, null, 2), (err) => {
             if(err) {
                 res.status(500).json({message: 'errore nel salvataggio'});
                 return;
@@ -91,7 +91,7 @@ app.post('/utenti', (req, res) => {
 app.delete('/utenti/:user', (req, res) => {
     const usernameToDelete = req.params.user;
 
-    fs.readFile('utenti.json', 'utf8', (err, data) => {
+    fs.readFile('server/utenti.json', 'utf8', (err, data) => {
         if (err) {
             res.status(500).json({ message: 'Errore nella lettura' });
             return;
@@ -108,7 +108,7 @@ app.delete('/utenti/:user', (req, res) => {
             // Remove the user from the array
             utenti.splice(userIndex, 1);
 
-            fs.writeFile('utenti.json', JSON.stringify(utenti, null, 2), (err) => {
+            fs.writeFile('server/utenti.json', JSON.stringify(utenti, null, 2), (err) => {
                 if (err) {
                     res.status(500).json({ message: 'Errore nel salvataggio' });
                     return;
@@ -125,7 +125,7 @@ app.put('/utenti/:user', (req, res) => {
     const usernameToUpdate = req.params.user;
     const { newUser, newPwd, newRuolo } = req.body;
 
-    fs.readFile('utenti.json', 'utf8', (err, data) => {
+    fs.readFile('server/utenti.json', 'utf8', (err, data) => {
         if (err) {
             res.status(500).json({ message: 'Errore nella lettura' });
             return;
@@ -163,5 +163,4 @@ const PORT = 3000;
 
 app.listen(PORT, () => {
     console.log(`server in esecuzione sulla porta ${PORT}`);
-
 });
