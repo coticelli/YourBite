@@ -88,6 +88,74 @@ app.post('/utenti', (req, res) => {
     }
 })
 
+app.delete('/utenti/:user', (req, res) => {
+    const usernameToDelete = req.params.user;
+
+    fs.readFile('utenti.json', 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).json({ message: 'Errore nella lettura' });
+            return;
+        }
+
+        try {
+            let utenti = JSON.parse(data);
+
+            const userIndex = utenti.findIndex(u => u.user === usernameToDelete);
+            if (userIndex === -1) {
+                return res.status(404).json({ message: 'Utente non trovato' });
+            }
+
+            // Remove the user from the array
+            utenti.splice(userIndex, 1);
+
+            fs.writeFile('utenti.json', JSON.stringify(utenti, null, 2), (err) => {
+                if (err) {
+                    res.status(500).json({ message: 'Errore nel salvataggio' });
+                    return;
+                }
+                res.status(200).json({ message: `Utente ${usernameToDelete} eliminato con successo` });
+            });
+        } catch (err) {
+            res.status(500).json({ message: 'Errore nel parsing' });
+        }
+    });
+});
+
+app.put('/utenti/:user', (req, res) => {
+    const usernameToUpdate = req.params.user;
+    const { newUser, newPwd, newRuolo } = req.body;
+
+    fs.readFile('utenti.json', 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).json({ message: 'Errore nella lettura' });
+            return;
+        }
+
+        try {
+            let utenti = JSON.parse(data);
+
+            const userIndex = utenti.findIndex(u => u.user === usernameToUpdate);
+            if (userIndex === -1) {
+                return res.status(404).json({ message: 'Utente non trovato' });
+            }
+
+            // Update the user's information
+            if (newUser) utenti[userIndex].user = newUser;
+            if (newPwd) utenti[userIndex].pwd = newPwd;
+            if (newRuolo) utenti[userIndex].ruolo = newRuolo;
+
+            fs.writeFile('utenti.json', JSON.stringify(utenti, null, 2), (err) => {
+                if (err) {
+                    res.status(500).json({ message: 'Errore nel salvataggio' });
+                    return;
+                }
+                res.status(200).json({ message: `Utente ${usernameToUpdate} aggiornato con successo`, updatedUser: utenti[userIndex] });
+            });
+        } catch (err) {
+            res.status(500).json({ message: 'Errore nel parsing' });
+        }
+    });
+});
 
 
 
