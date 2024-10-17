@@ -166,5 +166,5 @@ LoyaltyProgram
 }
 
 Il mio diagramma Use Case:
-http://yuml.me/diagram/scruffy;dir:LR/usecase/
+https://yuml.me/dfa14484.svg
 
