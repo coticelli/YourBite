@@ -165,6 +165,12 @@ LoyaltyProgram
 	}
 }
 
+Titolo: YourBite
+Descrizione: Una piattaforma innovativa per ristoratori che consente ai clienti di creare menu personalizzati in modo facile e veloce tramite QR code. I clienti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. È possibile ricaricare il conto pagando in contanti al cassiere, convertendo l'importo in una valuta digitale che i clienti possono utilizzare per effettuare ordini.
+Target: Ristoratori
+Problema:Il sito web propone nuove opportunità di vendita ai ristoratori, offrendo soluzioni personalizzate ai clienti della loro attività
+Competitor:
+NeatMenu - Eatsee - Menubly -  Almenu - OctoTable - BuonMenu - MenuDrive - Square for Restaurants - Ordermark - Flipdish - Yumm.
 Il mio diagramma Use Case:
 https://yuml.me/dfa14484.svg
 
