@@ -1,5 +1,4 @@
 # YourBite
-Ecco una versione rivista e strutturata in modo più professionale:
 
 
 
