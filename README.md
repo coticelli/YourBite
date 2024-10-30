@@ -49,7 +49,6 @@ Ecco una versione rivista e strutturata in modo più professionale:
 ---
 
 **JSON di Riferimento**:  
-```json
 {
   "PaymentMethods": [
     {
@@ -179,5 +178,6 @@ Ecco una versione rivista e strutturata in modo più professionale:
     ]
   }
 }
-```
+**use case diagram**:
+https://yuml.me/dfa14484.svg
 
