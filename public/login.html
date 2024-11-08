@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Stili del login */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+            overflow: hidden;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            float: left;
+        }
+        .navbar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="registrazione.html">Registrazione</a>
+        <a href="login.html">Accedi</a>
+    </div>
+
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Accedi</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Funzione per inviare la richiesta di login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            fetch('http://37.27.202.176:3000/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+})
+
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                if (data.error) {
+                    messageDiv.innerText = data.error;
+                    messageDiv.style.color = 'red';
+                } else {
+                    messageDiv.innerText = data.message;
+                    messageDiv.style.color = 'green';
+                }
+            })
+            .catch(error => {
+    console.error('Errore durante il login:', error);
+    const messageDiv = document.getElementById('message');
+    messageDiv.innerText = 'Errore durante il login, riprova.';
+    messageDiv.style.color = 'red';
+});
+
+        });
+    </script>
+
+</body>
+</html>
