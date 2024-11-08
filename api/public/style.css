@@ -1,0 +1,124 @@
+/* Impostazioni globali */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white; /* Sfondo bianco di base */
+    background-image: url('/img/background.jpg'); /* Percorso corretto per l'immagine di background */
+    background-size: cover; /* Adatta l'immagine per coprire tutta la pagina */
+    background-position: center; /* Centra l'immagine */
+    background-attachment: fixed; /* Fissa l'immagine durante lo scrolling */
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333; /* Colore di sfondo navbar */
+    padding: 15px;
+    overflow: hidden;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    float: left;
+    display: inline-block;
+}
+
+.navbar a:hover {
+    background-color: #575757;
+    border-radius: 5px;
+}
+
+/* Hero Section */
+.hero {
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: black;
+    background-image: url('./img/hero-background.jpg'); /* Percorso corretto per l'immagine hero */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+.hero-content {
+    color: black;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombra leggera per dare profondità */
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.8); /* Sfondo bianco semi-trasparente per migliorare la leggibilità */
+    max-width: 600px; /* Impostato un massimo per la larghezza del contenuto */
+    margin: 0 auto;
+    animation: fadeIn 2s ease-out; /* Aggiunto effetto di animazione */
+}
+
+/* Animazione di ingresso */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Titolo */
+.hero h1 {
+    font-size: 3rem;
+    margin: 0;
+    color: #ffcc00; /* Giallo per richiamare il brand */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    animation: fadeIn 2s ease-out; /* Aggiunto effetto di animazione */
+}
+
+/* Descrizione */
+.hero p {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: #333;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Pulsanti */
+.buttons {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.primary-button, .secondary-button {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+
+.primary-button {
+    background-color: #007BFF; /* Colore blu per il pulsante registrazione */
+    color: white;
+}
+
+.primary-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-4px); /* Leggera animazione al passaggio del mouse */
+}
+
+.secondary-button {
+    background-color: #ffcc00; /* Giallo per il pulsante login */
+    color: black;
+}
+
+.secondary-button:hover {
+    background-color: #e6b800;
+    transform: translateY(-4px); /* Leggera animazione al passaggio del mouse */
+}
