@@ -1,4 +1,3 @@
-// Importa le dipendenze necessarie
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
@@ -125,10 +124,71 @@ app.post('/login', (req, res) => {
     });
 });
 
+
+
+
+    // Crea la tabella dei panini
+    db.run(`CREATE TABLE IF NOT EXISTS panini (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        ingredienti TEXT NOT NULL,
+        prezzo REAL NOT NULL
+    )`);
+  
+    // Popola la tabella dei panini se è vuota
+    db.all('SELECT COUNT(*) AS count FROM panini', (err, rows) => {
+        if (err) {
+            console.error('Errore nel controllo dei dati iniziali:', err);
+            return;
+        }
+        if (rows[0].count === 0) {
+            const paniniData = [
+                { nome: 'Panino Classico', ingredienti: 'Pane, Prosciutto, Formaggio', prezzo: 4.50 },
+                { nome: 'Panino al Pollo', ingredienti: 'Pane, Pollo, Lattuga, Maionese', prezzo: 5.00 },
+                { nome: 'Panino Veggie', ingredienti: 'Pane, Pomodoro, Lattuga, Avocado', prezzo: 4.00 }
+            ];
+            
+            paniniData.forEach(panino => {
+                db.run(`INSERT INTO panini (nome, ingredienti, prezzo) VALUES (?, ?, ?)`, [panino.nome, panino.ingredienti, panino.prezzo], err => {
+                    if (err) {
+                        console.error("Errore durante l'inserimento dei dati:", err);
+                    }
+                });
+            });
+            console.log('Dati iniziali inseriti nella tabella panini.');
+        } else {
+            console.log('La tabella panini è già popolata.');
+        }
+    });
+
+
+
+    app.get('/panini', (req, res) => {
+        const panini = [
+            { nome: "Panino Classico", ingredienti: ["pane", "carne", "formaggio"], },
+            { nome: "Panino Pollo", ingredienti: ["pane", "pollo", "insalata"] },
+            { nome: "Panino Vegano", ingredienti: ["pane", "verdure", "hummus"] },
+            { nome: "Panino Pollo Piccante", ingredienti: ["pane", "pollo", "salsa piccante", "insalata"] },
+        ];
+        res.json(panini);
+    });
+
+
+// Route per ottenere la lista dei panini con pollo
+app.get('/panini/pollo', (req, res) => {
+    db.all('SELECT * FROM panini WHERE ingredienti LIKE ?', ['%pollo%'], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Errore del server.' });
+        }
+        res.status(200).json({ success: true, data: rows });
+    });
+});
+
 // Route per gestire gli errori 404
 app.get('*', (req, res) => {
     res.status(404).send('File non trovato');
 });
+
 
 // Inizia il server
 app.listen(port, () => {
