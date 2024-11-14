@@ -1,52 +1,120 @@
-# YourBite
+Nome: YourBite
+
+Descrizione: YourBite è una piattaforma innovativa pensata per i ristoratori, che consente ai clienti di creare menu personalizzati tramite QR code in modo semplice e veloce. I clienti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. È possibile ricaricare il conto con pagamenti in contanti al punto vendita, convertendo l’importo in una valuta digitale utilizzabile per effettuare ordini.
+
+Target: Ristoratori
+
+Problema: I ristoratori spesso incontrano difficoltà nella gestione efficiente degli ordini e nel fornire un'esperienza cliente personalizzata. YourBite affronta questo problema offrendo una piattaforma che facilita la personalizzazione degli ordini, migliora l’efficienza e incrementa le vendite, ottimizzando il processo di acquisto e migliorando la soddisfazione del cliente.
+
+Competitor: NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Restaurants, Ordermark, Flipdish, Yumm.
+
+Requisiti Funzionali
+
+Metodi di Pagamento:
+
+Supporto per vari metodi di pagamento (carte di credito, PayPal, wallet digitali).
+
+Ricarica del Wallet Virtuale in Contanti:
+
+Possibilità di ricaricare il wallet in contanti presso punti vendita fisici o tramite modalità offline.
+
+Integrazione API per Fast Food/Ristoranti:
+
+API per la gestione e l'aggiornamento degli ordini e dei menu in tempo reale.
+
+Database degli Ingredienti:
+
+Creazione di un database completo con dettagli su allergeni, valori nutrizionali e opzioni di personalizzazione.
+
+Notifiche Ordine:
+
+Sistema di notifiche in tempo reale sullo stato dell'ordine.
+
+Pagina di Supporto:
+
+Sezione dedicata al supporto clienti con FAQ, live chat e assistenza via email o telefono.
+
+Registrazione e Login:
+
+Accesso tramite email, social media o numero di telefono.
+
+Sistema di Bonus:
+
+Programma di fidelizzazione che premia gli utenti con punti bonus per ordini ripetuti.
+
+Offerte e Consegna del Cibo:
+
+Visualizzazione di offerte speciali e opzioni per la consegna a domicilio.
+
+Sincronizzazione tra Venditore e App:
+
+Sincronizzazione dei tempi di preparazione e consegna per offrire stime precise di arrivo.
+
+Layout e Prodotti Personalizzati:
+
+Layout personalizzato per ogni venditore, con offerte specifiche.
+
+Personalizzazione degli Ingredienti:
+
+Possibilità per i clienti di aggiungere o rimuovere ingredienti dai piatti ordinati.
+
+Visualizzazione del Menu del Mese:
+
+Sezione con il menu del mese e sondaggi interattivi per il feedback.
+
+Personalizzazione della Lingua:
+
+Opzione per modificare la lingua dell’app in base alle preferenze.
+
+Requisiti Non Funzionali
+
+Connessione Internet:
+
+Richiesta una connessione stabile per un corretto funzionamento.
+
+Prestazioni:
+
+Esperienza fluida fino a 1.000 utenti simultanei.
+
+Interfaccia Responsive:
+
+Ottimizzazione per dispositivi mobili, tablet e desktop.
+
+Tempi di Caricamento:
+
+Caricamento delle pagine in meno di 2 secondi.
+
+Scalabilità:
+
+Progettato per scalare con l'aumento di utenti e ristoranti.
+
+Requisiti di Dominio
+
+Metodi di Pagamento:
+
+Rilevanti per la gestione dei pagamenti digitali.
+
+Ricarica del Wallet Virtuale in Contanti:
+
+Essenziale per includere modalità di pagamento offline.
+
+Integrazione API per Fast Food/Ristoranti:
+
+Importante per l'integrazione con sistemi esistenti nei ristoranti.
+
+Database degli Ingredienti:
+
+Fondamentale per la sicurezza alimentare e la personalizzazione del menu.
+
+Offerte e Consegna del Cibo:
+
+Incentiva le vendite e soddisfa le aspettative del cliente.
+
+Sistema di Bonus:
+
+Strumento chiave per la fidelizzazione della clientela.
 
 
-
-**Nome**: YourBite  
-**Descrizione**: YourBite è una piattaforma innovativa pensata per i ristoratori, che consente ai clienti di creare menu personalizzati tramite QR code in modo semplice e veloce. I clienti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. È possibile ricaricare il conto con pagamenti in contanti al punto vendita, convertendo l’importo in una valuta digitale utilizzabile per effettuare ordini.  
-**Target**: Ristoratori  
-**Problema**: YourBite offre nuove opportunità di vendita per i ristoratori, fornendo soluzioni personalizzate per i clienti della loro attività.  
-**Competitor**: NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Restaurants, Ordermark, Flipdish, Yumm.  
-
-
-
-### Requisiti Funzionali
-
-1. **Metodi di Pagamento**: Supporto per vari metodi di pagamento (carte di credito, PayPal, wallet digitali).
-2. **Ricarica del Wallet Virtuale in Contanti**: Possibilità di ricaricare il wallet in contanti presso punti vendita fisici o tramite modalità offline.
-3. **API per Fast Food/Ristoranti**: Integrazione di API per la gestione di ordini e menu.
-4. **Database degli Ingredienti**: Creazione di un database completo con dettagli su allergeni, valori nutrizionali e opzioni di personalizzazione.
-5. **Notifiche Ordine**: Sistema di notifiche in tempo reale sullo stato dell'ordine.
-6. **Pagina di Supporto**: Sezione di supporto clienti con FAQ, live chat e assistenza via email o telefono.
-7. **Registrazione e Login**: Sistema di registrazione e accesso tramite email, social media o numero di telefono.
-8. **Sistema di Bonus**: Programma di fedeltà che premia gli utenti con punti bonus.
-9. **Offerte e Consegna del Cibo**: Visualizzazione di offerte speciali e gestione delle opzioni di consegna a domicilio.
-10. **Sincronizzazione tra Venditore e App**: Sincronizzazione dei tempi di preparazione e consegna con un tempo stimato di arrivo.
-11. **Layout e Prodotti Personalizzati**: Layout personalizzato per ogni venditore, con prodotti e offerte specifiche.
-12. **Personalizzazione degli Ingredienti**: Possibilità per gli utenti di aggiungere o rimuovere ingredienti dai piatti ordinati.
-13. **Visualizzazione del Menu del Mese**: Sezione dedicata al menu del mese, con sondaggi interattivi per raccogliere feedback sui prodotti.
-14. **Personalizzazione della Lingua**: Opzione per personalizzare la lingua dell’app in base alla preferenza dell’utente.
-
-### Requisiti Non Funzionali
-
-1. **Connessione Internet**: L'app richiede una connessione internet stabile per garantire un corretto funzionamento.
-2. **Prestazioni**: Il sistema deve garantire un'esperienza fluida e senza rallentamenti per un massimo di 1.000 utenti simultanei.
-3. **Interfaccia Responsive**: L'interfaccia deve essere ottimizzata per dispositivi mobili, tablet e desktop.
-4. **Tempi di Caricamento**: Tutte le pagine devono caricarsi in meno di 2 secondi.
-5. **Scalabilità**: Il sistema deve essere progettato per scalare agevolmente in base al numero di utenti e di ristoranti coinvolti.
-
-### Requisiti di Dominio
-
-1. **Metodi di Pagamento**: L'inclusione di diversi metodi di pagamento è rilevante nel contesto della gestione dei pagamenti digitali.
-2. **Ricarica del Wallet Virtuale in Contanti**: Questo è un requisito specifico del settore che permette di integrare modalità di pagamento offline.
-3. **API per Fast Food/Ristoranti**: Necessità di integrazione con sistemi preesistenti in ristoranti e fast food per migliorare la gestione degli ordini.
-4. **Database degli Ingredienti**: Essenziale per la sicurezza alimentare e per fornire opzioni di personalizzazione nel menu.
-5. **Offerte e Consegna del Cibo**: Un requisito fondamentale nel settore della ristorazione, pensato per incentivare le vendite.
-6. **Sistema di Bonus**: Un programma di fidelizzazione per incentivare la frequenza degli ordini, elemento chiave nel mantenimento della clientela.
-
-
-**use case diagram**:
-https://yuml.me/dfa14484.svg
 
 
 **JSON di Riferimento**:  
