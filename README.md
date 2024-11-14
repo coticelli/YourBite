@@ -1,121 +1,104 @@
 **Nome**: YourBite
 
-**Descrizione**: **YourBite è una piattaforma innovativa pensata per i ristoratori, che consente ai clienti di creare menu personalizzati in modo semplice e veloce**. I clienti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. È possibile ricaricare il conto con pagamenti in contanti al punto vendita, convertendo l’importo in una valuta digitale utilizzabile per effettuare ordini.
+**Descrizione**:  
+YourBite è una piattaforma innovativa progettata per i ristoratori, che permette ai clienti di creare menu personalizzati in modo semplice e immediato. Gli utenti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. Inoltre, è possibile ricaricare il saldo del proprio account con pagamenti in contante presso i punti vendita fisici, con la conversione dell’importo in una valuta digitale utilizzabile per effettuare ordini.
 
 **Target**: Ristoratori
 
-**Problema**: I ristoratori spesso incontrano difficoltà nella gestione efficiente degli ordini e nel fornire un'esperienza cliente personalizzata. YourBite affronta questo problema offrendo una piattaforma che facilita la personalizzazione degli ordini, migliora l’efficienza e incrementa le vendite, ottimizzando il processo di acquisto e migliorando la soddisfazione del cliente.
+**Problema**:  
+I ristoratori affrontano frequentemente difficoltà nella gestione efficiente degli ordini, nonché nel garantire un’esperienza cliente altamente personalizzata. In scenari di alto volume, ad esempio, un ristorante può ricevere numerosi ordini in breve tempo, causando confusione nello staff e ritardi nella preparazione. Tali disguidi possono generare malintesi sugli ingredienti richiesti dai clienti, con il rischio di insoddisfazione e recensioni negative. Inoltre, la carenza di un sistema intuitivo per la personalizzazione degli ordini rende arduo rispondere in modo rapido alle richieste specifiche, come l’eliminazione di allergeni o l’aggiunta di ingredienti extra. YourBite risponde a questa esigenza con una piattaforma che semplifica la personalizzazione degli ordini, ottimizzando l’efficienza operativa e incrementando le vendite, migliorando al contempo la soddisfazione del cliente.
 
-**Competitor**: NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Restaurants, Ordermark, Flipdish, Yumm.
+**Competitor**:  
+NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Restaurants, Ordermark, Flipdish, Yumm.
 
-**Requisiti Funzionali**
+---
 
-**Metodi di Pagamento**:
+### **Requisiti Funzionali**
 
-Supporto per vari metodi di pagamento (carte di credito, PayPal, wallet digitali).
+**Metodi di Pagamento**:  
+- Supporto per una varietà di metodi di pagamento, inclusi carte di credito, PayPal e wallet digitali.
 
-**Ricarica del Wallet Virtuale in Contanti**:
+**Ricarica del Wallet Virtuale in Contanti**:  
+- Possibilità di ricaricare il wallet virtuale in contante presso i punti vendita fisici, utilizzando modalità offline.
 
-Possibilità di ricaricare il wallet in contanti presso punti vendita fisici o tramite modalità offline.
+**Integrazione API per Fast Food/Ristoranti**:  
+- Integrazione di API per la gestione e l'aggiornamento in tempo reale degli ordini e dei menu.
 
-**Integrazione API per Fast Food/Ristoranti**:
+**Database degli Ingredienti**:  
+- Creazione di un database completo con dettagli su allergeni, valori nutrizionali e opzioni di personalizzazione.
 
-API per la gestione e l'aggiornamento degli ordini e dei menu in tempo reale.
+**Notifiche Ordine**:  
+- Sistema di notifiche in tempo reale per aggiornamenti sullo stato dell'ordine.
 
-**Database degli Ingredienti**:
+**Pagina di Supporto**:  
+- Sezione dedicata al supporto clienti, con FAQ, chat live e assistenza via email o telefono.
 
-Creazione di un database completo con dettagli su allergeni, valori nutrizionali e opzioni di personalizzazione.
+**Registrazione e Login**:  
+- Accesso tramite email, social media o numero di telefono.
 
-**Notifiche Ordine**:
+**Sistema di Bonus**:  
+- Programma di fidelizzazione che premia gli utenti con punti bonus per ordini ripetuti.
 
-Sistema di notifiche in tempo reale sullo stato dell'ordine.
+**Offerte e Consegna del Cibo**:  
+- Visualizzazione di offerte speciali e opzioni per la consegna a domicilio.
 
-**Pagina di Supporto**:
+**Sincronizzazione tra Venditore e App**:  
+- Sincronizzazione dei tempi di preparazione e consegna per fornire stime precise sul tempo di arrivo.
 
-Sezione dedicata al supporto clienti con FAQ, live chat e assistenza via email o telefono.
+**Layout e Prodotti Personalizzati**:  
+- Layout personalizzato per ogni venditore, con offerte specifiche.
 
-**Registrazione e Login**:
+**Personalizzazione degli Ingredienti**:  
+- Opzione per i clienti di aggiungere o rimuovere ingredienti dai piatti ordinati.
 
-Accesso tramite email, social media o numero di telefono.
+**Visualizzazione del Menu del Mese**:  
+- Sezione dedicata al menu del mese, con sondaggi interattivi per il feedback degli utenti.
 
-**Sistema di Bonus**:
+**Personalizzazione della Lingua**:  
+- Possibilità di modificare la lingua dell’app in base alle preferenze individuali.
 
-Programma di fidelizzazione che premia gli utenti con punti bonus per ordini ripetuti.
+---
 
-**Offerte e Consegna del Cibo**:
+### **Requisiti Non Funzionali**
 
-Visualizzazione di offerte speciali e opzioni per la consegna a domicilio.
+**Connessione Internet**:  
+- Una connessione internet stabile è necessaria per il corretto funzionamento dell’applicazione.
 
-**Sincronizzazione tra Venditore e App**:
+**Prestazioni**:  
+- L’esperienza utente deve essere fluida, anche con la gestione simultanea di fino a 1.000 utenti.
 
-Sincronizzazione dei tempi di preparazione e consegna per offrire stime precise di arrivo.
+**Interfaccia Responsive**:  
+- L'applicazione sarà ottimizzata per dispositivi mobili, tablet e desktop.
 
-**Layout e Prodotti Personalizzati**:
+**Tempi di Caricamento**:  
+- Le pagine devono caricarsi in meno di 2 secondi, per garantire una navigazione veloce e senza interruzioni.
 
-Layout personalizzato per ogni venditore, con offerte specifiche.
+**Scalabilità**:  
+- Il sistema sarà progettato per scalare facilmente, consentendo l’aumento del numero di utenti e ristoranti senza compromettere le prestazioni.
 
-**Personalizzazione degli Ingredienti**:
+---
 
-Possibilità per i clienti di aggiungere o rimuovere ingredienti dai piatti ordinati.
+### **Requisiti di Dominio**
 
-**Visualizzazione del Menu del Mese**:
+**Metodi di Pagamento**:  
+- La gestione dei pagamenti digitali è un aspetto cruciale per l’efficace operatività della piattaforma.
 
-Sezione con il menu del mese e sondaggi interattivi per il feedback.
+**Ricarica del Wallet Virtuale in Contanti**:  
+- È fondamentale includere modalità di pagamento offline, in modo da garantire un’esperienza completa anche senza necessità di connessione immediata.
 
-**Personalizzazione della Lingua**:
+**Integrazione API per Fast Food/Ristoranti**:  
+- L’integrazione con sistemi esistenti nei ristoranti è essenziale per garantire un flusso di lavoro armonioso e in tempo reale.
 
-Opzione per modificare la lingua dell’app in base alle preferenze.
+**Database degli Ingredienti**:  
+- Un database accurato è indispensabile per la sicurezza alimentare e per la corretta personalizzazione del menu, soprattutto in relazione agli allergeni.
 
-**Requisiti Non Funzionali**
+**Offerte e Consegna del Cibo**:  
+- Le offerte speciali e le opzioni di consegna sono un incentivo per incrementare le vendite e soddisfare le aspettative dei clienti.
 
-**Connessione Internet**:
+**Sistema di Bonus**:  
+- Un programma di fidelizzazione efficace è uno strumento chiave per incentivare la clientela a utilizzare frequentemente la piattaforma.
 
-Richiesta una connessione stabile per un corretto funzionamento.
-
-**Prestazioni**:
-
-Esperienza fluida fino a 1.000 utenti simultanei.
-
-**Interfaccia Responsive**:
-
-Ottimizzazione per dispositivi mobili, tablet e desktop.
-
-**Tempi di Caricamento**:
-
-Caricamento delle pagine in meno di 2 secondi.
-
-**Scalabilità**:
-
-Progettato per scalare con l'aumento di utenti e ristoranti.
-
-**Requisiti di Dominio**
-
-**Metodi di Pagamento**:
-
-Rilevanti per la gestione dei pagamenti digitali.
-
-**Ricarica del Wallet Virtuale in Contanti**:
-
-Essenziale per includere modalità di pagamento offline.
-
-**Integrazione API per Fast Food/Ristoranti**:
-
-Importante per l'integrazione con sistemi esistenti nei ristoranti.
-
-**Database degli Ingredienti**:
-
-Fondamentale per la sicurezza alimentare e la personalizzazione del menu.
-
-**Offerte e Consegna del Cibo**:
-
-Incentiva le vendite e soddisfa le aspettative del cliente.
-
-**Sistema di Bonus**:
-
-Strumento chiave per la fidelizzazione della clientela.
-
-
-
+---
 
 **JSON di Riferimento**:  
 {
