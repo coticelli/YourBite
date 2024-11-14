@@ -22,11 +22,10 @@
 8. **Sistema di Bonus**: Programma di fedeltà che premia gli utenti con punti bonus.
 9. **Offerte e Consegna del Cibo**: Visualizzazione di offerte speciali e gestione delle opzioni di consegna a domicilio.
 10. **Sincronizzazione tra Venditore e App**: Sincronizzazione dei tempi di preparazione e consegna con un tempo stimato di arrivo.
-11. **Sistema GPS**: Integrazione del GPS per tracciare la posizione del corriere e ottimizzare i tempi di consegna.
-12. **Layout e Prodotti Personalizzati**: Layout personalizzato per ogni venditore, con prodotti e offerte specifiche.
-13. **Personalizzazione degli Ingredienti**: Possibilità per gli utenti di aggiungere o rimuovere ingredienti dai piatti ordinati.
-14. **Visualizzazione del Menu del Mese**: Sezione dedicata al menu del mese, con sondaggi interattivi per raccogliere feedback sui prodotti.
-15. **Personalizzazione della Lingua**: Opzione per personalizzare la lingua dell’app in base alla preferenza dell’utente.
+11. **Layout e Prodotti Personalizzati**: Layout personalizzato per ogni venditore, con prodotti e offerte specifiche.
+12. **Personalizzazione degli Ingredienti**: Possibilità per gli utenti di aggiungere o rimuovere ingredienti dai piatti ordinati.
+13. **Visualizzazione del Menu del Mese**: Sezione dedicata al menu del mese, con sondaggi interattivi per raccogliere feedback sui prodotti.
+14. **Personalizzazione della Lingua**: Opzione per personalizzare la lingua dell’app in base alla preferenza dell’utente.
 
 ### Requisiti Non Funzionali
 
