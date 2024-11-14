@@ -65,7 +65,7 @@ NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Re
 - Una connessione internet stabile è necessaria per il corretto funzionamento dell’applicazione.
 
 **Prestazioni**:  
-- L’esperienza utente deve essere fluida, anche con la gestione simultanea di fino a 1.000 utenti.
+- L’esperienza utente deve essere fluida, anche con la gestione simultanea.
 
 **Interfaccia Responsive**:  
 - L'applicazione sarà ottimizzata per dispositivi mobili, tablet e desktop.
