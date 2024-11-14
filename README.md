@@ -100,6 +100,10 @@ NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Re
 
 ---
 
+![image](https://github.com/user-attachments/assets/5f4dee4f-666a-4164-89f3-e05ac5350ff8)
+
+---
+
 **JSON di Riferimento**:  
 {
   "PaymentMethods": [
