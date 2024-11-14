@@ -3,7 +3,7 @@
 **Descrizione**:  
 YourBite è una piattaforma innovativa progettata per i ristoratori, che permette ai clienti di creare menu personalizzati in modo semplice e immediato. Gli utenti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. Inoltre, è possibile ricaricare il saldo del proprio account con pagamenti in contante presso i punti vendita fisici, con la conversione dell’importo in una valuta digitale utilizzabile per effettuare ordini.
 
-**Target**: Ristoratori
+**Target**:propietari di fast food e clienti di fast food
 
 **Problema**:  
 I ristoratori affrontano frequentemente difficoltà nella gestione efficiente degli ordini, nonché nel garantire un’esperienza cliente altamente personalizzata. In scenari di alto volume, ad esempio, un ristorante può ricevere numerosi ordini in breve tempo, causando confusione nello staff e ritardi nella preparazione. Tali disguidi possono generare malintesi sugli ingredienti richiesti dai clienti, con il rischio di insoddisfazione e recensioni negative. Inoltre, la carenza di un sistema intuitivo per la personalizzazione degli ordini rende arduo rispondere in modo rapido alle richieste specifiche, come l’eliminazione di allergeni o l’aggiunta di ingredienti extra. YourBite risponde a questa esigenza con una piattaforma che semplifica la personalizzazione degli ordini, ottimizzando l’efficienza operativa e incrementando le vendite, migliorando al contempo la soddisfazione del cliente.
