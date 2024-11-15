@@ -84,7 +84,7 @@
 
         // Funzione per visualizzare gli endpoint del server esterno
         document.getElementById('visualizza-endpoint').addEventListener('click', () => {
-            fetch('https://orange-space-fiesta-744v9g94rw72p66w.github-3000.app.git.dev/bands')  // Sostituisci con l'URL del server esterno
+            fetch('https://orange-space-fiesta-744v9g94rw72p66w.github-3000.app.github.dev/bands')  // Sostituisci con l'URL del server esterno
                 .then(response => response.json())
                 .then(data => {
                     alert('Endpoint ricevuti:\n' + JSON.stringify(data, null, 2));
