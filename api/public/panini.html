@@ -16,6 +16,9 @@
     </div>
     <h1>Lista dei Panini</h1>
 
+    <!-- Button per visualizzare gli endpoint del server esterno -->
+    <button id="visualizza-endpoint">Visualizza Endpoint Esterni</button>
+
     <!-- Tabella per tutti i panini -->
     <h2>Tutti i Panini</h2>
     <table border="1" id="tutti-panini">
@@ -56,22 +59,16 @@
             const cell3 = row.insertCell(2);
             cell1.textContent = panino.nome;
             cell2.textContent = panino.ingredienti.join(", ");
-            cell3.textContent = panino.prezzo ? `€${panino.prezzo.toFixed(2)}` : 'N/A';  // Gestione del prezzo
+            cell3.textContent = panino.prezzo ? `€${panino.prezzo.toFixed(2)}` : 'N/A';
         }
 
         // Carica i panini tramite una chiamata AJAX al server
         fetch('/panini')
             .then(response => response.json())
             .then(data => {
-                console.log("Dati ricevuti:", data);  // Log per vedere cosa ricevi dal server
-
-                // Verifica che i dati siano corretti
                 if (data && Array.isArray(data) && data.length > 0) {
-                    // Aggiungi tutti i panini alla tabella generale
                     data.forEach(panino => {
                         aggiungiPanino('tutti-panini', panino);
-
-                        // Aggiungi i panini con pollo alla tabella dei panini con pollo
                         if (panino.ingredienti && panino.ingredienti.includes('pollo')) {
                             aggiungiPanino('panini-pollo', panino);
                         }
@@ -84,6 +81,19 @@
                 console.error('Errore nel caricamento dei panini:', error);
                 document.getElementById('tutti-panini').innerHTML = '<tr><td colspan="3">Errore nel caricamento dei panini.</td></tr>';
             });
+
+        // Funzione per visualizzare gli endpoint del server esterno
+        document.getElementById('visualizza-endpoint').addEventListener('click', () => {
+            fetch('https://orange-space-fiesta-744v9g94rw72p66w.github-3000.app.git.dev/bands')  // Sostituisci con l'URL del server esterno
+                .then(response => response.json())
+                .then(data => {
+                    alert('Endpoint ricevuti:\n' + JSON.stringify(data, null, 2));
+                })
+                .catch(error => {
+                    console.error('Errore nel caricamento degli endpoint:', error);
+                    alert('Errore nel caricamento degli endpoint.');
+                });
+        });
     </script>
 </body>
 </html>

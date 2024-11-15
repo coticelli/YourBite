@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 // Serve i file statici (HTML, CSS, immagini, ecc.) dalla cartella 'public'
 app.use(express.static(path.join(__dirname, 'public'))); // Serve 'public' per file statici
 
+app.use(express.urlencoded ({extended:true}));
 // Crea una connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
 
@@ -162,7 +163,25 @@ app.post('/login', (req, res) => {
     });
 
 
+    app.use(cors()); // Permette richieste da qualsiasi origine
 
+
+    const corsOptions = {
+        origin: '*', // Definisci l'origine (puoi specificare un URL specifico invece di '*' per maggiore sicurezza)
+        methods: 'GET,POST', // Definisci i metodi accettati
+        credentials: false // Se vuoi permettere l'invio di cookie e credenziali, imposta a `true`
+    };
+    
+    app.use(cors(corsOptions));
+    
+    app.use((req, res, next) => {
+        console.log('Richiesta ricevuta:', req.method, req.path);
+        next();
+      });
+      
+ 
+
+    
     app.get('/panini', (req, res) => {
         const panini = [
             { nome: "Panino Classico", ingredienti: ["pane", "carne", "formaggio"], },
@@ -192,5 +211,5 @@ app.get('*', (req, res) => {
 
 // Inizia il server
 app.listen(port, () => {
-    console.log(`Server in esecuzione su http://37.27.202.176:${port}`);
+    console.log(`Server in esecuzione su http://localhost:${port}`);
 });
