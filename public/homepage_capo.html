@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourBite - Manager Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <img src="img/logo.png" alt="YourBite Logo" class="logo">
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="homepage_capo.html" class="active">Dashboard</a>
+            <a href="settings.html">Settings</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </nav>
+
+        <!-- Welcome Message -->
+        <h1 class="welcome-message">Benvenuto Capo, <span id="username"></span></h1>
+
+        <!-- Manager Actions -->
+        <div class="manager-actions">
+            <button class="primary-btn">Gestisci Ordini</button>
+            <button class="primary-btn">Visualizza Statistiche</button>
+            <button class="primary-btn">Gestisci Menu</button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Recupera il nome utente e il tipo di utente dal localStorage
+            const username = localStorage.getItem("username");
+            const userType = localStorage.getItem("userType");
+
+            // Se l'utente non è del tipo "capo", reindirizza alla pagina appropriata
+            if (!username || userType !== "capo") {
+                window.location.href = "/login.html"; // Reindirizza alla pagina di login se l'utente non è un capo
+            } else {
+                document.getElementById("username").textContent = username; // Mostra il nome utente
+            }
+        });
+
+        document.getElementById("logoutBtn").addEventListener("click", function(event) {
+            event.preventDefault(); // Prevenire il comportamento predefinito del link
+
+            // Invia una richiesta di logout al server
+            fetch('/logout', { method: 'POST' }) // Usa il metodo POST per il logout
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Rimuovi i dati dal localStorage
+                        localStorage.removeItem("username");
+                        localStorage.removeItem("userType");
+
+                        // Reindirizza alla pagina di login
+                        window.location.href = "login.html"; // Sostituisci con il tuo URL di login
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore durante il logout:', error);
+                    alert('Errore durante il logout. Riprova.');
+                });
+        });
+    </script>
+
+</body>
+
+</html>
