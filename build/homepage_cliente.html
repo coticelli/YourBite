@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage Cliente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Benvenuto nella Homepage, <span id="username"></span>!</h1>
+    </header>
+    
+    <main>
+        <section>
+            <p>Qui puoi trovare tutte le informazioni relative al tuo account.</p>
+            <button id="logoutButton">Logout</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 YourBite - Tutti i diritti riservati</p>
+    </footer>
+
+    <script>
+        // Recupera il nome utente e il tipo di utente dal localStorage
+        const username = localStorage.getItem('username');
+        const userType = localStorage.getItem('userType'); // Recupera il tipo di utente
+
+        if (username && userType) {
+            document.getElementById('username').textContent = username; // Mostra il nome utente
+
+            // Se l'utente non è un cliente, redirigi alla homepage appropriata
+            if (userType !== 'cliente') {
+                window.location.href = `/homepage${userType}.html`; // Reindirizza in base al tipo di utente
+            }
+        } else {
+            // Se non c'è nome utente o tipo utente, reindirizza alla pagina di login
+            window.location.href = '/login.html';
+        }
+
+        // Funzionalità del bottone Logout
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+
+                if (response.ok) {
+                    // Rimuove il nome utente e tipo utente dal localStorage
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('userType');
+
+                    // Redirige alla pagina di login dopo il logout
+                    window.location.href = '/login.html';
+                } else {
+                    alert('Errore durante il logout. Riprova.');
+                }
+            } catch (error) {
+                console.error('Errore:', error);
+                alert('Errore durante il logout.');
+            }
+        });
+    </script>
+</body>
+</html>

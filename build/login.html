@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourBite - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <!-- Logo -->
+        <img src="img/logo.png" alt="YourBite Logo" class="logo">
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div>
+            <button class="tab active"><a href="login.html" style="text-decoration:none; color: black;">Log in</a></button>
+            <button class="tab"><a href="signup.html" style="text-decoration:none; color: black;">Sign Up</a></button><br><br>
+        </div> 
+        <div class="welcome-message"><br>
+            Welcome to YourBite
+        </div>
+               
+        <!-- Log In Form -->
+        <form id="loginForm" class="form">
+            <div class="form-group">
+                <input type="email" id="email" placeholder=" " required>
+                <label for="email">E-mail</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Password</label>
+            </div>
+            <!-- Log In Button inside the same form box -->
+            <button type="submit" class="primary-btn">Log In</button>
+
+            <!-- Forgot Password Link -->
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+        </form>
+
+        <!-- Message Div for errors -->
+        <div id="message" style="color: red; font-size: 16px;"></div>
+    </div>
+
+    <div class="footer">
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Log per vedere i dati prima di inviarli al server
+            console.log('Email:', email, 'Password:', password);
+
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Risposta dal server:', data);
+
+                if (data.error) {
+                    document.getElementById('message').innerText = data.error;
+                } else {
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('userType', data.userType);
+
+                    // Verifica se redirectUrl è presente e corretta
+                    if (data.redirectUrl && data.redirectUrl.trim() !== "") {
+                        console.log('Redirecting to:', data.redirectUrl);
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        console.error('Redirect URL is not defined or empty');
+                        document.getElementById('message').innerText = 'Errore durante il login. Riprova.';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante il login:', error);
+                document.getElementById('message').innerText = 'Errore durante il login. Riprova.';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+// Importa le librerie necessarie
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const path = require('path');
@@ -6,21 +7,31 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const authRoutes = require('./authRoutes');
 
 // Crea un'istanza di Express
 const app = express();
 const port = 3000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json()); // Assicurati che il body parser sia configurato correttamente
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors()); // Abilita CORS per tutte le richieste
+app.use(bodyParser.json()); // Parsea il corpo della richiesta come JSON
+app.use(express.static(path.join(__dirname, 'public'))); // Serve i file statici dalla cartella 'public'
+app.use('/', authRoutes); // Aggiungi le route di autenticazione
+const session = require('express-session');
 
-// Connessione al database
+app.use(session({
+  secret: '1e01ad5f540721968c5c17c7789c5446', // Replace with a secure secret
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to `true` for HTTPS
+}));
+
+// Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
 
+// Creazione della tabella utenti, se non esiste
 db.serialize(() => {
-    // Creazione della tabella utenti
     db.run(`CREATE TABLE IF NOT EXISTS utenti (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
@@ -40,6 +51,7 @@ db.serialize(() => {
     const hashedPasswordCapo = bcrypt.hashSync('capo', 10);
     const hashedPasswordCliente = bcrypt.hashSync('cliente', 10);
 
+    // Inserimento dati nel database, se non esistono già
     db.run(`INSERT OR IGNORE INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
         ['admin', 'admin@example.com', hashedPasswordAdmin, 'amministratore']);
     db.run(`INSERT OR IGNORE INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
@@ -48,7 +60,7 @@ db.serialize(() => {
         ['cliente', 'cliente@example.com', hashedPasswordCliente, 'cliente']);
 });
 
-// Swagger
+// Swagger - Impostazione della documentazione API
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Route per la homepage
@@ -60,10 +72,12 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
+    // Controlla che email e password siano forniti
     if (!email || !password) {
         return res.status(400).json({ error: 'Email e password sono richiesti.' });
     }
 
+    // Cerca l'utente nel database
     db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, row) => {
         if (err) {
             return res.status(500).json({ error: 'Errore del server.' });
@@ -73,6 +87,7 @@ app.post('/login', (req, res) => {
             return res.status(400).json({ error: 'Email o password non validi.' });
         }
 
+        // Confronta la password con quella criptata nel database
         bcrypt.compare(password.trim(), row.password, (err, result) => {
             if (err) {
                 return res.status(500).json({ error: 'Errore durante il login.' });
@@ -82,9 +97,8 @@ app.post('/login', (req, res) => {
                 return res.status(400).json({ error: 'Email o password non validi.' });
             }
 
+            // Determina la URL di reindirizzamento in base al tipo utente
             let redirectUrl = '';
-
-            // Verify the user type and assign the correct URL
             switch (row.tipo) {
                 case 'cliente':
                     redirectUrl = '/homepage_cliente.html';
@@ -96,19 +110,16 @@ app.post('/login', (req, res) => {
                     redirectUrl = '/homepage_capo.html';
                     break;
                 default:
-                    redirectUrl = ''; // In case of invalid user type
+                    redirectUrl = ''; // Tipo utente non valido
                     break;
             }
 
-            // If redirectUrl is not set, show error
+            // Se non è stata trovata una URL di reindirizzamento, restituisci un errore
             if (!redirectUrl) {
                 return res.status(400).json({ error: 'Tipo utente non valido, impossibile determinare la homepage.' });
             }
 
-            // Log the response data for debugging
-            console.log('Redirect URL:', redirectUrl);
-
-            // Respond with the redirect URL and username
+            // Risposta con il reindirizzamento e il nome utente
             res.json({ success: true, redirectUrl, username: row.username });
         });
     });
@@ -118,24 +129,27 @@ app.post('/login', (req, res) => {
 app.post('/register', (req, res) => {
     const { username, email, password, tipo } = req.body;
 
+    // Verifica che tutti i campi siano presenti
     if (!username || !email || !password || !tipo) {
         return res.status(400).json({ error: 'Tutti i campi sono obbligatori.' });
     }
 
-    // Validazione della password
+    // Validazione della password (minimo 8 caratteri, almeno una lettera e un numero)
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
         return res.status(400).json({ error: 'La password deve essere lunga almeno 8 caratteri e contenere almeno una lettera e un numero.' });
     }
 
+    // Verifica che il tipo utente sia valido
     const validTypes = ['cliente', 'amministratore', 'capo'];
     if (!validTypes.includes(tipo)) {
         return res.status(400).json({ error: 'Tipo utente non valido.' });
     }
 
+    // Cripta la password
     const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Verifica se l'email esiste già nel database
+    // Verifica se l'email è già in uso
     db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, row) => {
         if (err) {
             console.error('Errore durante la verifica dell\'email:', err.message);
@@ -146,7 +160,7 @@ app.post('/register', (req, res) => {
             return res.status(400).json({ error: 'Questa email è già in uso.' });
         }
 
-        // Inserisci il nuovo utente nel database
+        // Inserisce il nuovo utente nel database
         db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
             [username, email, hashedPassword, tipo], function(err) {
                 if (err) {
@@ -162,11 +176,11 @@ app.post('/register', (req, res) => {
 
 // Endpoint di logout (metodo POST)
 app.post('/logout', (req, res) => {
-    // Esegui il logout
+    // Simula il logout
     res.json({ success: true, message: 'Logout effettuato con successo.' });
 });
 
-// Inizia il server
+// Avvia il server sulla porta 3000
 app.listen(port, () => {
     console.log(`Server in esecuzione su http://localhost:${port}`);
 });
