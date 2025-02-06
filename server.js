@@ -14,7 +14,7 @@ const app = express();
 const port = 3000;
 
 // Middleware
-app.use(cors()); // Abilita CORS per tutte le richieste
+app.use(cors({ origin: '*' })); // Abilita CORS per tutte le richieste
 app.use(bodyParser.json()); // Parsea il corpo della richiesta come JSON
 app.use(express.static(path.join(__dirname, 'public'))); // Serve i file statici dalla cartella 'public'
 app.use('/', authRoutes); // Aggiungi le route di autenticazione
@@ -126,7 +126,8 @@ app.post('/login', (req, res) => {
 });
 
 // Route per la registrazione
-app.post('/register', (req, res) => {
+app.post('/signup', (req, res) => {
+    console.log('Dati ricevuti:', req.body); // Log per il debug
     const { username, email, password, tipo } = req.body;
 
     // Verifica che tutti i campi siano presenti
