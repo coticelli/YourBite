@@ -169,7 +169,7 @@ app.post('/delete-user-data', (req, res) => {
     // Logica per rimuovere i dati dal DB
     deleteUserData(userId)
       .then(() => res.status(200).json({ message: 'Dati utente eliminati con successo.' }))
-      .catch((err) => res.status(500).json({ error: 'Errore durante l’eliminazione dei dati.' }));
+      .catch((err) => res.status(500).json({ error: 'Errore durante eliminazione dei dati.' }));
   });
 
 // Middleware per proteggere le pagine
@@ -254,13 +254,12 @@ app.post('/login', (req, res) => {
             }
 
             // Risposta con il reindirizzamento e il nome utente
-           // Risposta con il reindirizzamento e il nome utente
-res.json({ 
-    success: true, 
-    redirectUrl, 
-    username: row.username,
-    tipo: row.tipo  // Assicurati che questa proprietà sia inclusa
-});
+            res.json({ 
+                success: true, 
+                redirectUrl, 
+                username: row.username,
+                tipo: row.tipo  // Assicurati che questa proprietà sia inclusa
+            });
         });
     });
 });
@@ -302,33 +301,32 @@ app.post('/signup', (req, res) => {
         }
 
         // Inserisce il nuovo utente nel database
-        // Inserisce il nuovo utente nel database
-db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
-    [username, email, hashedPassword, tipo], function(err) {
-        if (err) {
-            console.error('Errore durante l\'inserimento del nuovo utente:', err.message);
-            return res.status(500).json({ error: 'Errore durante la registrazione.' });
-        }
+        db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
+            [username, email, hashedPassword, tipo], function(err) {
+                if (err) {
+                    console.error('Errore durante l\'inserimento del nuovo utente:', err.message);
+                    return res.status(500).json({ error: 'Errore durante la registrazione.' });
+                }
 
-        console.log(`Nuovo utente registrato: ${username}`);
-        // Definisci una URL di redirect in base al tipo utente
-        let redirectUrl = '';
-        switch (tipo) {
-            case 'cliente':
-                redirectUrl = '/homepage_cliente.html';
-                break;
-            case 'amministratore':
-                redirectUrl = '/homepage_admin.html';
-                break;
-            case 'capo':
-                redirectUrl = '/homepage_capo.html';
-                break;
-            default:
-                redirectUrl = '/login.html'; 
-                break;
-        }
-        res.json({ success: true, message: 'Registrazione avvenuta con successo.', redirectUrl });
-    });
+                console.log(`Nuovo utente registrato: ${username}`);
+                // Definisci una URL di redirect in base al tipo utente
+                let redirectUrl = '';
+                switch (tipo) {
+                    case 'cliente':
+                        redirectUrl = '/homepage_cliente.html';
+                        break;
+                    case 'amministratore':
+                        redirectUrl = '/homepage_admin.html';
+                        break;
+                    case 'capo':
+                        redirectUrl = '/homepage_capo.html';
+                        break;
+                    default:
+                        redirectUrl = '/login.html'; 
+                        break;
+                }
+                res.json({ success: true, message: 'Registrazione avvenuta con successo.', redirectUrl });
+            });
     });
 });
 
@@ -341,6 +339,163 @@ app.post('/logout', (req, res) => {
         res.clearCookie('connect.sid'); // Pulisci il cookie di sessione
         res.json({ success: true, message: 'Logout effettuato con successo.' });
     });
+});
+
+// Funzione per recuperare i panini da API esterna
+async function fetchPaniniFromExternalAPI() {
+    try {
+        // Utilizzo di TheMealDB API come esempio - API gratuita per ricette
+        // Questa API restituisce pasti che possiamo "trasformare" in panini
+        const response = await axios.get('https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef');
+        
+        // Trasformiamo i dati nel formato che ci serve per i panini
+        const meals = response.data.meals || [];
+        return meals.map(meal => ({
+            id: meal.idMeal,
+            nome: meal.strMeal.includes('burger') ? meal.strMeal : `${meal.strMeal} Burger`,
+            descrizione: `Delizioso panino con ${meal.strMeal}`,
+            prezzo: (Math.random() * 5 + 5).toFixed(2), // Prezzo casuale tra 5 e 10
+            categoria: determineCategory(meal.strMeal),
+            ingredienti: `Carne, ${meal.strMeal.toLowerCase()}, lattuga, pomodoro, cipolla, salsa speciale`,
+            disponibile: true,
+            immagine: meal.strMealThumb
+        }));
+    } catch (error) {
+        console.error('Errore nel recupero dei panini dall\'API esterna:', error);
+        return [];
+    }
+}
+
+// Funzione di supporto per determinare la categoria del panino
+function determineCategory(mealName) {
+    const lowerName = mealName.toLowerCase();
+    if (lowerName.includes('chicken') || lowerName.includes('pollo')) return 'Pollo';
+    if (lowerName.includes('beef') || lowerName.includes('meat')) return 'Hamburger';
+    if (lowerName.includes('veg')) return 'Vegetariano';
+    return 'Speciale';
+}
+
+// Cache per evitare troppe chiamate all'API esterna
+let paniniCache = [];
+let lastFetchTime = 0;
+const CACHE_DURATION = 3600000; // 1 ora in millisecondi
+
+// Endpoint API per ottenere tutti i panini
+app.get('/api/panini', async (req, res) => {
+    try {
+        const currentTime = Date.now();
+        // Aggiorna la cache se è scaduta
+        if (paniniCache.length === 0 || currentTime - lastFetchTime > CACHE_DURATION) {
+            paniniCache = await fetchPaniniFromExternalAPI();
+            lastFetchTime = currentTime;
+        }
+        res.json(paniniCache);
+    } catch (error) {
+        console.error('Errore durante il recupero dei panini:', error);
+        res.status(500).json({ error: 'Errore del server nel recupero dei panini.' });
+    }
+});
+
+// Endpoint API per ottenere un panino specifico tramite ID
+app.get('/api/panini/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const currentTime = Date.now();
+        // Aggiorna la cache se è scaduta
+        if (paniniCache.length === 0 || currentTime - lastFetchTime > CACHE_DURATION) {
+            paniniCache = await fetchPaniniFromExternalAPI();
+            lastFetchTime = currentTime;
+        }
+        
+        const panino = paniniCache.find(p => p.id.toString() === id);
+        if (!panino) {
+            return res.status(404).json({ error: 'Panino non trovato.' });
+        }
+        res.json(panino);
+    } catch (error) {
+        console.error('Errore durante il recupero del panino:', error);
+        res.status(500).json({ error: 'Errore del server nel recupero del panino.' });
+    }
+});
+
+// Endpoint API per filtrare i panini
+app.get('/api/panini/filtro', async (req, res) => {
+    const { categoria, prezzo_min, prezzo_max, ingrediente, disponibile } = req.query;
+    
+    try {
+        const currentTime = Date.now();
+        // Aggiorna la cache se è scaduta
+        if (paniniCache.length === 0 || currentTime - lastFetchTime > CACHE_DURATION) {
+            paniniCache = await fetchPaniniFromExternalAPI();
+            lastFetchTime = currentTime;
+        }
+        
+        // Filtra i panini in base ai parametri della query
+        let filteredPanini = [...paniniCache];
+        
+        if (categoria) {
+            filteredPanini = filteredPanini.filter(p => 
+                p.categoria.toLowerCase() === categoria.toLowerCase()
+            );
+        }
+        
+        if (prezzo_min) {
+            filteredPanini = filteredPanini.filter(p => 
+                parseFloat(p.prezzo) >= parseFloat(prezzo_min)
+            );
+        }
+        
+        if (prezzo_max) {
+            filteredPanini = filteredPanini.filter(p => 
+                parseFloat(p.prezzo) <= parseFloat(prezzo_max)
+            );
+        }
+        
+        if (ingrediente) {
+            filteredPanini = filteredPanini.filter(p => 
+                p.ingredienti.toLowerCase().includes(ingrediente.toLowerCase())
+            );
+        }
+        
+        if (disponibile !== undefined) {
+            const isDisponibile = disponibile === 'true';
+            filteredPanini = filteredPanini.filter(p => p.disponibile === isDisponibile);
+        }
+        
+        res.json(filteredPanini);
+    } catch (error) {
+        console.error('Errore durante il filtraggio dei panini:', error);
+        res.status(500).json({ error: 'Errore del server nel filtraggio dei panini.' });
+    }
+});
+
+// Anche supportare l'endpoint senza lo slash iniziale
+app.get('api/panini/filtro', async (req, res) => {
+    // Reindirizza alla versione corretta dell'endpoint
+    res.redirect('/api/panini/filtro' + (Object.keys(req.query).length ? '?' + new URLSearchParams(req.query).toString() : ''));
+});
+
+// Endpoint API per filtrare per categoria specifica
+app.get('/api/panini/categoria/:categoria', async (req, res) => {
+    const categoria = req.params.categoria;
+    
+    try {
+        const currentTime = Date.now();
+        // Aggiorna la cache se è scaduta
+        if (paniniCache.length === 0 || currentTime - lastFetchTime > CACHE_DURATION) {
+            paniniCache = await fetchPaniniFromExternalAPI();
+            lastFetchTime = currentTime;
+        }
+        
+        const filteredPanini = paniniCache.filter(p => 
+            p.categoria.toLowerCase() === categoria.toLowerCase()
+        );
+        
+        res.json(filteredPanini);
+    } catch (error) {
+        console.error('Errore durante il recupero dei panini per categoria:', error);
+        res.status(500).json({ error: 'Errore del server nel recupero dei panini per categoria.' });
+    }
 });
 
 // Avvia il server sulla porta 3000

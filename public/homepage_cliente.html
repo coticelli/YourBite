@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage Cliente</title>
+    <title>Homepage Cliente - YourBite</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,6 +22,7 @@
         main {
             padding: 20px;
             text-align: center;
+            margin-bottom: 60px; /* Spazio per il footer */
         }
         
         button {
@@ -31,6 +32,8 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
+            border-radius: 4px;
+            margin: 5px;
         }
         
         button:hover {
@@ -46,6 +49,147 @@
             width: 100%;
             bottom: 0;
         }
+
+        /* Stili per il menù panini */
+        .menu-container {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .filters {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-group {
+            margin: 10px;
+        }
+
+        .filter-group label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .panini-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .panino-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .panino-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .panino-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .panino-info {
+            padding: 15px;
+        }
+
+        .panino-nome {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .panino-prezzo {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .panino-descrizione {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .panino-categoria {
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        /* Aggiunto per lo stato di caricamento */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #4CAF50;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                margin: 5px 0;
+            }
+            
+            .panini-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
     </style>
 </head>
 <body>
@@ -58,6 +202,49 @@
             <p>Qui puoi trovare tutte le informazioni relative al tuo account.</p>
             <button id="logoutButton">Logout</button>
         </section>
+
+        <!-- Nuova sezione per il menù panini -->
+        <section class="menu-container">
+            <h2>Il Nostro Menù</h2>
+            
+            <!-- Filtri per i panini -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="categoria-filter">Categoria:</label>
+                    <select id="categoria-filter">
+                        <option value="">Tutte le categorie</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Pollo">Pollo</option>
+                        <option value="Vegetariano">Vegetariano</option>
+                        <option value="Speciale">Speciale</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="prezzo-filter">Prezzo massimo:</label>
+                    <input type="range" id="prezzo-filter" min="5" max="10" step="0.5" value="10">
+                    <span id="prezzo-value">€10.00</span>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="ingrediente-filter">Ingrediente:</label>
+                    <input type="text" id="ingrediente-filter" placeholder="es. pollo, bacon...">
+                </div>
+                
+                <div class="filter-group">
+                    <button id="apply-filters">Applica Filtri</button>
+                    <button id="reset-filters">Reset</button>
+                </div>
+            </div>
+            
+            <!-- Contenitore per la griglia di panini -->
+            <div id="panini-container">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Caricamento panini in corso...</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -67,17 +254,15 @@
     <script>
         // Recupera il nome utente e il tipo di utente dal localStorage
         const username = localStorage.getItem('username');
-        const userType = localStorage.getItem('userType'); // Recupera il tipo di utente
+        const userType = localStorage.getItem('userType');
 
         if (username && userType) {
-            document.getElementById('username').textContent = username; // Mostra il nome utente
+            document.getElementById('username').textContent = username;
 
-            // Se l'utente non è un cliente, redirigi alla homepage appropriata
             if (userType !== 'cliente') {
-                window.location.href = `/homepage${userType}.html`; // Reindirizza in base al tipo di utente
+                window.location.href = `/homepage_${userType}.html`;
             }
         } else {
-            // Se non c'è nome utente o tipo utente, reindirizza alla pagina di login
             window.location.href = '/login.html';
         }
 
@@ -87,11 +272,8 @@
                 const response = await fetch('/logout', { method: 'POST' });
 
                 if (response.ok) {
-                    // Rimuove il nome utente e tipo utente dal localStorage
                     localStorage.removeItem('username');
                     localStorage.removeItem('userType');
-
-                    // Redirige alla pagina di login dopo il logout
                     window.location.href = '/login.html';
                 } else {
                     alert('Errore durante il logout. Riprova.');
@@ -101,13 +283,135 @@
                 alert('Errore durante il logout.');
             }
         });
-        // Controlla se l'utente è autenticato (da aggiungere nelle pagine protette)
-document.addEventListener('DOMContentLoaded', function() {
-    if (!localStorage.getItem('isAuthenticated')) {
-        // Utente non autenticato, reindirizza alla pagina di login
-        window.location.href = '/login.html';
+
+        // JavaScript per la gestione dei panini
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Riferimenti agli elementi del DOM
+            const paniniContainer = document.getElementById('panini-container');
+            const categoriaFilter = document.getElementById('categoria-filter');
+            const prezzoFilter = document.getElementById('prezzo-filter');
+            const prezzoValue = document.getElementById('prezzo-value');
+            const ingredienteFilter = document.getElementById('ingrediente-filter');
+            const applyFiltersBtn = document.getElementById('apply-filters');
+            const resetFiltersBtn = document.getElementById('reset-filters');
+            
+            
+             // Aggiorna il valore visual del prezzo quando si muove lo slider
+prezzoFilter.addEventListener('input', function() {
+    prezzoValue.textContent = `€${parseFloat(this.value).toFixed(2)}`;
+});
+
+// Funzione per caricare i panini dal server
+async function loadPanini() {
+    try {
+        // Mostra il loader
+        paniniContainer.innerHTML = `
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Caricamento panini in corso...</p>
+            </div>
+        `;
+        
+        // Simula una chiamata API (da sostituire con fetch reale)
+        const response = await fetch('/api/panini');
+        
+        if (!response.ok) {
+            throw new Error('Errore nel caricamento dei panini');
+        }
+        
+        const panini = await response.json();
+        displayPanini(panini);
+    } catch (error) {
+        console.error('Errore:', error);
+        paniniContainer.innerHTML = `
+            <div class="error-message">
+                <p>Si è verificato un errore nel caricamento dei panini. Riprova più tardi.</p>
+            </div>
+        `;
+    }
+}
+
+// Funzione per visualizzare i panini
+function displayPanini(panini) {
+    if (panini.length === 0) {
+        paniniContainer.innerHTML = `
+            <div class="no-results">
+                <p>Nessun panino trovato con i filtri selezionati.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div class="panini-grid">';
+    
+    panini.forEach(panino => {
+        // Converti prezzo in numero se è una stringa
+        const prezzo = typeof panino.prezzo === 'string' ? parseFloat(panino.prezzo) : panino.prezzo;
+        
+        html += `
+            <div class="panino-card">
+                <img src="${panino.immagine}" alt="${panino.nome}" class="panino-img">
+                <div class="panino-info">
+                    <div class="panino-nome">${panino.nome}</div>
+                    <div class="panino-prezzo">€${prezzo.toFixed(2)}</div>
+                    <div class="panino-descrizione">${panino.descrizione}</div>
+                    <div class="panino-categoria">${panino.categoria}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    paniniContainer.innerHTML = html;
+}
+
+// Funzione per filtrare i panini
+function filterPanini(panini) {
+    const categoria = categoriaFilter.value;
+    const prezzoMax = parseFloat(prezzoFilter.value);
+    const ingrediente = ingredienteFilter.value.toLowerCase().trim();
+    
+    return panini.filter(panino => {
+        // Filtro per categoria
+        if (categoria && panino.categoria !== categoria) {
+            return false;
+        }
+        
+        // Filtro per prezzo
+        if (panino.prezzo > prezzoMax) {
+            return false;
+        }
+        
+        // Filtro per ingrediente
+        if (ingrediente && !panino.ingredienti.some(ing => ing.toLowerCase().includes(ingrediente))) {
+            return false;
+        }
+        
+        return true;
+    });
+}
+
+// Gestione del pulsante "Applica Filtri"
+applyFiltersBtn.addEventListener('click', async function() {
+    try {
+        const response = await fetch('/api/panini');
+        const panini = await response.json();
+        const filteredPanini = filterPanini(panini);
+        displayPanini(filteredPanini);
+    } catch (error) {
+        console.error('Errore:', error);
     }
 });
+
+// Gestione del pulsante "Reset"
+resetFiltersBtn.addEventListener('click', function() {
+    categoriaFilter.value = '';
+    prezzoFilter.value = 10;
+    prezzoValue.textContent = '€10.00';
+    ingredienteFilter.value = '';
+    loadPanini();
+});
+
+// Carica i panini all'avvio
+loadPanini();});
     </script>
-</body>
-</html>
