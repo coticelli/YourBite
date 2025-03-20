@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,24 +8,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-        
+
         :root {
-            --primary: #d62300; /* Rosso Burger King */
-            --secondary: #faaf18; /* Oro/giallo Burger King */
-            --dark: #2d2d2d; /* Scuro quasi nero */
-            --light: #ffffff; /* Bianco */
-            --gray: #f7f7f7; /* Grigio chiaro */
-            --text: #333333; /* Testo principale */
-            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --primary: #d62300;
+            /* Rosso Burger King */
+            --secondary: #faaf18;
+            /* Oro/giallo Burger King */
+            --dark: #2d2d2d;
+            /* Scuro quasi nero */
+            --light: #ffffff;
+            /* Bianco */
+            --gray: #f7f7f7;
+            /* Grigio chiaro */
+            --text: #333333;
+            /* Testo principale */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             --radius: 12px;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--gray);
@@ -34,7 +41,7 @@
             line-height: 1.5;
             min-height: 100vh;
         }
-        
+
         header {
             background-color: var(--primary);
             box-shadow: var(--shadow);
@@ -43,49 +50,52 @@
             top: 0;
             z-index: 100;
         }
-        
+
         .container {
             width: 90%;
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         header .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .logo {
-    display: flex;
-    align-items: center;
-    color: var(--light);
-    height: 60px; /* Riduci l'altezza complessiva del container */
-    padding: 5px;
-}
-        
-.logo h1 {
-    font-size: 3rem; /* Dimensione ridotta per il titolo */
-    font-weight: 700;
-    margin-left: 8px;
-}
-        
-.logo-img {
-    height: 120px; /* Dimensione ridotta dell'immagine del logo */
-    width: auto;
-    object-fit: contain;
-    vertical-align: middle;
-}
-        
+            display: flex;
+            align-items: center;
+            color: var(--light);
+            height: 60px;
+            /* Riduci l'altezza complessiva del container */
+            padding: 5px;
+        }
+
+        .logo h1 {
+            font-size: 3rem;
+            /* Dimensione ridotta per il titolo */
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .logo-img {
+            height: 120px;
+            /* Dimensione ridotta dell'immagine del logo */
+            width: auto;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+
         nav ul {
             display: flex;
             list-style: none;
         }
-        
+
         nav li {
             margin-left: 2rem;
         }
-        
+
         nav a {
             color: var(--light);
             text-decoration: none;
@@ -93,16 +103,16 @@
             font-size: 1rem;
             transition: all 0.2s;
         }
-        
+
         nav a:hover {
             color: var(--secondary);
         }
-        
+
         main {
             padding: 2rem 0;
             margin-bottom: 2rem;
         }
-        
+
         .welcome-section {
             text-align: center;
             margin-bottom: 3rem;
@@ -111,13 +121,13 @@
             padding: 2rem;
             box-shadow: var(--shadow);
         }
-        
+
         .welcome-section h2 {
             font-size: 2rem;
             margin-bottom: 1rem;
             color: var(--primary);
         }
-        
+
         button {
             background-color: var(--primary);
             color: white;
@@ -130,24 +140,24 @@
             transition: all 0.2s;
             box-shadow: 0 2px 5px rgba(214, 35, 0, 0.2);
         }
-        
+
         button:hover {
             background-color: #b61e00;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(214, 35, 0, 0.3);
         }
-        
+
         #logoutButton {
             background-color: transparent;
             color: var(--primary);
             border: 2px solid var(--primary);
         }
-        
+
         #logoutButton:hover {
             background-color: var(--primary);
             color: white;
         }
-        
+
         .section-title {
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
@@ -156,7 +166,7 @@
             position: relative;
             padding-bottom: 15px;
         }
-        
+
         .section-title::after {
             content: '';
             position: absolute;
@@ -168,7 +178,7 @@
             background-color: var(--secondary);
             border-radius: 3px;
         }
-        
+
         /* Filtri menu */
         .filters {
             background-color: var(--light);
@@ -182,11 +192,11 @@
             align-items: center;
             gap: 1rem;
         }
-        
+
         .filter-group {
             flex: 1 1 200px;
         }
-        
+
         .filter-group label {
             display: block;
             margin-bottom: 0.5rem;
@@ -194,8 +204,8 @@
             font-size: 0.9rem;
             color: var(--dark);
         }
-        
-        .filter-group select, 
+
+        .filter-group select,
         .filter-group input[type="text"] {
             width: 100%;
             padding: 0.8rem;
@@ -204,20 +214,20 @@
             font-family: 'Montserrat', sans-serif;
             transition: all 0.2s;
         }
-        
-        .filter-group select:focus, 
+
+        .filter-group select:focus,
         .filter-group input:focus {
             outline: none;
             border-color: var(--secondary);
             box-shadow: 0 0 0 2px rgba(250, 175, 24, 0.1);
         }
-        
+
         .range-wrapper {
             width: 100%;
             display: flex;
             flex-direction: column;
         }
-        
+
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -227,7 +237,7 @@
             outline: none;
             margin-top: 0.5rem;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
@@ -237,41 +247,41 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.1);
         }
-        
+
         #prezzo-value {
             font-weight: 600;
             color: var(--primary);
             margin-top: 0.5rem;
             text-align: center;
         }
-        
+
         .filter-buttons {
             display: flex;
             gap: 10px;
             justify-content: center;
             flex: 1 1 200px;
         }
-        
+
         #reset-filters {
             background-color: #e0e0e0;
             color: var(--text);
         }
-        
+
         #reset-filters:hover {
             background-color: #d0d0d0;
         }
-        
+
         /* Grid panini */
         .panini-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
-        
+
         .panino-card {
             background-color: var(--light);
             border-radius: var(--radius);
@@ -280,35 +290,35 @@
             transition: all 0.3s ease;
             position: relative;
         }
-        
+
         .panino-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
         }
-        
+
         .panino-img {
             width: 100%;
             height: 200px;
             object-fit: cover;
             transition: all 0.3s;
         }
-        
+
         .panino-card:hover .panino-img {
             transform: scale(1.05);
         }
-        
+
         .panino-info {
             padding: 1.5rem;
             position: relative;
         }
-        
+
         .panino-nome {
             font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--dark);
         }
-        
+
         .panino-prezzo {
             position: absolute;
             top: -20px;
@@ -319,16 +329,16 @@
             padding: 0.5rem 1rem;
             border-radius: 25px;
             font-size: 1rem;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         .panino-descrizione {
             color: #666;
             font-size: 0.9rem;
             margin-bottom: 1rem;
             line-height: 1.5;
         }
-        
+
         .panino-categoria {
             display: inline-flex;
             align-items: center;
@@ -339,21 +349,23 @@
             color: var(--dark);
             font-weight: 600;
         }
-        
+
         .panino-categoria i {
             margin-right: 5px;
             color: var(--primary);
         }
-        
+
         /* Loader e messaggi */
-        .loading, .no-results, .error-message {
+        .loading,
+        .no-results,
+        .error-message {
             text-align: center;
             padding: 3rem;
             background-color: var(--light);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
-        
+
         .loading-spinner {
             display: inline-block;
             width: 40px;
@@ -364,42 +376,79 @@
             animation: spin 1s linear infinite;
             margin-bottom: 1rem;
         }
-        
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
                 width: 95%;
             }
-            
+
             header .container {
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             nav ul {
                 margin-top: 1rem;
                 justify-content: center;
             }
-            
+
             nav li {
                 margin: 0 0.5rem;
             }
-            
+
             .filter-group {
                 flex: 1 1 100%;
             }
-            
+
             .panini-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            /* Pulsante Chat */
+            .chat-button {
+                position: fixed;
+                left: 20px;
+                top: 100px;
+                z-index: 99;
+            }
+
+            #chatButton {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--secondary);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                transition: all 0.3s ease;
+                padding: 0;
+                font-size: 1.5rem;
+            }
+
+            #chatButton:hover {
+                transform: scale(1.1) translateY(-2px);
+                background-color: var(--primary);
+            }
+
+            #chatButton i {
+                margin: 0;
             }
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -415,8 +464,13 @@
                 </ul>
             </nav>
         </div>
+        <div class="chat-button">
+            <button id="chatButton" title="Assistenza Chat">
+                <i class="fas fa-comment-dots"></i>
+            </button>
+        </div>
     </header>
-    
+
     <main>
         <div class="container">
             <section class="welcome-section">
@@ -428,7 +482,7 @@
             <!-- Sezione Menu Panini -->
             <section>
                 <h2 class="section-title">Il Nostro Menu</h2>
-                
+
                 <!-- Filtri -->
                 <div class="filters">
                     <div class="filter-group">
@@ -441,7 +495,7 @@
                             <option value="Speciale">Speciale</option>
                         </select>
                     </div>
-                    
+
                     <div class="filter-group">
                         <label for="prezzo-filter">Prezzo massimo</label>
                         <div class="range-wrapper">
@@ -449,18 +503,18 @@
                             <span id="prezzo-value">€10.00</span>
                         </div>
                     </div>
-                    
+
                     <div class="filter-group">
                         <label for="ingrediente-filter">Ingrediente</label>
                         <input type="text" id="ingrediente-filter" placeholder="es. pollo, bacon...">
                     </div>
-                    
+
                     <div class="filter-buttons">
                         <button id="apply-filters">Applica Filtri</button>
                         <button id="reset-filters">Reset</button>
                     </div>
                 </div>
-                
+
                 <!-- Contenitore Panini -->
                 <div id="panini-container">
                     <div class="loading">
@@ -513,9 +567,9 @@
         const ingredienteFilter = document.getElementById('ingrediente-filter');
         const applyFiltersBtn = document.getElementById('apply-filters');
         const resetFiltersBtn = document.getElementById('reset-filters');
-        
+
         // Aggiorna il valore visual del prezzo quando si muove lo slider
-        prezzoFilter.addEventListener('input', function() {
+        prezzoFilter.addEventListener('input', function () {
             prezzoValue.textContent = `€${parseFloat(this.value).toFixed(2)}`;
         });
 
@@ -581,15 +635,15 @@
                         <p>Caricamento panini in corso...</p>
                     </div>
                 `;
-                
+
                 // Prova a caricare i dati dall'API
                 try {
                     const response = await fetch('/api/panini');
-                    
+
                     if (!response.ok) {
                         throw new Error('Errore nel caricamento dei panini');
                     }
-                    
+
                     const panini = await response.json();
                     displayPanini(panini);
                 } catch (error) {
@@ -609,7 +663,7 @@
 
         // Funzione per ottenere l'icona della categoria
         function getCategoryIcon(categoria) {
-            switch(categoria.toLowerCase()) {
+            switch (categoria.toLowerCase()) {
                 case 'hamburger':
                     return '<i class="fas fa-hamburger"></i>';
                 case 'pollo':
@@ -633,14 +687,14 @@
                 `;
                 return;
             }
-            
+
             let html = '<div class="panini-grid">';
-            
+
             panini.forEach(panino => {
                 // Converti prezzo in numero se è una stringa
                 const prezzo = typeof panino.prezzo === 'string' ? parseFloat(panino.prezzo) : panino.prezzo;
                 const categoryIcon = getCategoryIcon(panino.categoria);
-                
+
                 html += `
                     <div class="panino-card">
                         <img src="${panino.immagine}" alt="${panino.nome}" class="panino-img">
@@ -653,7 +707,7 @@
                     </div>
                 `;
             });
-            
+
             html += '</div>';
             paniniContainer.innerHTML = html;
         }
@@ -663,19 +717,19 @@
             const categoria = categoriaFilter.value;
             const prezzoMax = parseFloat(prezzoFilter.value);
             const ingrediente = ingredienteFilter.value.toLowerCase().trim();
-            
+
             return panini.filter(panino => {
                 // Filtro per categoria
                 if (categoria && panino.categoria !== categoria) {
                     return false;
                 }
-                
+
                 // Filtro per prezzo (assicuriamoci che prezzo sia un numero)
                 const prezzo = typeof panino.prezzo === 'string' ? parseFloat(panino.prezzo) : panino.prezzo;
                 if (prezzo > prezzoMax) {
                     return false;
                 }
-                
+
                 // Filtro per ingrediente (verifichiamo che ingredienti esista)
                 if (ingrediente && panino.ingredienti) {
                     // Se ingredienti è una stringa, la convertiamo in array
@@ -692,19 +746,19 @@
                     // Se è stato specificato un ingrediente ma il panino non ha proprietà ingredienti
                     return false;
                 }
-                
+
                 return true;
             });
         }
 
         // Gestione del pulsante "Applica Filtri"
-        applyFiltersBtn.addEventListener('click', function() {
+        applyFiltersBtn.addEventListener('click', function () {
             const filteredPanini = filterPanini(examplePanini);
             displayPanini(filteredPanini);
         });
 
         // Gestione del pulsante "Reset"
-        resetFiltersBtn.addEventListener('click', function() {
+        resetFiltersBtn.addEventListener('click', function () {
             categoriaFilter.value = '';
             prezzoFilter.value = 10;
             prezzoValue.textContent = '€10.00';
@@ -714,6 +768,12 @@
 
         // Carica i panini all'avvio
         loadPanini();
+
+        // Gestione del pulsante Chat
+        document.getElementById('chatButton').addEventListener('click', function () {
+            window.location.href = '/chat.html';
+        });
     </script>
 </body>
+
 </html>

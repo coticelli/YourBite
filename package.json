@@ -25,6 +25,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "^5.0.0",
+    "socket.io": "^4.8.1",
     "sqlite3": "^5.1.7",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
