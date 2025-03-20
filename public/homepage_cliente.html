@@ -101,6 +101,13 @@
                 alert('Errore durante il logout.');
             }
         });
+        // Controlla se l'utente è autenticato (da aggiungere nelle pagine protette)
+document.addEventListener('DOMContentLoaded', function() {
+    if (!localStorage.getItem('isAuthenticated')) {
+        // Utente non autenticato, reindirizza alla pagina di login
+        window.location.href = '/login.html';
+    }
+});
     </script>
 </body>
 </html>

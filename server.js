@@ -28,9 +28,12 @@ const session = require('express-session');
 // Initialize passport and session middleware
 app.use(session({
     secret: 'your_secret_key',
-    resave: false,
+    resave: true,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { 
+        secure: false, // Imposta su true se usi HTTPS
+        maxAge: 24 * 60 * 60 * 1000 // 24 ore in millisecondi
+    }
 }));
 
 app.use(passport.initialize());
@@ -169,6 +172,28 @@ app.post('/delete-user-data', (req, res) => {
       .catch((err) => res.status(500).json({ error: 'Errore durante l’eliminazione dei dati.' }));
   });
 
+// Middleware per proteggere le pagine
+function requireLogin(req, res, next) {
+    console.log("Session:", req.session);
+    if (req.session && req.session.user) {
+        return next();
+    } else {
+        // Usa 302 per il reindirizzamento invece del 200
+        return res.redirect('/login.html');
+    }
+}
+
+// Applica il middleware alle pagine protette
+app.get('/homepage_cliente.html', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'homepage_cliente.html'));
+});
+app.get('/homepage_admin.html', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'homepage_admin.html'));
+});
+app.get('/homepage_capo.html', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'homepage_capo.html'));
+});
+
 // Route per il login
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
@@ -198,6 +223,14 @@ app.post('/login', (req, res) => {
                 return res.status(400).json({ error: 'Email o password non validi.' });
             }
 
+            // Salva i dati dell'utente nella sessione
+            req.session.user = {
+                id: row.id,
+                username: row.username,
+                email: row.email,
+                tipo: row.tipo
+            };
+
             // Determina la URL di reindirizzamento in base al tipo utente
             let redirectUrl = '';
             switch (row.tipo) {
@@ -215,13 +248,19 @@ app.post('/login', (req, res) => {
                     break;
             }
 
-            // Se non è stata trovata una URL di reindirizzamento, restituisci un errore
+            // Se non viene trovata una URL di reindirizzamento, restituisci un errore
             if (!redirectUrl) {
                 return res.status(400).json({ error: 'Tipo utente non valido, impossibile determinare la homepage.' });
             }
 
             // Risposta con il reindirizzamento e il nome utente
-            res.json({ success: true, redirectUrl, username: row.username });
+           // Risposta con il reindirizzamento e il nome utente
+res.json({ 
+    success: true, 
+    redirectUrl, 
+    username: row.username,
+    tipo: row.tipo  // Assicurati che questa proprietà sia inclusa
+});
         });
     });
 });
@@ -295,8 +334,13 @@ db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)
 
 // Endpoint di logout (metodo POST)
 app.post('/logout', (req, res) => {
-    // Simula il logout
-    res.json({ success: true, message: 'Logout effettuato con successo.' });
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Errore durante il logout.' });
+        }
+        res.clearCookie('connect.sid'); // Pulisci il cookie di sessione
+        res.json({ success: true, message: 'Logout effettuato con successo.' });
+    });
 });
 
 // Avvia il server sulla porta 3000
