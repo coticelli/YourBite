@@ -1,3 +1,7 @@
+require('dotenv').config();
+
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // Importa le librerie necessarie
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
@@ -8,6 +12,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const authRoutes = require('./authRoutes');
+const axios = require('axios');
 
 // Crea un'istanza di Express
 const app = express();
@@ -20,15 +25,65 @@ app.use(express.static(path.join(__dirname, 'public'))); // Serve i file statici
 app.use('/', authRoutes); // Aggiungi le route di autenticazione
 const session = require('express-session');
 
+// Initialize passport and session middleware
 app.use(session({
-  secret: '1e01ad5f540721968c5c17c7789c5446', // Replace with a secure secret
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Set to `true` for HTTPS
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const clientId = '1162998261881771';
+const redirectUri = 'http://localhost:3000/auth/facebook/callback'; 
+
+const facebookLoginUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=state_param`;
 
 // Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
+
+
+
+
+passport.use(new GoogleStrategy({
+    clientID : "556734462631-9cissld95v9q2dvpql2mblfo8a4o76rc.apps.googleusercontent.com", // Replace with your Google Client ID
+    callbackURL: 'http://localhost:3000/auth/google/callback', // Same as Google Developer Console redirect URI
+  },
+  (token, tokenSecret, profile, done) => {
+    // This will be called after a successful authentication
+    // Store the profile info in session or database
+    return done(null, profile);
+  }
+));
+
+// To serialize the user info into the session
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+// To deserialize the user info from the session
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+
+app.get('/auth/google', passport.authenticate('google', {
+    scope: ['profile', 'email'] // Request profile and email info
+}));
+
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+      // On successful authentication, you can redirect to the homepage or dashboard
+      res.redirect('/homepage_cliente.html'); // Change the URL based on user type
+    }
+  );
+  
+
+
 
 // Creazione della tabella utenti, se non esiste
 db.serialize(() => {
@@ -67,6 +122,52 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Endpoint di callback di Facebook
+app.get('/auth/facebook/callback', (req, res) => {
+    const { code } = req.query; // Ottieni il parametro 'code' dalla query string
+
+    if (!code) {
+        return res.status(400).send('Errore: nessun codice di autorizzazione ricevuto.');
+    }
+
+    // Scambia il 'code' per un 'access_token' di Facebook
+    const tokenUrl = `https://graph.facebook.com/v12.0/oauth/access_token?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${process.env.FACEBOOK_CLIENT_SECRET}&code=${code}`;
+
+    axios.get(tokenUrl)
+        .then(response => {
+            const accessToken = response.data.access_token;
+
+            // Usa il token di accesso per ottenere i dati dell'utente
+            const userUrl = `https://graph.facebook.com/me?access_token=${accessToken}`;
+            return axios.get(userUrl);
+        })
+        .then(userResponse => {
+            // Qui puoi ottenere i dati dell'utente da Facebook
+            const userData = userResponse.data;
+
+            // Puoi decidere cosa fare con questi dati, come salvarli nel DB
+            // Ad esempio, crea una sessione per l'utente
+            req.session.user = userData;
+
+            // Esegui il reindirizzamento o altre operazioni
+            res.redirect('/homepage_cliente.html'); // Cambia a seconda del tipo di utente
+        })
+        .catch(err => {
+            console.error('Errore durante l\'accesso a Facebook:', err);
+            res.status(500).send('Errore nel login con Facebook');
+        });
+});
+
+  
+app.post('/delete-user-data', (req, res) => {
+    const userId = req.body.user_id;
+    
+    // Logica per rimuovere i dati dal DB
+    deleteUserData(userId)
+      .then(() => res.status(200).json({ message: 'Dati utente eliminati con successo.' }))
+      .catch((err) => res.status(500).json({ error: 'Errore durante l’eliminazione dei dati.' }));
+  });
 
 // Route per il login
 app.post('/login', (req, res) => {
