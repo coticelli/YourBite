@@ -34,8 +34,14 @@
                 <label for="password">Password</label>
             </div>
             <!-- Log In Button inside the same form box -->
-            <button type="submit" class="primary-btn">Log In</button>
-
+            <button type="submit" class="primary-btn">Log In</button><br>
+            <button type="button" class="primary-button" onclick="window.location.href='/auth/facebook'">
+                Log In with Facebook
+              </button>
+              <button style="background-color: orange;" type="button" class="primary-button" onclick="window.location.href='/auth/google'">
+                Log In with Google
+            </button>
+            
             <!-- Forgot Password Link -->
             <div class="forgot-password">
                 <a href="#">Forgot Password?</a>
@@ -44,9 +50,6 @@
 
         <!-- Message Div for errors -->
         <div id="message" style="color: red; font-size: 16px;"></div>
-    </div>
-
-    <div class="footer">
     </div>
 
     <script>
