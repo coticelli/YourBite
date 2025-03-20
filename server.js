@@ -263,16 +263,33 @@ app.post('/signup', (req, res) => {
         }
 
         // Inserisce il nuovo utente nel database
-        db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
-            [username, email, hashedPassword, tipo], function(err) {
-                if (err) {
-                    console.error('Errore durante l\'inserimento del nuovo utente:', err.message);
-                    return res.status(500).json({ error: 'Errore durante la registrazione.' });
-                }
+        // Inserisce il nuovo utente nel database
+db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`, 
+    [username, email, hashedPassword, tipo], function(err) {
+        if (err) {
+            console.error('Errore durante l\'inserimento del nuovo utente:', err.message);
+            return res.status(500).json({ error: 'Errore durante la registrazione.' });
+        }
 
-                console.log(`Nuovo utente registrato: ${username}`);
-                res.json({ success: true, message: 'Registrazione avvenuta con successo.' });
-            });
+        console.log(`Nuovo utente registrato: ${username}`);
+        // Definisci una URL di redirect in base al tipo utente
+        let redirectUrl = '';
+        switch (tipo) {
+            case 'cliente':
+                redirectUrl = '/homepage_cliente.html';
+                break;
+            case 'amministratore':
+                redirectUrl = '/homepage_admin.html';
+                break;
+            case 'capo':
+                redirectUrl = '/homepage_capo.html';
+                break;
+            default:
+                redirectUrl = '/login.html'; 
+                break;
+        }
+        res.json({ success: true, message: 'Registrazione avvenuta con successo.', redirectUrl });
+    });
     });
 });
 
