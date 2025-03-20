@@ -377,13 +377,26 @@ function filterPanini(panini) {
             return false;
         }
         
-        // Filtro per prezzo
-        if (panino.prezzo > prezzoMax) {
+        // Filtro per prezzo (assicuriamoci che prezzo sia un numero)
+        const prezzo = typeof panino.prezzo === 'string' ? parseFloat(panino.prezzo) : panino.prezzo;
+        if (prezzo > prezzoMax) {
             return false;
         }
         
-        // Filtro per ingrediente
-        if (ingrediente && !panino.ingredienti.some(ing => ing.toLowerCase().includes(ingrediente))) {
+        // Filtro per ingrediente (verifichiamo che ingredienti esista)
+        if (ingrediente && panino.ingredienti) {
+            // Se ingredienti è una stringa, la convertiamo in array
+            if (typeof panino.ingredienti === 'string') {
+                return panino.ingredienti.toLowerCase().includes(ingrediente);
+            }
+            // Se è un array, controlliamo ogni elemento
+            else if (Array.isArray(panino.ingredienti)) {
+                return panino.ingredienti.some(ing => ing.toLowerCase().includes(ingrediente));
+            }
+            // Se ingredienti esiste ma non è né stringa né array, ritorniamo false
+            return false;
+        } else if (ingrediente) {
+            // Se è stato specificato un ingrediente ma il panino non ha proprietà ingredienti
             return false;
         }
         
