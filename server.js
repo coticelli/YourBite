@@ -40,11 +40,12 @@ const session = require('express-session');
 // Initialize passport and session middleware
 app.use(session({
     secret: 'your_secret_key',
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-        secure: false, // Imposta su true se usi HTTPS
-        maxAge: 24 * 60 * 60 * 1000 // 24 ore in millisecondi
+        secure: process.env.NODE_ENV === 'production', // Only use secure in production
+        httpOnly: true, // Prevent client-side JS from accessing the cookie
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
     }
 }));
 
@@ -145,71 +146,89 @@ db.serialize(() => {
 io.on('connection', (socket) => {
     console.log('Nuovo utente connesso:', socket.id);
 
-    // Gestione dell'ingresso nella stanza di supporto
-    socket.on('join_support_room', (userData) => {
+    // Gestione dell'ingresso dell'utente nella chat
+    socket.on('userJoin', (userData) => {
+        console.log('Utente entrato:', userData);
+        // Crea un ID stanza basato sull'ID utente
         const roomId = `support_${userData.userId}`;
         socket.join(roomId);
+        
+        // Memorizza l'ID dell'utente e la stanza nel socket per uso futuro
+        socket.userData = userData;
+        socket.currentRoom = roomId;
 
-        // Notifica all'assistenza che un nuovo utente ha richiesto supporto
-        socket.to('support_staff').emit('new_support_request', {
+        console.log(`Utente ${userData.username} entrato nella stanza: ${roomId}`);
+        
+        // Notifica operatori che un utente è entrato in chat
+        io.to('support_staff').emit('new_support_request', {
             roomId,
             user: userData
         });
-
-        console.log(`Utente ${userData.username} entrato nella stanza di supporto: ${roomId}`);
-
-        // Messaggio di benvenuto automatico
-        socket.emit('message', {
-            sender: 'Sistema',
-            text: `Benvenuto nella chat di assistenza, ${userData.username}! Un operatore sarà con te a breve.`,
-            timestamp: new Date().toISOString()
-        });
     });
-
+    
     // Gestione per lo staff di assistenza
-    socket.on('join_support_staff', (staffData) => {
+    socket.on('operatorJoin', (operatorData) => {
+        console.log('Operatore entrato:', operatorData);
         socket.join('support_staff');
-        console.log(`Staff ${staffData.username} connesso all'assistenza`);
+        
+        // Se specificato un roomId, entra anche in quella stanza
+        if (operatorData.roomId) {
+            socket.join(operatorData.roomId);
+            socket.currentRoom = operatorData.roomId;
+            
+            // Notifica gli utenti nella stanza che l'operatore è entrato
+            io.to(operatorData.roomId).emit('operatorJoin', {
+                username: operatorData.username,
+                userId: operatorData.userId
+            });
+        }
     });
-
-    // Gestione dell'entrata dell'operatore nella stanza di supporto di un utente
-    socket.on('staff_join_room', (data) => {
-        socket.join(data.roomId);
-        io.to(data.roomId).emit('message', {
-            sender: 'Sistema',
-            text: `L'operatore ${data.staffName} è ora disponibile per aiutarti.`,
-            timestamp: new Date().toISOString()
+    
+    // Gestione invio messaggi
+    socket.on('message', (message) => {
+        console.log('Messaggio ricevuto:', message);
+        
+        // Se il messaggio non specifica un roomId, usa la stanza corrente dell'utente
+        const roomId = message.roomId || socket.currentRoom;
+        
+        if (!roomId) {
+            console.error('Nessun roomId disponibile per inviare il messaggio');
+            return;
+        }
+        
+        // Broadcast del messaggio a tutti nella stanza (incluso mittente per conferma)
+        io.to(roomId).emit('message', message);
+        
+        // Salva il messaggio nel database
+        saveMessageToDatabase({
+            roomId,
+            senderId: message.sender,
+            sender: message.senderName,
+            text: message.content,
+            timestamp: message.timestamp
         });
     });
 
-    // Invio di messaggi
-    socket.on('send_message', (messageData) => {
-        console.log('Messaggio ricevuto:', messageData);
-
-        // Arricchisci il messaggio con il timestamp se non è già presente
-        const enrichedMessage = {
-            ...messageData,
-            timestamp: messageData.timestamp || new Date().toISOString()
-        };
-
-        // Invia il messaggio a tutti nella stanza specificata
-        io.to(messageData.roomId).emit('message', enrichedMessage);
-
-        // Salva i messaggi nel database per cronologia
-        saveMessageToDatabase(enrichedMessage);
-    });
-
-    // Notifica di scrittura
+    // Gestione indicatore di digitazione
     socket.on('typing', (data) => {
-        socket.to(data.roomId).emit('user_typing', {
-            username: data.username,
-            isTyping: data.isTyping
-        });
+        // Se data non contiene un roomId, usa la stanza corrente
+        const roomId = data.roomId || socket.currentRoom;
+        if (roomId) {
+            // Invia l'indicatore di digitazione a tutti tranne il mittente
+            socket.to(roomId).emit('typing', data);
+        }
     });
 
     // Gestione disconnessione
     socket.on('disconnect', () => {
         console.log('Utente disconnesso:', socket.id);
+        // Se l'utente era in una stanza e aveva dati utente, notifica gli altri
+        if (socket.currentRoom && socket.userData) {
+            socket.to(socket.currentRoom).emit('userLeave', {
+                username: socket.userData.username,
+                userId: socket.userData.userId
+            });
+        }
     });
 });
 

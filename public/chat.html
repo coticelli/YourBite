@@ -169,9 +169,6 @@
                     // Invia messaggio al server
                     socket.emit('message', message);
                     
-                    // Aggiunge il messaggio all'interfaccia
-                    addMessage(message);
-                    
                     // Pulisce il campo di input
                     messageInput.value = '';
                     

@@ -4,7 +4,7 @@ const router = express.Router();
 
 const APP_ID = '1162998261881771';
 const APP_SECRET = '1e01ad5f540721968c5c17c7789c5446';
-const REDIRECT_URI = '<http://localhost:3000/auth/facebook/callback>';
+const REDIRECT_URI = 'http://localhost:3000/auth/facebook/callback';
 
 // Initiates the Facebook Login flow
 router.get('/auth/facebook', (req, res) => {
