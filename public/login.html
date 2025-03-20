@@ -62,7 +62,7 @@
             // Log per vedere i dati prima di inviarli al server
             console.log('Email:', email, 'Password:', password);
 
-            fetch('http://localhost:3000/login', {
+            fetch('/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
