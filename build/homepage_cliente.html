@@ -1,83 +1,543 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage Cliente</title>
+    <title>Homepage Cliente - YourBite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #d62300;
+            /* Rosso Burger King */
+            --secondary: #faaf18;
+            /* Oro/giallo Burger King */
+            --dark: #2d2d2d;
+            /* Scuro quasi nero */
+            --light: #ffffff;
+            /* Bianco */
+            --gray: #f7f7f7;
+            /* Grigio chiaro */
+            --text: #333333;
+            /* Testo principale */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            box-sizing: border-box;
         }
-        
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--gray);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
         header {
-            background-color: #333;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
+            background-color: var(--primary);
+            box-shadow: var(--shadow);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            color: var(--light);
+            height: 60px;
+            /* Riduci l'altezza complessiva del container */
+            padding: 5px;
+        }
+
+        .logo h1 {
+            font-size: 3rem;
+            /* Dimensione ridotta per il titolo */
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .logo-img {
+            height: 120px;
+            /* Dimensione ridotta dell'immagine del logo */
+            width: auto;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 2rem;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
         main {
-            padding: 20px;
-            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
         }
-        
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            background-color: var(--light);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .welcome-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
         button {
-            background-color: #4CAF50;
+            background-color: var(--primary);
             color: white;
-            padding: 10px 20px;
             border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 16px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(214, 35, 0, 0.2);
         }
-        
+
         button:hover {
-            background-color: #45a049;
+            background-color: #b61e00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(214, 35, 0, 0.3);
         }
-        
-        footer {
-            background-color: #333;
+
+        #logoutButton {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        #logoutButton:hover {
+            background-color: var(--primary);
             color: white;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
             text-align: center;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
             bottom: 0;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary);
+            border-radius: 3px;
+        }
+
+        /* Filtri menu */
+        .filters {
+            background-color: var(--light);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            flex: 1 1 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .filter-group select,
+        .filter-group input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(250, 175, 24, 0.1);
+        }
+
+        .range-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            margin-top: 0.5rem;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        #prezzo-value {
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex: 1 1 200px;
+        }
+
+        #reset-filters {
+            background-color: #e0e0e0;
+            color: var(--text);
+        }
+
+        #reset-filters:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* Grid panini */
+        .panini-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .panino-card {
+            background-color: var(--light);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .panino-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .panino-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: all 0.3s;
+        }
+
+        .panino-card:hover .panino-img {
+            transform: scale(1.05);
+        }
+
+        .panino-info {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .panino-nome {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .panino-prezzo {
+            position: absolute;
+            top: -20px;
+            right: 15px;
+            background-color: var(--secondary);
+            color: var(--dark);
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .panino-descrizione {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .panino-categoria {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .panino-categoria i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+
+        /* Loader e messaggi */
+        .loading,
+        .no-results,
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--light);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+
+            nav li {
+                margin: 0 0.5rem;
+            }
+
+            .filter-group {
+                flex: 1 1 100%;
+            }
+
+            .panini-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            /* Pulsante Chat */
+            .chat-button {
+                position: fixed;
+                left: 20px;
+                top: 100px;
+                z-index: 99;
+            }
+
+            #chatButton {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--secondary);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                transition: all 0.3s ease;
+                padding: 0;
+                font-size: 1.5rem;
+            }
+
+            #chatButton:hover {
+                transform: scale(1.1) translateY(-2px);
+                background-color: var(--primary);
+            }
+
+            #chatButton i {
+                margin: 0;
+            }
         }
     </style>
 </head>
+
 <body>
     <header>
-        <h1>Benvenuto nella Homepage, <span id="username"></span>!</h1>
+        <div class="container">
+            <div class="logo">
+                <img src="/img/logo.png" alt="YourBite Logo" class="logo-img">
+                <h1>YourBite</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Menu</a></li>
+                    <li><a href="#">Ordini</a></li>
+                    <li><a href="#">Profilo</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="chat-button">
+            <button id="chatButton" title="Assistenza Chat">
+                <i class="fas fa-comment-dots"></i>
+            </button>
+        </div>
     </header>
-    
-    <main>
-        <section>
-            <p>Qui puoi trovare tutte le informazioni relative al tuo account.</p>
-            <button id="logoutButton">Logout</button>
-        </section>
-    </main>
 
-    <footer>
-        <p>&copy; 2024 YourBite - Tutti i diritti riservati</p>
-    </footer>
+    <main>
+        <div class="container">
+            <section class="welcome-section">
+                <h2>Benvenuto, <span id="username">Cliente</span>!</h2>
+                <p>Scopri i nostri deliziosi panini preparati con ingredienti freschi e di qualità.</p>
+                <button id="logoutButton">Logout</button>
+            </section>
+
+            <!-- Sezione Menu Panini -->
+            <section>
+                <h2 class="section-title">Il Nostro Menu</h2>
+
+                <!-- Filtri -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="categoria-filter">Categoria</label>
+                        <select id="categoria-filter">
+                            <option value="">Tutte le categorie</option>
+                            <option value="Hamburger">Hamburger</option>
+                            <option value="Pollo">Pollo</option>
+                            <option value="Vegetariano">Vegetariano</option>
+                            <option value="Speciale">Speciale</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="prezzo-filter">Prezzo massimo</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="prezzo-filter" min="5" max="10" step="0.5" value="10">
+                            <span id="prezzo-value">€10.00</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="ingrediente-filter">Ingrediente</label>
+                        <input type="text" id="ingrediente-filter" placeholder="es. pollo, bacon...">
+                    </div>
+
+                    <div class="filter-buttons">
+                        <button id="apply-filters">Applica Filtri</button>
+                        <button id="reset-filters">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Contenitore Panini -->
+                <div id="panini-container">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Caricamento panini in corso...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
 
     <script>
         // Recupera il nome utente e il tipo di utente dal localStorage
         const username = localStorage.getItem('username');
-        const userType = localStorage.getItem('userType'); // Recupera il tipo di utente
+        const userType = localStorage.getItem('userType');
 
         if (username && userType) {
-            document.getElementById('username').textContent = username; // Mostra il nome utente
+            document.getElementById('username').textContent = username;
 
-            // Se l'utente non è un cliente, redirigi alla homepage appropriata
             if (userType !== 'cliente') {
-                window.location.href = `/homepage${userType}.html`; // Reindirizza in base al tipo di utente
+                window.location.href = `/homepage_${userType}.html`;
             }
         } else {
-            // Se non c'è nome utente o tipo utente, reindirizza alla pagina di login
             window.location.href = '/login.html';
         }
 
@@ -87,11 +547,8 @@
                 const response = await fetch('/logout', { method: 'POST' });
 
                 if (response.ok) {
-                    // Rimuove il nome utente e tipo utente dal localStorage
                     localStorage.removeItem('username');
                     localStorage.removeItem('userType');
-
-                    // Redirige alla pagina di login dopo il logout
                     window.location.href = '/login.html';
                 } else {
                     alert('Errore durante il logout. Riprova.');
@@ -101,6 +558,222 @@
                 alert('Errore durante il logout.');
             }
         });
+
+        // Riferimenti agli elementi del DOM
+        const paniniContainer = document.getElementById('panini-container');
+        const categoriaFilter = document.getElementById('categoria-filter');
+        const prezzoFilter = document.getElementById('prezzo-filter');
+        const prezzoValue = document.getElementById('prezzo-value');
+        const ingredienteFilter = document.getElementById('ingrediente-filter');
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        const resetFiltersBtn = document.getElementById('reset-filters');
+
+        // Aggiorna il valore visual del prezzo quando si muove lo slider
+        prezzoFilter.addEventListener('input', function () {
+            prezzoValue.textContent = `€${parseFloat(this.value).toFixed(2)}`;
+        });
+
+        // DATI DI ESEMPIO (per non attendere all'infinito l'API)
+        const examplePanini = [
+            {
+                nome: "Classic Burger",
+                prezzo: 7.50,
+                descrizione: "Hamburger di manzo con cheddar, lattuga, pomodoro e salsa speciale",
+                categoria: "Hamburger",
+                immagine: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+                ingredienti: ["manzo", "cheddar", "lattuga", "pomodoro", "salsa speciale"]
+            },
+            {
+                nome: "Crispy Chicken",
+                prezzo: 6.50,
+                descrizione: "Pollo croccante con insalata, pomodoro e maionese al limone",
+                categoria: "Pollo",
+                immagine: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredienti: ["pollo", "insalata", "pomodoro", "maionese al limone"]
+            },
+            {
+                nome: "Veggie Delight",
+                prezzo: 6.00,
+                descrizione: "Burger vegetariano con formaggio, cipolla caramellata e rucola",
+                categoria: "Vegetariano",
+                immagine: "https://images.unsplash.com/photo-1550547660-d9450f859349?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredienti: ["burger vegetariano", "formaggio", "cipolla caramellata", "rucola"]
+            },
+            {
+                nome: "Double Cheeseburger",
+                prezzo: 9.00,
+                descrizione: "Doppio hamburger di manzo con doppio formaggio, bacon e salsa BBQ",
+                categoria: "Hamburger",
+                immagine: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredienti: ["manzo", "formaggio", "bacon", "salsa BBQ"]
+            },
+            {
+                nome: "Spicy Chicken",
+                prezzo: 7.00,
+                descrizione: "Pollo speziato con peperoncino, jalapenos e salsa piccante",
+                categoria: "Pollo",
+                immagine: "https://images.unsplash.com/photo-1593703148583-34370374ea01?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredienti: ["pollo", "peperoncino", "jalapenos", "salsa piccante"]
+            },
+            {
+                nome: "Supreme Bacon",
+                prezzo: 8.50,
+                descrizione: "Hamburger di manzo con extra bacon croccante, formaggio e salsa speciale",
+                categoria: "Speciale",
+                immagine: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                ingredienti: ["manzo", "bacon", "formaggio", "salsa speciale"]
+            }
+        ];
+
+        // Funzione per caricare i panini dal server
+        async function loadPanini() {
+            try {
+                // Mostra il loader
+                paniniContainer.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Caricamento panini in corso...</p>
+                    </div>
+                `;
+
+                // Prova a caricare i dati dall'API
+                try {
+                    const response = await fetch('/api/panini');
+
+                    if (!response.ok) {
+                        throw new Error('Errore nel caricamento dei panini');
+                    }
+
+                    const panini = await response.json();
+                    displayPanini(panini);
+                } catch (error) {
+                    console.error('Errore API, uso dati di esempio:', error);
+                    // Se la fetch fallisce, usa i dati di esempio
+                    setTimeout(() => displayPanini(examplePanini), 500); // Breve ritardo per simulare il caricamento
+                }
+            } catch (error) {
+                console.error('Errore:', error);
+                paniniContainer.innerHTML = `
+                    <div class="error-message">
+                        <p>Si è verificato un errore nel caricamento dei panini. Riprova più tardi.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Funzione per ottenere l'icona della categoria
+        function getCategoryIcon(categoria) {
+            switch (categoria.toLowerCase()) {
+                case 'hamburger':
+                    return '<i class="fas fa-hamburger"></i>';
+                case 'pollo':
+                    return '<i class="fas fa-drumstick-bite"></i>';
+                case 'vegetariano':
+                    return '<i class="fas fa-leaf"></i>';
+                case 'speciale':
+                    return '<i class="fas fa-star"></i>';
+                default:
+                    return '<i class="fas fa-utensils"></i>';
+            }
+        }
+
+        // Funzione per visualizzare i panini
+        function displayPanini(panini) {
+            if (panini.length === 0) {
+                paniniContainer.innerHTML = `
+                    <div class="no-results">
+                        <p>Nessun panino trovato con i filtri selezionati.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="panini-grid">';
+
+            panini.forEach(panino => {
+                // Converti prezzo in numero se è una stringa
+                const prezzo = typeof panino.prezzo === 'string' ? parseFloat(panino.prezzo) : panino.prezzo;
+                const categoryIcon = getCategoryIcon(panino.categoria);
+
+                html += `
+                    <div class="panino-card">
+                        <img src="${panino.immagine}" alt="${panino.nome}" class="panino-img">
+                        <div class="panino-info">
+                            <div class="panino-prezzo">€${prezzo.toFixed(2)}</div>
+                            <div class="panino-nome">${panino.nome}</div>
+                            <div class="panino-descrizione">${panino.descrizione}</div>
+                            <div class="panino-categoria">${categoryIcon} ${panino.categoria}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            paniniContainer.innerHTML = html;
+        }
+
+        // Funzione per filtrare i panini
+        function filterPanini(panini) {
+            const categoria = categoriaFilter.value;
+            const prezzoMax = parseFloat(prezzoFilter.value);
+            const ingrediente = ingredienteFilter.value.toLowerCase().trim();
+
+            return panini.filter(panino => {
+                // Filtro per categoria
+                if (categoria && panino.categoria !== categoria) {
+                    return false;
+                }
+
+                // Filtro per prezzo (assicuriamoci che prezzo sia un numero)
+                const prezzo = typeof panino.prezzo === 'string' ? parseFloat(panino.prezzo) : panino.prezzo;
+                if (prezzo > prezzoMax) {
+                    return false;
+                }
+
+                // Filtro per ingrediente (verifichiamo che ingredienti esista)
+                if (ingrediente && panino.ingredienti) {
+                    // Se ingredienti è una stringa, la convertiamo in array
+                    if (typeof panino.ingredienti === 'string') {
+                        return panino.ingredienti.toLowerCase().includes(ingrediente);
+                    }
+                    // Se è un array, controlliamo ogni elemento
+                    else if (Array.isArray(panino.ingredienti)) {
+                        return panino.ingredienti.some(ing => ing.toLowerCase().includes(ingrediente));
+                    }
+                    // Se ingredienti esiste ma non è né stringa né array, ritorniamo false
+                    return false;
+                } else if (ingrediente) {
+                    // Se è stato specificato un ingrediente ma il panino non ha proprietà ingredienti
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        // Gestione del pulsante "Applica Filtri"
+        applyFiltersBtn.addEventListener('click', function () {
+            const filteredPanini = filterPanini(examplePanini);
+            displayPanini(filteredPanini);
+        });
+
+        // Gestione del pulsante "Reset"
+        resetFiltersBtn.addEventListener('click', function () {
+            categoriaFilter.value = '';
+            prezzoFilter.value = 10;
+            prezzoValue.textContent = '€10.00';
+            ingredienteFilter.value = '';
+            displayPanini(examplePanini);
+        });
+
+        // Carica i panini all'avvio
+        loadPanini();
+
+        // Gestione del pulsante Chat
+        document.getElementById('chatButton').addEventListener('click', function () {
+            window.location.href = '/chat.html';
+        });
     </script>
 </body>
+
 </html>

@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Admin Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <!-- Header Section -->
     <header class="header">
@@ -19,7 +17,6 @@
         <!-- Navigation Bar -->
         <nav class="navbar">
             <a href="homepage_admin.html" class="active">Dashboard</a>
-            <a href="settings.html">Settings</a>
             <a href="#" id="logoutBtn">Logout</a>
         </nav>
 
@@ -39,38 +36,50 @@
             // Recupera il nome utente e il tipo di utente dal localStorage
             const username = localStorage.getItem("username");
             const userType = localStorage.getItem("userType");
+            const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-            // Se l'utente non è del tipo "admin", reindirizza alla pagina appropriata
-            if (!username || userType !== "admin") {
-                window.location.href = "/login.html"; // Reindirizza alla pagina di login se l'utente non è un amministratore
-            } else {
-                document.getElementById("username").textContent = username; // Mostra il nome utente
+            // Verifica autenticazione
+            if (!isAuthenticated) {
+                window.location.href = "/login.html";
+                return;
             }
+
+            // Verifica tipo utente (usando "amministratore" invece di "admin")
+            if (userType !== "amministratore") {
+                console.log("Tipo utente non valido:", userType);
+                window.location.href = "/login.html";
+                return;
+            }
+
+            // Mostra il nome utente
+            document.getElementById("username").textContent = username || "Utente";
         });
 
         document.getElementById("logoutBtn").addEventListener("click", function(event) {
-            event.preventDefault(); // Prevenire il comportamento predefinito del link
+            event.preventDefault();
 
             // Invia una richiesta di logout al server
-            fetch('/logout', { method: 'POST' }) // Usa il metodo POST per il logout
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Rimuovi i dati dal localStorage
-                        localStorage.removeItem("username");
-                        localStorage.removeItem("userType");
+            fetch('/logout', { 
+                method: 'POST',
+                credentials: 'include' // Importante per i cookie di sessione
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Rimuovi i dati dal localStorage
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("userType");
+                    localStorage.removeItem("isAuthenticated");
 
-                        // Reindirizza alla pagina di login
-                        window.location.href = "login.html"; // Sostituisci con il tuo URL di login
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore durante il logout:', error);
-                    alert('Errore durante il logout. Riprova.');
-                });
+                    // Reindirizza alla pagina di login
+                    window.location.href = "/login.html";
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante il logout:', error);
+                alert('Errore durante il logout. Riprova.');
+            });
         });
     </script>
-
 </body>
-
 </html>

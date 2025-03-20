@@ -1,13 +1,20 @@
+/* Impostazioni globali per viewport */
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
 /* Impostazioni globali */
 body {
     font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: white; /* Sfondo bianco di base */
-    background-image: url('/img/background.jpg'); /* Percorso corretto per l'immagine di background */
-    background-size: cover; /* Adatta l'immagine per coprire tutta la pagina */
-    background-position: center; /* Centra l'immagine */
-    background-attachment: fixed; /* Fissa l'immagine durante lo scrolling */
+    background: url('img/bg.png') no-repeat center center/cover; /* Background unificato */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuisce Header, Content e Footer */
 }
 
 /* Navbar */
@@ -93,7 +100,8 @@ body {
     justify-content: center;
 }
 
-.primary-button, .secondary-button {
+.primary-button,
+.secondary-button {
     padding: 1rem 2rem;
     font-size: 1.2rem;
     border: none;
@@ -123,140 +131,129 @@ body {
     transform: translateY(-4px); /* Leggera animazione al passaggio del mouse */
 }
 
- /* General Page Styles */
- body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: url('img/bg.png') no-repeat center center/cover;
-    overflow: hidden; /* Prevent scrolling */
-    height: 100vh; /* Full viewport height */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Align elements in the available space */
-  }
-  .footer{
+/* General Page Styles con Flexbox per organizzare Header, Content e Footer */
+.footer {
     background-color: rgb(241, 235, 235);
-    bottom: 280px;
-    height: 50vh; /* Adjusted to fit within the screen */
+    height: 50vh; /* Altezza fissa per il Footer */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    z-index: 0; /* Make sure header is above the content */
-  }
+    z-index: 0; /* Assicura che il footer sia sotto Header e Content */
+}
 
-  /* Header Styles */
-  .header {
-    height: 40vh; /* Adjusted to fit within the screen */
+/* Header Styles */
+.header {
+    flex: 0 0 40vh; /* L'Header occupa il 40% dell'altezza disponibile */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    z-index: 1; /* Make sure header is above the content */
-  }
+    z-index: 1; /* Assicura che l'Header sia sopra il Content */
+}
 
-  .logo {
-    width: 300px; /* Increased size */
+.logo {
+    width: 300px; /* Dimensione del logo */
     margin-bottom: 20px;
-  }
+}
 
 .tabs {
-position: absolute;
-bottom: -30px;
-display: flex;
-gap: 20px;
-width: 100%;
-justify-content: center;
+    position: absolute;
+    bottom: -30px;
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
 }
 
 .tab {
-width: 450px;
-padding: 10px 0; /* Adjusted padding to avoid making the buttons taller */
-background-color: white;
-border: 2px solid red;
-border-radius: 25px;
-font-size: 18px;
-color: red;
-cursor: pointer;
-transition: 0.3s ease;
-text-align: center; /* Ensure text is centered */
+    width: 450px;
+    padding: 10px 0; /* Padding per evitare che i bottoni diventino troppo alti */
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 25px;
+    font-size: 18px;
+    color: red;
+    cursor: pointer;
+    transition: 0.3s ease;
+    text-align: center; /* Centra il testo */
 }
 
-.tab.active, .tab:hover {
-background-color: red;
-color: white;
+.tab.active,
+.tab:hover {
+    background-color: red;
+    color: white;
 }
 
-
-  /* Main Content Styles */
-  .content {
+/* Main Content Styles */
+.content {
+    flex: 1 0 auto; /* Il Content occupa lo spazio rimanente */
     background: white;
     margin: 0 auto;
-    padding: 30px; /* Increased padding */
-    width: 80%; 
-    max-width: 1200px; /* Optional: Set a max width for larger screens */
+    padding: 30px; /* Padding aumentato */
+    width: 80%;
+    max-width: 1200px; /* Larghezza massima per schermi larghi */
     text-align: center;
     border-radius: 35px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    flex-grow: 1; /* Allow content to grow */
     display: flex;
-    flex-direction: column; /* Stack the content vertically */
-    align-items: center; /* Center the content horizontally */
-    justify-content: center; /* Vertically center the content */
+    flex-direction: column; /* Stack verticale */
+    align-items: center; /* Centra il contenuto orizzontalmente */
+    justify-content: center; /* Centra verticalmente il contenuto */
     box-sizing: border-box;
-    margin-top: -50px; /* This will create the overlap effect */
-    position: relative; /* Ensure content stays above background */
-    z-index: 1; /* Ensure content appears above the background but below the header */
-  }
+    margin-top: -50px; /* Crea effetto di overlap */
+    position: relative;
+    z-index: 1; /* Il Content sta sopra il background ma sotto l'Header */
+}
 
-  .form {
-    width: 100%; /* Ensure the form spans the full width */
-    max-width: 400px; /* Limit the form width */
+.form {
+    width: 100%; /* La form occupa tutta la larghezza disponibile */
+    max-width: 400px; /* Larghezza massima della form */
     text-align: left;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center the form content */
-  }
+    align-items: center; /* Centra il contenuto della form */
+}
 
-  .form-group {
-    margin-bottom: 10px; /* Reduced bottom margin to reduce space between form fields */
-    position: relative; /* Add relative positioning to make label position absolute inside */
-    width: 100%; /* Ensure input spans the full width */
-  }
+.form-group {
+    margin-bottom: 10px; /* Spazio ridotto tra i campi */
+    position: relative; /* Posizionamento relativo per il label */
+    width: 100%; /* Il campo input occupa tutta la larghezza */
+}
 
-  .form-group label {
+.form-group label {
     position: absolute;
     top: 0;
     left: 15px;
     font-size: 14px;
     color: #555;
-    background-color: white; /* Make label's background white to cover input background */
+    background-color: white; /* Sfondo bianco per una migliore leggibilità */
     padding: 0 5px;
     transition: 0.2s ease-in-out;
-    pointer-events: none; /* Prevent label from being clicked */
-  }
+    pointer-events: none; /* Impedisce il click sul label */
+}
 
-  .form-group input {
-    width: 100%; /* Ensure input spans the full width */
-    padding: 20px 10px 10px 10px; /* Increased padding to give space for the label */
+.form-group input {
+    width: 100%; /* L'input occupa tutta la larghezza */
+    padding: 20px 10px 10px 10px; /* Padding aumentato per lasciare spazio al label */
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
-  }
+}
 
-  .form-group input:focus + label,
-  .form-group input:not(:placeholder-shown) + label {
-    top: -30px; /* Move label up when input is focused or has content */
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+    top: -30px; /* Sposta il label in alto quando l'input è attivo o ha contenuto */
     left: 15px;
     font-size: 12px;
-    color: #007BFF; /* Optional: Change label color on focus */
-  }
+    color: #007BFF; /* Cambia colore del label in caso di focus */
+}
 
-  /* Button inside form */
-  .primary-btn {
+/* Button inside form */
+.primary-btn {
     padding: 10px 20px;
     background-color: red;
     color: white;
@@ -265,43 +262,67 @@ color: white;
     cursor: pointer;
     font-size: 16px;
     transition: 0.3s ease;
-    width: 100%; /* Make the button occupy the entire form width */
-    max-width: 500px; /* Optional: Set a max width */
-    margin-top: 10px; /* Reduced top margin to decrease the space above the button */
-  }
+    width: 100%; /* Il bottone occupa tutta la larghezza della form */
+    max-width: 500px; /* Larghezza massima del bottone */
+    margin-top: 10px; /* Spazio ridotto sopra il bottone */
+}
 
-  .primary-btn:hover {
+.primary-btn:hover {
     background-color: darkred;
-  }
+}
 
-  /* Forgot Password Link */
-  .forgot-password {
+/* Forgot Password Link */
+.forgot-password {
     margin-top: 15px;
     font-size: 14px;
-  }
+}
 
-  .forgot-password a {
+.forgot-password a {
     color: black;
     text-decoration: none;
-  }
+}
 
-  .forgot-password a:hover {
+.forgot-password a:hover {
     text-decoration: underline;
-  }
-  .welcome-message {
-        font-size: 24px;
-        font-weight: bold;
-        color: red;
-        margin-bottom: 20px;
+}
+
+.welcome-message {
+    font-size: 24px;
+    font-weight: bold;
+    color: red;
+    margin-bottom: 20px;
+}
+
+/* Media Query per dispositivi con max-width: 768px */
+@media only screen and (max-width: 768px) {
+    body {
+        padding: 10px;
     }
-    @media (max-width: 768px) {
-        .tab {
-          width: 80%;
-          font-size: 16px;
-        }
-      
-        .form {
-          width: 90%;
-        }
-      }
-      
+    .header,
+    .content {
+        margin: 0 auto;
+        width: 95%;
+    }
+    .header {
+        flex: 0 0 30vh; /* Riduce l'altezza dell'Header */
+    }
+    .content {
+        padding: 20px;
+        margin-top: -30px; /* Riduce l'effetto overlap */
+    }
+    .logo {
+        width: 200px; /* Riduce il logo */
+    }
+    .form,
+    .form-group input,
+    .form-group label,
+    button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .tab {
+        display: block;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+}
