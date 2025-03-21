@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{!-- Titolo dinamico --}}
+    <title>{{pageTitle}}</title>
+    {{!-- Percorso CSS assoluto --}}
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <!-- Logo -->
+        {{!-- Percorso immagine assoluto --}}
+        <img src="/img/logo.png" alt="YourBite Logo" class="logo">
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div>
+            {{!-- Link aggiornati alle route Express --}}
+            <button class="tab active"><a href="/login" style="text-decoration:none; color: black;">Log in</a></button>
+            <button class="tab"><a href="/signup" style="text-decoration:none; color: black;">Sign Up</a></button><br><br>
+        </div>
+        <div class="welcome-message"><br>
+            Log in to Your Account
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="form">
+            <div class="form-group">
+                <input type="email" id="email" placeholder=" " required autocomplete="email">
+                <label for="email">E-mail</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder=" " required autocomplete="current-password">
+                <label for="password">Password</label>
+            </div>
+            <button type="submit" class="primary-btn">Log in</button>
+        </form>
+
+        <!-- Message Div for errors -->
+        <div id="message" style="color: red; font-size: 16px;"></div>
+
+        <!-- Google Sign-In Button -->
+        <div class="google-signin">
+            <a href="/auth/google" class="google-btn">
+                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" width="20px" height="20px">
+                Sign in with Google
+            </a>
+        </div>
+    </div>
+
+    {{!-- Lo script JS rimane uguale, si interfaccia con l'API POST /login --}}
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/login', { // Questo endpoint è già gestito in server.js
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errData => {
+                        throw new Error(errData.error || `Network response was not ok: ${response.statusText}`);
+                    }).catch(() => {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Risposta dal server:', data);
+                if (data.error) {
+                    document.getElementById('message').innerText = data.error;
+                    console.error('Errore dal server:', data.error);
+                } else if (data.success && data.redirectUrl) {
+                    // Salva i dati dell'utente nel localStorage (OPZIONALE)
+                    // localStorage.setItem('username', data.username);
+                    // localStorage.setItem('userType', data.tipo);
+
+                    // Redirige alla URL fornita dal server
+                    window.location.href = data.redirectUrl;
+                } else {
+                     document.getElementById('message').innerText = 'Risposta inattesa dal server.';
+                     console.error('Risposta inattesa:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante il login:', error);
+                document.getElementById('message').innerText = error.message || 'Errore durante il login. Riprova.';
+            });
+        });
+    </script>
+</body>
+</html>

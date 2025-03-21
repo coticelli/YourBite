@@ -384,16 +384,14 @@ async function deleteUserData(userId) {
         resolve();
     });
 }
-// Middleware per proteggere le pagine (rimane uguale)
 function requireLogin(req, res, next) {
     console.log("Session:", req.session);
     if (req.session && req.session.user) {
         return next();
     } else {
-        // Reindirizza alla pagina di login (che dovrai convertire in login.hbs)
-        // res.redirect('/login'); // Usa /login invece di /login.html
-        // PER ORA:
-        res.redirect('/login.html');
+        // Usa 302 per il reindirizzamento invece del 200
+        // return res.redirect('/login.html'); // <-- VECCHIO
+        return res.redirect('/login');      // <-- NUOVO: Reindirizza alla route /login
     }
 }
 
@@ -403,11 +401,10 @@ app.get('/signup', (req, res) => {
     res.render('signup', { pageTitle: 'YourBite - Registrati' }); // Passiamo il titolo della pagina
 });
 
+// Pagina di Login
 app.get('/login', (req, res) => {
-    // Quando avrai views/login.hbs:
-    // res.render('login', { pageTitle: 'Login' });
-    // PER ORA:
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    // Renderizza il template views/login.hbs
+    res.render('login', { pageTitle: 'YourBite - Login' }); // Passiamo il titolo
 });
 
 // Pagine protette (da convertire)
