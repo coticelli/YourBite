@@ -397,11 +397,10 @@ function requireLogin(req, res, next) {
     }
 }
 
+// Pagina di Signup
 app.get('/signup', (req, res) => {
-    // Quando avrai views/signup.hbs:
-    // res.render('signup', { pageTitle: 'Registrati' });
-    // PER ORA:
-    res.sendFile(path.join(__dirname, 'public', 'signup.html'));
+    // Renderizza il template views/signup.hbs
+    res.render('signup', { pageTitle: 'YourBite - Registrati' }); // Passiamo il titolo della pagina
 });
 
 app.get('/login', (req, res) => {

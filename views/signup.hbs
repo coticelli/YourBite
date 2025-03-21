@@ -3,32 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YourBite - Sign Up</title>
-    <link rel="stylesheet" href="style.css">
+    {{!-- Titolo dinamico passato dal server --}}
+    <title>{{pageTitle}}</title>
+    {{!-- Percorso CSS assoluto dalla root (assumendo style.css in public/) --}}
+    <link rel="stylesheet" href="/style.css">
+    {{!-- Se style.css è in public/css/style.css, usa href="/css/style.css" --}}
 </head>
 <body>
     <!-- Header Section -->
     <div class="header">
         <!-- Logo -->
-        <img src="img/logo.png" alt="YourBite Logo" class="logo">
+        {{!-- Percorso immagine assoluto dalla root --}}
+        <img src="/img/logo.png" alt="YourBite Logo" class="logo">
     </div>
 
     <!-- Main Content -->
     <div class="content">
         <div>
-            <button class="tab"><a href="login.html" style="text-decoration:none; color: black;">Log in</a></button>
-            <button class="tab active"><a href="signup.html" style="text-decoration:none; color: black;">Sign Up</a></button><br><br>
-        </div> 
+            {{!-- Link aggiornati alle route Express --}}
+            <button class="tab"><a href="/login" style="text-decoration:none; color: black;">Log in</a></button>
+            <button class="tab active"><a href="/signup" style="text-decoration:none; color: black;">Sign Up</a></button><br><br>
+        </div>
         <div class="welcome-message"><br>
             Create your account
         </div>
-               
+
         <!-- Sign Up Form -->
         <form id="signupForm" class="form">
             <div class="form-group">
                 <input type="text" id="username" placeholder=" " required autocomplete="username">
                 <label for="username">Username</label>
-            </div>            
+            </div>
             <div class="form-group">
                 <input type="email" id="email" placeholder=" " required autocomplete="email">
                 <label for="email">E-mail</label>
@@ -53,6 +58,7 @@
         <div id="message" style="color: red; font-size: 16px;"></div>
     </div>
 
+    {{!-- Lo script JS rimane uguale, si interfaccia con l'API /signup --}}
     <script>
         document.getElementById('signupForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -62,36 +68,45 @@
             const password = document.getElementById('password').value;
             const tipo = document.getElementById('userType').value;
 
-            fetch('/signup', {
+            fetch('/signup', { // Questo endpoint è già gestito in server.js
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password, tipo })
             })
             .then(response => {
-                // Verifica se la risposta non è OK e logga l'errore
                 if (!response.ok) {
-                    console.error('Errore nella risposta, status:', response.status, response.statusText);
-                    throw new Error('Network response was not ok');
+                    // Prova a leggere il corpo dell'errore come JSON per messaggi più specifici
+                    return response.json().then(errData => {
+                        throw new Error(errData.error || `Network response was not ok: ${response.statusText}`);
+                    }).catch(() => {
+                        // Se il corpo dell'errore non è JSON o c'è un altro problema
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    });
                 }
                 return response.json();
             })
             .then(data => {
                 console.log('Risposta dal server:', data);
-                if (data.error) {
+                if (data.error) { // Anche se la risposta è 200, potrebbe contenere un errore logico (improbabile con la gestione sopra, ma per sicurezza)
                     document.getElementById('message').innerText = data.error;
-                    console.error('Errore dal server:', data.error);
-                } else {
-                    // Salva i dati dell'utente nel localStorage
-                    localStorage.setItem('username', username);
-                    localStorage.setItem('userType', tipo);
+                    console.error('Errore logico dal server:', data.error);
+                } else if (data.success && data.redirectUrl) {
+                    // Salva i dati dell'utente nel localStorage (OPZIONALE, la sessione è lato server)
+                    // localStorage.setItem('username', username); // Potresti non averne bisogno se usi la sessione correttamente
+                    // localStorage.setItem('userType', tipo);
 
-                    // Redirige alla homepage in base al tipo di utente
+                    // Redirige alla URL fornita dal server
                     window.location.href = data.redirectUrl;
+                } else {
+                    // Caso imprevisto
+                     document.getElementById('message').innerText = 'Risposta inattesa dal server.';
+                     console.error('Risposta inattesa:', data);
                 }
             })
             .catch(error => {
                 console.error('Errore durante la registrazione:', error);
-                document.getElementById('message').innerText = 'Errore durante la registrazione. Riprova.';
+                // Mostra il messaggio di errore specifico ricevuto o uno generico
+                document.getElementById('message').innerText = error.message || 'Errore durante la registrazione. Riprova.';
             });
         });
     </script>
