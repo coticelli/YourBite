@@ -39,12 +39,8 @@
             </div>
             <!-- Log In Button inside the same form box -->
             <button type="submit" class="primary-btn">Log In</button><br>
-            <button type="button" class="primary-button" onclick="window.location.href='/auth/facebook'">
-                Log In with Facebook
-            </button>
-            <button style="background-color: orange;" type="button" class="primary-button"
-                onclick="window.location.href='/auth/google'">
-                Log In with Google
+            <button id="googleLoginBtn" class="btn btn-primary">
+                <i class="fab fa-google"></i> Accedi con Google
             </button>
 
             <!-- Forgot Password Link -->
@@ -106,6 +102,9 @@
                 });
             console.log('Dati completi:', data);
         });
+        document.getElementById('googleLoginBtn').addEventListener('click', function() {
+    window.location.href = '/auth/google';
+});
     </script>
 </body>
 
