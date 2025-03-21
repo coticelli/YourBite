@@ -474,7 +474,7 @@
     <main>
         <div class="container">
             <section class="welcome-section">
-                <h2>Benvenuto, <span id="username">Cliente</span>!</h2>
+                <h2>Benvenuto, <span id="username">{{ username }}</span>!</h2>
                 <p>Scopri i nostri deliziosi panini preparati con ingredienti freschi e di qualità.</p>
                 <button id="logoutButton">Logout</button>
             </section>
@@ -537,7 +537,7 @@
                 if (response.ok) {
                     localStorage.removeItem('username');
                     localStorage.removeItem('userType');
-                    window.location.href = '/login.html';
+                    window.location.href = '/login.hbs';
                 } else {
                     alert('Errore durante il logout. Riprova.');
                 }
@@ -759,7 +759,7 @@
 
         // Gestione del pulsante Chat
         document.getElementById('chatButton').addEventListener('click', function () {
-            window.location.href = '/chat.html';
+            window.location.href = '/chat.hbs';
         });
     </script>
 </body>

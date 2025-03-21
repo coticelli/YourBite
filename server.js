@@ -407,12 +407,8 @@ app.get('/login', (req, res) => {
     res.render('login', { pageTitle: 'YourBite - Login' }); // Passiamo il titolo
 });
 
-// Pagine protette (da convertire)
 app.get('/homepage_cliente', requireLogin, (req, res) => {
-    // Quando avrai views/homepage_cliente.hbs:
-    // res.render('homepage_cliente', { pageTitle: 'Homepage Cliente', user: req.session.user });
-    // PER ORA:
-    res.sendFile(path.join(__dirname, 'public', 'homepage_cliente.html'));
+    res.render('homepage_cliente', { pageTitle: 'Homepage Cliente', user: req.session.user });
 });
 app.get('/homepage_admin', requireLogin, (req, res) => {
     // Quando avrai views/homepage_admin.hbs:
