@@ -16,12 +16,12 @@
     <main class="content">
         <!-- Navigation Bar -->
         <nav class="navbar">
-            <a href="homepage_admin.html" class="active">Dashboard</a>
+            <a href="/admin" class="active">Dashboard</a>
             <a href="#" id="logoutBtn">Logout</a>
         </nav>
 
         <!-- Welcome Message -->
-        <h1 class="welcome-message">Benvenuto Amministratore, <span id="username"></span></h1>
+        <h1 class="welcome-message">Benvenuto Amministratore, <span>{{username}}</span></h1>
 
         <!-- Admin Actions -->
         <div class="admin-actions">
@@ -32,29 +32,6 @@
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Recupera il nome utente e il tipo di utente dal localStorage
-            const username = localStorage.getItem("username");
-            const userType = localStorage.getItem("userType");
-            const isAuthenticated = localStorage.getItem("isAuthenticated");
-
-            // Verifica autenticazione
-            if (!isAuthenticated) {
-                window.location.href = "/login.html";
-                return;
-            }
-
-            // Verifica tipo utente (usando "amministratore" invece di "admin")
-            if (userType !== "amministratore") {
-                console.log("Tipo utente non valido:", userType);
-                window.location.href = "/login.html";
-                return;
-            }
-
-            // Mostra il nome utente
-            document.getElementById("username").textContent = username || "Utente";
-        });
-
         document.getElementById("logoutBtn").addEventListener("click", function(event) {
             event.preventDefault();
 
@@ -66,13 +43,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Rimuovi i dati dal localStorage
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("userType");
-                    localStorage.removeItem("isAuthenticated");
-
                     // Reindirizza alla pagina di login
-                    window.location.href = "/login.html";
+                    window.location.href = "/login";
                 }
             })
             .catch(error => {

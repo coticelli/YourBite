@@ -411,16 +411,11 @@ app.get('/homepage_cliente', requireLogin, (req, res) => {
     res.render('homepage_cliente', { pageTitle: 'Homepage Cliente', user: req.session.user });
 });
 app.get('/homepage_admin', requireLogin, (req, res) => {
-    // Quando avrai views/homepage_admin.hbs:
-    // res.render('homepage_admin', { pageTitle: 'Homepage Admin', user: req.session.user });
-    // PER ORA:
-    res.sendFile(path.join(__dirname, 'public', 'homepage_admin.html'));
+    res.render('homepage_admin', { pageTitle: 'Homepage Admin', user: req.session.user });
+    
 });
 app.get('/homepage_capo', requireLogin, (req, res) => {
-    // Quando avrai views/homepage_capo.hbs:
-    // res.render('homepage_capo', { pageTitle: 'Homepage Capo', user: req.session.user });
-    // PER ORA:
-    res.sendFile(path.join(__dirname, 'public', 'homepage_capo.html'));
+    res.render('homepage_capo', { pageTitle: 'Homepage Capo', user: req.session.user });
 });
 
 // Route per il login
@@ -464,19 +459,15 @@ app.post('/login', (req, res) => {
             let redirectUrl = '';
             switch (row.tipo) {
                 case 'cliente':
-                    // redirectUrl = '/homepage_cliente.html'; // Vecchio
                     redirectUrl = '/homepage_cliente'; // Nuovo percorso per HBS
                     break;
                 case 'amministratore':
-                    // redirectUrl = '/homepage_admin.html'; // Vecchio
                     redirectUrl = '/homepage_admin'; // Nuovo percorso per HBS
                     break;
                 case 'capo':
-                    // redirectUrl = '/homepage_capo.html'; // Vecchio
                     redirectUrl = '/homepage_capo'; // Nuovo percorso per HBS
                     break;
                 default:
-                    // redirectUrl = '/login.html'; // Vecchio
                     redirectUrl = '/login'; // Nuovo percorso per HBS
                     break;
             }
@@ -546,19 +537,15 @@ app.post('/signup', (req, res) => {
                 let redirectUrl = '';
                 switch (tipo) {
                     case 'cliente':
-                        // redirectUrl = '/homepage_cliente.html'; // Vecchio
                         redirectUrl = '/homepage_cliente'; // Nuovo
                         break;
                     case 'amministratore':
-                        // redirectUrl = '/homepage_admin.html'; // Vecchio
                         redirectUrl = '/homepage_admin'; // Nuovo
                         break;
                     case 'capo':
-                        // redirectUrl = '/homepage_capo.html'; // Vecchio
                         redirectUrl = '/homepage_capo'; // Nuovo
                         break;
                     default:
-                        // redirectUrl = '/login.html'; // Vecchio
                         redirectUrl = '/login'; // Nuovo
                         break;
                 }
