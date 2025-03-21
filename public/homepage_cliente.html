@@ -527,19 +527,7 @@
     </main>
 
     <script>
-        // Recupera il nome utente e il tipo di utente dal localStorage
-        const username = localStorage.getItem('username');
-        const userType = localStorage.getItem('userType');
 
-        if (username && userType) {
-            document.getElementById('username').textContent = username;
-
-            if (userType !== 'cliente') {
-                window.location.href = `/homepage_${userType}.html`;
-            }
-        } else {
-            window.location.href = '/login.html';
-        }
 
         // Funzionalità del bottone Logout
         document.getElementById('logoutButton').addEventListener('click', async () => {
