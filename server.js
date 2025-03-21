@@ -1,20 +1,20 @@
 require('dotenv').config();
 
+const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-// Importa le librerie necessarie
-const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
+const session = require('express-session');
 const path = require('path');
-const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const authRoutes = require('./authRoutes');
 const axios = require('axios');
-const http = require('http'); // Aggiunto per WebSocket
-const { Server } = require('socket.io'); // Aggiunto per WebSocket
+const http = require('http');
+const { Server } = require('socket.io');
 
 // Crea un'istanza di Express
 const app = express();
@@ -25,68 +25,132 @@ const server = http.createServer(app);
 // Inizializza Socket.IO con il server HTTP
 const io = new Server(server, {
     cors: {
-        origin: '*', // In produzione, limita questo alle origini consentite
+        origin: '*',
         methods: ['GET', 'POST']
     }
 });
 
 // Middleware
-app.use(cors({ origin: '*' })); // Abilita CORS per tutte le richieste
-app.use(bodyParser.json()); // Parsea il corpo della richiesta come JSON
-app.use(express.static(path.join(__dirname, 'public'))); // Serve i file statici dalla cartella 'public'
-app.use('/', authRoutes); // Aggiungi le route di autenticazione
-const session = require('express-session');
+app.use(cors({ origin: '*' }));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', authRoutes);
 
-// Initialize passport and session middleware
+// Session configuration
 app.use(session({
-    secret: 'your_secret_key',
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Only use secure in production
-        httpOnly: true, // Prevent client-side JS from accessing the cookie
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
 
+// Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
 
+// Configure Google Strategy
 passport.use(new GoogleStrategy({
-    clientID: "api", // Replace with your Google Client ID
-    callbackURL: 'http://localhost:3000/auth/google/callback', // Same as Google Developer Console redirect URI
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback',
+    scope: ['profile', 'email']
 },
-    (token, tokenSecret, profile, done) => {
-        // This will be called after a successful authentication
-        // Store the profile info in session or database
-        return done(null, profile);
+(accessToken, refreshToken, profile, done) => {
+    // Check if user exists in database using email
+    const email = profile.emails && profile.emails.length > 0
+        ? profile.emails[0].value
+        : null;
+   
+    if (!email) {
+        return done(new Error('No email found in Google profile'), null);
     }
-));
-
-// To serialize the user info into the session
-passport.serializeUser((user, done) => {
-    done(null, user);
-});
-
-// To deserialize the user info from the session
-passport.deserializeUser((user, done) => {
-    done(null, user);
-});
-
-
-app.get('/auth/google', passport.authenticate('google', {
-    scope: ['profile', 'email'] // Request profile and email info
+   
+    db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, user) => {
+        if (err) {
+            return done(err);
+        }
+       
+        if (user) {
+            // User exists, return user
+            return done(null, user);
+        } else {
+            // User doesn't exist, create new user
+            const newUser = {
+                username: profile.displayName || email.split('@')[0],
+                email: email,
+                password: bcrypt.hashSync(Math.random().toString(36).slice(-8), 10), // Random password
+                tipo: 'cliente' // Default user type
+            };
+           
+            db.run('INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)',
+                [newUser.username, newUser.email, newUser.password, newUser.tipo],
+                function(err) {
+                    if (err) {
+                        return done(err);
+                    }
+                   
+                    // Get the inserted user
+                    newUser.id = this.lastID;
+                    return done(null, newUser);
+                }
+            );
+        }
+    });
 }));
 
+// Serialize user to session
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+// Deserialize user from session
+passport.deserializeUser((id, done) => {
+    db.get('SELECT * FROM utenti WHERE id = ?', [id], (err, user) => {
+        done(err, user);
+    });
+});
+
+// Google authentication routes
+app.get('/auth/google', passport.authenticate('google', {
+    scope: ['profile', 'email']
+}));
 
 app.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
+    passport.authenticate('google', {
+        failureRedirect: '/login.html'
+    }),
     (req, res) => {
-        // On successful authentication, you can redirect to the homepage or dashboard
-        res.redirect('/homepage_cliente.html'); // Change the URL based on user type
+        // Determine redirect URL based on user type
+        let redirectUrl = '/homepage_cliente.html';
+        if (req.user && req.user.tipo) {
+            switch (req.user.tipo) {
+                case 'amministratore':
+                    redirectUrl = '/homepage_admin.html';
+                    break;
+                case 'capo':
+                    redirectUrl = '/homepage_capo.html';
+                    break;
+                default:
+                    redirectUrl = '/homepage_cliente.html';
+            }
+        }
+       
+        // Create or update session
+        req.session.user = {
+            id: req.user.id,
+            username: req.user.username,
+            email: req.user.email,
+            tipo: req.user.tipo
+        };
+       
+        res.redirect(redirectUrl);
     }
 );
 

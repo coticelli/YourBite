@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Login</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -39,9 +40,11 @@
             </div>
             <!-- Log In Button inside the same form box -->
             <button type="submit" class="primary-btn">Log In</button><br>
-            <button id="googleLoginBtn" class="btn btn-primary">
+           
+            <!-- Google Login Button -->
+            <a href="/auth/google" id="googleLoginBtn" class="btn btn-primary" style="display: inline-block; margin-top: 10px; text-align: center; padding: 10px; background-color: #4285F4; color: white; border-radius: 4px; text-decoration: none;">
                 <i class="fab fa-google"></i> Accedi con Google
-            </button>
+            </a>
 
             <!-- Forgot Password Link -->
             <div class="forgot-password">
@@ -100,11 +103,7 @@
                     console.error('Errore durante il login:', error);
                     document.getElementById('message').innerText = 'Errore durante il login. Riprova.';
                 });
-            console.log('Dati completi:', data);
         });
-        document.getElementById('googleLoginBtn').addEventListener('click', function() {
-    window.location.href = '/auth/google';
-});
     </script>
 </body>
 
