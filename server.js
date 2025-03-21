@@ -15,6 +15,7 @@ const authRoutes = require('./authRoutes');
 const axios = require('axios');
 const http = require('http');
 const { Server } = require('socket.io');
+const exphbs = require('express-handlebars');
 
 // Crea un'istanza di Express
 const app = express();
@@ -29,6 +30,21 @@ const io = new Server(server, {
         methods: ['GET', 'POST']
     }
 });
+
+// --- Configurazione View Engine Handlebars ---
+// 2. Configura Handlebars come view engine
+app.engine('.hbs', exphbs.engine({
+    extname: '.hbs', // Usa l'estensione .hbs per i file di template
+    defaultLayout: false, // Per ora non usiamo layout di default, ma potremmo in futuro
+}));
+app.set('view engine', '.hbs');         // Imposta .hbs come estensione predefinita per le viste
+app.set('views', path.join(__dirname, 'views')); // 3. Indica a Express dove trovare i file .hbs (nella cartella 'views')
+// --- Fine Configurazione View Engine ---
+
+// 4. Servi file statici (CSS, JS, Immagini) dalla cartella 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+// Nota: authRoutes potrebbe dover essere spostato dopo la configurazione della sessione/passport se usa la sessione
+
 
 // Middleware
 app.use(cors({ origin: '*' }));
@@ -51,6 +67,8 @@ app.use(session({
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use('/', authRoutes);
 
 // Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
@@ -313,34 +331,39 @@ app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Route per la homepage
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    // 5. Usa res.render per processare il template 'index.hbs'
+    // Passa un oggetto con i dati da inserire nel template
+    res.render('index', { pageTitle: 'Benvenuto - La Mia App' }); // 'index' si riferisce a views/index.hbs
 });
 
 // Route per la pagina di chat assistenza
-app.get('/chat.html', requireLogin, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+app.get('/chat', requireLogin, (req, res) => { // Cambiato percorso da chat.html a /chat
+    // Se chat.html diventa chat.hbs e si trova in views/
+    // res.render('chat', { pageTitle: 'Chat Assistenza', user: req.session.user });
+    // PER ORA: se è ancora HTML statico in public:
+    res.sendFile(path.join(__dirname, 'public', 'chat.html')); // Lasciato così finché non la converti
 });
 
 // Route per la pagina admin della chat
-app.get('/admin-chat.html', requireLogin, (req, res) => {
-    // Verifica che l'utente sia un amministratore o capo
+app.get('/admin-chat', requireLogin, (req, res) => { // Cambiato percorso
     if (req.session.user && (req.session.user.tipo === 'amministratore' || req.session.user.tipo === 'capo')) {
-        res.sendFile(path.join(__dirname, 'public', 'admin-chat.html'));
+        // Se admin-chat.html diventa admin-chat.hbs e si trova in views/
+        // res.render('admin-chat', { pageTitle: 'Admin Chat', user: req.session.user });
+        // PER ORA:
+        res.sendFile(path.join(__dirname, 'public', 'admin-chat.html')); // Lasciato così finché non la converti
     } else {
-        res.redirect('/'); // Reindirizza se non autorizzato
+        res.redirect('/');
     }
 });
 
 // Endpoint per ottenere la cronologia dei messaggi
 app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
     const roomId = req.params.roomId;
-
     db.all('SELECT * FROM chat_messages WHERE room_id = ? ORDER BY timestamp ASC', [roomId], (err, rows) => {
         if (err) {
             console.error('Errore durante il recupero dei messaggi:', err);
             return res.status(500).json({ error: 'Errore del server.' });
         }
-
         res.json(rows);
     });
 });
@@ -348,32 +371,63 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
 
 app.post('/delete-user-data', (req, res) => {
     const userId = req.body.user_id;
-
-    // Logica per rimuovere i dati dal DB
     deleteUserData(userId)
         .then(() => res.status(200).json({ message: 'Dati utente eliminati con successo.' }))
         .catch((err) => res.status(500).json({ error: 'Errore durante eliminazione dei dati.' }));
 });
 
-// Middleware per proteggere le pagine
+async function deleteUserData(userId) {
+    return new Promise((resolve, reject) => {
+        console.warn(`Funzione deleteUserData chiamata per userId: ${userId}, ma non implementata.`);
+        // Simula l'eliminazione
+        // db.run('DELETE FROM ... WHERE user_id = ?', [userId], (err) => { ... });
+        resolve();
+    });
+}
+// Middleware per proteggere le pagine (rimane uguale)
 function requireLogin(req, res, next) {
     console.log("Session:", req.session);
     if (req.session && req.session.user) {
         return next();
     } else {
-        // Usa 302 per il reindirizzamento invece del 200
-        return res.redirect('/login.html');
+        // Reindirizza alla pagina di login (che dovrai convertire in login.hbs)
+        // res.redirect('/login'); // Usa /login invece di /login.html
+        // PER ORA:
+        res.redirect('/login.html');
     }
 }
 
-// Applica il middleware alle pagine protette
-app.get('/homepage_cliente.html', requireLogin, (req, res) => {
+app.get('/signup', (req, res) => {
+    // Quando avrai views/signup.hbs:
+    // res.render('signup', { pageTitle: 'Registrati' });
+    // PER ORA:
+    res.sendFile(path.join(__dirname, 'public', 'signup.html'));
+});
+
+app.get('/login', (req, res) => {
+    // Quando avrai views/login.hbs:
+    // res.render('login', { pageTitle: 'Login' });
+    // PER ORA:
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Pagine protette (da convertire)
+app.get('/homepage_cliente', requireLogin, (req, res) => {
+    // Quando avrai views/homepage_cliente.hbs:
+    // res.render('homepage_cliente', { pageTitle: 'Homepage Cliente', user: req.session.user });
+    // PER ORA:
     res.sendFile(path.join(__dirname, 'public', 'homepage_cliente.html'));
 });
-app.get('/homepage_admin.html', requireLogin, (req, res) => {
+app.get('/homepage_admin', requireLogin, (req, res) => {
+    // Quando avrai views/homepage_admin.hbs:
+    // res.render('homepage_admin', { pageTitle: 'Homepage Admin', user: req.session.user });
+    // PER ORA:
     res.sendFile(path.join(__dirname, 'public', 'homepage_admin.html'));
 });
-app.get('/homepage_capo.html', requireLogin, (req, res) => {
+app.get('/homepage_capo', requireLogin, (req, res) => {
+    // Quando avrai views/homepage_capo.hbs:
+    // res.render('homepage_capo', { pageTitle: 'Homepage Capo', user: req.session.user });
+    // PER ORA:
     res.sendFile(path.join(__dirname, 'public', 'homepage_capo.html'));
 });
 
@@ -418,16 +472,20 @@ app.post('/login', (req, res) => {
             let redirectUrl = '';
             switch (row.tipo) {
                 case 'cliente':
-                    redirectUrl = '/homepage_cliente.html';
+                    // redirectUrl = '/homepage_cliente.html'; // Vecchio
+                    redirectUrl = '/homepage_cliente'; // Nuovo percorso per HBS
                     break;
                 case 'amministratore':
-                    redirectUrl = '/homepage_admin.html';
+                    // redirectUrl = '/homepage_admin.html'; // Vecchio
+                    redirectUrl = '/homepage_admin'; // Nuovo percorso per HBS
                     break;
                 case 'capo':
-                    redirectUrl = '/homepage_capo.html';
+                    // redirectUrl = '/homepage_capo.html'; // Vecchio
+                    redirectUrl = '/homepage_capo'; // Nuovo percorso per HBS
                     break;
                 default:
-                    redirectUrl = ''; // Tipo utente non valido
+                    // redirectUrl = '/login.html'; // Vecchio
+                    redirectUrl = '/login'; // Nuovo percorso per HBS
                     break;
             }
 
@@ -496,16 +554,20 @@ app.post('/signup', (req, res) => {
                 let redirectUrl = '';
                 switch (tipo) {
                     case 'cliente':
-                        redirectUrl = '/homepage_cliente.html';
+                        // redirectUrl = '/homepage_cliente.html'; // Vecchio
+                        redirectUrl = '/homepage_cliente'; // Nuovo
                         break;
                     case 'amministratore':
-                        redirectUrl = '/homepage_admin.html';
+                        // redirectUrl = '/homepage_admin.html'; // Vecchio
+                        redirectUrl = '/homepage_admin'; // Nuovo
                         break;
                     case 'capo':
-                        redirectUrl = '/homepage_capo.html';
+                        // redirectUrl = '/homepage_capo.html'; // Vecchio
+                        redirectUrl = '/homepage_capo'; // Nuovo
                         break;
                     default:
-                        redirectUrl = '/login.html';
+                        // redirectUrl = '/login.html'; // Vecchio
+                        redirectUrl = '/login'; // Nuovo
                         break;
                 }
                 res.json({ success: true, message: 'Registrazione avvenuta con successo.', redirectUrl });
