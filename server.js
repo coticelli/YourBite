@@ -147,21 +147,21 @@ app.get('/auth/google', passport.authenticate('google', {
 
 app.get('/auth/google/callback',
     passport.authenticate('google', {
-        failureRedirect: '/login'  // Remove .hbs here too
+        failureRedirect: '/login'  
     }),
     (req, res) => {
         // Determine redirect URL based on user type
-        let redirectUrl = '/homepage_cliente'; // Remove .hbs extension
+        let redirectUrl = '/homepage_cliente'; 
         if (req.user && req.user.tipo) {
             switch (req.user.tipo) {
                 case 'amministratore':
-                    redirectUrl = '/homepage_admin'; // Remove .hbs extension
+                    redirectUrl = '/homepage_admin'; 
                     break;
                 case 'capo':
-                    redirectUrl = '/homepage_capo'; // Remove .hbs extension
+                    redirectUrl = '/homepage_capo';
                     break;
                 default:
-                    redirectUrl = '/homepage_cliente'; // Remove .hbs extension
+                    redirectUrl = '/homepage_cliente';
             }
         }
        
