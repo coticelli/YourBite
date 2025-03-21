@@ -52,16 +52,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-const clientId = '1162998261881771';
-const redirectUri = 'http://localhost:3000/auth/facebook/callback';
-
-const facebookLoginUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=state_param`;
-
 // Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
 
 passport.use(new GoogleStrategy({
-    clientID: "556734462631-9cissld95v9q2dvpql2mblfo8a4o76rc.apps.googleusercontent.com", // Replace with your Google Client ID
+    clientID: "api", // Replace with your Google Client ID
     callbackURL: 'http://localhost:3000/auth/google/callback', // Same as Google Developer Console redirect URI
 },
     (token, tokenSecret, profile, done) => {
@@ -284,42 +279,6 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
 
         res.json(rows);
     });
-});
-
-// Endpoint di callback di Facebook
-app.get('/auth/facebook/callback', (req, res) => {
-    const { code } = req.query; // Ottieni il parametro 'code' dalla query string
-
-    if (!code) {
-        return res.status(400).send('Errore: nessun codice di autorizzazione ricevuto.');
-    }
-
-    // Scambia il 'code' per un 'access_token' di Facebook
-    const tokenUrl = `https://graph.facebook.com/v12.0/oauth/access_token?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${process.env.FACEBOOK_CLIENT_SECRET}&code=${code}`;
-
-    axios.get(tokenUrl)
-        .then(response => {
-            const accessToken = response.data.access_token;
-
-            // Usa il token di accesso per ottenere i dati dell'utente
-            const userUrl = `https://graph.facebook.com/me?access_token=${accessToken}`;
-            return axios.get(userUrl);
-        })
-        .then(userResponse => {
-            // Qui puoi ottenere i dati dell'utente da Facebook
-            const userData = userResponse.data;
-
-            // Puoi decidere cosa fare con questi dati, come salvarli nel DB
-            // Ad esempio, crea una sessione per l'utente
-            req.session.user = userData;
-
-            // Esegui il reindirizzamento o altre operazioni
-            res.redirect('/homepage_cliente.html'); // Cambia a seconda del tipo di utente
-        })
-        .catch(err => {
-            console.error('Errore durante l\'accesso a Facebook:', err);
-            res.status(500).send('Errore nel login con Facebook');
-        });
 });
 
 
