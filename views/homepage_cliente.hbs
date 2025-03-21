@@ -530,21 +530,25 @@
 
 
         // Funzionalità del bottone Logout
-        document.getElementById('logoutButton').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/logout', { method: 'POST' });
+        document.getElementById("logoutButton").addEventListener("click", function(event) {
+            event.preventDefault();
 
-                if (response.ok) {
-                    localStorage.removeItem('username');
-                    localStorage.removeItem('userType');
-                    window.location.href = '/login.hbs';
-                } else {
-                    alert('Errore durante il logout. Riprova.');
+            // Invia una richiesta di logout al server
+            fetch('/logout', { 
+                method: 'POST',
+                credentials: 'include' // Importante per i cookie di sessione
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reindirizza alla pagina di login
+                    window.location.href = "/login";
                 }
-            } catch (error) {
-                console.error('Errore:', error);
-                alert('Errore durante il logout.');
-            }
+            })
+            .catch(error => {
+                console.error('Errore durante il logout:', error);
+                alert('Errore durante il logout. Riprova.');
+            });
         });
 
         // Riferimenti agli elementi del DOM

@@ -32,7 +32,6 @@ const io = new Server(server, {
 });
 
 // --- Configurazione View Engine Handlebars ---
-// 2. Configura Handlebars come view engine
 app.engine('.hbs', exphbs.engine({
     extname: '.hbs', // Usa l'estensione .hbs per i file di template
     defaultLayout: false, // Per ora non usiamo layout di default, ma potremmo in futuro
@@ -50,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', authRoutes);
+
 
 // Session configuration
 app.use(session({
@@ -64,9 +63,15 @@ app.use(session({
     }
 }));
 
+
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
+});
+
 
 app.use('/', authRoutes);
 
@@ -142,21 +147,21 @@ app.get('/auth/google', passport.authenticate('google', {
 
 app.get('/auth/google/callback',
     passport.authenticate('google', {
-        failureRedirect: '/login.html'
+        failureRedirect: '/login'  // Remove .hbs here too
     }),
     (req, res) => {
         // Determine redirect URL based on user type
-        let redirectUrl = '/homepage_cliente.html';
+        let redirectUrl = '/homepage_cliente'; // Remove .hbs extension
         if (req.user && req.user.tipo) {
             switch (req.user.tipo) {
                 case 'amministratore':
-                    redirectUrl = '/homepage_admin.html';
+                    redirectUrl = '/homepage_admin'; // Remove .hbs extension
                     break;
                 case 'capo':
-                    redirectUrl = '/homepage_capo.html';
+                    redirectUrl = '/homepage_capo'; // Remove .hbs extension
                     break;
                 default:
-                    redirectUrl = '/homepage_cliente.html';
+                    redirectUrl = '/homepage_cliente'; // Remove .hbs extension
             }
         }
        
@@ -337,22 +342,37 @@ app.get('/', (req, res) => {
 });
 
 // Route per la pagina di chat assistenza
-app.get('/chat', requireLogin, (req, res) => { // Cambiato percorso da chat.html a /chat
-    // Se chat.html diventa chat.hbs e si trova in views/
-    // res.render('chat', { pageTitle: 'Chat Assistenza', user: req.session.user });
-    // PER ORA: se è ancora HTML statico in public:
-    res.sendFile(path.join(__dirname, 'public', 'chat.html')); // Lasciato così finché non la converti
+app.get('/chat', requireLogin, (req, res) => {
+    res.render('chat', { pageTitle: 'Chat Assistenza', user: req.session.user });
 });
+
 
 // Route per la pagina admin della chat
 app.get('/admin-chat', requireLogin, (req, res) => { // Cambiato percorso
     if (req.session.user && (req.session.user.tipo === 'amministratore' || req.session.user.tipo === 'capo')) {
-        // Se admin-chat.html diventa admin-chat.hbs e si trova in views/
-        // res.render('admin-chat', { pageTitle: 'Admin Chat', user: req.session.user });
-        // PER ORA:
-        res.sendFile(path.join(__dirname, 'public', 'admin-chat.html')); // Lasciato così finché non la converti
+        
+        res.render('admin-chat', { pageTitle: 'Admin Chat', user: req.session.user });
+       
     } else {
         res.redirect('/');
+    }
+});
+
+app.get('/api/user/info', (req, res) => {
+    if (req.session && req.session.user) {
+        res.json({
+            success: true,
+            user: {
+                id: req.session.user.id,
+                username: req.session.user.username,
+                tipo: req.session.user.tipo
+            }
+        });
+    } else {
+        res.json({
+            success: false,
+            message: 'Utente non autenticato'
+        });
     }
 });
 
@@ -384,16 +404,42 @@ async function deleteUserData(userId) {
         resolve();
     });
 }
+
+
 function requireLogin(req, res, next) {
-    console.log("Session:", req.session);
+    // Controlla se esiste una sessione utente
     if (req.session && req.session.user) {
+        // L'utente è autenticato, prosegui
         return next();
     } else {
-        // Usa 302 per il reindirizzamento invece del 200
-        // return res.redirect('/login.html'); // <-- VECCHIO
-        return res.redirect('/login');      // <-- NUOVO: Reindirizza alla route /login
+        // L'utente non è autenticato, reindirizza alla pagina di login
+        return res.redirect('/login.hbs');
     }
 }
+
+
+function requireAdmin(req, res, next) {
+    if (req.session && req.session.user && req.session.user.tipo === 'amministratore') {
+        return next();
+    } else {
+        // L'utente non ha i permessi necessari
+        return res.status(403).render('error', { 
+            message: 'Accesso negato. Devi essere un amministratore per visualizzare questa pagina.' 
+        });
+    }
+}
+
+function requireStaff(req, res, next) {
+    if (req.session && req.session.user && 
+        (req.session.user.tipo === 'amministratore' || req.session.user.tipo === 'capo')) {
+        return next();
+    } else {
+        return res.status(403).render('error', { 
+            message: 'Accesso negato. Non hai i permessi necessari per visualizzare questa pagina.' 
+        });
+    }
+}
+
 
 // Pagina di Signup
 app.get('/signup', (req, res) => {
@@ -551,6 +597,16 @@ app.post('/signup', (req, res) => {
                 }
                 res.json({ success: true, message: 'Registrazione avvenuta con successo.', redirectUrl });
             });
+    });
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Errore durante il logout:', err);
+            return res.status(500).send('Errore durante il logout');
+        }
+        res.redirect('/');
     });
 });
 

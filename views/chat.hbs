@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Assistenza</title>
+    <title>Support Chat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .chat-container {
@@ -48,26 +48,26 @@
 </head>
 <body>
     <div class="container mt-5 chat-container">
-        <h2 class="text-center mb-4">Chat con Assistenza</h2>
+        <h2 class="text-center mb-4">Support Chat</h2>
         <div class="message-list d-flex flex-column" id="messageList"></div>
         <div id="typingIndicator" class="mb-2 text-muted" style="display: none;">
-            L'operatore sta scrivendo...
+            The operator is typing...
         </div>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="messageInput" placeholder="Scrivi un messaggio...">
-            <button class="btn btn-primary" id="sendButton">Invia</button>
+            <input type="text" class="form-control" id="messageInput" placeholder="Type a message...">
+            <button class="btn btn-primary" id="sendButton">Send</button>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // Recupera i dati utente dalla sessione (questo valore sarà disponibile nella pagina se l'utente è loggato)
+        // Get user data from session (this value will be available on the page if the user is logged in)
         let userData = {
             userId: sessionStorage.getItem('userId') || "guest_" + Date.now(),
-            username: sessionStorage.getItem('username') || "Cliente"
+            username: sessionStorage.getItem('username') || "Customer"
         };
         
-        // All'avvio della pagina, prova a recuperare queste informazioni dal server se disponibili
+        // When the page starts, try to retrieve this information from the server if available
         fetch('/api/user/info', { credentials: 'include' })
             .then(response => response.json())
             .then(data => {
@@ -82,11 +82,7 @@
                 initializeChat();
             })
             .catch(err => {
-                console.log('Utilizzando i dati utente di default', err);
-                initializeChat();
-            })
-            .catch(err => {
-                console.log('Utilizzando i dati utente di default', err);
+                console.log('Using default user data', err);
                 initializeChat();
             });
         
@@ -97,23 +93,23 @@
             const sendButton = document.getElementById('sendButton');
             const typingIndicator = document.getElementById('typingIndicator');
             
-            // Connessione al socket
+            // Socket connection
             socket.on('connect', () => {
-                console.log('Connesso al server WebSocket');
+                console.log('Connected to WebSocket server');
                 
-                // Invia informazioni utente al server
+                // Send user information to server
                 socket.emit('userJoin', userData);
                 
-                // Aggiunge un messaggio di sistema all'interfaccia
-                addSystemMessage('Connesso all\'assistenza. Un operatore si unirà a breve.');
+                // Add a system message to the interface
+                addSystemMessage('Connected to support. An operator will join shortly.');
             });
             
-            // Gestione della ricezione dei messaggi
+            // Handle message reception
             socket.on('message', (message) => {
                 addMessage(message);
             });
             
-            // Gestione dell'indicatore di digitazione
+            // Handle typing indicator
             socket.on('typing', (data) => {
                 if (data.isTyping && data.userId !== userData.userId) {
                     typingIndicator.style.display = 'block';
@@ -122,35 +118,35 @@
                 }
             });
             
-            // Gestione connessione operatore
+            // Handle operator connection
             socket.on('operatorJoin', (data) => {
-                addSystemMessage(`L'operatore ${data.username} si è unito alla chat`);
+                addSystemMessage(`Operator ${data.username} has joined the chat`);
             });
             
-            // Gestione disconnessione operatore
+            // Handle operator disconnection
             socket.on('operatorLeave', (data) => {
-                addSystemMessage(`L'operatore ${data.username} ha lasciato la chat`);
+                addSystemMessage(`Operator ${data.username} has left the chat`);
             });
             
-            // Gestione errori di connessione
+            // Handle connection errors
             socket.on('connect_error', (error) => {
-                console.error('Errore di connessione:', error);
-                addSystemMessage('Errore di connessione al server. Riprova più tardi.');
+                console.error('Connection error:', error);
+                addSystemMessage('Error connecting to server. Please try again later.');
             });
             
-            // Evento invio messaggio
+            // Send message event
             sendButton.addEventListener('click', sendMessage);
             messageInput.addEventListener('keypress', (e) => {
-                // Invia notifica che l'utente sta scrivendo
+                // Send notification that user is typing
                 socket.emit('typing', { isTyping: true });
                 
-                // Se viene premuto Invio, invia il messaggio
+                // If Enter is pressed, send message
                 if (e.key === 'Enter') {
                     sendMessage();
                 }
             });
             
-            // Interrompe l'indicatore di digitazione quando l'utente smette di scrivere
+            // Stop typing indicator when user stops typing
             messageInput.addEventListener('blur', () => {
                 socket.emit('typing', { isTyping: false });
             });
@@ -158,7 +154,7 @@
             function sendMessage() {
                 const content = messageInput.value.trim();
                 if (content) {
-                    // Crea oggetto messaggio
+                    // Create message object
                     const message = {
                         content: content,
                         sender: userData.userId,
@@ -166,13 +162,13 @@
                         timestamp: new Date().toISOString()
                     };
                     
-                    // Invia messaggio al server
+                    // Send message to server
                     socket.emit('message', message);
                     
-                    // Pulisce il campo di input
+                    // Clear input field
                     messageInput.value = '';
                     
-                    // Resetta l'indicatore di digitazione
+                    // Reset typing indicator
                     socket.emit('typing', { isTyping: false });
                 }
             }
@@ -223,7 +219,7 @@
                 messageList.scrollTop = messageList.scrollHeight;
             }
             
-            // Recupera cronologia messaggi precedenti
+            // Retrieve previous message history
             fetch('/api/chat/history', {
                 method: 'POST',
                 headers: {
@@ -235,15 +231,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.messages.length > 0) {
-                    // Aggiunge messaggi precedenti all'interfaccia
+                    // Add previous messages to interface
                     data.messages.forEach(message => {
                         addMessage(message);
                     });
-                    addSystemMessage('Messaggi precedenti caricati');
+                    addSystemMessage('Previous messages loaded');
                 }
             })
             .catch(err => {
-                console.error('Errore nel caricamento della cronologia:', err);
+                console.error('Error loading history:', err);
             });
         }
     </script>
