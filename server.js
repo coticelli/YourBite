@@ -600,8 +600,13 @@ app.get('/login', (req, res) => {
     res.render('login', { pageTitle: 'YourBite - Login' }); // Passiamo il titolo
 });
 
+// Example for rendering homepage_cliente
 app.get('/homepage_cliente', requireLogin, (req, res) => {
-    res.render('homepage_cliente', { pageTitle: 'Homepage Cliente', user: req.session.user });
+    res.render('homepage_cliente', { 
+        pageTitle: 'Homepage Cliente', 
+        user: req.session.user,
+        username: req.session.user.username  // Make sure username is explicitly passed
+    });
 });
 app.get('/homepage_admin', requireLogin, (req, res) => {
     res.render('homepage_admin', { pageTitle: 'Homepage Admin', user: req.session.user });
