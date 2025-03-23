@@ -1,0 +1,7 @@
+FROM cotii/yourbite-app:latest
+
+# Copia il nuovo server.js che abbiamo appena modificato
+COPY server.js /usr/src/app/server.js
+
+# Si può anche creare un file .env fittizio se necessario
+RUN echo "GOOGLE_CLIENT_ID=dummy\nGOOGLE_CLIENT_SECRET=dummy" > /usr/src/app/.env
