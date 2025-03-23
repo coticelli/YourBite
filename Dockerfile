@@ -9,6 +9,7 @@ RUN npm install
 
 # Bundle app source
 COPY . .
+COPY .env /usr/src/app/.
 
 # Expose the port your app runs on
 EXPOSE 3000
