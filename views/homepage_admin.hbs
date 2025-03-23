@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/icona?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Admin Dashboard</title>
@@ -29,18 +32,83 @@
             color: var(--text);
         }
 
-        .header {
-            background-color: var(--light);
-            box-shadow: var(--shadow);
-            padding: 15px 0;
-            text-align: center;
-        }
+        header {
+  background: linear-gradient(to right, #ff7e00, #ff5100); /* Gradiente arancione in stile "food" */
+  padding: 15px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
         .logo {
-            height: 60px;
-            width: auto;
-            object-fit: contain;
-        }
+  width: 180px; /* Dimensione aumentata */
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05); /* Leggero effetto hover */
+}
+.header-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.header-nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+
+.header-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Badge per indicare utente admin/capo */
+.user-role-badge {
+  background-color: white;
+  color: #ff5100;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 10px;
+}
+/* Stili specifici per l'admin */
+body.admin-role header {
+  background: linear-gradient(to right, #3a5bd9, #2541b2); /* Blu per admin */
+}
+
+body.admin-role .user-role-badge {
+  color: #3a5bd9;
+}
+
+/* Stili specifici per il capo */
+body.capo-role header {
+  background: linear-gradient(to right, #ff7e00, #ff5100); /* Arancione per capo */
+}
+
+body.capo-role .user-role-badge {
+  color: #ff5100;
+}
+/* Titolo accanto al logo */
+.header-title {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  margin-left: 15px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Contenitore per logo e titolo */
+.logo-container {
+  display: flex;
+  align-items: center;
+}
 
         .content {
             max-width: 1200px;
@@ -130,9 +198,26 @@
 </head>
 <body>
     <!-- Header Section -->
-    <header class="header">
-        <img src="img/logo.png" alt="YourBite Logo" class="logo">
-    </header>
+    <header>
+  <div class="logo-container">
+    <img src="/path/to/your/logo.png" alt="YourBite Logo" class="logo">
+    <h1 class="header-title">YourBite</h1>
+  </div>
+  
+  <div class="header-nav">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/orders">Ordini</a>
+    <a href="/menu">Menu</a>
+    <a href="/customers">Clienti</a>
+    <a href="/settings">Impostazioni</a>
+    
+    <!-- Badge per indicare ruolo utente -->
+    <span class="user-role-badge">
+      <!-- Mostra 'Admin' o 'Capo' in base al ruolo -->
+      <?php echo $userRole === 'admin' ? 'Admin' : 'Capo'; ?>
+    </span>
+  </div>
+</header>
 
     <!-- Main Content -->
     <main class="content">
