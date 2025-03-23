@@ -388,6 +388,132 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
     });
 });
 
+// Add this endpoint to your server.js file
+
+// Delete all messages in a chat room
+app.delete('/api/chat/messages/:roomId', requireStaff, (req, res) => {
+    const roomId = req.params.roomId;
+    
+    // Validate the room ID format (should be like 'support_123')
+    if (!roomId || !roomId.startsWith('support_')) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'ID stanza non valido' 
+        });
+    }
+    
+    // Delete all messages for this room from the database
+    db.run('DELETE FROM chat_messages WHERE room_id = ?', [roomId], function(err) {
+        if (err) {
+            console.error('Error deleting messages:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore durante l\'eliminazione dei messaggi dal database' 
+            });
+        }
+        
+        // Check if any rows were affected
+        if (this.changes === 0) {
+            // No messages were deleted (maybe they were already deleted)
+            return res.json({ 
+                success: true, 
+                deleted: 0,
+                message: 'Nessun messaggio trovato da eliminare' 
+            });
+        }
+        
+        // Add a system message to record the deletion event
+        const systemMessage = {
+            room_id: roomId,
+            sender_id: 'system',
+            sender_name: 'Sistema',
+            message: `Un operatore ha eliminato ${this.changes} messaggi da questa chat.`,
+            timestamp: new Date().toISOString()
+        };
+        
+        db.run(
+            'INSERT INTO chat_messages (room_id, sender_id, sender_name, message, timestamp) VALUES (?, ?, ?, ?, ?)',
+            [systemMessage.room_id, systemMessage.sender_id, systemMessage.sender_name, systemMessage.message, systemMessage.timestamp],
+            function(err) {
+                if (err) {
+                    console.error('Error adding system message:', err);
+                    // Still return success for the deletion
+                }
+                
+                // Log this action for audit purposes
+                console.log(`[${new Date().toISOString()}] Operator ${req.session.user.username} (ID: ${req.session.user.id}) deleted ${this.changes} messages from room ${roomId}`);
+                
+                res.json({ 
+                    success: true, 
+                    deleted: this.changes,
+                    message: `${this.changes} messaggi eliminati con successo` 
+                });
+            }
+        );
+    });
+});
+// Delete all conversations and related messages
+app.delete('/api/chat/all-conversations', requireStaff, (req, res) => {
+    // Start a transaction to ensure data consistency
+    db.serialize(() => {
+        // Begin transaction
+        db.run('BEGIN TRANSACTION');
+        
+        // First, get count of distinct room_ids for reporting
+        db.get('SELECT COUNT(DISTINCT room_id) as count FROM chat_messages', [], (err, result) => {
+            if (err) {
+                console.error('Error counting conversations:', err);
+                db.run('ROLLBACK');
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore durante il conteggio delle conversazioni' 
+                });
+            }
+            
+            const conversationCount = result ? result.count : 0;
+            
+            // Delete all chat messages
+            db.run('DELETE FROM chat_messages', function(err) {
+                if (err) {
+                    console.error('Error deleting all chat messages:', err);
+                    db.run('ROLLBACK');
+                    return res.status(500).json({ 
+                        success: false, 
+                        error: 'Errore durante l\'eliminazione dei messaggi' 
+                    });
+                }
+                
+                // Create a system log entry
+                const logMessage = `Operatore ${req.session.user.username} (ID: ${req.session.user.id}) ha eliminato tutte le conversazioni (${conversationCount} in totale).`;
+                
+                // Log this action for audit purposes
+                console.log(`[${new Date().toISOString()}] ${logMessage}`);
+                
+                // You could optionally save this action to a separate admin_logs table
+                
+                // Commit transaction
+                db.run('COMMIT', function(err) {
+                    if (err) {
+                        console.error('Error committing transaction:', err);
+                        db.run('ROLLBACK');
+                        return res.status(500).json({ 
+                            success: false, 
+                            error: 'Errore durante il commit della transazione' 
+                        });
+                    }
+                    
+                    // Return success response
+                    res.json({ 
+                        success: true, 
+                        deleted: conversationCount,
+                        message: `${conversationCount} conversazioni eliminate con successo` 
+                    });
+                });
+            });
+        });
+    });
+});
+
 // Add this near your other API endpoints
 app.get('/api/chat/rooms', requireStaff, (req, res) => {
     // Get list of unique chat rooms from the database
