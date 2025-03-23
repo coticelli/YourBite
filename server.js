@@ -78,9 +78,16 @@ app.use('/', authRoutes);
 // Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
 
+// Disable Google OAuth if no client ID is provided
+
+/*
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    console.error('Google OAuth non configurato. Inserisci GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET nel file .env');
+} else {
+    console.log('Google OAuth configurato correttamente.');
+}
 // Configure Google Strategy
 passport.use(new GoogleStrategy({
-    
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback',
@@ -128,6 +135,8 @@ passport.use(new GoogleStrategy({
         }
     });
 }));
+*/
+console.log("Google OAuth authentication disabled");
 
 // Serialize user to session
 passport.serializeUser((user, done) => {
