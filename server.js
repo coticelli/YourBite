@@ -388,6 +388,27 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
     });
 });
 
+// Add this near your other API endpoints
+app.get('/api/chat/rooms', requireStaff, (req, res) => {
+    // Get list of unique chat rooms from the database
+    const query = `
+        SELECT DISTINCT room_id, 
+               (SELECT sender_name FROM chat_messages WHERE room_id = cm.room_id AND sender_id = SUBSTR(room_id, 9) LIMIT 1) as sender_name,
+               SUBSTR(room_id, 9) as user_id,
+               (SELECT message FROM chat_messages WHERE room_id = cm.room_id ORDER BY timestamp DESC LIMIT 1) as last_message
+        FROM chat_messages cm
+        ORDER BY (SELECT MAX(timestamp) FROM chat_messages WHERE room_id = cm.room_id) DESC
+    `;
+    
+    db.all(query, [], (err, rows) => {
+        if (err) {
+            console.error('Error querying chat rooms:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
+        res.json({ rooms: rows });
+    });
+});
 
 app.post('/delete-user-data', (req, res) => {
     const userId = req.body.user_id;

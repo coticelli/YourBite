@@ -427,29 +427,411 @@
     </main>
 
     <script>
-        document.getElementById("logoutBtn").addEventListener("click", function(event) {
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+    const activeChats = document.getElementById('activeChats');
+    const chatMain = document.querySelector('.chat-main');
+    let socket;
+    let currentRoom = null;
+    
+    // First, make sure the Socket.IO client library is included
+    function loadSocketIO() {
+        if (typeof io === 'undefined') {
+            // Socket.IO client library is not loaded - add it dynamically
+            const script = document.createElement('script');
+            script.src = '/socket.io/socket.io.js';
+            script.onload = connectToSocketServer;
+            document.head.appendChild(script);
+        } else {
+            // Socket.IO is already loaded
+            connectToSocketServer();
+        }
+    }
+    
+    // Connect to your existing Socket.IO server
+    function connectToSocketServer() {
+        console.log("Connecting to Socket.IO server...");
+        socket = io();
+        
+        // Join as operator to the support_staff room
+        socket.emit('operatorJoin', {
+            userId: '{{user.id}}',
+            username: '{{user.username}}',
+            tipo: '{{user.tipo}}'
+        });
+        
+        // Listen for new support requests coming from clients
+        socket.on('new_support_request', function(data) {
+            console.log("New support request received:", data);
+            addChatRequest(data.roomId, data.user);
             
-            fetch('/logout', { 
-                method: 'POST',
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "/login";
+            // Optionally play a sound notification
+            const audio = new Audio('/sound/notification.mp3');
+            audio.play().catch(e => console.log("Sound notification failed:", e));
+        });
+        
+        // Listen for incoming messages
+        socket.on('message', function(message) {
+            console.log("Message received:", message);
+            
+            // If this message is for the currently open chat, add it to the UI
+            if (currentRoom === message.roomId) {
+                // Don't add the message if it's from the operator (we add it optimistically)
+                if (message.sender !== '{{user.id}}') {
+                    addMessage(message);
                 }
-            })
-            .catch(error => {
-                console.error('Errore durante il logout:', error);
-                alert('Errore durante il logout. Riprova.');
+            } else {
+                // Highlight the chat request in the sidebar to indicate new message
+                const chatRequest = document.querySelector(`.chat-request[data-room-id="${message.roomId}"]`);
+                if (chatRequest) {
+                    chatRequest.classList.add('new-request');
+                    // Update the message preview
+                    const previewEl = chatRequest.querySelector('div:nth-child(3)');
+                    if (previewEl) {
+                        previewEl.textContent = message.content;
+                    }
+                } else {
+                    // This is a new chat we haven't seen yet - need to fetch user info
+                    fetchUserInfo(message.sender).then(user => {
+                        if (user) {
+                            addChatRequest(message.roomId, {
+                                userId: message.sender,
+                                username: message.senderName
+                            }, message.content);
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Handle connection events
+        socket.on('connect', function() {
+            console.log("Connected to WebSocket server!");
+        });
+        
+        socket.on('disconnect', function() {
+            console.log("Disconnected from WebSocket server!");
+        });
+        
+        socket.on('connect_error', function(error) {
+            console.error("Connection error:", error);
+        });
+    }
+    
+    // Load existing chats from database
+    function loadExistingChats() {
+        // Replace loading indicator
+        activeChats.innerHTML = `
+            <div style="text-align: center; padding: 15px 0;">
+                <div class="loading-spinner" style="width: 20px; height: 20px; margin: 0 auto 10px;"></div>
+                <p>Caricamento chat...</p>
+            </div>
+        `;
+        
+        // Query unique chat rooms from chat_messages table
+        fetch('/api/chat/rooms', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.rooms && data.rooms.length > 0) {
+                activeChats.innerHTML = ''; // Clear loading indicator
+                
+                // Add each chat room to the sidebar
+                data.rooms.forEach(room => {
+                    addChatRequest(room.room_id, {
+                        userId: room.user_id,
+                        username: room.sender_name
+                    }, room.last_message);
+                });
+            } else {
+                // No active chats
+                activeChats.innerHTML = `
+                    <div style="text-align: center; color: #777; padding: 15px 0;">
+                        <i class="fas fa-coffee" style="font-size: 1.5rem; margin-bottom: 10px;"></i>
+                        <p>In attesa di richieste...</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading chat rooms:', error);
+            activeChats.innerHTML = `
+                <div style="text-align: center; color: #777; padding: 15px 0;">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 10px;"></i>
+                    <p>Errore nel caricamento delle chat.</p>
+                </div>
+            `;
+        });
+    }
+    
+    // Add a chat request to the sidebar
+    function addChatRequest(roomId, user, lastMessage = null) {
+        // Check if this chat request already exists
+        if (document.querySelector(`.chat-request[data-room-id="${roomId}"]`)) {
+            return; // Already exists
+        }
+        
+        // Clear the "no requests" message if it exists
+        const noRequestsMsg = activeChats.querySelector('div[style*="text-align: center"]');
+        if (noRequestsMsg) {
+            activeChats.innerHTML = '';
+        }
+        
+        // Create chat request element
+        const chatRequest = document.createElement('div');
+        chatRequest.className = 'chat-request new-request';
+        chatRequest.dataset.roomId = roomId;
+        chatRequest.dataset.userId = user.userId;
+        
+        // Format timestamp
+        const now = new Date();
+        const formattedTime = now.toLocaleTimeString('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        chatRequest.innerHTML = `
+            <div style="font-weight: bold;">${user.username}</div>
+            <div style="font-size: 0.8rem; color: #777;">
+                <i class="far fa-clock"></i> ${formattedTime}
+            </div>
+            <div style="margin-top: 5px; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${lastMessage || 'Nuova richiesta di supporto'}
+            </div>
+        `;
+        
+        // Add click event to open this chat
+        chatRequest.addEventListener('click', function() {
+            // Open the chat interface
+            openChat(roomId, user);
+            
+            // Update UI state
+            document.querySelectorAll('.chat-request').forEach(el => {
+                el.classList.remove('active', 'new-request');
             });
+            this.classList.add('active');
         });
-
-        // Toggle sidebar on mobile
-        document.getElementById("sidebar-toggle").addEventListener("click", function() {
-            document.getElementById("chatSidebar").classList.toggle("show");
+        
+        // Add to sidebar
+        activeChats.appendChild(chatRequest);
+    }
+    
+    // Open a chat when clicked in the sidebar
+    function openChat(roomId, user) {
+        currentRoom = roomId;
+        
+        // Join this specific room
+        if (socket) {
+            socket.emit('operatorJoin', {
+                userId: '{{user.id}}',
+                username: '{{user.username}}',
+                roomId: roomId
+            });
+        }
+        
+        // Update UI with chat interface
+        chatMain.innerHTML = `
+            <div class="chat-header">
+                <div class="avatar user-avatar">${user.username.charAt(0).toUpperCase()}</div>
+                <div>
+                    <div style="font-weight: bold;">${user.username}</div>
+                    <div style="font-size: 0.8rem; color: #777;">Cliente</div>
+                </div>
+            </div>
+            <div class="message-list" id="messageList">
+                <div class="system-message">
+                    Inizio della conversazione con ${user.username}
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" class="form-control" id="messageInput" placeholder="Scrivi un messaggio...">
+                <button class="btn btn-outline-danger" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i> Invia
+                </button>
+            </div>
+        `;
+        
+        // Get UI elements
+        const messageList = document.getElementById('messageList');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        // Load chat history
+        loadChatHistory(roomId, messageList);
+        
+        // Add event listeners for sending messages
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                sendMessage(this.value.trim());
+                this.value = '';
+            }
         });
+        
+        sendBtn.addEventListener('click', function() {
+            if (messageInput.value.trim()) {
+                sendMessage(messageInput.value.trim());
+                messageInput.value = '';
+            }
+        });
+        
+        // Focus input field
+        messageInput.focus();
+    }
+    
+    // Load chat history from the server
+    function loadChatHistory(roomId, messageList) {
+        // Show loading indicator
+        messageList.innerHTML = `
+            <div style="display: flex; justify-content: center; padding: 20px;">
+                <div class="loading-spinner" style="width: 30px; height: 30px;"></div>
+            </div>
+        `;
+        
+        // Fetch chat history from your existing endpoint
+        fetch(`/api/chat/history/${roomId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load chat history');
+            }
+            return response.json();
+        })
+        .then(messages => {
+            // Clear loading indicator
+            messageList.innerHTML = `
+                <div class="system-message">
+                    Inizio della conversazione
+                </div>
+            `;
+            
+            // Add each message to the UI
+            if (messages && messages.length > 0) {
+                messages.forEach(message => {
+                    const isClient = message.sender_id === message.room_id.split('_')[1];
+                    
+                    const messageEl = document.createElement('div');
+                    messageEl.className = isClient ? 'message user-message' : 'message operator-message';
+                    
+                    const time = new Date(message.timestamp);
+                    const formattedTime = time.toLocaleTimeString('it-IT', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    messageEl.innerHTML = `
+                        ${message.message}
+                        <div class="timestamp">${formattedTime}</div>
+                    `;
+                    
+                    messageList.appendChild(messageEl);
+                });
+                
+                // Scroll to the bottom
+                messageList.scrollTop = messageList.scrollHeight;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading chat history:', error);
+            messageList.innerHTML = `
+                <div class="system-message" style="color: #d62300;">
+                    <i class="fas fa-exclamation-triangle"></i> Errore nel caricamento della cronologia.
+                </div>
+            `;
+        });
+    }
+    
+    // Send a message to the current chat
+    function sendMessage(message) {
+        if (!socket || !currentRoom || !message.trim()) return;
+        
+        const timestamp = new Date().toISOString();
+        
+        // Create message data
+        const messageData = {
+            roomId: currentRoom,
+            sender: '{{user.id}}',
+            senderName: '{{user.username}}',
+            content: message,
+            timestamp: timestamp
+        };
+        
+        // Add message to UI immediately (optimistic UI update)
+        const messageList = document.getElementById('messageList');
+        const messageEl = document.createElement('div');
+        messageEl.className = 'message operator-message';
+        
+        const formattedTime = new Date().toLocaleTimeString('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageEl.innerHTML = `
+            ${message}
+            <div class="timestamp">${formattedTime}</div>
+        `;
+        
+        messageList.appendChild(messageEl);
+        messageList.scrollTop = messageList.scrollHeight;
+        
+        // Send via Socket.IO
+        socket.emit('message', messageData);
+    }
+    
+    // Helper function to add a received message to the UI
+    function addMessage(message) {
+        const messageList = document.getElementById('messageList');
+        if (!messageList) return;
+        
+        const isFromClient = message.sender !== '{{user.id}}';
+        
+        const messageEl = document.createElement('div');
+        messageEl.className = isFromClient ? 'message user-message' : 'message operator-message';
+        
+        const time = new Date(message.timestamp);
+        const formattedTime = time.toLocaleTimeString('it-IT', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageEl.innerHTML = `
+            ${message.content}
+            <div class="timestamp">${formattedTime}</div>
+        `;
+        
+        messageList.appendChild(messageEl);
+        messageList.scrollTop = messageList.scrollHeight;
+    }
+    
+    // Helper function to fetch user info (if needed)
+    function fetchUserInfo(userId) {
+        return fetch(`/api/user/${userId}`, {
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                return data.user;
+            }
+            return null;
+        })
+        .catch(error => {
+            console.error('Error fetching user info:', error);
+            return null;
+        });
+    }
+    
+    // Initialize everything
+    loadSocketIO();
+    loadExistingChats();
+});
     </script>
 </body>
 </html>
