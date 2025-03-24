@@ -4,152 +4,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Gestione Menu</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <style>
-        .menu-container {
-            padding: 20px;
+<style>
+    /* Stili base */
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    /* Header e navigazione */
+    header {
+        background: linear-gradient(to right, #ff7e00, #ff5100);
+        padding: 15px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        width: 50px;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+        transform: scale(1.05);
+    }
+
+    .header-title {
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        margin-left: 15px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .header-nav {
+        display: flex;
+        gap: 20px;
+    }
+
+    .header-nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+    }
+
+    .header-nav a:hover, .header-nav a.active {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .header-nav a.active {
+        font-weight: bold;
+    }
+
+    .user-role-badge {
+        background-color: white;
+        color: #ff5100;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .user-controls {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+    .username {
+        color: white;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .logout-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Menu specifici */
+    .menu-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .menu-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .add-item-btn {
+        background: #ff5100;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .add-item-btn:hover {
+        background: #e04600;
+    }
+
+    .categories-nav {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .category-btn {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .category-btn.active {
+        background: #ff5100;
+        color: white;
+        border-color: #ff5100;
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .menu-item {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .menu-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .menu-item-image {
+        height: 180px;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .menu-item-details {
+        padding: 15px;
+    }
+
+    .menu-item-title {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .menu-item-title h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .menu-item-price {
+        font-weight: bold;
+        color: #ff5100;
+    }
+
+    .menu-item-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .menu-item-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .action-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .edit-btn {
+        background: #e7f7ee;
+        color: #00a86b;
+    }
+
+    .delete-btn {
+        background: #ffe7e7;
+        color: #ff4d4d;
+    }
+
+    .action-btn:hover {
+        opacity: 0.8;
+    }
+
+    .active-badge {
+        background: #e7f7ee;
+        color: #00a86b;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
+    .inactive-badge {
+        background: #f0f0f0;
+        color: #777;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
+    /* Media queries per responsività */
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
+            padding: 10px;
         }
-        .menu-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .add-item-btn {
-            background: #ff5100;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .add-item-btn:hover {
-            background: #e04600;
-        }
-        .categories-nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+        
+        .header-nav {
+            margin-top: 15px;
             flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
-        .category-btn {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
+        
+        .menu-actions {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
         }
-        .category-btn.active {
-            background: #ff5100;
-            color: white;
-            border-color: #ff5100;
-        }
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .menu-item {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .menu-item:hover {
-            transform: translateY(-5px);
-        }
-        .menu-item-image {
-            height: 180px;
-            background-size: cover;
-            background-position: center;
-        }
-        .menu-item-details {
-            padding: 15px;
-        }
-        .menu-item-title {
+        
+        .categories-nav {
+            overflow-x: auto;
+            padding-bottom: 10px;
+            white-space: nowrap;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            flex-wrap: nowrap;
         }
-        .menu-item-title h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .menu-item-price {
-            font-weight: bold;
-            color: #ff5100;
-        }
-        .menu-item-description {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        .menu-item-actions {
-            display: flex;
-            justify-content: space-between;
-        }
-        .action-btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .edit-btn {
-            background: #e7f7ee;
-            color: #00a86b;
-        }
-        .delete-btn {
-            background: #ffe7e7;
-            color: #ff4d4d;
-        }
-        .action-btn:hover {
-            opacity: 0.8;
-        }
-        .active-badge {
-            background: #e7f7ee;
-            color: #00a86b;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-        .inactive-badge {
-            background: #f0f0f0;
-            color: #777;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-left: 10px;
-        }
-    </style>
+    }
+</style>
 </head>
 <body class="capo-role">
     <!-- Header migliorato con gradiente arancione -->
     <header>
-        <div class="logo-container">
-            <img src="/images/logo.png" alt="YourBite Logo" class="logo">
-            <h1 class="header-title">YourBite</h1>
-        </div>
-        
-        <div class="header-nav">
-            <a href="/capo/dashboard">Dashboard</a>
-            <a href="/capo/ordini">Ordini</a>
-            <a href="/capo/menu" class="active">Menu</a>
-            <a href="/capo/clienti">Clienti</a>
-            <a href="/capo/impostazioni">Impostazioni</a>
-            
-            <span class="user-role-badge">Capo</span>
-        </div>
-    </header>
-
+    <div class="logo-container">
+       <img src="/img/logo.png" alt="YourBite Logo" class="logo">
+        <h1 class="header-title">YourBite</h1>
+    </div>
+    
+    <div class="header-nav">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/ordini">Ordini</a>
+    <a href="/menu">Menu</a>
+    <a href="/clienti">Clienti</a>
+    <a href="/impostazioni">Impostazioni</a>
+    
+    <div style="position: relative; margin-left: 10px;">
+        <span id="notification-badge" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -5px; display: none;">0</span>
+        <span class="user-role-badge">Capo</span>
+    </div>
+</div>
+<div class="user-controls">
+    <span class="username">{{user.username}}</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+</header>
     <div class="menu-container">
         <h1>Gestione Menu</h1>
         <p>Aggiungi, modifica o rimuovi prodotti dal tuo menu</p>
@@ -280,5 +441,80 @@
             </div>
         </div>
     </div>
+    <script>
+        // Salva questo file come public/js/capo-panel.js
+
+// Funzione per il logout
+function logout() {
+    fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/login';
+        }
+    })
+    .catch(error => console.error('Errore durante il logout:', error));
+}
+
+// Funzione per caricare statistiche nella dashboard
+function loadDashboardStats() {
+    fetch('/statistiche')
+        .then(response => response.json())
+        .then(data => {
+            // Aggiorna i dati della dashboard con i dati ricevuti
+            document.getElementById('vendite-oggi').textContent = `€${data.venditeOggi}`;
+            document.getElementById('ordini-oggi').textContent = data.ordiniOggi;
+            document.getElementById('nuovi-clienti').textContent = data.clientiNuovi;
+            // Aggiorna altri elementi della dashboard...
+        })
+        .catch(error => console.error('Errore caricamento statistiche:', error));
+}
+
+// Funzione per caricare notifiche
+function loadNotifications() {
+    fetch('/notifiche')
+        .then(response => response.json())
+        .then(notifications => {
+            const notificationBadge = document.getElementById('notification-badge');
+            const unreadCount = notifications.filter(n => !n.letto).length;
+            
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount;
+                notificationBadge.style.display = 'inline-block';
+            } else {
+                notificationBadge.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Errore caricamento notifiche:', error));
+}
+
+// Inizializza il pannello di controllo
+document.addEventListener('DOMContentLoaded', function() {
+    // Imposta la classe "active" sul link di navigazione corrente
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.header-nav a');
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+    
+    // Carica dati se siamo nella dashboard
+    if (currentPath === '/dashboard') {
+        loadDashboardStats();
+    }
+    
+    // Carica notifiche ogni minuto
+    loadNotifications();
+    setInterval(loadNotifications, 60000);
+});
+    </script>
 </body>
 </html>

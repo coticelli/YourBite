@@ -6,124 +6,274 @@
     <title>YourBite - Dashboard Capo</title>
     <link rel="stylesheet" href="/css/styles.css">
     <style>
-        .dashboard-container {
-            padding: 20px;
+    /* Stili base */
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    /* Header e navigazione */
+    header {
+        background: linear-gradient(to right, #ff7e00, #ff5100);
+        padding: 15px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        width: 50px;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+        transform: scale(1.05);
+    }
+
+    .header-title {
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        margin-left: 15px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .header-nav {
+        display: flex;
+        gap: 20px;
+    }
+
+    .header-nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+    }
+
+    .header-nav a:hover, .header-nav a.active {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .header-nav a.active {
+        font-weight: bold;
+    }
+
+    .user-role-badge {
+        background-color: white;
+        color: #ff5100;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .user-controls {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+    .username {
+        color: white;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .logout-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Dashboard specifici */
+    .dashboard-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .stat-card h3 {
+        color: #ff5100;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card .number {
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .stat-card .trend {
+        font-size: 14px;
+        color: green;
+        margin-top: 5px;
+    }
+
+    .trend.up::before {
+        content: "↑ ";
+    }
+
+    .trend.down::before {
+        content: "↓ ";
+        color: red;
+    }
+
+    .chart-container {
+        margin-top: 30px;
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-container h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .recent-orders {
+        margin-top: 30px;
+    }
+
+    .recent-orders h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .order-list {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Media queries per responsività */
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
+            padding: 10px;
         }
+        
+        .header-nav {
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: 1fr;
         }
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .stat-card h3 {
-            color: #ff5100;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        .stat-card .number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-        }
-        .stat-card .trend {
-            font-size: 14px;
-            color: green;
-            margin-top: 5px;
-        }
-        .trend.up::before {
-            content: "↑ ";
-        }
-        .trend.down::before {
-            content: "↓ ";
-            color: red;
-        }
-        .chart-container {
-            margin-top: 30px;
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .chart-container h2 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .recent-orders {
-            margin-top: 30px;
-        }
-        .recent-orders h2 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .order-list {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+        
         .order-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
+            flex-direction: column;
+            gap: 10px;
         }
-        .order-item:last-child {
-            border-bottom: none;
-        }
-    </style>
+    }
+</style>
 </head>
 <body class="capo-role">
     <!-- Header migliorato con gradiente arancione -->
     <header>
-        <div class="logo-container">
-            <img src="/images/logo.png" alt="YourBite Logo" class="logo">
-            <h1 class="header-title">YourBite</h1>
-        </div>
-        
-        <div class="header-nav">
-            <a href="/capo/dashboard" class="active">Dashboard</a>
-            <a href="/capo/ordini">Ordini</a>
-            <a href="/capo/menu">Menu</a>
-            <a href="/capo/clienti">Clienti</a>
-            <a href="/capo/impostazioni">Impostazioni</a>
-            
-            <span class="user-role-badge">Capo</span>
-        </div>
-    </header>
+<div class="logo-container">
+     <img src="/img/logo.png" alt="YourBite Logo" class="logo">
+    <h1 class="header-title">YourBite</h1>
+</div>
+    
+    <div class="header-nav">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/ordini">Ordini</a>
+    <a href="/menu">Menu</a>
+    <a href="/clienti">Clienti</a>
+    <a href="/impostazioni">Impostazioni</a>
+    
+    <div style="position: relative; margin-left: 10px;">
+        <span id="notification-badge" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -5px; display: none;">0</span>
+        <span class="user-role-badge">Capo</span>
+    </div>
+</div>
+<div class="user-controls">
+    <span class="username">{{user.username}}</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+</header>
 
     <div class="dashboard-container">
         <h1>Dashboard</h1>
         <p>Panoramica delle prestazioni del tuo fast food</p>
 
         <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Ordini Totali</h3>
-                <div class="number">247</div>
-                <div class="trend up">+12% rispetto a ieri</div>
-            </div>
-            <div class="stat-card">
-                <h3>Vendite Giornaliere</h3>
-                <div class="number">€1,895</div>
-                <div class="trend up">+8% rispetto a ieri</div>
-            </div>
-            <div class="stat-card">
-                <h3>Clienti Nuovi</h3>
-                <div class="number">18</div>
-                <div class="trend up">+5% rispetto a ieri</div>
-            </div>
-            <div class="stat-card">
-                <h3>Tempo Medio Preparazione</h3>
-                <div class="number">12 min</div>
-                <div class="trend down">+2 min rispetto a ieri</div>
-            </div>
-        </div>
+    <div class="stat-card">
+        <h3>Ordini Totali</h3>
+        <div class="number" id="ordini-oggi">247</div>
+        <div class="trend up">+12% rispetto a ieri</div>
+    </div>
+    <div class="stat-card">
+        <h3>Vendite Giornaliere</h3>
+        <div class="number" id="vendite-oggi">€1,895</div>
+        <div class="trend up">+8% rispetto a ieri</div>
+    </div>
+    <div class="stat-card">
+        <h3>Clienti Nuovi</h3>
+        <div class="number" id="nuovi-clienti">18</div>
+        <div class="trend up">+5% rispetto a ieri</div>
+    </div>
+    <div class="stat-card">
+        <h3>Tempo Medio Preparazione</h3>
+        <div class="number">12 min</div>
+        <div class="trend down">+2 min rispetto a ieri</div>
+    </div>
+</div>
 
         <div class="chart-container">
             <h2>Andamento Vendite</h2>
@@ -165,11 +315,92 @@
     </div>
 
     <script>
-        // Script per animare alcune statistiche
-        document.addEventListener('DOMContentLoaded', function() {
-            // Qui puoi aggiungere eventuali script per grafici o animazioni
-            console.log('Dashboard loaded');
+    // Funzione per logout
+    function logout() {
+        fetch('/logout', {
+            method: 'POST',
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/login';
+            }
+        })
+        .catch(error => console.error('Errore durante il logout:', error));
+    }
+
+    // Funzione sicura per aggiornare elementi DOM (controlla se esistono)
+    function updateElementText(id, text) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = text;
+        }
+    }
+
+    // Imposta la classe 'active' sul link di navigazione corrente
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.header-nav a');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (currentPath === link.getAttribute('href')) {
+                link.classList.add('active');
+            }
         });
-    </script>
+
+        // Funzione sicura per caricare statistiche
+        function loadDashboardStats() {
+            try {
+                fetch('/statistiche')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Usa la funzione sicura per aggiornare elementi
+                        updateElementText('vendite-oggi', `€${data.venditeOggi || 0}`);
+                        updateElementText('ordini-oggi', data.ordiniOggi || 0);
+                        updateElementText('nuovi-clienti', data.clientiNuovi || 0);
+                    })
+                    .catch(error => console.error('Errore caricamento statistiche:', error));
+            } catch (e) {
+                console.log('Caricamento statistiche non disponibile in questa pagina');
+            }
+        }
+
+        // Funzione sicura per caricare notifiche
+        function loadNotifications() {
+            try {
+                fetch('/notifiche')
+                    .then(response => response.json())
+                    .then(notifications => {
+                        const badge = document.getElementById('notification-badge');
+                        if (!badge) return; // Esci se l'elemento non esiste
+                        
+                        const unreadCount = notifications.filter(n => !n.letto).length;
+                        badge.textContent = unreadCount;
+                        badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+                    })
+                    .catch(error => console.error('Errore caricamento notifiche:', error));
+            } catch (e) {
+                console.log('Caricamento notifiche non disponibile in questa pagina');
+            }
+        }
+
+        // Solo per la dashboard, aggiungi elementi mancanti
+        if (currentPath === '/dashboard') {
+            // Aggiungi gli elementi mancanti se siamo nella dashboard
+            const container = document.querySelector('.dashboard-container');
+            if (container) {
+                // Aggiungi elementi per le statistiche e notifiche se necessario
+                if (!document.getElementById('notification-badge')) {
+                    const badgeContainer = document.createElement('div');
+                    badgeContainer.innerHTML = '<span id="notification-badge" style="display:none;">0</span>';
+                    document.querySelector('.header-nav').appendChild(badgeContainer);
+                }
+                
+                // Chiama le funzioni di caricamento
+                loadDashboardStats();
+                loadNotifications();
+            }
+        }
+    });
+</script>
 </body>
 </html>

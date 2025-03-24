@@ -67,8 +67,19 @@ app.use(session({
 // Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
+// Aggiungi questo dopo app.use(passport.session());
 app.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
+    // Sincronizza user tra passport e session
+    if (req.user && !req.session.user) {
+        req.session.user = {
+            id: req.user.id,
+            username: req.user.username,
+            email: req.user.email,
+            tipo: req.user.tipo
+        };
+    }
+    // Rendi disponibile l'utente a tutte le viste
+    res.locals.user = req.session.user || req.user || null;
     next();
 });
 
@@ -148,18 +159,33 @@ app.get('/auth/google', passport.authenticate('google', {
 }));
 // Aggiungi questo codice al tuo file server.js
 // Middleware per verificare il ruolo capo
+// Sostituisci la tua funzione verificaRuoloCapo con questa versione corretta
 function verificaRuoloCapo(req, res, next) {
+    // Debug - Log delle informazioni di sessione
+    console.log('Session User:', req.session.user);
+    console.log('Passport User:', req.user);
+    
     // Verifica se l'utente è autenticato e ha il ruolo di capo
-    if (req.isAuthenticated && req.user && req.user.ruolo === 'capo') {
-      return next();
+    // Controlla sia req.session.user che req.user (passport)
+    if (
+        (req.session && req.session.user && req.session.user.tipo === 'capo') ||
+        (req.isAuthenticated && typeof req.isAuthenticated === 'function' && req.isAuthenticated() && req.user && req.user.tipo === 'capo')
+    ) {
+        return next();
     }
+    
+    // Per debug durante lo sviluppo - uncommenta per bypassare temporaneamente l'autenticazione
+    // console.log('⚠️ DEBUG: Bypassando autenticazione per sviluppo');
+    // return next();
+    
     // Reindirizza alla pagina di login se non autorizzato
-    res.redirect('/login');
-  }
+    console.log('Accesso negato: l\'utente non è un capo o non è autenticato');
+    return res.redirect('/login');
+}
   
   // ============= ROTTE DASHBOARD CAPO =============
   // Pagina Dashboard principale
-  app.get('/capo/dashboard', verificaRuoloCapo, (req, res) => {
+  app.get('/dashboard', verificaRuoloCapo, (req, res) => {
     // Qui potresti recuperare dati reali dal database
     const datiDashboard = {
       ordiniTotali: 247,
@@ -183,7 +209,7 @@ function verificaRuoloCapo(req, res, next) {
   
   // ============= ROTTE GESTIONE ORDINI =============
   // Pagina Ordini
-  app.get('/capo/ordini', verificaRuoloCapo, (req, res) => {
+  app.get('/ordini', verificaRuoloCapo, (req, res) => {
     // Recupero ordini dal database
     const ordini = [
       { id: '1038', cliente: 'Marco Rossi', data: '24/03/2025 14:20', totale: '25.90', stato: 'Completato' },
@@ -202,14 +228,14 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per visualizzare dettagli ordine
-  app.get('/capo/ordini/:id', verificaRuoloCapo, (req, res) => {
+  app.get('/ordini/:id', verificaRuoloCapo, (req, res) => {
     const idOrdine = req.params.id;
     // Qui recupereresti i dettagli dell'ordine dal database
     res.json({ message: `Dettagli dell'ordine ${idOrdine}` });
   });
   
   // API per aggiornare stato ordine
-  app.post('/capo/ordini/:id/stato', verificaRuoloCapo, (req, res) => {
+  app.post('/ordini/:id/stato', verificaRuoloCapo, (req, res) => {
     const idOrdine = req.params.id;
     const nuovoStato = req.body.stato;
     
@@ -222,7 +248,7 @@ function verificaRuoloCapo(req, res, next) {
   
   // ============= ROTTE GESTIONE MENU =============
   // Pagina Menu
-  app.get('/capo/menu', verificaRuoloCapo, (req, res) => {
+  app.get('/menu', verificaRuoloCapo, (req, res) => {
     // Recupero prodotti dal database
     const prodotti = [
       { 
@@ -293,7 +319,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per aggiungere prodotto al menu
-  app.post('/capo/menu', verificaRuoloCapo, (req, res) => {
+  app.post('/menu', verificaRuoloCapo, (req, res) => {
     const nuovoProdotto = req.body;
     
     // Qui aggiungeresti il prodotto al database
@@ -305,7 +331,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per aggiornare prodotto
-  app.put('/capo/menu/:id', verificaRuoloCapo, (req, res) => {
+  app.put('/menu/:id', verificaRuoloCapo, (req, res) => {
     const idProdotto = req.params.id;
     const datiProdotto = req.body;
     
@@ -317,7 +343,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per eliminare prodotto
-  app.delete('/capo/menu/:id', verificaRuoloCapo, (req, res) => {
+  app.delete('/menu/:id', verificaRuoloCapo, (req, res) => {
     const idProdotto = req.params.id;
     
     // Qui elimineresti il prodotto dal database
@@ -329,7 +355,7 @@ function verificaRuoloCapo(req, res, next) {
   
   // ============= ROTTE GESTIONE CLIENTI =============
   // Pagina Clienti
-  app.get('/capo/clienti', verificaRuoloCapo, (req, res) => {
+  app.get('/clienti', verificaRuoloCapo, (req, res) => {
     // Recupero clienti dal database
     const clienti = [
       { 
@@ -402,7 +428,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per visualizzare dettagli cliente
-  app.get('/capo/clienti/:id', verificaRuoloCapo, (req, res) => {
+  app.get('/clienti/:id', verificaRuoloCapo, (req, res) => {
     const idCliente = req.params.id;
     
     // Qui recupereresti i dettagli del cliente dal database
@@ -410,7 +436,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per aggiornare cliente
-  app.put('/capo/clienti/:id', verificaRuoloCapo, (req, res) => {
+  app.put('/clienti/:id', verificaRuoloCapo, (req, res) => {
     const idCliente = req.params.id;
     const datiCliente = req.body;
     
@@ -422,7 +448,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per esportare dati clienti
-  app.get('/capo/clienti/export/data', verificaRuoloCapo, (req, res) => {
+  app.get('/clienti/export/data', verificaRuoloCapo, (req, res) => {
     // Qui genereresti un file CSV/Excel con i dati dei clienti
     
     // Esempio: invia un file fittizio
@@ -433,7 +459,7 @@ function verificaRuoloCapo(req, res, next) {
   
   // ============= ROTTE IMPOSTAZIONI =============
   // Pagina Impostazioni
-  app.get('/capo/impostazioni', verificaRuoloCapo, (req, res) => {
+  app.get('/impostazioni', verificaRuoloCapo, (req, res) => {
     // Recupero impostazioni dal database
     const impostazioni = {
       locale: {
@@ -460,7 +486,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per aggiornare impostazioni
-  app.post('/capo/impostazioni', verificaRuoloCapo, (req, res) => {
+  app.post('/impostazioni', verificaRuoloCapo, (req, res) => {
     const nuoveImpostazioni = req.body;
     
     // Qui aggiorneresti le impostazioni nel database
@@ -471,7 +497,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // API per caricare nuovo logo
-  app.post('/capo/impostazioni/logo', verificaRuoloCapo, (req, res) => {
+  app.post('/impostazioni/logo', verificaRuoloCapo, (req, res) => {
     // Qui gestiresti il caricamento del file e lo salveresti
     
     // Nota: questa route richiede un middleware per la gestione dei file
@@ -486,7 +512,7 @@ function verificaRuoloCapo(req, res, next) {
   
   // ============= ALTRE ROTTE UTILI =============
   // Rotta per ricevere notifiche in tempo reale (se usi websockets)
-  app.get('/capo/notifiche', verificaRuoloCapo, (req, res) => {
+  app.get('/notifiche', verificaRuoloCapo, (req, res) => {
     const notifiche = [
       { id: 1, messaggio: 'Nuovo ordine ricevuto', tempo: '2 minuti fa', letto: false },
       { id: 2, messaggio: 'Scorte di patatine in esaurimento', tempo: '1 ora fa', letto: true },
@@ -497,7 +523,7 @@ function verificaRuoloCapo(req, res, next) {
   });
   
   // Rotta per statistiche in tempo reale (per dashboard)
-  app.get('/capo/statistiche', verificaRuoloCapo, (req, res) => {
+  app.get('/statistiche', verificaRuoloCapo, (req, res) => {
     // Qui recupereresti dati in tempo reale dal database
     const statistiche = {
       venditeOggi: 1895,
@@ -702,6 +728,23 @@ function saveMessageToDatabase(message) {
 // Swagger - Impostazione della documentazione API
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.use((req, res, next) => {
+    // Log per debug durante lo sviluppo
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    console.log('Session ID:', req.sessionID);
+    console.log('Session User:', req.session && req.session.user ? `${req.session.user.username} (${req.session.user.tipo})` : 'nessuno');
+    console.log('Passport User:', req.user ? `${req.user.username} (${req.user.tipo})` : 'nessuno');
+    console.log('---');
+    next();
+});
+// Aggiungi questa rotta per debugging
+app.get('/auth-status', (req, res) => {
+    res.json({
+        isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+        sessionUser: req.session.user || null,
+        passportUser: req.user || null
+    });
+});
 // Route per la homepage
 app.get('/', (req, res) => {
     // 5. Usa res.render per processare il template 'index.hbs'
@@ -754,10 +797,47 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
         }
         res.json(rows);
     });
+
+});
+// Reindirizza da homepage_capo alla dashboard
+app.get('/homepage_capo', requireLogin, (req, res) => {
+    // Renderizza la pagina homepage_capo o reindirizza alla dashboard
+    // Opzione 1: Renderizza homepage_capo
+    res.render('homepage_capo', { 
+        pageTitle: 'Homepage Capo', 
+        user: req.session.user 
+    });
+    
+    // Opzione 2: Reindirizza alla dashboard (scegli una delle due opzioni)
+    // res.redirect('/dashboard');
 });
 
-// Add this endpoint to your server.js file
+// Middleware per upload file (aggiungi multer)
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/images/uploads/')
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, uniqueSuffix + '-' + file.originalname)
+    }
+});
+const upload = multer({ storage: storage });
 
+// Rotta per upload immagini prodotti
+app.post('/upload-image', verificaRuoloCapo, upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'Nessun file caricato' });
+    }
+    
+    const imagePath = '/images/uploads/' + req.file.filename;
+    res.json({ 
+        success: true, 
+        message: 'Immagine caricata con successo',
+        path: imagePath
+    });
+});
 // Delete all messages in a chat room
 app.delete('/api/chat/messages/:roomId', requireStaff, (req, res) => {
     const roomId = req.params.roomId;
@@ -926,9 +1006,13 @@ function requireLogin(req, res, next) {
     if (req.session && req.session.user) {
         // L'utente è autenticato, prosegui
         return next();
+    } else if (req.isAuthenticated && typeof req.isAuthenticated === 'function' && req.isAuthenticated()) {
+        // Utente autenticato con Passport
+        return next();
     } else {
         // L'utente non è autenticato, reindirizza alla pagina di login
-        return res.redirect('/login.hbs');
+        console.log('Utente non autenticato, reindirizzamento a /login');
+        return res.redirect('/login'); // Senza estensione .hbs
     }
 }
 

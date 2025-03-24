@@ -59,15 +59,20 @@ body.capo-role .user-role-badge {
   color: #ff5100;
 }
 
-        .logo {
-  width: 180px; /* Dimensione aumentata */
-  height: auto;
-  transition: transform 0.3s ease;
-}
+.logo-container {
+        display: flex;
+        align-items: center;
+    }
 
-.logo:hover {
-  transform: scale(1.05); /* Leggero effetto hover */
-}
+    .logo {
+        width: 50px;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+        transform: scale(1.05);
+    }
 
         .container {
             max-width: 1200px;
@@ -535,16 +540,16 @@ body.capo-role .user-role-badge {
     <!-- Header Section -->
     <header>
   <div class="logo-container">
-    <img src="/public/img/logo.png" class="logo-img">
+ <img src="/img/logo.png" alt="YourBite Logo" class="logo">
     <h1 class="header-title">YourBite</h1>
   </div>
   
   <div class="header-nav">
     <a href="/dashboard">Dashboard</a>
-    <a href="/orders">Ordini</a>
+    <a href="/ordini">Ordini</a>
     <a href="/menu">Menu</a>
-    <a href="/customers">Clienti</a>
-    <a href="/settings">Impostazioni</a>
+    <a href="/clienti">Clienti</a>
+    <a href="/impostazioni">Impostazioni</a>
     
     <!-- Badge per indicare ruolo utente -->
     <span class="user-role-badge">
@@ -561,13 +566,7 @@ body.capo-role .user-role-badge {
             <div class="navbar-brand">
                 <i class="fas fa-headset"></i> Support Dashboard
             </div>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/support">
-                        <i class="fas fa-home"></i> Dashboard
-                    </a>
-                </li>
-            </ul>
+         
             <button id="deleteAllConversationsBtn" class="btn btn-outline-danger"
                 style="margin-left: 10px; font-size: 0.8rem;">
                 <i class="fas fa-dumpster"></i> Elimina Tutte le Conversazioni
@@ -687,6 +686,77 @@ body.capo-role .user-role-badge {
                     window.location.href = '/logout';
                 }
             });
+
+            function logout() {
+    fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/login';
+        }
+    })
+    .catch(error => console.error('Errore durante il logout:', error));
+}
+
+// Funzione per caricare statistiche nella dashboard
+function loadDashboardStats() {
+    fetch('/statistiche')
+        .then(response => response.json())
+        .then(data => {
+            // Aggiorna i dati della dashboard con i dati ricevuti
+            document.getElementById('vendite-oggi').textContent = `€${data.venditeOggi}`;
+            document.getElementById('ordini-oggi').textContent = data.ordiniOggi;
+            document.getElementById('nuovi-clienti').textContent = data.clientiNuovi;
+            // Aggiorna altri elementi della dashboard...
+        })
+        .catch(error => console.error('Errore caricamento statistiche:', error));
+}
+
+// Funzione per caricare notifiche
+function loadNotifications() {
+    fetch('/notifiche')
+        .then(response => response.json())
+        .then(notifications => {
+            const notificationBadge = document.getElementById('notification-badge');
+            const unreadCount = notifications.filter(n => !n.letto).length;
+            
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount;
+                notificationBadge.style.display = 'inline-block';
+            } else {
+                notificationBadge.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Errore caricamento notifiche:', error));
+}
+
+// Inizializza il pannello di controllo
+document.addEventListener('DOMContentLoaded', function() {
+    // Imposta la classe "active" sul link di navigazione corrente
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.header-nav a');
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+    
+    // Carica dati se siamo nella dashboard
+    if (currentPath === '/dashboard') {
+        loadDashboardStats();
+    }
+    
+    // Carica notifiche ogni minuto
+    loadNotifications();
+    setInterval(loadNotifications, 60000);
+});
 
             const deleteAllBtn = document.getElementById('deleteAllConversationsBtn');
             if (deleteAllBtn) {
