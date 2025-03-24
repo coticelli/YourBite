@@ -1,365 +1,405 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/5f4dee4f-666a-4164-89f3-e05ac5350ff8" width="220">
+  <img src="https://github.com/user-attachments/assets/5f4dee4f-666a-4164-89f3-e05ac5350ff8" width="200">
   <h1>YourBite</h1>
-  <p><em>Revolutionizing the Quick-Service Restaurant Industry</em></p>
+  <p><i>Ordini personalizzati, esperienza senza paragoni</i></p>
   
-  ![Version](https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge)
-  ![Status](https://img.shields.io/badge/status-PRODUCTION-success?style=for-the-badge)
-  ![Docker](https://img.shields.io/badge/platform-DOCKER-2496ED?style=for-the-badge&logo=docker)
-  ![ROI](https://img.shields.io/badge/projected_ROI-137%25-green?style=for-the-badge)
+  ![Version](https://img.shields.io/badge/version-1.0.0-blue)
+  ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
   
+  <p>Ultimo aggiornamento: 2023-03-24</p>
 </div>
 
 ---
 
-## Executive Summary
+## 📋 Indice
 
-**YourBite** transforms how customers interact with quick-service restaurants through an innovative, cloud-based platform that allows for complete order customization while streamlining operations for restaurant owners. Our solution addresses a $273B market opportunity by connecting the convenience consumers demand with the operational excellence restaurants require.
-
-With YourBite, customers create personalized orders via smartphone, recharge digital wallets with cash or card payments, and enjoy a frictionless dining experience. For restaurant partners, we deliver increased throughput, reduced order errors, and enhanced customer satisfaction – driving measurable revenue growth of 17-23% across our pilot locations.
-
-> *"YourBite has increased our average ticket size by 19% while reducing order errors by 78%. The ROI was measurable within 5 weeks of implementation."*  
-> — Marco Rossi, Operations Director, Milano Fast Food Group
+- [Panoramica](#-panoramica)
+- [Problema e Soluzione](#-problema-e-soluzione)
+- [Target di Mercato](#-target-di-mercato)
+- [Avvio Rapido](#-avvio-rapido)
+- [Guida Dettagliata](#-guida-dettagliata)
+- [Requisiti Funzionali](#-requisiti-funzionali)
+- [Requisiti Non Funzionali](#-requisiti-non-funzionali)
+- [Requisiti di Dominio](#-requisiti-di-dominio)
+- [Struttura Dati](#-struttura-dati)
+- [Tecnologie Utilizzate](#-tecnologie-utilizzate)
+- [Concorrenza](#-concorrenza)
 
 ---
 
-## Market Opportunity & Positioning
+## 🚀 Panoramica
+
+**YourBite** è una piattaforma innovativa progettata per rivoluzionare l'esperienza di ordinazione nei fast food e ristoranti. Consente ai clienti di:
+
+- Creare menu personalizzati in modo semplice e intuitivo
+- Selezionare e combinare panini, bibite, patatine e snack tramite smartphone
+- Ricaricare il saldo dell'account con pagamenti in contanti nei punti vendita fisici
+- Utilizzare una valuta digitale interna per effettuare ordini rapidamente
+
+La piattaforma mette a disposizione un'interfaccia intuitiva sia per i ristoratori che per i clienti, ottimizzando l'intero processo di ordinazione e preparazione.
+
+---
+
+## 🔍 Problema e Soluzione
+
+### Sfide attuali
+I ristoratori affrontano molteplici difficoltà nella gestione quotidiana delle operazioni:
+
+- **Gestione inefficiente degli ordini** durante i periodi di alta affluenza
+- **Difficoltà di personalizzazione** degli ordini secondo le preferenze dei clienti
+- **Malintesi sugli ingredienti** che causano insoddisfazione e recensioni negative
+- **Ritardi nella preparazione** dovuti a confusione e processi manuali
+
+### Come YourBite risolve questi problemi
+
+✅ **Ordini digitali personalizzati** che eliminano gli errori di comunicazione  
+✅ **Gestione automatizzata** che riduce il carico di lavoro dello staff  
+✅ **Selezione ingredienti intuitiva** che migliora l'esperienza del cliente  
+✅ **Flusso di lavoro ottimizzato** che aumenta l'efficienza operativa  
+✅ **Tracciamento in tempo reale** che mantiene i clienti informati sull'avanzamento dell'ordine
+
+---
+
+## 👥 Target di Mercato
+
+YourBite si rivolge a due segmenti chiave del mercato:
 
 <table>
   <tr>
-    <td width="60%">
-      <h3>Industry Landscape</h3>
-      <ul>
-        <li>Global quick-service restaurant market: <b>$273B</b> (2023)</li>
-        <li>Digital ordering solutions growing at <b>22.3% CAGR</b></li>
-        <li>78% of restaurant operators report staffing challenges</li>
-        <li>92% of consumers expect personalization options</li>
-      </ul>
-      <h3>Competitive Advantage</h3>
-      <ul>
-        <li><b>Proprietary digital wallet</b> with offline recharge capability</li>
-        <li><b>Hyper-personalization</b> engine with ingredient-level customization</li>
-        <li><b>Edge-computing architecture</b> for millisecond response times</li>
-        <li><b>Seamless integration</b> with existing restaurant POS systems</li>
-      </ul>
+    <td width="50%" align="center"><b>🏢 Ristoratori</b></td>
+    <td width="50%" align="center"><b>🧑‍🤝‍🧑 Clienti</b></td>
+  </tr>
+  <tr>
+    <td>
+      • Proprietari di fast food<br>
+      • Gestori di catene di ristorazione<br>
+      • Ristoranti con alto volume di clienti<br>
+      • Locali con menu personalizzabili
     </td>
-    <td width="40%" align="center">
-      <img src="https://via.placeholder.com/400x300/f8f9fa/212529?text=Market+Growth+Projection" width="100%">
-      <p><em>QSR Digital Solutions Market Growth Projection</em></p>
+    <td>
+      • Clienti abituali di fast food<br>
+      • Persone con preferenze alimentari specifiche<br>
+      • Utenti tecnologicamente attivi<br>
+      • Consumatori attenti alla velocità del servizio
     </td>
   </tr>
 </table>
 
 ---
 
-## Platform Capabilities
+## 🚀 Avvio Rapido
 
-### For Restaurant Partners
+### Prerequisiti
+- Docker installato sul sistema
+- Connessione internet stabile
 
-<div style="display: flex; justify-content: space-between;">
-  <div style="width: 48%;">
-    <h4>🚀 Operational Excellence</h4>
-    <ul>
-      <li><b>Order Accuracy:</b> 99.7% reduction in order errors</li>
-      <li><b>Throughput:</b> Handle 3.2x more orders during peak times</li>
-      <li><b>Staff Efficiency:</b> Reduce order processing time by 64%</li>
-      <li><b>Inventory Management:</b> Real-time ingredient-level tracking</li>
-    </ul>
-    
-    <h4>📊 Business Intelligence</h4>
-    <ul>
-      <li><b>Customer Insights:</b> AI-powered preference analytics</li>
-      <li><b>Dynamic Pricing:</b> Demand-based optimization</li>
-      <li><b>Predictive Ordering:</b> ML forecasting for inventory</li>
-      <li><b>Performance Dashboard:</b> Real-time KPI monitoring</li>
-    </ul>
-  </div>
-  
-  <div style="width: 48%;">
-    <h4>💰 Revenue Enhancement</h4>
-    <ul>
-      <li><b>Upselling:</b> Intelligent recommendation engine (+14% AOV)</li>
-      <li><b>Loyalty:</b> Gamified retention program (87% engagement)</li>
-      <li><b>Marketing:</b> Targeted promotions with 32% conversion</li>
-      <li><b>New Revenue:</b> Digital-only menu options</li>
-    </ul>
-    
-    <h4>🔗 Integration Ecosystem</h4>
-    <ul>
-      <li><b>POS Systems:</b> Seamless integration with 19+ providers</li>
-      <li><b>Payment Processing:</b> Multi-currency, multi-method support</li>
-      <li><b>Delivery Networks:</b> Direct API connections to major services</li>
-      <li><b>Kitchen Display:</b> Smart prep sequencing and timing</li>
-    </ul>
-  </div>
-</div>
+### Windows
+1. Scarica questa repository
+2. Fai doppio clic su `start-yourbite.bat`
+3. Attendi l'avvio dell'applicazione (lo script installerà Docker se necessario)
+4. Il browser si aprirà automaticamente su http://localhost:3000
 
-### For Consumers
-
-<table>
-  <tr>
-    <td width="25%" align="center">
-      <h3>🎯</h3>
-      <h4>Perfect Personalization</h4>
-      <p>Ingredient-level customization with allergen awareness and nutrition tracking</p>
-    </td>
-    <td width="25%" align="center">
-      <h3>⚡</h3>
-      <h4>Frictionless Experience</h4>
-      <p>Order in seconds with favorites, reorder, and smart recommendations</p>
-    </td>
-    <td width="25%" align="center">
-      <h3>💳</h3>
-      <h4>Flexible Payments</h4>
-      <p>Digital wallet with cash/card reload options and loyalty integration</p>
-    </td>
-    <td width="25%" align="center">
-      <h3>🔔</h3>
-      <h4>Real-Time Updates</h4>
-      <p>Order tracking with accurate preparation and pickup timing</p>
-    </td>
-  </tr>
-</table>
+### Linux
+1. Scarica questa repository
+2. Apri il terminale nella cartella del progetto
+3. Rendi eseguibile lo script: `chmod +x start-yourbite.sh`
+4. Esegui lo script: `./start-yourbite.sh`
+5. L'applicazione si avvierà e aprirà automaticamente il browser
 
 ---
 
-## Technology Stack & Architecture
+## 📖 Guida Dettagliata
 
-YourBite leverages cutting-edge technology to deliver enterprise-grade performance, security, and scalability:
+### Architettura del Sistema
+
+YourBite utilizza un'architettura containerizzata con Docker per semplificare distribuzione e esecuzione:
+
+- **Frontend**: Interfaccia web responsive per clienti e pannello di amministrazione per ristoratori
+- **Backend**: API RESTful che gestisce la logica di business
+- **Database**: Archiviazione persistente per utenti, ordini, menu e transazioni
+- **Autenticazione**: Accesso sicuro tramite email/password o Google OAuth
+
+### Ruoli Utente
+
+L'applicazione prevede due tipi principali di utenti:
+
+1. **Clienti**: Possono navigare menu, personalizzare ordini, effettuare pagamenti
+2. **Ristoratori**: Possono gestire menu, monitorare ordini, analizzare le vendite
+
+### Risoluzione dei problemi comuni
+
+<details>
+<summary><b>Verificare lo stato dell'applicazione</b></summary>
+
+```bash
+docker ps
+```
+Dovresti vedere un container con l'immagine "cotii/yourbite-app" nell'elenco
+</details>
+
+<details>
+<summary><b>Cambio porta predefinita</b></summary>
+
+Se la porta 3000 è già in uso:
+```bash
+docker run -d -p 8080:3000 cotii/yourbite-app
+```
+Poi accedi all'applicazione su http://localhost:8080
+</details>
+
+<details>
+<summary><b>Avvio manuale dell'applicazione</b></summary>
+
+Su Windows:
+```bash
+docker pull cotii/yourbite-app
+docker run -d -p 3000:3000 cotii/yourbite-app
+```
+
+Su Linux:
+```bash
+sudo docker pull cotii/yourbite-app
+sudo docker run -d -p 3000:3000 cotii/yourbite-app
+```
+</details>
+
+<details>
+<summary><b>Problemi con l'autenticazione Google</b></summary>
+
+Assicurati che:
+1. Il servizio sia accessibile tramite il localhost esatto configurato (http://localhost:3000)
+2. Le credenziali Google OAuth siano configurate correttamente
+3. L'URL di callback impostato nella console Google Cloud sia esattamente: `http://localhost:3000/auth/google/callback`
+</details>
+
+<details>
+<summary><b>Persistenza dei dati</b></summary>
+
+I dati vengono memorizzati all'interno del container. Per conservarli tra riavvii:
+```bash
+docker run -d -p 3000:3000 -v ./data:/usr/src/app/data cotii/yourbite-app
+```
+</details>
+
+---
+
+## 📋 Requisiti Funzionali
+
+### Pagamenti e Transazioni
+- **Metodi di Pagamento**: Supporto per carte di credito, PayPal e wallet digitali
+- **Ricarica Wallet Virtuale**: Possibilità di ricaricare il saldo in contanti presso punti vendita fisici
+- **Sistema di Bonus**: Programma di fidelizzazione con punti bonus per ordini ripetuti
+
+### Gestione Ordini
+- **Personalizzazione Ingredienti**: Opzioni per aggiungere o rimuovere ingredienti dai piatti
+- **Notifiche in Tempo Reale**: Aggiornamenti sullo stato dell'ordine
+- **Sincronizzazione Venditore-App**: Sincronizzazione di tempi di preparazione e consegna
+
+### Esperienza Utente
+- **Registrazione e Login**: Accesso tramite email, social media o numero di telefono
+- **Layout Personalizzato**: Interfaccia adattata a ciascun venditore, con offerte specifiche
+- **Menu del Mese**: Sezione dedicata con sondaggi interattivi per il feedback
+- **Personalizzazione Linguistica**: Possibilità di modificare la lingua dell'app
+
+### Backend e Integrazione
+- **API per Ristoranti**: Integrazione per la gestione e l'aggiornamento in tempo reale
+- **Database Ingredienti**: Informazioni complete su allergeni e valori nutrizionali
+- **Supporto Cliente**: FAQ, chat live e assistenza multicanale
+- **Offerte e Consegne**: Sistema di promozioni e gestione delle consegne
+
+---
+
+## ⚙️ Requisiti Non Funzionali
+
+### Performance
+- **Tempi di Caricamento**: Pagine caricate in meno di 2 secondi
+- **Esperienza Fluida**: Gestione simultanea di multiple interazioni
+- **Connettività**: Requisito di connessione internet stabile per funzionalità complete
+
+### User Experience
+- **Responsive Design**: Ottimizzazione per dispositivi mobili, tablet e desktop
+- **Accessibilità**: Conformità alle linee guida di accessibilità standard
+
+### Infrastruttura
+- **Scalabilità**: Architettura progettata per gestire crescita di utenza senza degradare le prestazioni
+- **Sicurezza**: Protezione dei dati personali e transazioni
+
+---
+
+## 🏛️ Requisiti di Dominio
+
+### Gestione Finanziaria
+- **Pagamenti Digitali**: Integrazione sicura di sistemi di pagamento
+- **Transazioni Offline**: Supporto per operazioni senza connessione diretta tramite il wallet digitale
+
+### Integrazione Sistemi
+- **Compatibilità API**: Collegamento con sistemi gestionali esistenti nei ristoranti
+- **Flusso di Lavoro**: Garantire operazioni armonizzate in tempo reale
+
+### Sicurezza Alimentare
+- **Tracciabilità Ingredienti**: Database dettagliato per personalizzazioni sicure
+- **Informazioni Allergeni**: Gestione accurata delle informazioni su allergeni
+
+### Marketing e Fidelizzazione
+- **Promozioni**: Sistema di offerte speciali e opzioni di consegna
+- **Programma Fedeltà**: Meccanismi di incentivazione all'uso continuativo
+
+---
+
+## 🗄️ Struttura Dati
+
+Di seguito un esempio della struttura dati utilizzata nell'applicazione:
+
+<details>
+<summary><b>Visualizza esempio JSON</b></summary>
+
+```json
+{
+  "PaymentMethods": [
+    {
+      "Type": "CreditCard",
+      "Details": {
+        "CardNumber": "XXXX-XXXX-XXXX-XXXX",
+        "ExpiryDate": "12/24",
+        "CVV": "123"
+      }
+    },
+    {
+      "Type": "PayPal",
+      "Details": {
+        "Email": "user@example.com"
+      }
+    },
+    {
+      "Type": "DigitalWallet",
+      "Details": {
+        "WalletID": "wallet123456789"
+      }
+    }
+  ],
+  "WalletRecharge": {
+    "Amount": 100.00,
+    "PaymentMethod": "Cash",
+    "Location": "Piazza Grasso 537, Borgo Donatella, CB 40928"
+  },
+  "RestaurantAPI": {
+    "RestaurantID": "12345",
+    "Menu": [
+      {
+        "ItemID": "item001",
+        "Name": "Burger",
+        "Price": 8.99,
+        "Ingredients": ["Beef", "Lettuce", "Tomato", "Cheese"]
+      },
+      {
+        "ItemID": "item002",
+        "Name": "Pizza",
+        "Price": 12.99,
+        "Ingredients": ["Tomato Sauce", "Mozzarella", "Pepperoni"]
+      }
+    ],
+    "Order": {
+      "OrderID": "order123",
+      "CustomerID": "zio",
+      "Items": [
+        {
+          "ItemID": "item001",
+          "Quantity": 2
+        },
+        {
+          "ItemID": "item002",
+          "Quantity": 1
+        }
+      ],
+      "Status": "Preparation"
+    }
+  },
+  "IngredientDatabase": {
+    "Ingredients": [
+      {
+        "IngredientID": "ing001",
+        "Name": "Beef",
+        "Allergens": ["None"],
+        "NutritionalValues": {
+          "Calories": 250,
+          "Proteins": 20,
+          "Carbs": 5,
+          "Fats": 15
+        }
+      },
+      {
+        "IngredientID": "ing002",
+        "Name": "Lettuce",
+        "Allergens": ["None"],
+        "NutritionalValues": {
+          "Calories": 10,
+          "Proteins": 1,
+          "Carbs": 2,
+          "Fats": 0.5
+        }
+      }
+    ]
+  }
+}
+```
+</details>
+
+### Relazioni tra Entità
+
+```
+Cliente 1:N Ordini
+Ristoratore 1:N Menu
+Menu 1:N Prodotti
+Prodotto 1:N Ingredienti
+Ordine N:M Prodotti
+Wallet 1:1 Cliente
+Transazione N:1 Cliente
+```
+
+---
+
+## 💻 Tecnologie Utilizzate
+
+<table>
+  <tr>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/nodejs.png"/><br>Node.js</td>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/docker.png"/><br>Docker</td>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/javascript.png"/><br>JavaScript</td>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/google-logo.png"/><br>OAuth</td>
+  </tr>
+</table>
+
+### Architettura Tecnica
+
+- **Frontend**: HTML5, CSS3, JavaScript (React.js)
+- **Backend**: Node.js, Express.js
+- **Persistenza**: JSON file-based (MVP), espandibile a database relazionale
+- **Containerizzazione**: Docker per deployment semplificato
+- **Autenticazione**: Sistema locale + Google OAuth
+
+---
+
+## 🥊 Concorrenza
+
+Il mercato delle piattaforme di ordinazione per ristoranti comprende diversi competitor:
+
+- **NeatMenu, Eatsee, Menubly** - Piattaforme specializzate in menu digitali
+- **Almenu, OctoTable, BuonMenu** - Soluzioni per la gestione degli ordini
+- **MenuDrive, Square for Restaurants** - Sistemi integrati POS e ordinazione
+- **Ordermark, Flipdish, Yumm** - Aggregatori di ordini e consegne
+
+**Vantaggi competitivi di YourBite**:
+- Sistema integrato di wallet ricaricabile anche offline
+- Personalizzazione avanzata degli ingredienti
+- Interfaccia utente altamente intuitiva
+- Integrazione diretta con i flussi di lavoro esistenti dei ristoratori
+
+---
 
 <div align="center">
-  <table width="90%">
-    <tr>
-      <td align="center"><b>Frontend</b></td>
-      <td align="center"><b>Backend</b></td>
-      <td align="center"><b>Infrastructure</b></td>
-      <td align="center"><b>Security</b></td>
-    </tr>
-    <tr>
-      <td>
-        • React.js/Next.js<br>
-        • Progressive Web App<br>
-        • Material Design<br>
-        • 99/100 Lighthouse perf.
-      </td>
-      <td>
-        • Node.js microservices<br>
-        • GraphQL API<br>
-        • Redis caching<br>
-        • CQRS architecture
-      </td>
-      <td>
-        • Docker containerization<br>
-        • Kubernetes orchestration<br>
-        • AWS global infrastructure<br>
-        • Multi-region redundancy
-      </td>
-      <td>
-        • PCI-DSS compliance<br>
-        • GDPR/CCPA compliance<br>
-        • SOC2 Type II certified<br>
-        • 256-bit encryption
-      </td>
-    </tr>
-  </table>
-</div>
-
-Our cloud-native architecture provides:
-- **99.99% uptime SLA** for mission-critical reliability
-- **Sub-100ms response times** even during 10x normal load events
-- **Infinite horizontal scaling** to support enterprise-level deployment
-- **Zero-downtime deployments** for continuous feature delivery
-
----
-
-## Implementation & Deployment
-
-### Getting Started in Minutes
-
-<table>
-  <tr>
-    <td width="50%">
-      <h4>Windows Deployment</h4>
-      <ol>
-        <li>Download the YourBite repository</li>
-        <li>Run <code>start-yourbite.bat</code> with administrator privileges</li>
-        <li>Access the platform at <a href="http://localhost:3000">http://localhost:3000</a></li>
-      </ol>
-      <p><em>Enterprise deployment documentation available for Windows Server environments</em></p>
-    </td>
-    <td width="50%">
-      <h4>Linux/Unix Deployment</h4>
-      <ol>
-        <li>Clone the repository: <code>git clone https://github.com/coticelli/YourBite.git</code></li>
-        <li>Set permissions: <code>chmod +x start-yourbite.sh</code></li>
-        <li>Execute: <code>./start-yourbite.sh</code></li>
-      </ol>
-      <p><em>Kubernetes manifests available for production orchestration</em></p>
-    </td>
-  </tr>
-</table>
-
-### Enterprise Integration
-
-For large-scale implementations, our Professional Services team provides:
-
-- **Technical Discovery** – 2-day assessment of existing infrastructure
-- **Custom Integration** – Tailored connections to your existing systems
-- **Staff Training** – Comprehensive onboarding for all personnel levels
-- **Continuous Optimization** – Quarterly business review and performance tuning
-
----
-
-## Business Impact & Case Studies
-
-<table>
-  <tr>
-    <td width="33%" style="vertical-align: top; padding: 10px;">
-      <h4>🍔 FastBurger Chain</h4>
-      <p><b>Challenge:</b> 12-minute average order time, 9% error rate</p>
-      <p><b>Implementation:</b> Full platform + POS integration</p>
-      <p><b>Results:</b></p>
-      <ul>
-        <li>Order time reduced to 3.2 minutes</li>
-        <li>Error rate dropped to 0.3%</li>
-        <li>Customer satisfaction up 27%</li>
-        <li>Revenue increased 22% YoY</li>
-      </ul>
-    </td>
-    <td width="33%" style="vertical-align: top; padding: 10px;">
-      <h4>🍕 Pizza Express</h4>
-      <p><b>Challenge:</b> Complex customization causing fulfillment issues</p>
-      <p><b>Implementation:</b> Digital menu + kitchen display integration</p>
-      <p><b>Results:</b></p>
-      <ul>
-        <li>Custom orders increased 43%</li>
-        <li>Average ticket size up €4.75</li>
-        <li>Kitchen efficiency improved 35%</li>
-        <li>ROI achieved in 41 days</li>
-      </ul>
-    </td>
-    <td width="33%" style="vertical-align: top; padding: 10px;">
-      <h4>🌮 Taco Supremo</h4>
-      <p><b>Challenge:</b> Drive-thru bottlenecks during peak hours</p>
-      <p><b>Implementation:</b> Mobile ordering + loyalty program</p>
-      <p><b>Results:</b></p>
-      <ul>
-        <li>Drive-thru throughput +68%</li>
-        <li>85% customer adoption in 3 months</li>
-        <li>2.3x increase in repeat visits</li>
-        <li>Operational costs reduced 17%</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
----
-
-## Data-Driven Decision Making
-
-YourBite's advanced analytics engine transforms raw transaction data into actionable business intelligence:
-
-<div align="center">
-  <img src="https://via.placeholder.com/800x400/f8f9fa/212529?text=YourBite+Dashboard+Analytics" width="80%">
-  <p><em>Enterprise dashboard showing real-time performance metrics</em></p>
-</div>
-
-Our platform continuously analyzes:
-- **Customer behavior patterns** to optimize menu offerings
-- **Order flow efficiency** to identify operational bottlenecks
-- **Ingredient-level consumption** for just-in-time inventory management
-- **Staff productivity metrics** for optimized scheduling and training
-
----
-
-## Roadmap & Vision
-
-<table>
-  <tr>
-    <td width="33%" align="center">
-      <h4>Q2 2025</h4>
-      <ul>
-        <li>AI-powered demand forecasting</li>
-        <li>Voice ordering interface</li>
-        <li>Expanded payment options</li>
-        <li>Enhanced loyalty gamification</li>
-      </ul>
-    </td>
-    <td width="33%" align="center">
-      <h4>Q3-Q4 2025</h4>
-      <ul>
-        <li>Autonomous inventory management</li>
-        <li>AR menu visualization</li>
-        <li>Multi-location order coordination</li>
-        <li>Enterprise portal enhancement</li>
-      </ul>
-    </td>
-    <td width="33%" align="center">
-      <h4>2026 & Beyond</h4>
-      <ul>
-        <li>Predictive customer preferences</li>
-        <li>Integration with smart kitchen equipment</li>
-        <li>Global market expansion</li>
-        <li>Strategic acquisition opportunities</li>
-      </ul>
-    </td>
-  </tr>
-</table>
-
----
-
-## Leadership Team
-
-<table>
-  <tr>
-    <td width="25%" align="center">
-      <img src="https://via.placeholder.com/150" width="80%" style="border-radius: 50%;">
-      <h4>Fabio Coticelli</h4>
-      <p>Founder & CEO</p>
-      <p><em>Former Director of Digital Transformation at Global Quick Service Brands</em></p>
-    </td>
-    <td width="25%" align="center">
-      <img src="https://via.placeholder.com/150" width="80%" style="border-radius: 50%;">
-      <h4>Maria Ventura</h4>
-      <p>Chief Technology Officer</p>
-      <p><em>Ex-Amazon Principal Engineer, Payments Infrastructure</em></p>
-    </td>
-    <td width="25%" align="center">
-      <img src="https://via.placeholder.com/150" width="80%" style="border-radius: 50%;">
-      <h4>Alessandro Bianchi</h4>
-      <p>Chief Revenue Officer</p>
-      <p><em>Previously VP of Sales at Leading POS Provider</em></p>
-    </td>
-    <td width="25%" align="center">
-      <img src="https://via.placeholder.com/150" width="80%" style="border-radius: 50%;">
-      <h4>Sofia Romano</h4>
-      <p>Chief Product Officer</p>
-      <p><em>Former Head of Product, Restaurant Tech Unicorn</em></p>
-    </td>
-  </tr>
-</table>
-
----
-
-## Contact & Next Steps
-
-<div align="center">
-  <h3>Ready to Transform Your Restaurant Operations?</h3>
-  
-  <p>Schedule a personalized demo with our solution architects</p>
-  
-  <a href="mailto:enterprise@yourbite.com" style="background-color: #0066CC; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 15px;">Request Enterprise Demo</a>
-  <a href="https://yourbite.com/roi-calculator" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Calculate Your ROI</a>
-  
-  <p style="margin-top: 30px;">
-    <b>Global Headquarters:</b> Milan Innovation District, Via Tecnologia 42, 20157 Milano, Italy<br>
-    <b>Enterprise Contact:</b> +39 02 1234 5678 | enterprise@yourbite.com<br>
-    <b>Investor Relations:</b> investors@yourbite.com
+  <p>Sviluppato da <b>Fabio Coticelli</b></p>
+  <p>
+    <a href="mailto:fabiocoticelli06@gmail.com">fabiocoticelli06@gmail.com</a> |
+    <a href="https://github.com/coticelli">GitHub</a>
   </p>
-</div>
-
----
-
-<div align="center">
-  <p>© 2025 YourBite Technologies SpA | All Rights Reserved | Patents Pending</p>
 </div>
