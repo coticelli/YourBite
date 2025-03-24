@@ -1,18 +1,19 @@
-FROM node:18
+FROM node:18-alpine
 
-# Create app directory
+# Crea la directory dell'applicazione
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Copia package.json e package-lock.json
 COPY package*.json ./
+
+# Installa le dipendenze
 RUN npm install
 
-# Bundle app source
+# Copia il resto dell'applicazione
 COPY . .
-COPY .env /usr/src/app/.
 
-# Expose the port your app runs on
+# Esponi la porta su cui l'app è in ascolto
 EXPOSE 3000
 
-# Command to run your app
-CMD [ "node", "server.js" ]
+# Comando per avviare l'applicazione
+CMD ["node", "server.js"]
