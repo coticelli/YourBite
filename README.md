@@ -1,187 +1,258 @@
-# YourBite
-
-## Descrizione
-YourBite è una piattaforma innovativa progettata per i ristoratori, che permette ai clienti di creare menu personalizzati in modo semplice e immediato. Gli utenti possono scegliere e combinare panini, bibite, patatine e snack direttamente dal proprio smartphone. Inoltre, è possibile ricaricare il saldo del proprio account con pagamenti in contante presso i punti vendita fisici, con la conversione dell'importo in una valuta digitale utilizzabile per effettuare ordini.
-
-## Target
-Propietari di fast food e clienti di fast food
-
-## Problema
-I ristoratori affrontano frequentemente difficoltà nella gestione efficiente degli ordini, nonché nel garantire un'esperienza cliente altamente personalizzata. In scenari di alto volume, ad esempio, un ristorante può ricevere numerosi ordini in breve tempo, causando confusione nello staff e ritardi nella preparazione. Tali disguidi possono generare malintesi sugli ingredienti richiesti dai clienti, con il rischio di insoddisfazione e recensioni negative. Inoltre, la carenza di un sistema intuitivo per la personalizzazione degli ordini rende arduo rispondere in modo rapido alle richieste specifiche, come l'eliminazione di allergeni o l'aggiunta di ingredienti extra. YourBite risponde a questa esigenza con una piattaforma che semplifica la personalizzazione degli ordini, ottimizzando l'efficienza operativa e incrementando le vendite, migliorando al contempo la soddisfazione del cliente.
-
-## Competitor
-NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Restaurants, Ordermark, Flipdish, Yumm.
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/5f4dee4f-666a-4164-89f3-e05ac5350ff8" width="200">
+  <h1>YourBite</h1>
+  <p><i>Ordini personalizzati, esperienza senza paragoni</i></p>
+  
+  ![Version](https://img.shields.io/badge/version-1.0.0-blue)
+  ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
+  
+  <p>Ultimo aggiornamento: 2023-03-24</p>
+</div>
 
 ---
 
-## Istruzioni per l'utilizzo con Docker
+## 📋 Indice
+
+- [Panoramica](#-panoramica)
+- [Problema e Soluzione](#-problema-e-soluzione)
+- [Target di Mercato](#-target-di-mercato)
+- [Avvio Rapido](#-avvio-rapido)
+- [Guida Dettagliata](#-guida-dettagliata)
+- [Requisiti Funzionali](#-requisiti-funzionali)
+- [Requisiti Non Funzionali](#-requisiti-non-funzionali)
+- [Requisiti di Dominio](#-requisiti-di-dominio)
+- [Struttura Dati](#-struttura-dati)
+- [Tecnologie Utilizzate](#-tecnologie-utilizzate)
+- [Concorrenza](#-concorrenza)
+
+---
+
+## 🚀 Panoramica
+
+**YourBite** è una piattaforma innovativa progettata per rivoluzionare l'esperienza di ordinazione nei fast food e ristoranti. Consente ai clienti di:
+
+- Creare menu personalizzati in modo semplice e intuitivo
+- Selezionare e combinare panini, bibite, patatine e snack tramite smartphone
+- Ricaricare il saldo dell'account con pagamenti in contanti nei punti vendita fisici
+- Utilizzare una valuta digitale interna per effettuare ordini rapidamente
+
+La piattaforma mette a disposizione un'interfaccia intuitiva sia per i ristoratori che per i clienti, ottimizzando l'intero processo di ordinazione e preparazione.
+
+---
+
+## 🔍 Problema e Soluzione
+
+### Sfide attuali
+I ristoratori affrontano molteplici difficoltà nella gestione quotidiana delle operazioni:
+
+- **Gestione inefficiente degli ordini** durante i periodi di alta affluenza
+- **Difficoltà di personalizzazione** degli ordini secondo le preferenze dei clienti
+- **Malintesi sugli ingredienti** che causano insoddisfazione e recensioni negative
+- **Ritardi nella preparazione** dovuti a confusione e processi manuali
+
+### Come YourBite risolve questi problemi
+
+✅ **Ordini digitali personalizzati** che eliminano gli errori di comunicazione  
+✅ **Gestione automatizzata** che riduce il carico di lavoro dello staff  
+✅ **Selezione ingredienti intuitiva** che migliora l'esperienza del cliente  
+✅ **Flusso di lavoro ottimizzato** che aumenta l'efficienza operativa  
+✅ **Tracciamento in tempo reale** che mantiene i clienti informati sull'avanzamento dell'ordine
+
+---
+
+## 👥 Target di Mercato
+
+YourBite si rivolge a due segmenti chiave del mercato:
+
+<table>
+  <tr>
+    <td width="50%" align="center"><b>🏢 Ristoratori</b></td>
+    <td width="50%" align="center"><b>🧑‍🤝‍🧑 Clienti</b></td>
+  </tr>
+  <tr>
+    <td>
+      • Proprietari di fast food<br>
+      • Gestori di catene di ristorazione<br>
+      • Ristoranti con alto volume di clienti<br>
+      • Locali con menu personalizzabili
+    </td>
+    <td>
+      • Clienti abituali di fast food<br>
+      • Persone con preferenze alimentari specifiche<br>
+      • Utenti tecnologicamente attivi<br>
+      • Consumatori attenti alla velocità del servizio
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🚀 Avvio Rapido
 
 ### Prerequisiti
-- Docker Desktop installato e in esecuzione sul tuo sistema
-- Connessione internet stabile per il download dell'immagine Docker
+- Docker installato sul sistema
+- Connessione internet stabile
 
-### Come avviare l'applicazione
+### Windows
+1. Scarica questa repository
+2. Fai doppio clic su `start-yourbite.bat`
+3. Attendi l'avvio dell'applicazione (lo script installerà Docker se necessario)
+4. Il browser si aprirà automaticamente su http://localhost:3000
 
-1. **Avviare Docker Desktop** sul tuo computer
-
-2. **Aprire il terminale o prompt dei comandi**:
-   - Su Windows: Cerca "Prompt dei comandi" o "PowerShell" nel menu Start
-   - Su Mac: Apri l'applicazione Terminal
-   - Su Linux: Apri qualsiasi terminale disponibile
-
-3. **Eseguire il seguente comando** per scaricare e avviare l'applicazione:
-   ```
-   docker run -d -p 3000:3000 cotii/yourbite-app
-   ```
-   
-   Questo comando fa:
-   - Scarica l'immagine dell'applicazione da Docker Hub (al primo avvio)
-   - Crea un container in esecuzione in background
-   - Espone l'applicazione sulla porta 3000 del tuo computer
-
-4. **Accedere all'applicazione**:
-   - Apri il tuo browser web 
-   - Visita l'indirizzo: [http://localhost:3000](http://localhost:3000)
-   - L'applicazione YourBite dovrebbe caricarsi automaticamente
-
-### Comandi utili
-
-- **Verificare che l'applicazione sia in esecuzione**:
-  ```
-  docker ps
-  ```
-  Dovresti vedere un container con l'immagine "cotii/yourbite-app" nell'elenco
-
-- **Visualizzare i log dell'applicazione**:
-  ```
-  docker logs [ID_CONTAINER]
-  ```
-  Sostituisci [ID_CONTAINER] con l'ID mostrato nel comando "docker ps"
-
-- **Arrestare l'applicazione**:
-  ```
-  docker stop [ID_CONTAINER]
-  ```
-
-- **Rimuovere il container dopo l'arresto**:
-  ```
-  docker rm [ID_CONTAINER]
-  ```
-
-- **Aggiornare all'ultima versione** (se sono state rilasciate modifiche):
-  ```
-  docker pull cotii/yourbite-app
-  ```
-  Dopo aver scaricato la nuova versione, arrestare il vecchio container e avviarne uno nuovo.
-
-### Risoluzione problemi
-
-- **Se la porta 3000 è occupata** puoi usare una porta diversa:
-  ```
-  docker run -d -p 8080:3000 cotii/yourbite-app
-  ```
-  Poi accedi all'applicazione su [http://localhost:8080](http://localhost:8080)
-
-- **Se l'immagine non si scarica correttamente**:
-  ```
-  docker pull cotii/yourbite-app
-  ```
-  Questo forza il download dell'immagine
+### Linux
+1. Scarica questa repository
+2. Apri il terminale nella cartella del progetto
+3. Rendi eseguibile lo script: `chmod +x start-yourbite.sh`
+4. Esegui lo script: `./start-yourbite.sh`
+5. L'applicazione si avvierà e aprirà automaticamente il browser
 
 ---
 
-## Requisiti Funzionali
+## 📖 Guida Dettagliata
 
-**Metodi di Pagamento**:  
-- Supporto per una varietà di metodi di pagamento, inclusi carte di credito, PayPal e wallet digitali.
+### Architettura del Sistema
 
-**Ricarica del Wallet Virtuale in Contanti**:  
-- Possibilità di ricaricare il wallet virtuale in contante presso i punti vendita fisici, utilizzando modalità offline.
+YourBite utilizza un'architettura containerizzata con Docker per semplificare distribuzione e esecuzione:
 
-**Integrazione API per Fast Food/Ristoranti**:  
-- Integrazione di API per la gestione e l'aggiornamento in tempo reale degli ordini e dei menu.
+- **Frontend**: Interfaccia web responsive per clienti e pannello di amministrazione per ristoratori
+- **Backend**: API RESTful che gestisce la logica di business
+- **Database**: Archiviazione persistente per utenti, ordini, menu e transazioni
+- **Autenticazione**: Accesso sicuro tramite email/password o Google OAuth
 
-**Database degli Ingredienti**:  
-- Creazione di un database completo con dettagli su allergeni, valori nutrizionali e opzioni di personalizzazione.
+### Ruoli Utente
 
-**Notifiche Ordine**:  
-- Sistema di notifiche in tempo reale per aggiornamenti sullo stato dell'ordine.
+L'applicazione prevede due tipi principali di utenti:
 
-**Pagina di Supporto**:  
-- Sezione dedicata al supporto clienti, con FAQ, chat live e assistenza via email o telefono.
+1. **Clienti**: Possono navigare menu, personalizzare ordini, effettuare pagamenti
+2. **Ristoratori**: Possono gestire menu, monitorare ordini, analizzare le vendite
 
-**Registrazione e Login**:  
-- Accesso tramite email, social media o numero di telefono.
+### Risoluzione dei problemi comuni
 
-**Sistema di Bonus**:  
-- Programma di fidelizzazione che premia gli utenti con punti bonus per ordini ripetuti.
+<details>
+<summary><b>Verificare lo stato dell'applicazione</b></summary>
 
-**Offerte e Consegna del Cibo**:  
-- Visualizzazione di offerte speciali e opzioni per la consegna a domicilio.
+```bash
+docker ps
+```
+Dovresti vedere un container con l'immagine "cotii/yourbite-app" nell'elenco
+</details>
 
-**Sincronizzazione tra Venditore e App**:  
-- Sincronizzazione dei tempi di preparazione e consegna per fornire stime precise sul tempo di arrivo.
+<details>
+<summary><b>Cambio porta predefinita</b></summary>
 
-**Layout e Prodotti Personalizzati**:  
-- Layout personalizzato per ogni venditore, con offerte specifiche.
+Se la porta 3000 è già in uso:
+```bash
+docker run -d -p 8080:3000 cotii/yourbite-app
+```
+Poi accedi all'applicazione su http://localhost:8080
+</details>
 
-**Personalizzazione degli Ingredienti**:  
-- Opzione per i clienti di aggiungere o rimuovere ingredienti dai piatti ordinati.
+<details>
+<summary><b>Avvio manuale dell'applicazione</b></summary>
 
-**Visualizzazione del Menu del Mese**:  
-- Sezione dedicata al menu del mese, con sondaggi interattivi per il feedback degli utenti.
+Su Windows:
+```bash
+docker pull cotii/yourbite-app
+docker run -d -p 3000:3000 cotii/yourbite-app
+```
 
-**Personalizzazione della Lingua**:  
-- Possibilità di modificare la lingua dell'app in base alle preferenze individuali.
+Su Linux:
+```bash
+sudo docker pull cotii/yourbite-app
+sudo docker run -d -p 3000:3000 cotii/yourbite-app
+```
+</details>
 
----
+<details>
+<summary><b>Problemi con l'autenticazione Google</b></summary>
 
-## Requisiti Non Funzionali
+Assicurati che:
+1. Il servizio sia accessibile tramite il localhost esatto configurato (http://localhost:3000)
+2. Le credenziali Google OAuth siano configurate correttamente
+3. L'URL di callback impostato nella console Google Cloud sia esattamente: `http://localhost:3000/auth/google/callback`
+</details>
 
-**Connessione Internet**:  
-- Una connessione internet stabile è necessaria per il corretto funzionamento dell'applicazione.
+<details>
+<summary><b>Persistenza dei dati</b></summary>
 
-**Prestazioni**:  
-- L'esperienza utente deve essere fluida, anche con la gestione simultanea.
-
-**Interfaccia Responsive**:  
-- L'applicazione sarà ottimizzata per dispositivi mobili, tablet e desktop.
-
-**Tempi di Caricamento**:  
-- Le pagine devono caricarsi in meno di 2 secondi, per garantire una navigazione veloce e senza interruzioni.
-
-**Scalabilità**:  
-- Il sistema sarà progettato per scalare facilmente, consentendo l'aumento del numero di utenti e ristoranti senza compromettere le prestazioni.
-
----
-
-## Requisiti di Dominio
-
-**Metodi di Pagamento**:  
-- La gestione dei pagamenti digitali è un aspetto cruciale per l'efficace operatività della piattaforma.
-
-**Ricarica del Wallet Virtuale in Contanti**:  
-- È fondamentale includere modalità di pagamento offline, in modo da garantire un'esperienza completa anche senza necessità di connessione immediata.
-
-**Integrazione API per Fast Food/Ristoranti**:  
-- L'integrazione con sistemi esistenti nei ristoranti è essenziale per garantire un flusso di lavoro armonioso e in tempo reale.
-
-**Database degli Ingredienti**:  
-- Un database accurato è indispensabile per la sicurezza alimentare e per la corretta personalizzazione del menu, soprattutto in relazione agli allergeni.
-
-**Offerte e Consegna del Cibo**:  
-- Le offerte speciali e le opzioni di consegna sono un incentivo per incrementare le vendite e soddisfare le aspettative dei clienti.
-
-**Sistema di Bonus**:  
-- Un programma di fidelizzazione efficace è uno strumento chiave per incentivare la clientela a utilizzare frequentemente la piattaforma.
+I dati vengono memorizzati all'interno del container. Per conservarli tra riavvii:
+```bash
+docker run -d -p 3000:3000 -v ./data:/usr/src/app/data cotii/yourbite-app
+```
+</details>
 
 ---
 
-![image](https://github.com/user-attachments/assets/5f4dee4f-666a-4164-89f3-e05ac5350ff8)
+## 📋 Requisiti Funzionali
+
+### Pagamenti e Transazioni
+- **Metodi di Pagamento**: Supporto per carte di credito, PayPal e wallet digitali
+- **Ricarica Wallet Virtuale**: Possibilità di ricaricare il saldo in contanti presso punti vendita fisici
+- **Sistema di Bonus**: Programma di fidelizzazione con punti bonus per ordini ripetuti
+
+### Gestione Ordini
+- **Personalizzazione Ingredienti**: Opzioni per aggiungere o rimuovere ingredienti dai piatti
+- **Notifiche in Tempo Reale**: Aggiornamenti sullo stato dell'ordine
+- **Sincronizzazione Venditore-App**: Sincronizzazione di tempi di preparazione e consegna
+
+### Esperienza Utente
+- **Registrazione e Login**: Accesso tramite email, social media o numero di telefono
+- **Layout Personalizzato**: Interfaccia adattata a ciascun venditore, con offerte specifiche
+- **Menu del Mese**: Sezione dedicata con sondaggi interattivi per il feedback
+- **Personalizzazione Linguistica**: Possibilità di modificare la lingua dell'app
+
+### Backend e Integrazione
+- **API per Ristoranti**: Integrazione per la gestione e l'aggiornamento in tempo reale
+- **Database Ingredienti**: Informazioni complete su allergeni e valori nutrizionali
+- **Supporto Cliente**: FAQ, chat live e assistenza multicanale
+- **Offerte e Consegne**: Sistema di promozioni e gestione delle consegne
 
 ---
 
-**JSON di Riferimento**:  
+## ⚙️ Requisiti Non Funzionali
+
+### Performance
+- **Tempi di Caricamento**: Pagine caricate in meno di 2 secondi
+- **Esperienza Fluida**: Gestione simultanea di multiple interazioni
+- **Connettività**: Requisito di connessione internet stabile per funzionalità complete
+
+### User Experience
+- **Responsive Design**: Ottimizzazione per dispositivi mobili, tablet e desktop
+- **Accessibilità**: Conformità alle linee guida di accessibilità standard
+
+### Infrastruttura
+- **Scalabilità**: Architettura progettata per gestire crescita di utenza senza degradare le prestazioni
+- **Sicurezza**: Protezione dei dati personali e transazioni
+
+---
+
+## 🏛️ Requisiti di Dominio
+
+### Gestione Finanziaria
+- **Pagamenti Digitali**: Integrazione sicura di sistemi di pagamento
+- **Transazioni Offline**: Supporto per operazioni senza connessione diretta tramite il wallet digitale
+
+### Integrazione Sistemi
+- **Compatibilità API**: Collegamento con sistemi gestionali esistenti nei ristoranti
+- **Flusso di Lavoro**: Garantire operazioni armonizzate in tempo reale
+
+### Sicurezza Alimentare
+- **Tracciabilità Ingredienti**: Database dettagliato per personalizzazioni sicure
+- **Informazioni Allergeni**: Gestione accurata delle informazioni su allergeni
+
+### Marketing e Fidelizzazione
+- **Promozioni**: Sistema di offerte speciali e opzioni di consegna
+- **Programma Fedeltà**: Meccanismi di incentivazione all'uso continuativo
+
+---
+
+## 🗄️ Struttura Dati
+
+Di seguito un esempio della struttura dati utilizzata nell'applicazione:
+
+<details>
+<summary><b>Visualizza esempio JSON</b></summary>
+
 ```json
 {
   "PaymentMethods": [
@@ -268,48 +339,67 @@ NeatMenu, Eatsee, Menubly, Almenu, OctoTable, BuonMenu, MenuDrive, Square for Re
         }
       }
     ]
-  },
-  "OrderNotifications": {
-    "OrderID": "order123",
-    "Status": "Delivered",
-    "Timestamp": "2023-10-01T12:30:00Z",
-    "Message": "Your order has been delivered successfully."
-  },
-  "SupportPage": {
-    "FAQ": [
-      {
-        "Question": "How can I track my order?",
-        "Answer": "You can track your order by clicking on the 'Track Order' link in your order confirmation email."
-      }
-    ],
-    "LiveChat": {
-      "Status": "Online",
-      "AgentName": "John Doe"
-    },
-    "EmailSupport": "support@example.com",
-    "PhoneSupport": "+12 345 678 9"
-  },
-  "RegistrationLogin": {
-    "Registration": {
-      "Email": "user@example.com",
-      "Password": "password123",
-      "PhoneNumber": "+12 345 678 9",
-      "SocialMedia": ["Facebook", "Google"]
-    },
-    "Login": {
-      "Email": "user@example.com",
-      "Password": "password123"
-    }
-  },
-  "LoyaltyProgram": {
-    "UserID": "zio",
-    "Points": 150,
-    "Rewards": [
-      {
-        "RewardID": "reward001",
-        "Description": "10% off on your next order"
-      }
-    ]
   }
 }
 ```
+</details>
+
+### Relazioni tra Entità
+
+```
+Cliente 1:N Ordini
+Ristoratore 1:N Menu
+Menu 1:N Prodotti
+Prodotto 1:N Ingredienti
+Ordine N:M Prodotti
+Wallet 1:1 Cliente
+Transazione N:1 Cliente
+```
+
+---
+
+## 💻 Tecnologie Utilizzate
+
+<table>
+  <tr>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/nodejs.png"/><br>Node.js</td>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/docker.png"/><br>Docker</td>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/javascript.png"/><br>JavaScript</td>
+    <td align="center"><img src="https://img.icons8.com/color/48/000000/google-logo.png"/><br>OAuth</td>
+  </tr>
+</table>
+
+### Architettura Tecnica
+
+- **Frontend**: HTML5, CSS3, JavaScript (React.js)
+- **Backend**: Node.js, Express.js
+- **Persistenza**: JSON file-based (MVP), espandibile a database relazionale
+- **Containerizzazione**: Docker per deployment semplificato
+- **Autenticazione**: Sistema locale + Google OAuth
+
+---
+
+## 🥊 Concorrenza
+
+Il mercato delle piattaforme di ordinazione per ristoranti comprende diversi competitor:
+
+- **NeatMenu, Eatsee, Menubly** - Piattaforme specializzate in menu digitali
+- **Almenu, OctoTable, BuonMenu** - Soluzioni per la gestione degli ordini
+- **MenuDrive, Square for Restaurants** - Sistemi integrati POS e ordinazione
+- **Ordermark, Flipdish, Yumm** - Aggregatori di ordini e consegne
+
+**Vantaggi competitivi di YourBite**:
+- Sistema integrato di wallet ricaricabile anche offline
+- Personalizzazione avanzata degli ingredienti
+- Interfaccia utente altamente intuitiva
+- Integrazione diretta con i flussi di lavoro esistenti dei ristoratori
+
+---
+
+<div align="center">
+  <p>Sviluppato da <b>Fabio Coticelli</b></p>
+  <p>
+    <a href="mailto:fabiocoticelli06@gmail.com">fabiocoticelli06@gmail.com</a> |
+    <a href="https://github.com/coticelli">GitHub</a>
+  </p>
+</div>
