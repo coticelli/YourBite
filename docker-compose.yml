@@ -1,0 +1,15 @@
+version: '3'
+services:
+  yourbite:
+    image: yourbite:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - SESSION_SECRET=coticelli_dev_secret
+      - GOOGLE_CLIENT_ID=dummy_client_id
+      - GOOGLE_CLIENT_SECRET=dummy_client_secret
+      - GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+    volumes:
+      - ./data:/usr/src/app/data
