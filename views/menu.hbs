@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourBite - Gestione Menu</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .menu-container {
+            padding: 20px;
+        }
+        .menu-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .add-item-btn {
+            background: #ff5100;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .add-item-btn:hover {
+            background: #e04600;
+        }
+        .categories-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .category-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .category-btn.active {
+            background: #ff5100;
+            color: white;
+            border-color: #ff5100;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .menu-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+        .menu-item-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        .menu-item-details {
+            padding: 15px;
+        }
+        .menu-item-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .menu-item-title h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .menu-item-price {
+            font-weight: bold;
+            color: #ff5100;
+        }
+        .menu-item-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .menu-item-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .edit-btn {
+            background: #e7f7ee;
+            color: #00a86b;
+        }
+        .delete-btn {
+            background: #ffe7e7;
+            color: #ff4d4d;
+        }
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        .active-badge {
+            background: #e7f7ee;
+            color: #00a86b;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .inactive-badge {
+            background: #f0f0f0;
+            color: #777;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body class="capo-role">
+    <!-- Header migliorato con gradiente arancione -->
+    <header>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="YourBite Logo" class="logo">
+            <h1 class="header-title">YourBite</h1>
+        </div>
+        
+        <div class="header-nav">
+            <a href="/capo/dashboard">Dashboard</a>
+            <a href="/capo/ordini">Ordini</a>
+            <a href="/capo/menu" class="active">Menu</a>
+            <a href="/capo/clienti">Clienti</a>
+            <a href="/capo/impostazioni">Impostazioni</a>
+            
+            <span class="user-role-badge">Capo</span>
+        </div>
+    </header>
+
+    <div class="menu-container">
+        <h1>Gestione Menu</h1>
+        <p>Aggiungi, modifica o rimuovi prodotti dal tuo menu</p>
+
+        <div class="menu-actions">
+            <div>
+                <button class="add-item-btn">+ Aggiungi Prodotto</button>
+            </div>
+            <div>
+                <select>
+                    <option value="all">Tutti i prodotti</option>
+                    <option value="active">Prodotti attivi</option>
+                    <option value="inactive">Prodotti inattivi</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="categories-nav">
+            <button class="category-btn active">Tutti</button>
+            <button class="category-btn">Panini</button>
+            <button class="category-btn">Pizze</button>
+            <button class="category-btn">Patatine</button>
+            <button class="category-btn">Bevande</button>
+            <button class="category-btn">Dessert</button>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item">
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?burger')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>Burger Classic <span class="active-badge">Attivo</span></h3>
+                        <div class="menu-item-price">€8.90</div>
+                    </div>
+                    <div class="menu-item-description">
+                        Hamburger di manzo, insalata, pomodoro, cipolla e salsa speciale.
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn">Modifica</button>
+                        <button class="action-btn delete-btn">Elimina</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?pizza')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>Pizza Margherita <span class="active-badge">Attivo</span></h3>
+                        <div class="menu-item-price">€9.50</div>
+                    </div>
+                    <div class="menu-item-description">
+                        Pomodoro, mozzarella, basilico e olio d'oliva.
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn">Modifica</button>
+                        <button class="action-btn delete-btn">Elimina</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?fries')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>Patatine Fritte <span class="active-badge">Attivo</span></h3>
+                        <div class="menu-item-price">€3.50</div>
+                    </div>
+                    <div class="menu-item-description">
+                        Patatine croccanti servite con ketchup o maionese.
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn">Modifica</button>
+                        <button class="action-btn delete-btn">Elimina</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?chicken')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>Chicken Burger <span class="active-badge">Attivo</span></h3>
+                        <div class="menu-item-price">€7.90</div>
+                    </div>
+                    <div class="menu-item-description">
+                        Hamburger di pollo, insalata, pomodoro e salsa ai peperoni.
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn">Modifica</button>
+                        <button class="action-btn delete-btn">Elimina</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?cola')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>Cola <span class="active-badge">Attivo</span></h3>
+                        <div class="menu-item-price">€2.50</div>
+                    </div>
+                    <div class="menu-item-description">
+                        Bevanda gassata in lattina 33cl.
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn">Modifica</button>
+                        <button class="action-btn delete-btn">Elimina</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-item">
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?dessert')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>Tiramisù <span class="inactive-badge">Inattivo</span></h3>
+                        <div class="menu-item-price">€4.90</div>
+                    </div>
+                    <div class="menu-item-description">
+                        Dolce cremoso al mascarpone con caffè e cacao.
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn">Modifica</button>
+                        <button class="action-btn delete-btn">Elimina</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

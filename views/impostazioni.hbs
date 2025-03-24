@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourBite - Impostazioni</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .settings-container {
+            padding: 20px;
+        }
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+        .settings-nav {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .settings-nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .settings-nav li {
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .settings-nav li.active {
+            background-color: #ff5100;
+            color: white;
+        }
+        .settings-nav li:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+        .settings-content {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        .settings-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #ff5100;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+        .toggle-label {
+            font-weight: 500;
+        }
+        .save-btn {
+            background: #ff5100;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .save-btn:hover {
+            background: #e04600;
+        }
+        .logo-preview {
+            width: 150px;
+            height: 150px;
+            border: 1px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .upload-btn {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="capo-role">
+    <!-- Header migliorato con gradiente arancione -->
+    <header>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="YourBite Logo" class="logo">
+            <h1 class="header-title">YourBite</h1>
+        </div>
+        
+        <div class="header-nav">
+            <a href="/capo/dashboard">Dashboard</a>
+            <a href="/capo/ordini">Ordini</a>
+            <a href="/capo/menu">Menu</a>
+            <a href="/capo/clienti">Clienti</a>
+            <a href="/capo/impostazioni" class="active">Impostazioni</a>
+            
+            <span class="user-role-badge">Capo</span>
+        </div>
+    </header>
+
+    <div class="settings-container">
+        <h1>Impostazioni</h1>
+        <p>Configura le impostazioni del tuo locale</p>
+
+        <div class="settings-grid">
+            <div class="settings-nav">
+                <ul>
+                    <li class="active">Profilo Locale</li>
+                    <li>Orari di Apertura</li>
+                    <li>Metodi di Pagamento</li>
+                    <li>Notifiche</li>
+                    <li>Gestione Utenti</li>
+                    <li>Sicurezza</li>
+                    <li>Applicazione Mobile</li>
+                </ul>
+            </div>
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h2>Profilo Locale</h2>
+                    <div class="form-group">
+                        <label for="restaurant-name">Nome del Locale</label>
+                        <input type="text" id="restaurant-name" value="Fast Food da Mario">
+                    </div>
+                    <div class="form-group">
+                        <label for="restaurant-address">Indirizzo</label>
+                        <input type="text" id="restaurant-address" value="Via Roma 123, Milano">
+                    </div>
+                    <div class="form-group">
+                        <label for="restaurant-phone">Telefono</label>
+                        <input type="text" id="restaurant-phone" value="+39 02 1234567">
+                    </div>
+                    <div class="form-group">
+                        <label for="restaurant-email">Email</label>
+                        <input type="email" id="restaurant-email" value="info@fastfoodmario.it">
+                    </div>
+                    <div class="form-group">
+                        <label for="restaurant-description">Descrizione</label>
+                        <textarea id="restaurant-description" rows="4">Fast Food da Mario offre una vasta selezione di panini, pizze, patatine fritte e bevande. Serviamo cibo di qualità dal 2010.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Logo</label>
+                        <div class="logo-preview">
+                            <img src="/images/logo.png" alt="Logo del ristorante">
+                        </div>
+                        <button class="upload-btn">Carica Nuovo Logo</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2>Impostazioni di Visualizzazione</h2>
+                    <div class="toggle-row">
+                        <span class="toggle-label">Mostra prezzi con IVA inclusa</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">Mostra ingredienti dei prodotti</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">Mostra valori nutrizionali</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">Mostra allergeni</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="save-btn">Salva Modifiche</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

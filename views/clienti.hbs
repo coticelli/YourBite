@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourBite - Gestione Clienti</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .customers-container {
+            padding: 20px;
+        }
+        .customers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            max-width: 400px;
+        }
+        .search-box input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .search-btn {
+            background: #ff5100;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-btn:hover {
+            background: #e04600;
+        }
+        .export-btn {
+            background: #3a5bd9;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .export-btn:hover {
+            background: #2b4baa;
+        }
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .customers-table th, .customers-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .customers-table th {
+            background-color: #f8f8f8;
+            color: #555;
+            font-weight: 600;
+        }
+        .customers-table tr:last-child td {
+            border-bottom: none;
+        }
+        .customers-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .customer-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-active {
+            background-color: #e7f7ee;
+            color: #00a86b;
+        }
+        .status-inactive {
+            background-color: #f0f0f0;
+            color: #777;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background 0.3s;
+        }
+        .view-btn {
+            background: #e7f1fd;
+            color: #3a5bd9;
+        }
+        .edit-btn {
+            background: #e7f7ee;
+            color: #00a86b;
+        }
+        .delete-btn {
+            background: #ffe7e7;
+            color: #ff4d4d;
+        }
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            color: #555;
+            text-decoration: none;
+        }
+        .pagination a.active {
+            background-color: #ff5100;
+            color: white;
+            border-color: #ff5100;
+        }
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+        }
+        .loyalty-points {
+            background: #fff8e6;
+            color: #ffa500;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="capo-role">
+    <!-- Header migliorato con gradiente arancione -->
+    <header>
+        <div class="logo-container">
+            <img src="/images/logo.png" alt="YourBite Logo" class="logo">
+            <h1 class="header-title">YourBite</h1>
+        </div>
+        
+        <div class="header-nav">
+            <a href="/capo/dashboard">Dashboard</a>
+            <a href="/capo/ordini">Ordini</a>
+            <a href="/capo/menu">Menu</a>
+            <a href="/capo/clienti" class="active">Clienti</a>
+            <a href="/capo/impostazioni">Impostazioni</a>
+            
+            <span class="user-role-badge">Capo</span>
+        </div>
+    </header>
+
+    <div class="customers-container">
+        <h1>Gestione Clienti</h1>
+        <p>Visualizza e gestisci i clienti del tuo locale</p>
+
+        <div class="customers-header">
+            <div class="search-box">
+                <input type="text" placeholder="Cerca cliente...">
+                <button class="search-btn">Cerca</button>
+            </div>
+            <button class="export-btn">Esporta Dati</button>
+        </div>
+
+        <table class="customers-table">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Numero Telefono</th>
+                    <th>Ordini</th>
+                    <th>Punti Fedeltà</th>
+                    <th>Stato</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?man')"></div>
+                            Marco Rossi
+                        </div>
+                    </td>
+                    <td>marco.rossi@email.com</td>
+                    <td>+39 123 456 7890</td>
+                    <td>12</td>
+                    <td><span class="loyalty-points">250 punti</span></td>
+                    <td><span class="customer-status status-active">Attivo</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Visualizza</button>
+                        <button class="action-btn edit-btn">Modifica</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?woman')"></div>
+                            Laura Bianchi
+                        </div>
+                    </td>
+                    <td>laura.bianchi@email.com</td>
+                    <td>+39 123 456 7891</td>
+                    <td>8</td>
+                    <td><span class="loyalty-points">180 punti</span></td>
+                    <td><span class="customer-status status-active">Attivo</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Visualizza</button>
+                        <button class="action-btn edit-btn">Modifica</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?man2')"></div>
+                            Giuseppe Verdi
+                        </div>
+                    </td>
+                    <td>giuseppe.verdi@email.com</td>
+                    <td>+39 123 456 7892</td>
+                    <td>15</td>
+                    <td><span class="loyalty-points">320 punti</span></td>
+                    <td><span class="customer-status status-active">Attivo</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Visualizza</button>
+                        <button class="action-btn edit-btn">Modifica</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?woman2')"></div>
+                            Francesca Neri
+                        </div>
+                    </td>
+                    <td>francesca.neri@email.com</td>
+                    <td>+39 123 456 7893</td>
+                    <td>5</td>
+                    <td><span class="loyalty-points">90 punti</span></td>
+                    <td><span class="customer-status status-active">Attivo</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Visualizza</button>
+                        <button class="action-btn edit-btn">Modifica</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?man3')"></div>
+                            Antonio Russo
+                        </div>
+                    </td>
+                    <td>antonio.russo@email.com</td>
+                    <td>+39 123 456 7894</td>
+                    <td>3</td>
+                    <td><span class="loyalty-points">60 punti</span></td>
+                    <td><span class="customer-status status-inactive">Inattivo</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Visualizza</button>
+                        <button class="action-btn edit-btn">Modifica</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?woman3')"></div>
+                            Elena Martini
+                        </div>
+                    </td>
+                    <td>elena.martini@email.com</td>
+                    <td>+39 123 456 7895</td>
+                    <td>10</td>
+                    <td><span class="loyalty-points">210 punti</span></td>
+                    <td><span class="customer-status status-active">Attivo</span></td>
+                    <td>
+                        <button class="action-btn view-btn">Visualizza</button>
+                        <button class="action-btn edit-btn">Modifica</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">&raquo;</a>
+        </div>
+    </div>
+</body>
+</html>

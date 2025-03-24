@@ -78,14 +78,7 @@ app.use('/', authRoutes);
 // Connessione al database SQLite
 const db = new sqlite3.Database('./database.db');
 
-// Disable Google OAuth if no client ID is provided
 
-/*
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    console.error('Google OAuth non configurato. Inserisci GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET nel file .env');
-} else {
-    console.log('Google OAuth configurato correttamente.');
-}
 // Configure Google Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -135,8 +128,7 @@ passport.use(new GoogleStrategy({
         }
     });
 }));
-*/
-console.log("Google OAuth authentication disabled");
+
 
 // Serialize user to session
 passport.serializeUser((user, done) => {
@@ -154,7 +146,373 @@ passport.deserializeUser((id, done) => {
 app.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email']
 }));
-
+// Aggiungi questo codice al tuo file server.js
+// Middleware per verificare il ruolo capo
+function verificaRuoloCapo(req, res, next) {
+    // Verifica se l'utente è autenticato e ha il ruolo di capo
+    if (req.isAuthenticated && req.user && req.user.ruolo === 'capo') {
+      return next();
+    }
+    // Reindirizza alla pagina di login se non autorizzato
+    res.redirect('/login');
+  }
+  
+  // ============= ROTTE DASHBOARD CAPO =============
+  // Pagina Dashboard principale
+  app.get('/capo/dashboard', verificaRuoloCapo, (req, res) => {
+    // Qui potresti recuperare dati reali dal database
+    const datiDashboard = {
+      ordiniTotali: 247,
+      venditeGiornaliere: 1895,
+      clientiNuovi: 18,
+      tempoMedioPreparazione: 12,
+      ordiniRecenti: [
+        { id: '1038', totale: '25.90', tempo: '10 minuti fa', stato: 'Completato' },
+        { id: '1037', totale: '18.50', tempo: '22 minuti fa', stato: 'Completato' },
+        { id: '1036', totale: '32.75', tempo: '35 minuti fa', stato: 'Completato' },
+        { id: '1035', totale: '15.20', tempo: '45 minuti fa', stato: 'Completato' }
+      ]
+    };
+    
+    res.render('dashboard', { 
+      titolo: 'Dashboard Capo', 
+      dati: datiDashboard,
+      user: req.user
+    });
+  });
+  
+  // ============= ROTTE GESTIONE ORDINI =============
+  // Pagina Ordini
+  app.get('/capo/ordini', verificaRuoloCapo, (req, res) => {
+    // Recupero ordini dal database
+    const ordini = [
+      { id: '1038', cliente: 'Marco Rossi', data: '24/03/2025 14:20', totale: '25.90', stato: 'Completato' },
+      { id: '1037', cliente: 'Laura Bianchi', data: '24/03/2025 14:05', totale: '18.50', stato: 'Completato' },
+      { id: '1036', cliente: 'Giuseppe Verdi', data: '24/03/2025 13:40', totale: '32.75', stato: 'Completato' },
+      { id: '1035', cliente: 'Francesca Neri', data: '24/03/2025 13:10', totale: '15.20', stato: 'Completato' },
+      { id: '1034', cliente: 'Antonio Russo', data: '24/03/2025 12:45', totale: '27.60', stato: 'In preparazione' },
+      { id: '1033', cliente: 'Elena Martini', data: '24/03/2025 12:30', totale: '21.40', stato: 'In attesa' }
+    ];
+    
+    res.render('ordini', { 
+      titolo: 'Gestione Ordini', 
+      ordini: ordini,
+      user: req.user
+    });
+  });
+  
+  // API per visualizzare dettagli ordine
+  app.get('/capo/ordini/:id', verificaRuoloCapo, (req, res) => {
+    const idOrdine = req.params.id;
+    // Qui recupereresti i dettagli dell'ordine dal database
+    res.json({ message: `Dettagli dell'ordine ${idOrdine}` });
+  });
+  
+  // API per aggiornare stato ordine
+  app.post('/capo/ordini/:id/stato', verificaRuoloCapo, (req, res) => {
+    const idOrdine = req.params.id;
+    const nuovoStato = req.body.stato;
+    
+    // Qui aggiorneresti lo stato dell'ordine nel database
+    res.json({ 
+      success: true, 
+      message: `Stato dell'ordine ${idOrdine} aggiornato a ${nuovoStato}` 
+    });
+  });
+  
+  // ============= ROTTE GESTIONE MENU =============
+  // Pagina Menu
+  app.get('/capo/menu', verificaRuoloCapo, (req, res) => {
+    // Recupero prodotti dal database
+    const prodotti = [
+      { 
+        id: 1, 
+        nome: 'Burger Classic', 
+        prezzo: 8.90, 
+        descrizione: 'Hamburger di manzo, insalata, pomodoro, cipolla e salsa speciale.', 
+        categoria: 'Panini',
+        stato: 'Attivo',
+        immagine: 'https://source.unsplash.com/random/300x200/?burger'
+      },
+      { 
+        id: 2, 
+        nome: 'Pizza Margherita', 
+        prezzo: 9.50, 
+        descrizione: 'Pomodoro, mozzarella, basilico e olio d\'oliva.', 
+        categoria: 'Pizze',
+        stato: 'Attivo',
+        immagine: 'https://source.unsplash.com/random/300x200/?pizza'
+      },
+      { 
+        id: 3, 
+        nome: 'Patatine Fritte', 
+        prezzo: 3.50, 
+        descrizione: 'Patatine croccanti servite con ketchup o maionese.', 
+        categoria: 'Patatine',
+        stato: 'Attivo',
+        immagine: 'https://source.unsplash.com/random/300x200/?fries'
+      },
+      { 
+        id: 4, 
+        nome: 'Chicken Burger', 
+        prezzo: 7.90, 
+        descrizione: 'Hamburger di pollo, insalata, pomodoro e salsa ai peperoni.', 
+        categoria: 'Panini',
+        stato: 'Attivo',
+        immagine: 'https://source.unsplash.com/random/300x200/?chicken'
+      },
+      { 
+        id: 5, 
+        nome: 'Cola', 
+        prezzo: 2.50, 
+        descrizione: 'Bevanda gassata in lattina 33cl.', 
+        categoria: 'Bevande',
+        stato: 'Attivo',
+        immagine: 'https://source.unsplash.com/random/300x200/?cola'
+      },
+      { 
+        id: 6, 
+        nome: 'Tiramisù', 
+        prezzo: 4.90, 
+        descrizione: 'Dolce cremoso al mascarpone con caffè e cacao.', 
+        categoria: 'Dessert',
+        stato: 'Inattivo',
+        immagine: 'https://source.unsplash.com/random/300x200/?dessert'
+      }
+    ];
+    
+    // Recupero categorie dal database
+    const categorie = ['Tutti', 'Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert'];
+    
+    res.render('menu', { 
+      titolo: 'Gestione Menu', 
+      prodotti: prodotti,
+      categorie: categorie,
+      user: req.user
+    });
+  });
+  
+  // API per aggiungere prodotto al menu
+  app.post('/capo/menu', verificaRuoloCapo, (req, res) => {
+    const nuovoProdotto = req.body;
+    
+    // Qui aggiungeresti il prodotto al database
+    res.json({ 
+      success: true, 
+      message: 'Prodotto aggiunto con successo',
+      prodotto: nuovoProdotto
+    });
+  });
+  
+  // API per aggiornare prodotto
+  app.put('/capo/menu/:id', verificaRuoloCapo, (req, res) => {
+    const idProdotto = req.params.id;
+    const datiProdotto = req.body;
+    
+    // Qui aggiorneresti il prodotto nel database
+    res.json({ 
+      success: true, 
+      message: `Prodotto ${idProdotto} aggiornato con successo`
+    });
+  });
+  
+  // API per eliminare prodotto
+  app.delete('/capo/menu/:id', verificaRuoloCapo, (req, res) => {
+    const idProdotto = req.params.id;
+    
+    // Qui elimineresti il prodotto dal database
+    res.json({ 
+      success: true, 
+      message: `Prodotto ${idProdotto} eliminato con successo`
+    });
+  });
+  
+  // ============= ROTTE GESTIONE CLIENTI =============
+  // Pagina Clienti
+  app.get('/capo/clienti', verificaRuoloCapo, (req, res) => {
+    // Recupero clienti dal database
+    const clienti = [
+      { 
+        id: 1, 
+        nome: 'Marco Rossi', 
+        email: 'marco.rossi@email.com', 
+        telefono: '+39 123 456 7890', 
+        ordini: 12, 
+        punti: 250,
+        stato: 'Attivo',
+        avatar: 'https://source.unsplash.com/random/100x100/?man'
+      },
+      { 
+        id: 2, 
+        nome: 'Laura Bianchi', 
+        email: 'laura.bianchi@email.com', 
+        telefono: '+39 123 456 7891', 
+        ordini: 8, 
+        punti: 180,
+        stato: 'Attivo',
+        avatar: 'https://source.unsplash.com/random/100x100/?woman'
+      },
+      { 
+        id: 3, 
+        nome: 'Giuseppe Verdi', 
+        email: 'giuseppe.verdi@email.com', 
+        telefono: '+39 123 456 7892', 
+        ordini: 15, 
+        punti: 320,
+        stato: 'Attivo',
+        avatar: 'https://source.unsplash.com/random/100x100/?man2'
+      },
+      { 
+        id: 4, 
+        nome: 'Francesca Neri', 
+        email: 'francesca.neri@email.com', 
+        telefono: '+39 123 456 7893', 
+        ordini: 5, 
+        punti: 90,
+        stato: 'Attivo',
+        avatar: 'https://source.unsplash.com/random/100x100/?woman2'
+      },
+      { 
+        id: 5, 
+        nome: 'Antonio Russo', 
+        email: 'antonio.russo@email.com', 
+        telefono: '+39 123 456 7894', 
+        ordini: 3, 
+        punti: 60,
+        stato: 'Inattivo',
+        avatar: 'https://source.unsplash.com/random/100x100/?man3'
+      },
+      { 
+        id: 6, 
+        nome: 'Elena Martini', 
+        email: 'elena.martini@email.com', 
+        telefono: '+39 123 456 7895', 
+        ordini: 10, 
+        punti: 210,
+        stato: 'Attivo',
+        avatar: 'https://source.unsplash.com/random/100x100/?woman3'
+      }
+    ];
+    
+    res.render('clienti', { 
+      titolo: 'Gestione Clienti', 
+      clienti: clienti,
+      user: req.user
+    });
+  });
+  
+  // API per visualizzare dettagli cliente
+  app.get('/capo/clienti/:id', verificaRuoloCapo, (req, res) => {
+    const idCliente = req.params.id;
+    
+    // Qui recupereresti i dettagli del cliente dal database
+    res.json({ message: `Dettagli del cliente ${idCliente}` });
+  });
+  
+  // API per aggiornare cliente
+  app.put('/capo/clienti/:id', verificaRuoloCapo, (req, res) => {
+    const idCliente = req.params.id;
+    const datiCliente = req.body;
+    
+    // Qui aggiorneresti i dati del cliente nel database
+    res.json({ 
+      success: true, 
+      message: `Cliente ${idCliente} aggiornato con successo`
+    });
+  });
+  
+  // API per esportare dati clienti
+  app.get('/capo/clienti/export/data', verificaRuoloCapo, (req, res) => {
+    // Qui genereresti un file CSV/Excel con i dati dei clienti
+    
+    // Esempio: invia un file fittizio
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=clienti.csv');
+    res.send('ID,Nome,Email,Telefono,Ordini,Punti,Stato\n1,Marco Rossi,marco.rossi@email.com,+39 123 456 7890,12,250,Attivo');
+  });
+  
+  // ============= ROTTE IMPOSTAZIONI =============
+  // Pagina Impostazioni
+  app.get('/capo/impostazioni', verificaRuoloCapo, (req, res) => {
+    // Recupero impostazioni dal database
+    const impostazioni = {
+      locale: {
+        nome: 'Fast Food da Mario',
+        indirizzo: 'Via Roma 123, Milano',
+        telefono: '+39 02 1234567',
+        email: 'info@fastfoodmario.it',
+        descrizione: 'Fast Food da Mario offre una vasta selezione di panini, pizze, patatine fritte e bevande. Serviamo cibo di qualità dal 2010.',
+        logo: '/images/logo.png'
+      },
+      visualizzazione: {
+        mostraPrezziIVA: true,
+        mostraIngredienti: true,
+        mostraValoriNutrizionali: false,
+        mostraAllergeni: true
+      }
+    };
+    
+    res.render('impostazioni', { 
+      titolo: 'Impostazioni', 
+      impostazioni: impostazioni,
+      user: req.user
+    });
+  });
+  
+  // API per aggiornare impostazioni
+  app.post('/capo/impostazioni', verificaRuoloCapo, (req, res) => {
+    const nuoveImpostazioni = req.body;
+    
+    // Qui aggiorneresti le impostazioni nel database
+    res.json({ 
+      success: true, 
+      message: 'Impostazioni aggiornate con successo'
+    });
+  });
+  
+  // API per caricare nuovo logo
+  app.post('/capo/impostazioni/logo', verificaRuoloCapo, (req, res) => {
+    // Qui gestiresti il caricamento del file e lo salveresti
+    
+    // Nota: questa route richiede un middleware per la gestione dei file
+    // come multer, che dovresti aggiungere al tuo server.js
+    
+    res.json({ 
+      success: true, 
+      message: 'Logo caricato con successo',
+      path: '/images/logo-nuovo.png' // Percorso del nuovo logo
+    });
+  });
+  
+  // ============= ALTRE ROTTE UTILI =============
+  // Rotta per ricevere notifiche in tempo reale (se usi websockets)
+  app.get('/capo/notifiche', verificaRuoloCapo, (req, res) => {
+    const notifiche = [
+      { id: 1, messaggio: 'Nuovo ordine ricevuto', tempo: '2 minuti fa', letto: false },
+      { id: 2, messaggio: 'Scorte di patatine in esaurimento', tempo: '1 ora fa', letto: true },
+      { id: 3, messaggio: 'Nuovo cliente registrato', tempo: '3 ore fa', letto: true }
+    ];
+    
+    res.json(notifiche);
+  });
+  
+  // Rotta per statistiche in tempo reale (per dashboard)
+  app.get('/capo/statistiche', verificaRuoloCapo, (req, res) => {
+    // Qui recupereresti dati in tempo reale dal database
+    const statistiche = {
+      venditeOggi: 1895,
+      confrontoIeri: '+12%',
+      ordiniOggi: 247,
+      clientiNuovi: 18,
+      prodottiPiuVenduti: [
+        { nome: 'Burger Classic', quantita: 78 },
+        { nome: 'Patatine Fritte', quantita: 65 },
+        { nome: 'Cola', quantita: 54 }
+      ]
+    };
+    
+    res.json(statistiche);
+  });
 app.get('/auth/google/callback',
     passport.authenticate('google', {
         failureRedirect: '/login'  
