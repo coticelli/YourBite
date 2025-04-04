@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/5f4dee4f-666a-4164-89f3-e05ac5350ff8" width="200">
   <h1>YourBite</h1>
   <p><i>Ordini personalizzati, esperienza senza paragoni</i></p>
   
