@@ -50,6 +50,8 @@ app.use(cors({ origin: '*' }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+console.log(process.env.GOOGLE_CALLBACK_URL)
+
 
 // Session configuration
 app.use(session({
@@ -94,9 +96,24 @@ const db = new sqlite3.Database('./database.db');
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback',
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
     scope: ['profile', 'email']
 },
+function(accessToken, refreshToken, profile, done) {
+    // Qui normalmente cerchi o crei l'utente nel database
+    // Esempio:
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+        return done(err, user);
+    });
+    
+    // Oppure per test:
+    // return done(null, {
+    //     id: profile.id,
+    //     username: profile.displayName,
+    //     email: profile.emails[0].value,
+    //     tipo: 'cliente' // Default tipo
+    // });
+}));
 (accessToken, refreshToken, profile, done) => {
     // Check if user exists in database using email
     const email = profile.emails && profile.emails.length > 0
@@ -138,7 +155,7 @@ passport.use(new GoogleStrategy({
             );
         }
     });
-}));
+};
 
 
 // Serialize user to session
@@ -539,7 +556,7 @@ function verificaRuoloCapo(req, res, next) {
     
     res.json(statistiche);
   });
-app.get('/auth/google/callback',
+  app.get('/auth/google/callback',
     passport.authenticate('google', {
         failureRedirect: '/login'  
     }),
