@@ -6,7 +6,7 @@
   ![Version](https://img.shields.io/badge/version-1.0.0-blue)
   ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
   
-  <p>Ultimo aggiornamento: 2023-03-24</p>
+  <p>Ultimo aggiornamento: 2025-04-04</p>
 </div>
 
 ---
