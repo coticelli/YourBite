@@ -16,6 +16,7 @@ const axios = require('axios');
 const http = require('http');
 const { Server } = require('socket.io');
 const exphbs = require('express-handlebars');
+const https = require('https');
 
 // Crea un'istanza di Express
 const app = express();
@@ -100,92 +101,48 @@ passport.use(new GoogleStrategy({
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
     scope: ['profile', 'email']
 },
-(accessToken, refreshToken, profile, done) => {
-    // Check if user exists in database using email
-    const email = profile.emails && profile.emails.length > 0
-        ? profile.emails[0].value
-        : null;
-   
-    if (!email) {
-        return done(new Error('No email found in Google profile'), null);
-    }
-   
-    db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, user) => {
-        if (err) {
-            return done(err);
-        }
-       
-        if (user) {
-            // User exists, return user
-            return done(null, user);
-        } else {
-            // User doesn't exist, create new user
-            const newUser = {
-                username: profile.displayName || email.split('@')[0],
-                email: email,
-                password: bcrypt.hashSync(Math.random().toString(36).slice(-8), 10), // Random password
-                tipo: 'cliente' // Default user type
-            };
-           
-            db.run('INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)',
-                [newUser.username, newUser.email, newUser.password, newUser.tipo],
-                function(err) {
-                    if (err) {
-                        return done(err);
-                    }
-                   
-                    // Get the inserted user
-                    newUser.id = this.lastID;
-                    return done(null, newUser);
-                }
-            );
-        }
-    });
-}));
+    (accessToken, refreshToken, profile, done) => {
+        // Check if user exists in database using email
+        const email = profile.emails && profile.emails.length > 0
+            ? profile.emails[0].value
+            : null;
 
+        if (!email) {
+            return done(new Error('No email found in Google profile'), null);
+        }
 
-(accessToken, refreshToken, profile, done) => {
-    // Check if user exists in database using email
-    const email = profile.emails && profile.emails.length > 0
-        ? profile.emails[0].value
-        : null;
-   
-    if (!email) {
-        return done(new Error('No email found in Google profile'), null);
-    }
-   
-    db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, user) => {
-        if (err) {
-            return done(err);
-        }
-       
-        if (user) {
-            // User exists, return user
-            return done(null, user);
-        } else {
-            // User doesn't exist, create new user
-            const newUser = {
-                username: profile.displayName || email.split('@')[0],
-                email: email,
-                password: bcrypt.hashSync(Math.random().toString(36).slice(-8), 10), // Random password
-                tipo: 'cliente' // Default user type
-            };
-           
-            db.run('INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)',
-                [newUser.username, newUser.email, newUser.password, newUser.tipo],
-                function(err) {
-                    if (err) {
-                        return done(err);
+        db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, user) => {
+            if (err) {
+                return done(err);
+            }
+
+            if (user) {
+                // User exists, return user
+                return done(null, user);
+            } else {
+                // User doesn't exist, create new user
+                const newUser = {
+                    username: profile.displayName || email.split('@')[0],
+                    email: email,
+                    password: bcrypt.hashSync(Math.random().toString(36).slice(-8), 10), // Random password
+                    tipo: 'cliente' // Default user type
+                };
+
+                db.run('INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)',
+                    [newUser.username, newUser.email, newUser.password, newUser.tipo],
+                    function (err) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        // Get the inserted user
+                        newUser.id = this.lastID;
+                        return done(null, newUser);
                     }
-                   
-                    // Get the inserted user
-                    newUser.id = this.lastID;
-                    return done(null, newUser);
-                }
-            );
-        }
-    });
-};
+                );
+            }
+        });
+    }));
 
 
 // Serialize user to session
@@ -211,7 +168,7 @@ function verificaRuoloCapo(req, res, next) {
     // Debug - Log delle informazioni di sessione
     console.log('Session User:', req.session.user);
     console.log('Passport User:', req.user);
-    
+
     // Verifica se l'utente è autenticato e ha il ruolo di capo
     // Controlla sia req.session.user che req.user (passport)
     if (
@@ -220,383 +177,383 @@ function verificaRuoloCapo(req, res, next) {
     ) {
         return next();
     }
-    
+
     // Per debug durante lo sviluppo - uncommenta per bypassare temporaneamente l'autenticazione
     // console.log('⚠️ DEBUG: Bypassando autenticazione per sviluppo');
     // return next();
-    
+
     // Reindirizza alla pagina di login se non autorizzato
     console.log('Accesso negato: l\'utente non è un capo o non è autenticato');
     return res.redirect('/login');
 }
-  
-  // ============= ROTTE DASHBOARD CAPO =============
-  // Pagina Dashboard principale
-  app.get('/dashboard', verificaRuoloCapo, (req, res) => {
+
+// ============= ROTTE DASHBOARD CAPO =============
+// Pagina Dashboard principale
+app.get('/dashboard', verificaRuoloCapo, (req, res) => {
     // Qui potresti recuperare dati reali dal database
     const datiDashboard = {
-      ordiniTotali: 247,
-      venditeGiornaliere: 1895,
-      clientiNuovi: 18,
-      tempoMedioPreparazione: 12,
-      ordiniRecenti: [
-        { id: '1038', totale: '25.90', tempo: '10 minuti fa', stato: 'Completato' },
-        { id: '1037', totale: '18.50', tempo: '22 minuti fa', stato: 'Completato' },
-        { id: '1036', totale: '32.75', tempo: '35 minuti fa', stato: 'Completato' },
-        { id: '1035', totale: '15.20', tempo: '45 minuti fa', stato: 'Completato' }
-      ]
+        ordiniTotali: 247,
+        venditeGiornaliere: 1895,
+        clientiNuovi: 18,
+        tempoMedioPreparazione: 12,
+        ordiniRecenti: [
+            { id: '1038', totale: '25.90', tempo: '10 minuti fa', stato: 'Completato' },
+            { id: '1037', totale: '18.50', tempo: '22 minuti fa', stato: 'Completato' },
+            { id: '1036', totale: '32.75', tempo: '35 minuti fa', stato: 'Completato' },
+            { id: '1035', totale: '15.20', tempo: '45 minuti fa', stato: 'Completato' }
+        ]
     };
-    
-    res.render('dashboard', { 
-      titolo: 'Dashboard Capo', 
-      dati: datiDashboard,
-      user: req.user
+
+    res.render('dashboard', {
+        titolo: 'Dashboard Capo',
+        dati: datiDashboard,
+        user: req.user
     });
-  });
-  
-  // ============= ROTTE GESTIONE ORDINI =============
-  // Pagina Ordini
-  app.get('/ordini', verificaRuoloCapo, (req, res) => {
+});
+
+// ============= ROTTE GESTIONE ORDINI =============
+// Pagina Ordini
+app.get('/ordini', verificaRuoloCapo, (req, res) => {
     // Recupero ordini dal database
     const ordini = [
-      { id: '1038', cliente: 'Marco Rossi', data: '24/03/2025 14:20', totale: '25.90', stato: 'Completato' },
-      { id: '1037', cliente: 'Laura Bianchi', data: '24/03/2025 14:05', totale: '18.50', stato: 'Completato' },
-      { id: '1036', cliente: 'Giuseppe Verdi', data: '24/03/2025 13:40', totale: '32.75', stato: 'Completato' },
-      { id: '1035', cliente: 'Francesca Neri', data: '24/03/2025 13:10', totale: '15.20', stato: 'Completato' },
-      { id: '1034', cliente: 'Antonio Russo', data: '24/03/2025 12:45', totale: '27.60', stato: 'In preparazione' },
-      { id: '1033', cliente: 'Elena Martini', data: '24/03/2025 12:30', totale: '21.40', stato: 'In attesa' }
+        { id: '1038', cliente: 'Marco Rossi', data: '24/03/2025 14:20', totale: '25.90', stato: 'Completato' },
+        { id: '1037', cliente: 'Laura Bianchi', data: '24/03/2025 14:05', totale: '18.50', stato: 'Completato' },
+        { id: '1036', cliente: 'Giuseppe Verdi', data: '24/03/2025 13:40', totale: '32.75', stato: 'Completato' },
+        { id: '1035', cliente: 'Francesca Neri', data: '24/03/2025 13:10', totale: '15.20', stato: 'Completato' },
+        { id: '1034', cliente: 'Antonio Russo', data: '24/03/2025 12:45', totale: '27.60', stato: 'In preparazione' },
+        { id: '1033', cliente: 'Elena Martini', data: '24/03/2025 12:30', totale: '21.40', stato: 'In attesa' }
     ];
-    
-    res.render('ordini', { 
-      titolo: 'Gestione Ordini', 
-      ordini: ordini,
-      user: req.user
+
+    res.render('ordini', {
+        titolo: 'Gestione Ordini',
+        ordini: ordini,
+        user: req.user
     });
-  });
-  
-  // API per visualizzare dettagli ordine
-  app.get('/ordini/:id', verificaRuoloCapo, (req, res) => {
+});
+
+// API per visualizzare dettagli ordine
+app.get('/ordini/:id', verificaRuoloCapo, (req, res) => {
     const idOrdine = req.params.id;
     // Qui recupereresti i dettagli dell'ordine dal database
     res.json({ message: `Dettagli dell'ordine ${idOrdine}` });
-  });
-  
-  // API per aggiornare stato ordine
-  app.post('/ordini/:id/stato', verificaRuoloCapo, (req, res) => {
+});
+
+// API per aggiornare stato ordine
+app.post('/ordini/:id/stato', verificaRuoloCapo, (req, res) => {
     const idOrdine = req.params.id;
     const nuovoStato = req.body.stato;
-    
+
     // Qui aggiorneresti lo stato dell'ordine nel database
-    res.json({ 
-      success: true, 
-      message: `Stato dell'ordine ${idOrdine} aggiornato a ${nuovoStato}` 
+    res.json({
+        success: true,
+        message: `Stato dell'ordine ${idOrdine} aggiornato a ${nuovoStato}`
     });
-  });
-  
-  // ============= ROTTE GESTIONE MENU =============
-  // Pagina Menu
-  app.get('/menu', verificaRuoloCapo, (req, res) => {
+});
+
+// ============= ROTTE GESTIONE MENU =============
+// Pagina Menu
+app.get('/menu', verificaRuoloCapo, (req, res) => {
     // Recupero prodotti dal database
     const prodotti = [
-      { 
-        id: 1, 
-        nome: 'Burger Classic', 
-        prezzo: 8.90, 
-        descrizione: 'Hamburger di manzo, insalata, pomodoro, cipolla e salsa speciale.', 
-        categoria: 'Panini',
-        stato: 'Attivo',
-        immagine: 'https://source.unsplash.com/random/300x200/?burger'
-      },
-      { 
-        id: 2, 
-        nome: 'Pizza Margherita', 
-        prezzo: 9.50, 
-        descrizione: 'Pomodoro, mozzarella, basilico e olio d\'oliva.', 
-        categoria: 'Pizze',
-        stato: 'Attivo',
-        immagine: 'https://source.unsplash.com/random/300x200/?pizza'
-      },
-      { 
-        id: 3, 
-        nome: 'Patatine Fritte', 
-        prezzo: 3.50, 
-        descrizione: 'Patatine croccanti servite con ketchup o maionese.', 
-        categoria: 'Patatine',
-        stato: 'Attivo',
-        immagine: 'https://source.unsplash.com/random/300x200/?fries'
-      },
-      { 
-        id: 4, 
-        nome: 'Chicken Burger', 
-        prezzo: 7.90, 
-        descrizione: 'Hamburger di pollo, insalata, pomodoro e salsa ai peperoni.', 
-        categoria: 'Panini',
-        stato: 'Attivo',
-        immagine: 'https://source.unsplash.com/random/300x200/?chicken'
-      },
-      { 
-        id: 5, 
-        nome: 'Cola', 
-        prezzo: 2.50, 
-        descrizione: 'Bevanda gassata in lattina 33cl.', 
-        categoria: 'Bevande',
-        stato: 'Attivo',
-        immagine: 'https://source.unsplash.com/random/300x200/?cola'
-      },
-      { 
-        id: 6, 
-        nome: 'Tiramisù', 
-        prezzo: 4.90, 
-        descrizione: 'Dolce cremoso al mascarpone con caffè e cacao.', 
-        categoria: 'Dessert',
-        stato: 'Inattivo',
-        immagine: 'https://source.unsplash.com/random/300x200/?dessert'
-      }
+        {
+            id: 1,
+            nome: 'Burger Classic',
+            prezzo: 8.90,
+            descrizione: 'Hamburger di manzo, insalata, pomodoro, cipolla e salsa speciale.',
+            categoria: 'Panini',
+            stato: 'Attivo',
+            immagine: 'https://source.unsplash.com/random/300x200/?burger'
+        },
+        {
+            id: 2,
+            nome: 'Pizza Margherita',
+            prezzo: 9.50,
+            descrizione: 'Pomodoro, mozzarella, basilico e olio d\'oliva.',
+            categoria: 'Pizze',
+            stato: 'Attivo',
+            immagine: 'https://source.unsplash.com/random/300x200/?pizza'
+        },
+        {
+            id: 3,
+            nome: 'Patatine Fritte',
+            prezzo: 3.50,
+            descrizione: 'Patatine croccanti servite con ketchup o maionese.',
+            categoria: 'Patatine',
+            stato: 'Attivo',
+            immagine: 'https://source.unsplash.com/random/300x200/?fries'
+        },
+        {
+            id: 4,
+            nome: 'Chicken Burger',
+            prezzo: 7.90,
+            descrizione: 'Hamburger di pollo, insalata, pomodoro e salsa ai peperoni.',
+            categoria: 'Panini',
+            stato: 'Attivo',
+            immagine: 'https://source.unsplash.com/random/300x200/?chicken'
+        },
+        {
+            id: 5,
+            nome: 'Cola',
+            prezzo: 2.50,
+            descrizione: 'Bevanda gassata in lattina 33cl.',
+            categoria: 'Bevande',
+            stato: 'Attivo',
+            immagine: 'https://source.unsplash.com/random/300x200/?cola'
+        },
+        {
+            id: 6,
+            nome: 'Tiramisù',
+            prezzo: 4.90,
+            descrizione: 'Dolce cremoso al mascarpone con caffè e cacao.',
+            categoria: 'Dessert',
+            stato: 'Inattivo',
+            immagine: 'https://source.unsplash.com/random/300x200/?dessert'
+        }
     ];
-    
+
     // Recupero categorie dal database
     const categorie = ['Tutti', 'Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert'];
-    
-    res.render('menu', { 
-      titolo: 'Gestione Menu', 
-      prodotti: prodotti,
-      categorie: categorie,
-      user: req.user
+
+    res.render('menu', {
+        titolo: 'Gestione Menu',
+        prodotti: prodotti,
+        categorie: categorie,
+        user: req.user
     });
-  });
-  
-  // API per aggiungere prodotto al menu
-  app.post('/menu', verificaRuoloCapo, (req, res) => {
+});
+
+// API per aggiungere prodotto al menu
+app.post('/menu', verificaRuoloCapo, (req, res) => {
     const nuovoProdotto = req.body;
-    
+
     // Qui aggiungeresti il prodotto al database
-    res.json({ 
-      success: true, 
-      message: 'Prodotto aggiunto con successo',
-      prodotto: nuovoProdotto
+    res.json({
+        success: true,
+        message: 'Prodotto aggiunto con successo',
+        prodotto: nuovoProdotto
     });
-  });
-  
-  // API per aggiornare prodotto
-  app.put('/menu/:id', verificaRuoloCapo, (req, res) => {
+});
+
+// API per aggiornare prodotto
+app.put('/menu/:id', verificaRuoloCapo, (req, res) => {
     const idProdotto = req.params.id;
     const datiProdotto = req.body;
-    
+
     // Qui aggiorneresti il prodotto nel database
-    res.json({ 
-      success: true, 
-      message: `Prodotto ${idProdotto} aggiornato con successo`
+    res.json({
+        success: true,
+        message: `Prodotto ${idProdotto} aggiornato con successo`
     });
-  });
-  
-  // API per eliminare prodotto
-  app.delete('/menu/:id', verificaRuoloCapo, (req, res) => {
+});
+
+// API per eliminare prodotto
+app.delete('/menu/:id', verificaRuoloCapo, (req, res) => {
     const idProdotto = req.params.id;
-    
+
     // Qui elimineresti il prodotto dal database
-    res.json({ 
-      success: true, 
-      message: `Prodotto ${idProdotto} eliminato con successo`
+    res.json({
+        success: true,
+        message: `Prodotto ${idProdotto} eliminato con successo`
     });
-  });
-  
-  // ============= ROTTE GESTIONE CLIENTI =============
-  // Pagina Clienti
-  app.get('/clienti', verificaRuoloCapo, (req, res) => {
+});
+
+// ============= ROTTE GESTIONE CLIENTI =============
+// Pagina Clienti
+app.get('/clienti', verificaRuoloCapo, (req, res) => {
     // Recupero clienti dal database
     const clienti = [
-      { 
-        id: 1, 
-        nome: 'Marco Rossi', 
-        email: 'marco.rossi@email.com', 
-        telefono: '+39 123 456 7890', 
-        ordini: 12, 
-        punti: 250,
-        stato: 'Attivo',
-        avatar: 'https://source.unsplash.com/random/100x100/?man'
-      },
-      { 
-        id: 2, 
-        nome: 'Laura Bianchi', 
-        email: 'laura.bianchi@email.com', 
-        telefono: '+39 123 456 7891', 
-        ordini: 8, 
-        punti: 180,
-        stato: 'Attivo',
-        avatar: 'https://source.unsplash.com/random/100x100/?woman'
-      },
-      { 
-        id: 3, 
-        nome: 'Giuseppe Verdi', 
-        email: 'giuseppe.verdi@email.com', 
-        telefono: '+39 123 456 7892', 
-        ordini: 15, 
-        punti: 320,
-        stato: 'Attivo',
-        avatar: 'https://source.unsplash.com/random/100x100/?man2'
-      },
-      { 
-        id: 4, 
-        nome: 'Francesca Neri', 
-        email: 'francesca.neri@email.com', 
-        telefono: '+39 123 456 7893', 
-        ordini: 5, 
-        punti: 90,
-        stato: 'Attivo',
-        avatar: 'https://source.unsplash.com/random/100x100/?woman2'
-      },
-      { 
-        id: 5, 
-        nome: 'Antonio Russo', 
-        email: 'antonio.russo@email.com', 
-        telefono: '+39 123 456 7894', 
-        ordini: 3, 
-        punti: 60,
-        stato: 'Inattivo',
-        avatar: 'https://source.unsplash.com/random/100x100/?man3'
-      },
-      { 
-        id: 6, 
-        nome: 'Elena Martini', 
-        email: 'elena.martini@email.com', 
-        telefono: '+39 123 456 7895', 
-        ordini: 10, 
-        punti: 210,
-        stato: 'Attivo',
-        avatar: 'https://source.unsplash.com/random/100x100/?woman3'
-      }
+        {
+            id: 1,
+            nome: 'Marco Rossi',
+            email: 'marco.rossi@email.com',
+            telefono: '+39 123 456 7890',
+            ordini: 12,
+            punti: 250,
+            stato: 'Attivo',
+            avatar: 'https://source.unsplash.com/random/100x100/?man'
+        },
+        {
+            id: 2,
+            nome: 'Laura Bianchi',
+            email: 'laura.bianchi@email.com',
+            telefono: '+39 123 456 7891',
+            ordini: 8,
+            punti: 180,
+            stato: 'Attivo',
+            avatar: 'https://source.unsplash.com/random/100x100/?woman'
+        },
+        {
+            id: 3,
+            nome: 'Giuseppe Verdi',
+            email: 'giuseppe.verdi@email.com',
+            telefono: '+39 123 456 7892',
+            ordini: 15,
+            punti: 320,
+            stato: 'Attivo',
+            avatar: 'https://source.unsplash.com/random/100x100/?man2'
+        },
+        {
+            id: 4,
+            nome: 'Francesca Neri',
+            email: 'francesca.neri@email.com',
+            telefono: '+39 123 456 7893',
+            ordini: 5,
+            punti: 90,
+            stato: 'Attivo',
+            avatar: 'https://source.unsplash.com/random/100x100/?woman2'
+        },
+        {
+            id: 5,
+            nome: 'Antonio Russo',
+            email: 'antonio.russo@email.com',
+            telefono: '+39 123 456 7894',
+            ordini: 3,
+            punti: 60,
+            stato: 'Inattivo',
+            avatar: 'https://source.unsplash.com/random/100x100/?man3'
+        },
+        {
+            id: 6,
+            nome: 'Elena Martini',
+            email: 'elena.martini@email.com',
+            telefono: '+39 123 456 7895',
+            ordini: 10,
+            punti: 210,
+            stato: 'Attivo',
+            avatar: 'https://source.unsplash.com/random/100x100/?woman3'
+        }
     ];
-    
-    res.render('clienti', { 
-      titolo: 'Gestione Clienti', 
-      clienti: clienti,
-      user: req.user
+
+    res.render('clienti', {
+        titolo: 'Gestione Clienti',
+        clienti: clienti,
+        user: req.user
     });
-  });
-  
-  // API per visualizzare dettagli cliente
-  app.get('/clienti/:id', verificaRuoloCapo, (req, res) => {
+});
+
+// API per visualizzare dettagli cliente
+app.get('/clienti/:id', verificaRuoloCapo, (req, res) => {
     const idCliente = req.params.id;
-    
+
     // Qui recupereresti i dettagli del cliente dal database
     res.json({ message: `Dettagli del cliente ${idCliente}` });
-  });
-  
-  // API per aggiornare cliente
-  app.put('/clienti/:id', verificaRuoloCapo, (req, res) => {
+});
+
+// API per aggiornare cliente
+app.put('/clienti/:id', verificaRuoloCapo, (req, res) => {
     const idCliente = req.params.id;
     const datiCliente = req.body;
-    
+
     // Qui aggiorneresti i dati del cliente nel database
-    res.json({ 
-      success: true, 
-      message: `Cliente ${idCliente} aggiornato con successo`
+    res.json({
+        success: true,
+        message: `Cliente ${idCliente} aggiornato con successo`
     });
-  });
-  
-  // API per esportare dati clienti
-  app.get('/clienti/export/data', verificaRuoloCapo, (req, res) => {
+});
+
+// API per esportare dati clienti
+app.get('/clienti/export/data', verificaRuoloCapo, (req, res) => {
     // Qui genereresti un file CSV/Excel con i dati dei clienti
-    
+
     // Esempio: invia un file fittizio
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=clienti.csv');
     res.send('ID,Nome,Email,Telefono,Ordini,Punti,Stato\n1,Marco Rossi,marco.rossi@email.com,+39 123 456 7890,12,250,Attivo');
-  });
-  
-  // ============= ROTTE IMPOSTAZIONI =============
-  // Pagina Impostazioni
-  app.get('/impostazioni', verificaRuoloCapo, (req, res) => {
+});
+
+// ============= ROTTE IMPOSTAZIONI =============
+// Pagina Impostazioni
+app.get('/impostazioni', verificaRuoloCapo, (req, res) => {
     // Recupero impostazioni dal database
     const impostazioni = {
-      locale: {
-        nome: 'Fast Food da Mario',
-        indirizzo: 'Via Roma 123, Milano',
-        telefono: '+39 02 1234567',
-        email: 'info@fastfoodmario.it',
-        descrizione: 'Fast Food da Mario offre una vasta selezione di panini, pizze, patatine fritte e bevande. Serviamo cibo di qualità dal 2010.',
-        logo: '/images/logo.png'
-      },
-      visualizzazione: {
-        mostraPrezziIVA: true,
-        mostraIngredienti: true,
-        mostraValoriNutrizionali: false,
-        mostraAllergeni: true
-      }
+        locale: {
+            nome: 'Fast Food da Mario',
+            indirizzo: 'Via Roma 123, Milano',
+            telefono: '+39 02 1234567',
+            email: 'info@fastfoodmario.it',
+            descrizione: 'Fast Food da Mario offre una vasta selezione di panini, pizze, patatine fritte e bevande. Serviamo cibo di qualità dal 2010.',
+            logo: '/images/logo.png'
+        },
+        visualizzazione: {
+            mostraPrezziIVA: true,
+            mostraIngredienti: true,
+            mostraValoriNutrizionali: false,
+            mostraAllergeni: true
+        }
     };
-    
-    res.render('impostazioni', { 
-      titolo: 'Impostazioni', 
-      impostazioni: impostazioni,
-      user: req.user
+
+    res.render('impostazioni', {
+        titolo: 'Impostazioni',
+        impostazioni: impostazioni,
+        user: req.user
     });
-  });
-  
-  // API per aggiornare impostazioni
-  app.post('/impostazioni', verificaRuoloCapo, (req, res) => {
+});
+
+// API per aggiornare impostazioni
+app.post('/impostazioni', verificaRuoloCapo, (req, res) => {
     const nuoveImpostazioni = req.body;
-    
+
     // Qui aggiorneresti le impostazioni nel database
-    res.json({ 
-      success: true, 
-      message: 'Impostazioni aggiornate con successo'
+    res.json({
+        success: true,
+        message: 'Impostazioni aggiornate con successo'
     });
-  });
-  
-  // API per caricare nuovo logo
-  app.post('/impostazioni/logo', verificaRuoloCapo, (req, res) => {
+});
+
+// API per caricare nuovo logo
+app.post('/impostazioni/logo', verificaRuoloCapo, (req, res) => {
     // Qui gestiresti il caricamento del file e lo salveresti
-    
+
     // Nota: questa route richiede un middleware per la gestione dei file
     // come multer, che dovresti aggiungere al tuo server.js
-    
-    res.json({ 
-      success: true, 
-      message: 'Logo caricato con successo',
-      path: '/images/logo-nuovo.png' // Percorso del nuovo logo
+
+    res.json({
+        success: true,
+        message: 'Logo caricato con successo',
+        path: '/images/logo-nuovo.png' // Percorso del nuovo logo
     });
-  });
-  
-  // ============= ALTRE ROTTE UTILI =============
-  // Rotta per ricevere notifiche in tempo reale (se usi websockets)
-  app.get('/notifiche', verificaRuoloCapo, (req, res) => {
+});
+
+// ============= ALTRE ROTTE UTILI =============
+// Rotta per ricevere notifiche in tempo reale (se usi websockets)
+app.get('/notifiche', verificaRuoloCapo, (req, res) => {
     const notifiche = [
-      { id: 1, messaggio: 'Nuovo ordine ricevuto', tempo: '2 minuti fa', letto: false },
-      { id: 2, messaggio: 'Scorte di patatine in esaurimento', tempo: '1 ora fa', letto: true },
-      { id: 3, messaggio: 'Nuovo cliente registrato', tempo: '3 ore fa', letto: true }
+        { id: 1, messaggio: 'Nuovo ordine ricevuto', tempo: '2 minuti fa', letto: false },
+        { id: 2, messaggio: 'Scorte di patatine in esaurimento', tempo: '1 ora fa', letto: true },
+        { id: 3, messaggio: 'Nuovo cliente registrato', tempo: '3 ore fa', letto: true }
     ];
-    
+
     res.json(notifiche);
-  });
-  
-  // Rotta per statistiche in tempo reale (per dashboard)
-  app.get('/statistiche', verificaRuoloCapo, (req, res) => {
+});
+
+// Rotta per statistiche in tempo reale (per dashboard)
+app.get('/statistiche', verificaRuoloCapo, (req, res) => {
     // Qui recupereresti dati in tempo reale dal database
     const statistiche = {
-      venditeOggi: 1895,
-      confrontoIeri: '+12%',
-      ordiniOggi: 247,
-      clientiNuovi: 18,
-      prodottiPiuVenduti: [
-        { nome: 'Burger Classic', quantita: 78 },
-        { nome: 'Patatine Fritte', quantita: 65 },
-        { nome: 'Cola', quantita: 54 }
-      ]
+        venditeOggi: 1895,
+        confrontoIeri: '+12%',
+        ordiniOggi: 247,
+        clientiNuovi: 18,
+        prodottiPiuVenduti: [
+            { nome: 'Burger Classic', quantita: 78 },
+            { nome: 'Patatine Fritte', quantita: 65 },
+            { nome: 'Cola', quantita: 54 }
+        ]
     };
-    
+
     res.json(statistiche);
-  });
-  app.get('/auth/google/callback',
+});
+app.get('/auth/google/callback',
     passport.authenticate('google', {
-        failureRedirect: '/login'  
+        failureRedirect: '/login'
     }),
     (req, res) => {
         // Determine redirect URL based on user type
-        let redirectUrl = '/homepage_cliente'; 
+        let redirectUrl = '/homepage_cliente';
         if (req.user && req.user.tipo) {
             switch (req.user.tipo) {
                 case 'amministratore':
-                    redirectUrl = '/homepage_admin'; 
+                    redirectUrl = '/homepage_admin';
                     break;
                 case 'capo':
                     redirectUrl = '/homepage_capo';
@@ -605,7 +562,7 @@ function verificaRuoloCapo(req, res, next) {
                     redirectUrl = '/homepage_cliente';
             }
         }
-       
+
         // Create or update session
         req.session.user = {
             id: req.user.id,
@@ -613,7 +570,7 @@ function verificaRuoloCapo(req, res, next) {
             email: req.user.email,
             tipo: req.user.tipo
         };
-       
+
         res.redirect(redirectUrl);
     }
 );
@@ -675,30 +632,30 @@ io.on('connection', (socket) => {
         // Crea un ID stanza basato sull'ID utente
         const roomId = `support_${userData.userId}`;
         socket.join(roomId);
-        
+
         // Memorizza l'ID dell'utente e la stanza nel socket per uso futuro
         socket.userData = userData;
         socket.currentRoom = roomId;
 
         console.log(`Utente ${userData.username} entrato nella stanza: ${roomId}`);
-        
+
         // Notifica operatori che un utente è entrato in chat
         io.to('support_staff').emit('new_support_request', {
             roomId,
             user: userData
         });
     });
-    
+
     // Gestione per lo staff di assistenza
     socket.on('operatorJoin', (operatorData) => {
         console.log('Operatore entrato:', operatorData);
         socket.join('support_staff');
-        
+
         // Se specificato un roomId, entra anche in quella stanza
         if (operatorData.roomId) {
             socket.join(operatorData.roomId);
             socket.currentRoom = operatorData.roomId;
-            
+
             // Notifica gli utenti nella stanza che l'operatore è entrato
             io.to(operatorData.roomId).emit('operatorJoin', {
                 username: operatorData.username,
@@ -706,22 +663,22 @@ io.on('connection', (socket) => {
             });
         }
     });
-    
+
     // Gestione invio messaggi
     socket.on('message', (message) => {
         console.log('Messaggio ricevuto:', message);
-        
+
         // Se il messaggio non specifica un roomId, usa la stanza corrente dell'utente
         const roomId = message.roomId || socket.currentRoom;
-        
+
         if (!roomId) {
             console.error('Nessun roomId disponibile per inviare il messaggio');
             return;
         }
-        
+
         // Broadcast del messaggio a tutti nella stanza (incluso mittente per conferma)
         io.to(roomId).emit('message', message);
-        
+
         // Salva il messaggio nel database
         saveMessageToDatabase({
             roomId,
@@ -808,9 +765,9 @@ app.get('/chat', requireLogin, (req, res) => {
 // Route per la pagina admin della chat
 app.get('/admin-chat', requireLogin, (req, res) => { // Cambiato percorso
     if (req.session.user && (req.session.user.tipo === 'amministratore' || req.session.user.tipo === 'capo')) {
-        
+
         res.render('admin-chat', { pageTitle: 'Admin Chat', user: req.session.user });
-       
+
     } else {
         res.redirect('/');
     }
@@ -850,11 +807,11 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
 app.get('/homepage_capo', requireLogin, (req, res) => {
     // Renderizza la pagina homepage_capo o reindirizza alla dashboard
     // Opzione 1: Renderizza homepage_capo
-    res.render('homepage_capo', { 
-        pageTitle: 'Homepage Capo', 
-        user: req.session.user 
+    res.render('homepage_capo', {
+        pageTitle: 'Homepage Capo',
+        user: req.session.user
     });
-    
+
     // Opzione 2: Reindirizza alla dashboard (scegli una delle due opzioni)
     // res.redirect('/dashboard');
 });
@@ -877,10 +834,10 @@ app.post('/upload-image', verificaRuoloCapo, upload.single('image'), (req, res) 
     if (!req.file) {
         return res.status(400).json({ success: false, message: 'Nessun file caricato' });
     }
-    
+
     const imagePath = '/images/uploads/' + req.file.filename;
-    res.json({ 
-        success: true, 
+    res.json({
+        success: true,
         message: 'Immagine caricata con successo',
         path: imagePath
     });
@@ -888,35 +845,35 @@ app.post('/upload-image', verificaRuoloCapo, upload.single('image'), (req, res) 
 // Delete all messages in a chat room
 app.delete('/api/chat/messages/:roomId', requireStaff, (req, res) => {
     const roomId = req.params.roomId;
-    
+
     // Validate the room ID format (should be like 'support_123')
     if (!roomId || !roomId.startsWith('support_')) {
-        return res.status(400).json({ 
-            success: false, 
-            error: 'ID stanza non valido' 
+        return res.status(400).json({
+            success: false,
+            error: 'ID stanza non valido'
         });
     }
-    
+
     // Delete all messages for this room from the database
-    db.run('DELETE FROM chat_messages WHERE room_id = ?', [roomId], function(err) {
+    db.run('DELETE FROM chat_messages WHERE room_id = ?', [roomId], function (err) {
         if (err) {
             console.error('Error deleting messages:', err);
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Errore durante l\'eliminazione dei messaggi dal database' 
+            return res.status(500).json({
+                success: false,
+                error: 'Errore durante l\'eliminazione dei messaggi dal database'
             });
         }
-        
+
         // Check if any rows were affected
         if (this.changes === 0) {
             // No messages were deleted (maybe they were already deleted)
-            return res.json({ 
-                success: true, 
+            return res.json({
+                success: true,
                 deleted: 0,
-                message: 'Nessun messaggio trovato da eliminare' 
+                message: 'Nessun messaggio trovato da eliminare'
             });
         }
-        
+
         // Add a system message to record the deletion event
         const systemMessage = {
             room_id: roomId,
@@ -925,23 +882,23 @@ app.delete('/api/chat/messages/:roomId', requireStaff, (req, res) => {
             message: `Un operatore ha eliminato ${this.changes} messaggi da questa chat.`,
             timestamp: new Date().toISOString()
         };
-        
+
         db.run(
             'INSERT INTO chat_messages (room_id, sender_id, sender_name, message, timestamp) VALUES (?, ?, ?, ?, ?)',
             [systemMessage.room_id, systemMessage.sender_id, systemMessage.sender_name, systemMessage.message, systemMessage.timestamp],
-            function(err) {
+            function (err) {
                 if (err) {
                     console.error('Error adding system message:', err);
                     // Still return success for the deletion
                 }
-                
+
                 // Log this action for audit purposes
                 console.log(`[${new Date().toISOString()}] Operator ${req.session.user.username} (ID: ${req.session.user.id}) deleted ${this.changes} messages from room ${roomId}`);
-                
-                res.json({ 
-                    success: true, 
+
+                res.json({
+                    success: true,
                     deleted: this.changes,
-                    message: `${this.changes} messaggi eliminati con successo` 
+                    message: `${this.changes} messaggi eliminati con successo`
                 });
             }
         );
@@ -953,55 +910,55 @@ app.delete('/api/chat/all-conversations', requireStaff, (req, res) => {
     db.serialize(() => {
         // Begin transaction
         db.run('BEGIN TRANSACTION');
-        
+
         // First, get count of distinct room_ids for reporting
         db.get('SELECT COUNT(DISTINCT room_id) as count FROM chat_messages', [], (err, result) => {
             if (err) {
                 console.error('Error counting conversations:', err);
                 db.run('ROLLBACK');
-                return res.status(500).json({ 
-                    success: false, 
-                    error: 'Errore durante il conteggio delle conversazioni' 
+                return res.status(500).json({
+                    success: false,
+                    error: 'Errore durante il conteggio delle conversazioni'
                 });
             }
-            
+
             const conversationCount = result ? result.count : 0;
-            
+
             // Delete all chat messages
-            db.run('DELETE FROM chat_messages', function(err) {
+            db.run('DELETE FROM chat_messages', function (err) {
                 if (err) {
                     console.error('Error deleting all chat messages:', err);
                     db.run('ROLLBACK');
-                    return res.status(500).json({ 
-                        success: false, 
-                        error: 'Errore durante l\'eliminazione dei messaggi' 
+                    return res.status(500).json({
+                        success: false,
+                        error: 'Errore durante l\'eliminazione dei messaggi'
                     });
                 }
-                
+
                 // Create a system log entry
                 const logMessage = `Operatore ${req.session.user.username} (ID: ${req.session.user.id}) ha eliminato tutte le conversazioni (${conversationCount} in totale).`;
-                
+
                 // Log this action for audit purposes
                 console.log(`[${new Date().toISOString()}] ${logMessage}`);
-                
+
                 // You could optionally save this action to a separate admin_logs table
-                
+
                 // Commit transaction
-                db.run('COMMIT', function(err) {
+                db.run('COMMIT', function (err) {
                     if (err) {
                         console.error('Error committing transaction:', err);
                         db.run('ROLLBACK');
-                        return res.status(500).json({ 
-                            success: false, 
-                            error: 'Errore durante il commit della transazione' 
+                        return res.status(500).json({
+                            success: false,
+                            error: 'Errore durante il commit della transazione'
                         });
                     }
-                    
+
                     // Return success response
-                    res.json({ 
-                        success: true, 
+                    res.json({
+                        success: true,
                         deleted: conversationCount,
-                        message: `${conversationCount} conversazioni eliminate con successo` 
+                        message: `${conversationCount} conversazioni eliminate con successo`
                     });
                 });
             });
@@ -1020,13 +977,13 @@ app.get('/api/chat/rooms', requireStaff, (req, res) => {
         FROM chat_messages cm
         ORDER BY (SELECT MAX(timestamp) FROM chat_messages WHERE room_id = cm.room_id) DESC
     `;
-    
+
     db.all(query, [], (err, rows) => {
         if (err) {
             console.error('Error querying chat rooms:', err);
             return res.status(500).json({ error: 'Database error' });
         }
-        
+
         res.json({ rooms: rows });
     });
 });
@@ -1069,19 +1026,19 @@ function requireAdmin(req, res, next) {
         return next();
     } else {
         // L'utente non ha i permessi necessari
-        return res.status(403).render('error', { 
-            message: 'Accesso negato. Devi essere un amministratore per visualizzare questa pagina.' 
+        return res.status(403).render('error', {
+            message: 'Accesso negato. Devi essere un amministratore per visualizzare questa pagina.'
         });
     }
 }
 
 function requireStaff(req, res, next) {
-    if (req.session && req.session.user && 
+    if (req.session && req.session.user &&
         (req.session.user.tipo === 'amministratore' || req.session.user.tipo === 'capo')) {
         return next();
     } else {
-        return res.status(403).render('error', { 
-            message: 'Accesso negato. Non hai i permessi necessari per visualizzare questa pagina.' 
+        return res.status(403).render('error', {
+            message: 'Accesso negato. Non hai i permessi necessari per visualizzare questa pagina.'
         });
     }
 }
@@ -1101,15 +1058,15 @@ app.get('/login', (req, res) => {
 
 // Example for rendering homepage_cliente
 app.get('/homepage_cliente', requireLogin, (req, res) => {
-    res.render('homepage_cliente', { 
-        pageTitle: 'Homepage Cliente', 
+    res.render('homepage_cliente', {
+        pageTitle: 'Homepage Cliente',
         user: req.session.user,
         username: req.session.user.username  // Make sure username is explicitly passed
     });
 });
 app.get('/homepage_admin', requireLogin, (req, res) => {
     res.render('homepage_admin', { pageTitle: 'Homepage Admin', user: req.session.user });
-    
+
 });
 app.get('/homepage_capo', requireLogin, (req, res) => {
     res.render('homepage_capo', { pageTitle: 'Homepage Capo', user: req.session.user });
@@ -1311,22 +1268,292 @@ let paniniCache = [];
 let lastFetchTime = 0;
 const CACHE_DURATION = 3600000; // 1 ora in millisecondi
 
-// Endpoint API per ottenere tutti i panini
-app.get('/api/panini', async (req, res) => {
-    try {
-        const currentTime = Date.now();
-        // Aggiorna la cache se è scaduta
-        if (paniniCache.length === 0 || currentTime - lastFetchTime > CACHE_DURATION) {
-            paniniCache = await fetchPaniniFromExternalAPI();
-            lastFetchTime = currentTime;
-        }
-        res.json(paniniCache);
-    } catch (error) {
-        console.error('Errore durante il recupero dei panini:', error);
-        res.status(500).json({ error: 'Errore del server nel recupero dei panini.' });
-    }
-});
 
+// Rate-limit friendly endpoint for McDonald's API
+app.get('/api/panini', async (req, res) => {
+    console.log('API Panini endpoint called (McDonald\'s RapidAPI with rate limit handling)');
+    
+    // Use a much smaller list of IDs to avoid rate limits
+    const productIds = [
+      '200426', // Double Hamburger
+      '200438', // McChicken
+      '200445'  // Filet-O-Fish
+    ];
+    
+    // Function to add delay between requests
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
+    const products = [];
+    
+    try {
+      // Sequential fetching instead of parallel to avoid rate limits
+      for (const id of productIds) {
+        try {
+          const options = {
+            method: 'GET',
+            hostname: 'mcdonald-s-products-api.p.rapidapi.com',
+            port: null,
+            path: `/us/products/${id}`,
+            headers: {
+              'x-rapidapi-key': '0f52344f89msha7a8f67f53837d7p1b4f2ejsnac674f8dd02c',
+              'x-rapidapi-host': 'mcdonald-s-products-api.p.rapidapi.com'
+            }
+          };
+          
+          // Wrap the request in a promise
+          const productData = await new Promise((resolve, reject) => {
+            const request = https.request(options, function(response) {
+              const chunks = [];
+              
+              response.on('data', function(chunk) {
+                chunks.push(chunk);
+              });
+              
+              response.on('end', function() {
+                if (response.statusCode === 200) {
+                  const body = Buffer.concat(chunks);
+                  try {
+                    const data = JSON.parse(body.toString());
+                    resolve(data);
+                  } catch (error) {
+                    console.error(`Error parsing response for ${id}:`, error);
+                    resolve(null);
+                  }
+                } else if (response.statusCode === 429) {
+                  console.log(`Rate limit hit for product ${id} (429)`);
+                  resolve(null);
+                } else {
+                  console.log(`Failed to fetch product ${id}: Status ${response.statusCode}`);
+                  resolve(null);
+                }
+              });
+            });
+            
+            request.on('error', function(error) {
+              console.error(`Request error for product ${id}:`, error);
+              resolve(null);
+            });
+            
+            request.end();
+          });
+          
+          // If we got data back, process it
+          if (productData && productData.name) {
+            // Determine the category based on name
+            let category = 'Speciale';
+            const lowerName = productData.name.toLowerCase();
+            
+            if (lowerName.includes('burger') || lowerName.includes('hamburger')) {
+              category = 'Hamburger';
+            } else if (lowerName.includes('chicken') || lowerName.includes('mcchicken')) {
+              category = 'Pollo';
+            } else if (lowerName.includes('fish') || lowerName.includes('filet')) {
+              category = 'Pesce';
+            }
+            
+            // Clean the description
+            let description = productData.description || `Delizioso ${productData.name}`;
+            description = description
+              .split(/(\*|\^|Download the|McDonald's App|Mobile Order)/)[0]
+              .trim();
+            
+            if (description.length > 150) {
+              description = description.substring(0, 147) + '...';
+            }
+            
+            // Select appropriate image based on category
+            let imageUrl;
+            switch(category) {
+              case 'Hamburger':
+                imageUrl = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80";
+                break;
+              case 'Pollo':
+                imageUrl = "https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
+                break;
+              case 'Pesce':
+                imageUrl = "https://images.unsplash.com/photo-1562967914-01efa7e87832?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80";
+                break;
+              default:
+                imageUrl = "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80";
+            }
+            
+            // Create the product object
+            const panino = {
+              id: productData.id || id,
+              nome: productData.name,
+              prezzo: parseFloat(Math.floor(Math.random() * 5) + 5).toFixed(2),
+              descrizione: description,
+              categoria: category,
+              ingredienti: productData.ingredients || "Ingredienti freschi di qualità",
+              disponibile: true,
+              immagine: imageUrl
+            };
+            
+            products.push(panino);
+            console.log(`Successfully fetched product ${id}: ${productData.name}`);
+          }
+        } catch (error) {
+          console.error(`Error processing product ${id}:`, error);
+        }
+        
+        // Add a delay between requests to avoid rate limiting (1.5 seconds)
+        await delay(1500);
+      }
+      
+      // Combine with a few hardcoded items to ensure variety
+      const hardcodedItems = [
+        {
+          id: "1001",
+          nome: "Big Mac",
+          prezzo: "7.50",
+          descrizione: "Iconico hamburger con doppio strato di carne, formaggio, lattuga, cipolla e salsa speciale",
+          categoria: "Hamburger",
+          immagine: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, doppia carne di manzo, formaggio, lattuga, cipolla, cetrioli, salsa speciale"
+        },
+        {
+          id: "1004",
+          nome: "Quarter Pounder con formaggio",
+          prezzo: "8.00",
+          descrizione: "Hamburger di manzo con formaggio, cipolla, ketchup e senape",
+          categoria: "Hamburger",
+          immagine: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, carne di manzo, formaggio, cipolla, ketchup, senape"
+        }
+      ];
+      
+      // If we got at least one product, add our hardcoded ones
+      if (products.length > 0) {
+        // Add hardcoded items only if we don't already have items of that name
+        const existingNames = products.map(p => p.nome);
+        for (const item of hardcodedItems) {
+          if (!existingNames.includes(item.nome)) {
+            products.push(item);
+          }
+        }
+        
+        console.log(`Returning ${products.length} products (${products.length - hardcodedItems.length} from API, ${hardcodedItems.length} hardcoded)`);
+        paniniCache = products;
+        lastFetchTime = Date.now();
+        return res.json(products);
+      }
+      
+      // If we couldn't get any products, use comprehensive example data
+      console.log("No products fetched from McDonald's API, using example data");
+      const examplePanini = [
+        {
+          id: "1001",
+          nome: "Big Mac",
+          prezzo: "7.50",
+          descrizione: "Iconico hamburger con doppio strato di carne, formaggio, lattuga, cipolla e salsa speciale",
+          categoria: "Hamburger",
+          immagine: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, doppia carne di manzo, formaggio, lattuga, cipolla, cetrioli, salsa speciale"
+        },
+        {
+          id: "1002",
+          nome: "McChicken",
+          prezzo: "6.50",
+          descrizione: "Panino con pollo impanato, lattuga fresca e maionese cremosa",
+          categoria: "Pollo",
+          immagine: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, filetto di pollo impanato, lattuga, maionese"
+        },
+        {
+          id: "1003", 
+          nome: "Quarter Pounder",
+          prezzo: "8.00",
+          descrizione: "Hamburger di manzo con formaggio, cipolla, ketchup e senape",
+          categoria: "Hamburger",
+          immagine: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, carne di manzo, formaggio, cipolla, ketchup, senape"
+        },
+        {
+          id: "1004",
+          nome: "Filet-O-Fish",
+          prezzo: "6.75",
+          descrizione: "Filetto di pesce impanato con formaggio e salsa tartara",
+          categoria: "Pesce",
+          immagine: "https://images.unsplash.com/photo-1562967914-01efa7e87832?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, filetto di pesce impanato, formaggio, salsa tartara"
+        },
+        {
+          id: "1005",
+          nome: "Double Cheeseburger",
+          prezzo: "7.25",
+          descrizione: "Doppio hamburger con doppio formaggio, cipolla, sottaceti e salse",
+          categoria: "Hamburger",
+          immagine: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, doppia carne di manzo, doppio formaggio, cipolla, sottaceti, ketchup, senape"
+        },
+        {
+          id: "1006",
+          nome: "Spicy Chicken Deluxe",
+          prezzo: "7.75",
+          descrizione: "Pollo piccante con lattuga, pomodoro e maionese al pepe",
+          categoria: "Pollo",
+          immagine: "https://images.unsplash.com/photo-1626078299034-57a3a242ad99?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, filetto di pollo piccante impanato, lattuga, pomodoro, maionese al pepe"
+        },
+        {
+          id: "1007",
+          nome: "Veggie Deluxe",
+          prezzo: "6.50",
+          descrizione: "Burger vegetariano con insalata fresca e salsa speciale",
+          categoria: "Vegetariano",
+          immagine: "https://images.unsplash.com/photo-1550547660-d9450f859349?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, patty vegetale, insalata, pomodoro, formaggio, salsa"
+        }
+      ];
+      
+      paniniCache = examplePanini;
+      lastFetchTime = Date.now();
+      return res.json(examplePanini);
+    } catch (error) {
+      console.error('Error in API processing:', error);
+      
+      // Fallback to predefined data
+      const fallbackData = [
+        {
+          id: "1001",
+          nome: "Big Mac",
+          prezzo: "7.50",
+          descrizione: "Iconico hamburger con doppio strato di carne, formaggio, lattuga, cipolla e salsa speciale",
+          categoria: "Hamburger",
+          immagine: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, doppia carne di manzo, formaggio, lattuga, cipolla, cetrioli, salsa speciale"
+        },
+        {
+          id: "1002", 
+          nome: "McChicken",
+          prezzo: "6.50",
+          descrizione: "Panino con pollo impanato, lattuga fresca e maionese cremosa",
+          categoria: "Pollo",
+          immagine: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          ingredienti: "Pane, filetto di pollo impanato, lattuga, maionese"
+        }
+      ];
+      
+      paniniCache = fallbackData;
+      lastFetchTime = Date.now();
+      
+      res.json(fallbackData);
+    }
+  });
+
+// Helper function to map API categories to our categories
+function mapCategory(category) {
+    const categoryMap = {
+        'burgers': 'Hamburger',
+        'chicken': 'Pollo',
+        'salad': 'Vegetariano',
+        'drinks': 'Bevande',
+        'desserts': 'Dessert',
+        'breakfast': 'Colazione'
+    };
+
+    return categoryMap[category.toLowerCase()] || 'Speciale';
+}
 // Endpoint API per ottenere un panino specifico tramite ID
 app.get('/api/panini/:id', async (req, res) => {
     const id = req.params.id;

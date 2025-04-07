@@ -453,7 +453,7 @@
     <header>
         <div class="container">
             <div class="logo">
-                <img src="/public/img/logo.png"  class="logo-img">
+                <img src="/img/logo.png" class="logo-img">
                 <h1>YourBite</h1>
             </div>
             <nav>
@@ -491,6 +491,9 @@
                             <option value="">Tutte le categorie</option>
                             <option value="Hamburger">Hamburger</option>
                             <option value="Pollo">Pollo</option>
+                            <option value="Pesce">Pesce</option>
+                            <option value="Bevande">Bevande</option>
+                            <option value="Contorni">Contorni</option>
                             <option value="Vegetariano">Vegetariano</option>
                             <option value="Speciale">Speciale</option>
                         </select>
@@ -527,7 +530,13 @@
     </main>
 
     <script>
-
+        // Funzione per il logout
+        // Assicurati di avere un bottone con id "logoutButton" nel tuo HTML
+        // e che il server gestisca la richiesta di logout correttamente.
+        // Puoi anche usare un'icona o un'immagine per il bottone di logout.
+        // Assicurati di avere un bottone con id "chatButton" nel tuo HTML
+        // e che il server gestisca la richiesta di chat correttamente.
+        let currentPanini = [];
 
         // Funzionalità del bottone Logout
         document.getElementById("logoutButton").addEventListener("click", function (event) {
@@ -622,52 +631,50 @@
             try {
                 // Mostra il loader
                 paniniContainer.innerHTML = `
-                    <div class="loading">
-                        <div class="loading-spinner"></div>
-                        <p>Caricamento panini in corso...</p>
-                    </div>
-                `;
+              <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Caricamento panini in corso...</p>
+              </div>
+            `;
 
-                // Prova a caricare i dati dall'API
-                try {
-                    const response = await fetch('/api/panini');
-
-                    if (!response.ok) {
-                        throw new Error('Errore nel caricamento dei panini');
-                    }
-
-                    const panini = await response.json();
-                    displayPanini(panini);
-                } catch (error) {
-                    console.error('Errore API, uso dati di esempio:', error);
-                    // Se la fetch fallisce, usa i dati di esempio
-                    setTimeout(() => displayPanini(examplePanini), 500); // Breve ritardo per simulare il caricamento
+                // Carica i dati dall'API
+                const response = await fetch('/api/panini');
+                if (!response.ok) {
+                    throw new Error('Errore nel caricamento dei panini');
                 }
+
+                const panini = await response.json();
+                currentPanini = panini; // Salva i dati per uso futuro con i filtri
+                displayPanini(panini);
             } catch (error) {
                 console.error('Errore:', error);
-                paniniContainer.innerHTML = `
-                    <div class="error-message">
-                        <p>Si è verificato un errore nel caricamento dei panini. Riprova più tardi.</p>
-                    </div>
-                `;
+                // Se la fetch fallisce, usa i dati di esempio
+                console.error('Errore API, uso dati di esempio:', error);
+                setTimeout(() => displayPanini(examplePanini), 500);
             }
         }
 
         // Funzione per ottenere l'icona della categoria
         function getCategoryIcon(categoria) {
-            switch (categoria.toLowerCase()) {
-                case 'hamburger':
-                    return '<i class="fas fa-hamburger"></i>';
-                case 'pollo':
-                    return '<i class="fas fa-drumstick-bite"></i>';
-                case 'vegetariano':
-                    return '<i class="fas fa-leaf"></i>';
-                case 'speciale':
-                    return '<i class="fas fa-star"></i>';
-                default:
-                    return '<i class="fas fa-utensils"></i>';
-            }
-        }
+    switch (categoria.toLowerCase()) {
+        case 'hamburger':
+            return '<i class="fas fa-hamburger"></i>';
+        case 'pollo':
+            return '<i class="fas fa-drumstick-bite"></i>';
+        case 'pesce':
+            return '<i class="fas fa-fish"></i>';
+        case 'bevande':
+            return '<i class="fas fa-coffee"></i>';
+        case 'contorni':
+            return '<i class="fas fa-french-fries"></i>'; // Note: might need different icon
+        case 'vegetariano':
+            return '<i class="fas fa-leaf"></i>';
+        case 'speciale':
+            return '<i class="fas fa-star"></i>';
+        default:
+            return '<i class="fas fa-utensils"></i>';
+    }
+}
 
         // Funzione per visualizzare i panini
         function displayPanini(panini) {
@@ -745,7 +752,7 @@
 
         // Gestione del pulsante "Applica Filtri"
         applyFiltersBtn.addEventListener('click', function () {
-            const filteredPanini = filterPanini(examplePanini);
+            const filteredPanini = filterPanini(currentPanini);
             displayPanini(filteredPanini);
         });
 
@@ -755,7 +762,7 @@
             prezzoFilter.value = 10;
             prezzoValue.textContent = '€10.00';
             ingredienteFilter.value = '';
-            displayPanini(examplePanini);
+            displayPanini(currentPanini);
         });
 
         // Carica i panini all'avvio
@@ -765,6 +772,7 @@
         document.getElementById('chatButton').addEventListener('click', function () {
             window.location.href = '/chat';
         });
+
         // Script to ensure username is displayed in welcome message
         document.addEventListener('DOMContentLoaded', function () {
             // Function to update username in welcome message
