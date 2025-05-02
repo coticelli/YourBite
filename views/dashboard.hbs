@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Dashboard Capo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+
     <!-- Chart.js deve essere caricato prima dei nostri script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    
+
     <style>
         /* === VARIABILI E IMPOSTAZIONI BASE === */
         :root {
@@ -34,7 +36,7 @@
             --gray-dark: #e9ecef;
             --text: #212529;
             --text-light: #6c757d;
-            
+
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -60,7 +62,7 @@
 
         body {
             background-color: var(--gray);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 25% 10%, rgba(94, 96, 206, 0.05) 0%, transparent 40%),
                 radial-gradient(circle at 75% 75%, rgba(72, 191, 227, 0.05) 0%, transparent 40%);
             color: var(--text);
@@ -119,9 +121,17 @@
         }
 
         @keyframes glowPulse {
-            0% { opacity: 0; }
-            50% { opacity: 0.2; }
-            100% { opacity: 0; }
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
 
         /* === HEADER E NAVIGAZIONE === */
@@ -149,18 +159,23 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(120deg, 
-                rgba(0, 0, 0, 0), 
-                rgba(255, 255, 255, 0.1),
-                rgba(0, 0, 0, 0));
+            background: linear-gradient(120deg,
+                    rgba(0, 0, 0, 0),
+                    rgba(255, 255, 255, 0.1),
+                    rgba(0, 0, 0, 0));
             background-size: 200% 100%;
             animation: headerShimmer 6s linear infinite;
             pointer-events: none;
         }
 
         @keyframes headerShimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .header-container {
@@ -198,13 +213,11 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 255, 255, 0)
-            );
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.3),
+                    rgba(255, 255, 255, 0));
             transform: rotate(45deg);
             transition: var(--transition);
             opacity: 0;
@@ -222,8 +235,13 @@
         }
 
         @keyframes logoPulse {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
         }
 
         .header-title {
@@ -287,10 +305,10 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(120deg, 
-                rgba(255, 255, 255, 0), 
-                rgba(255, 255, 255, 0.2), 
-                rgba(255, 255, 255, 0));
+            background: linear-gradient(120deg,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.2),
+                    rgba(255, 255, 255, 0));
             top: 0;
             left: -100%;
             transition: var(--transition);
@@ -339,8 +357,13 @@
         }
 
         @keyframes badgePulse {
-            0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-            100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+            0% {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            100% {
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
         }
 
         .user-role-badge i {
@@ -349,11 +372,25 @@
         }
 
         @keyframes rotateIcon {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(10deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(-10deg); }
-            100% { transform: rotate(0deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            50% {
+                transform: rotate(0deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
         }
 
         #notification-badge {
@@ -376,8 +413,13 @@
         }
 
         @keyframes notificationPulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.15); }
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.15);
+            }
         }
 
         .user-controls {
@@ -417,10 +459,10 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(120deg, 
-                rgba(255, 255, 255, 0), 
-                rgba(255, 255, 255, 0.2), 
-                rgba(255, 255, 255, 0));
+            background: linear-gradient(120deg,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.2),
+                    rgba(255, 255, 255, 0));
             top: 0;
             left: -100%;
             transition: var(--transition);
@@ -449,8 +491,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .dashboard-header {
@@ -817,14 +866,27 @@
         }
 
         @keyframes particleFloat {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(80px, -80px); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(80px, -80px);
+            }
         }
-        
+
         @keyframes particleFade {
-            0% { opacity: 0.05; }
-            50% { opacity: 0.2; }
-            100% { opacity: 0.05; }
+            0% {
+                opacity: 0.05;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 0.05;
+            }
         }
 
         /* === CUSTOMIZED SCROLLBAR === */
@@ -832,18 +894,18 @@
             width: 8px;
             height: 8px;
         }
-        
+
         ::-webkit-scrollbar-track {
             background: var(--gray-light);
             border-radius: 10px;
         }
-        
+
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(var(--primary-light), var(--primary));
             border-radius: 10px;
             transition: var(--transition);
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(var(--primary), var(--primary-dark));
         }
@@ -936,30 +998,120 @@
             box-shadow: var(--shadow-warning);
         }
 
+        .summary-card.info .summary-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card.success .summary-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: var(--shadow-success);
+        }
+
+        .summary-card.error .summary-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: var(--shadow-danger);
+        }
+
+        .summary-card.warning .summary-icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: var(--shadow-warning);
+        }
+
+        .summary-card.info .summary-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card.success .summary-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: var(--shadow-success);
+        }
+
+        .summary-card.error .summary-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: var(--shadow-danger);
+        }
+
+        .summary-card.warning .summary-icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: var(--shadow-warning);
+        }
+
+        .summary-card.info .summary-icon {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            box-shadow: var(--shadow);
+        }
+
+        .summary-card.success .summary-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: var(--shadow-success);
+        }
+
+        .summary-card.error .summary-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: var(--shadow-danger);
+        }
+
+        .summary-card.warning .summary-icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: var(--shadow-warning);
+        }
+
+        .header-nav a.home-button {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.header-nav a.home-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0)
+    );
+    transform: rotate(45deg);
+    animation: homeButtonShimmer 3s infinite;
+    opacity: 0.5;
+}
+
+@keyframes homeButtonShimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) rotate(45deg); }
+    100% { transform: translateX(-100%) rotate(45deg); }
+}
         /* === RESPONSIVE DESIGN === */
         @media (max-width: 1200px) {
             .header-nav a span {
                 display: none;
             }
-            
+
             .header-nav a {
                 padding: 10px;
                 font-size: 16px;
                 justify-content: center;
             }
-            
+
             .header-nav a i {
                 margin: 0;
             }
-            
+
             .user-role-badge {
                 padding: 8px 12px;
             }
-            
+
             .quick-summary {
                 flex-wrap: wrap;
             }
-            
+
             .summary-card {
                 min-width: calc(50% - 10px);
                 flex: 0 0 calc(50% - 10px);
@@ -972,20 +1124,20 @@
                 justify-content: center;
                 gap: 10px;
             }
-            
+
             .logo-container {
                 margin-right: auto;
             }
-            
+
             .user-controls {
                 margin-left: auto;
             }
-            
+
             header {
                 height: auto;
                 padding: 10px 0;
             }
-            
+
             .dashboard-container {
                 padding: 20px 15px;
             }
@@ -997,34 +1149,35 @@
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .header-nav {
                 flex-wrap: wrap;
                 justify-content: center;
                 margin: 10px 0;
             }
-            
-            .logo-container, .user-controls {
+
+            .logo-container,
+            .user-controls {
                 margin: 0;
                 justify-content: center;
                 width: 100%;
             }
-            
+
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .summary-card {
                 min-width: 100%;
                 flex: 0 0 100%;
             }
-            
+
             .order-item {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 8px;
             }
-            
+
             .chart-actions {
                 flex-direction: column;
                 align-items: flex-start;
@@ -1036,11 +1189,11 @@
             .quick-summary {
                 flex-direction: column;
             }
-            
+
             .dashboard-header h1 {
                 font-size: 24px;
             }
-            
+
             .chart-filter {
                 flex-wrap: wrap;
             }
@@ -1141,10 +1294,11 @@
         }
     </style>
 </head>
+
 <body class="capo-role">
     <!-- Particle Background -->
     <div class="particles" id="particles"></div>
-    
+
     <!-- Header migliorato -->
     <header>
         <div class="header-container">
@@ -1152,8 +1306,11 @@
                 <img src="/img/logo.png" alt="YourBite Logo" class="logo">
                 <h1 class="header-title">YourBite</h1>
             </div>
-            
+
             <div class="header-nav">
+                <a href="/homepage_capo">
+                    <i class="fas fa-home"></i> <span>Homepage</span>
+                </a>
                 <a href="/dashboard" class="active">
                     <i class="fas fa-chart-line"></i> <span>Dashboard</span>
                 </a>
@@ -1169,7 +1326,7 @@
                 <a href="/impostazioni">
                     <i class="fas fa-cog"></i> <span>Impostazioni</span>
                 </a>
-                
+
                 <div style="position: relative; margin-left: 10px;">
                     <span id="notification-badge" style="display: none;">0</span>
                     <span class="user-role-badge">
@@ -1177,7 +1334,7 @@
                     </span>
                 </div>
             </div>
-            
+
             <div class="user-controls">
                 <span class="username">{{user.username}}</span>
                 <button class="logout-btn btn-glow" onclick="logout()">
@@ -1204,7 +1361,7 @@
                     <i class="fas fa-coins"></i>
                 </div>
             </div>
-            
+
             <div class="summary-card animate-in animate-delay-2">
                 <div class="summary-info">
                     <div class="summary-title">Clienti attivi</div>
@@ -1214,7 +1371,7 @@
                     <i class="fas fa-users"></i>
                 </div>
             </div>
-            
+
             <div class="summary-card warning animate-in animate-delay-3">
                 <div class="summary-info">
                     <div class="summary-title">Ordini in corso</div>
@@ -1236,7 +1393,7 @@
                 <div class="number" id="ordini-oggi">247</div>
                 <div class="trend up">+12% rispetto a ieri</div>
             </div>
-            
+
             <div class="stat-card card-hover-effect animate-in animate-delay-1">
                 <div class="icon">
                     <i class="fas fa-euro-sign"></i>
@@ -1245,7 +1402,7 @@
                 <div class="number" id="vendite-oggi">€1,895</div>
                 <div class="trend up">+8% rispetto a ieri</div>
             </div>
-            
+
             <div class="stat-card card-hover-effect animate-in animate-delay-2">
                 <div class="icon">
                     <i class="fas fa-user-plus"></i>
@@ -1254,7 +1411,7 @@
                 <div class="number" id="nuovi-clienti">18</div>
                 <div class="trend up">+5% rispetto a ieri</div>
             </div>
-            
+
             <div class="stat-card card-hover-effect animate-in animate-delay-3">
                 <div class="icon">
                     <i class="fas fa-clock"></i>
@@ -1290,21 +1447,21 @@
                     <div class="order-time">10 minuti fa</div>
                     <div class="order-status completed"><i class="fas fa-check-circle"></i> Completato</div>
                 </div>
-                
+
                 <div class="order-item">
                     <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1037</div>
                     <div class="order-price">€18.50</div>
                     <div class="order-time">22 minuti fa</div>
                     <div class="order-status completed"><i class="fas fa-check-circle"></i> Completato</div>
                 </div>
-                
+
                 <div class="order-item">
                     <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1036</div>
                     <div class="order-price">€32.75</div>
                     <div class="order-time">35 minuti fa</div>
                     <div class="order-status processing"><i class="fas fa-spinner fa-spin"></i> In preparazione</div>
                 </div>
-                
+
                 <div class="order-item">
                     <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1035</div>
                     <div class="order-price">€15.20</div>
@@ -1316,19 +1473,19 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Verifica che Chart.js sia caricato
             if (typeof Chart === 'undefined') {
                 console.error('Chart.js non è stato caricato correttamente. Carico dinamicamente...');
-                
+
                 // Carica Chart.js dinamicamente
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js';
-                script.onload = function() {
+                script.onload = function () {
                     console.log('Chart.js caricato con successo');
                     initializeAll();
                 };
-                script.onerror = function() {
+                script.onerror = function () {
                     console.error('Impossibile caricare Chart.js');
                     showFallbackChart();
                 };
@@ -1341,22 +1498,22 @@
             function initializeAll() {
                 // Create particles background
                 createParticles();
-                
+
                 // Initialize the sales chart
                 initSalesChart();
-                
+
                 // Set active navigation link
                 setActiveNavLink();
-                
+
                 // Load dashboard data
                 loadDashboardData();
-                
+
                 // Add interactivity to chart filter buttons
                 setupChartFilters();
-                
+
                 // Simulate dashboard activity
                 simulateActivity();
-                
+
                 // Show welcome toast
                 setTimeout(() => {
                     showToast('Dashboard pronta', 'Benvenuto nel pannello di controllo YourBite', 'success');
@@ -1378,61 +1535,61 @@
                 }
             }
         });
-        
+
         // Create background particles
         function createParticles() {
             const particles = document.getElementById('particles');
             if (!particles) return;
-            
+
             // Clear any existing particles
             particles.innerHTML = '';
-            
+
             // Settings
             const particleCount = 50; // Number of particles
-            
+
             // Create particles
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-                
+
                 // Random position
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
-                
+
                 // Random size
                 const size = Math.random() * 10 + 2;
-                
+
                 // Random opacity
                 const opacity = Math.random() * 0.5 + 0.1;
-                
+
                 // Random animation duration
                 const duration = Math.random() * 60 + 30;
-                
+
                 // Apply styles
                 particle.style.left = `${posX}%`;
                 particle.style.top = `${posY}%`;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.opacity = opacity;
-                
+
                 // Alternate between primary and secondary colors
                 if (i % 2 === 0) {
                     particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
                 } else {
                     particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
                 }
-                
+
                 // Add floating animation
                 particle.style.animation = `
                     particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
                     particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
                 `;
-                
+
                 // Append to container
                 particles.appendChild(particle);
             }
         }
-        
+
         // Initialize the sales chart
         function initSalesChart() {
             try {
@@ -1462,13 +1619,13 @@
                 if (window.salesChart instanceof Chart) {
                     window.salesChart.destroy();
                 }
-                
+
                 console.log('Creating gradient for chart...');
                 // Gradient background
                 const gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, 'rgba(94, 96, 206, 0.2)');
                 gradient.addColorStop(1, 'rgba(94, 96, 206, 0)');
-                
+
                 console.log('Setting up chart data...');
                 // Chart data
                 const data = {
@@ -1486,7 +1643,7 @@
                         backgroundColor: gradient
                     }]
                 };
-                
+
                 console.log('Setting up chart options...');
                 // Chart options
                 const options = {
@@ -1531,7 +1688,7 @@
                                 font: {
                                     family: 'Montserrat'
                                 },
-                                callback: function(value) {
+                                callback: function (value) {
                                     return '€' + value;
                                 }
                             }
@@ -1551,7 +1708,7 @@
                         }
                     }
                 };
-                
+
                 console.log('Creating chart instance...');
                 // Create chart
                 window.salesChart = new Chart(ctx, {
@@ -1559,14 +1716,14 @@
                     data: data,
                     options: options
                 });
-                
+
                 console.log('Chart successfully created!');
             } catch (error) {
                 console.error('Error initializing chart:', error);
                 showFallbackChart();
             }
         }
-        
+
         function showFallbackChart() {
             const chartWrapper = document.querySelector('.chart-wrapper');
             if (chartWrapper) {
@@ -1579,16 +1736,16 @@
                         </button>
                     </div>
                 `;
-                
+
                 showToast('Errore grafico', 'Non è stato possibile inizializzare il grafico delle vendite', 'error');
             }
         }
-        
+
         // Set the active navigation link
         function setActiveNavLink() {
             const currentPath = window.location.pathname;
             const navLinks = document.querySelectorAll('.header-nav a');
-            
+
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (currentPath === link.getAttribute('href')) {
@@ -1596,7 +1753,7 @@
                 }
             });
         }
-        
+
         // Load dashboard data
         function loadDashboardData() {
             try {
@@ -1606,25 +1763,25 @@
                         updateElementText('vendite-oggi', `€${data.venditeOggi || 0}`);
                         updateElementText('ordini-oggi', data.ordiniOggi || 0);
                         updateElementText('nuovi-clienti', data.clientiNuovi || 0);
-                        
+
                         // Update summary cards
                         updateElementText('total-sales-today', `€${data.venditeOggi || 0}`);
                         updateElementText('active-customers', data.clientiAttivi || 78);
                         updateElementText('pending-orders', data.ordiniInCorso || 12);
-                        
+
                         // Show success toast
                         showToast('Dati aggiornati', 'Le statistiche della dashboard sono state aggiornate', 'success');
                     })
                     .catch(error => {
                         console.error('Errore caricamento statistiche:', error);
-                        
+
                         // Show error toast
                         showToast('Errore di caricamento', 'Impossibile caricare le statistiche più recenti', 'error');
-                        
+
                         // Use placeholder data
                         usePlaceholderData();
                     });
-                    
+
                 // Load notifications
                 loadNotifications();
             } catch (e) {
@@ -1632,7 +1789,7 @@
                 usePlaceholderData();
             }
         }
-        
+
         // Load notifications
         function loadNotifications() {
             try {
@@ -1641,11 +1798,11 @@
                     .then(notifications => {
                         const badge = document.getElementById('notification-badge');
                         if (!badge) return;
-                        
+
                         const unreadCount = notifications.filter(n => !n.letto).length;
                         badge.textContent = unreadCount;
                         badge.style.display = unreadCount > 0 ? 'flex' : 'none';
-                        
+
                         if (unreadCount > 0) {
                             showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
                         }
@@ -1655,25 +1812,25 @@
                 console.log('Caricamento notifiche non disponibile in questa pagina');
             }
         }
-        
+
         // Setup chart filters
         function setupChartFilters() {
             const filterButtons = document.querySelectorAll('.chart-filter-btn');
-            
+
             filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     // Remove active class from all buttons
                     filterButtons.forEach(btn => btn.classList.remove('active'));
-                    
+
                     // Add active class to clicked button
                     this.classList.add('active');
-                    
+
                     // Update chart data based on selected period
                     updateChartData(this.dataset.period);
                 });
             });
         }
-        
+
         // Update chart data based on period
         function updateChartData(period) {
             try {
@@ -1682,10 +1839,10 @@
                     initSalesChart();
                     return;
                 }
-                
+
                 let labels, data;
-                
-                switch(period) {
+
+                switch (period) {
                     case 'day':
                         labels = ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
                         data = [120, 210, 380, 290, 320, 490, 380, 290];
@@ -1701,12 +1858,12 @@
                     default:
                         return;
                 }
-                
+
                 // Update chart data
                 window.salesChart.data.labels = labels;
                 window.salesChart.data.datasets[0].data = data;
                 window.salesChart.update();
-                
+
                 // Show toast notification
                 showToast('Grafico aggiornato', `Visualizzazione dati per ${getPeriodName(period)}`, 'success');
             } catch (error) {
@@ -1714,17 +1871,17 @@
                 showToast('Errore aggiornamento', 'Impossibile aggiornare il grafico', 'error');
             }
         }
-        
+
         // Get period name in Italian
         function getPeriodName(period) {
-            switch(period) {
+            switch (period) {
                 case 'day': return 'oggi';
                 case 'week': return 'questa settimana';
                 case 'month': return 'questo mese';
                 default: return period;
             }
         }
-        
+
         // Use placeholder data when fetch fails
         function usePlaceholderData() {
             updateElementText('vendite-oggi', '€1,895');
@@ -1734,7 +1891,7 @@
             updateElementText('active-customers', '78');
             updateElementText('pending-orders', '12');
         }
-        
+
         // Helper function to update element text if element exists
         function updateElementText(id, text) {
             const element = document.getElementById(id);
@@ -1742,7 +1899,7 @@
                 element.textContent = text;
             }
         }
-        
+
         // Show toast notification
         function showToast(title, message, type = 'success') {
             // Remove existing toasts
@@ -1750,17 +1907,17 @@
             existingToasts.forEach(toast => {
                 toast.remove();
             });
-            
+
             // Create new toast
             const toast = document.createElement('div');
             toast.className = `toast-notification toast-${type}`;
-            
-                       // Icon based on type
+
+            // Icon based on type
             let icon = 'info-circle';
             if (type === 'success') icon = 'check-circle';
             if (type === 'error') icon = 'exclamation-circle';
             if (type === 'warning') icon = 'exclamation-triangle';
-            
+
             toast.innerHTML = `
                 <div class="toast-icon">
                     <i class="fas fa-${icon}"></i>
@@ -1773,14 +1930,14 @@
                     <i class="fas fa-times"></i>
                 </div>
             `;
-            
+
             document.body.appendChild(toast);
-            
+
             // Add show class after a small delay to trigger animation
             setTimeout(() => {
                 toast.classList.add('show');
             }, 10);
-            
+
             // Add event listener to close button
             const closeButton = toast.querySelector('.toast-close');
             closeButton.addEventListener('click', () => {
@@ -1789,7 +1946,7 @@
                     toast.remove();
                 }, 300);
             });
-            
+
             // Auto close after 5 seconds
             setTimeout(() => {
                 if (document.body.contains(toast)) {
@@ -1802,7 +1959,7 @@
                 }
             }, 5000);
         }
-        
+
         // Simulate dashboard activity
         function simulateActivity() {
             // Random updates every 30-60 seconds
@@ -1816,7 +1973,7 @@
                             const newValue = currentValue + Math.floor(Math.random() * 3) - 1;
                             if (newValue >= 0) {
                                 pendingOrders.textContent = newValue;
-                                
+
                                 if (newValue > currentValue) {
                                     showToast('Nuovo ordine', 'È stato ricevuto un nuovo ordine', 'success');
                                 }
@@ -1847,14 +2004,14 @@
                         }
                     }
                 ];
-                
+
                 // Execute a random activity
                 const randomActivity = activities[Math.floor(Math.random() * activities.length)];
                 randomActivity();
-                
+
             }, Math.random() * 30000 + 30000); // 30-60 seconds
         }
-        
+
         // Function for logout
         function logout() {
             // Show loading overlay
@@ -1871,12 +2028,12 @@
             loadingOverlay.style.alignItems = 'center';
             loadingOverlay.style.zIndex = '2000';
             loadingOverlay.style.backdropFilter = 'blur(5px)';
-            
+
             const spinnerContainer = document.createElement('div');
             spinnerContainer.style.width = '60px';
             spinnerContainer.style.height = '60px';
             spinnerContainer.style.position = 'relative';
-            
+
             const spinner = document.createElement('div');
             spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
             spinner.style.borderTopColor = '#5e60ce';
@@ -1884,7 +2041,7 @@
             spinner.style.width = '100%';
             spinner.style.height = '100%';
             spinner.style.animation = 'spin 1s linear infinite';
-            
+
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes spin {
@@ -1892,56 +2049,57 @@
                     100% { transform: rotate(360deg); }
                 }
             `;
-            
+
             document.head.appendChild(style);
             spinnerContainer.appendChild(spinner);
-            
+
             const loadingText = document.createElement('p');
             loadingText.textContent = 'Logout in corso...';
             loadingText.style.marginTop = '20px';
             loadingText.style.color = 'var(--primary)';
             loadingText.style.fontWeight = '500';
-            
+
             loadingOverlay.appendChild(spinnerContainer);
             loadingOverlay.appendChild(loadingText);
             document.body.appendChild(loadingOverlay);
-            
+
             // Perform logout
             fetch('/logout', {
                 method: 'POST',
             })
-            .then(response => {
-                if (response.ok) {
-                    loadingText.textContent = 'Reindirizzamento...';
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 800);
-                } else {
-                    throw new Error('Errore durante il logout');
-                }
-            })
-            .catch(error => {
-                console.error('Errore durante il logout:', error);
-                loadingText.textContent = 'Si è verificato un errore. Riprova.';
-                
-                // Add retry button
-                const retryButton = document.createElement('button');
-                retryButton.textContent = 'Riprova';
-                retryButton.style.marginTop = '15px';
-                retryButton.style.padding = '8px 20px';
-                retryButton.style.background = 'var(--primary)';
-                retryButton.style.color = 'white';
-                retryButton.style.border = 'none';
-                retryButton.style.borderRadius = 'var(--radius-sm)';
-                retryButton.style.cursor = 'pointer';
-                retryButton.onclick = function() {
-                    document.body.removeChild(loadingOverlay);
-                    logout();
-                };
-                
-                loadingOverlay.appendChild(retryButton);
-            });
+                .then(response => {
+                    if (response.ok) {
+                        loadingText.textContent = 'Reindirizzamento...';
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 800);
+                    } else {
+                        throw new Error('Errore durante il logout');
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore durante il logout:', error);
+                    loadingText.textContent = 'Si è verificato un errore. Riprova.';
+
+                    // Add retry button
+                    const retryButton = document.createElement('button');
+                    retryButton.textContent = 'Riprova';
+                    retryButton.style.marginTop = '15px';
+                    retryButton.style.padding = '8px 20px';
+                    retryButton.style.background = 'var(--primary)';
+                    retryButton.style.color = 'white';
+                    retryButton.style.border = 'none';
+                    retryButton.style.borderRadius = 'var(--radius-sm)';
+                    retryButton.style.cursor = 'pointer';
+                    retryButton.onclick = function () {
+                        document.body.removeChild(loadingOverlay);
+                        logout();
+                    };
+
+                    loadingOverlay.appendChild(retryButton);
+                });
         }
     </script>
 </body>
+
 </html>

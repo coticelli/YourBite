@@ -4,517 +4,2201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Gestione Menu</title>
-<style>
-    /* Stili base */
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5;
-        color: #333;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* === VARIABILI E IMPOSTAZIONI BASE === */
+        :root {
+            /* Palette colori moderna e vibrante */
+            --primary: #5e60ce;
+            --primary-light: #6930c3;
+            --primary-dark: #5390d9;
+            --secondary: #48bfe3;
+            --secondary-light: #64dfdf;
+            --accent: #80ffdb;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --dark: #1a1a2e;
+            --dark-blue: #16213e;
+            --medium-dark: #252941;
+            --light: #ffffff;
+            --gray: #f8f9fa;
+            --gray-light: #fafbfc;
+            --gray-dark: #e9ecef;
+            --text: #212529;
+            --text-light: #6c757d;
+            
+            /* Effetti e animazioni */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25);
+            --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25);
+            --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25);
+            --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-    /* Header e navigazione */
-    header {
-        background: linear-gradient(to right, #ff7e00, #ff5100);
-        padding: 15px 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: white;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Arial', sans-serif;
+            scroll-behavior: smooth;
+        }
 
-    .logo-container {
-        display: flex;
-        align-items: center;
-    }
-
-    .logo {
-        width: 50px;
-        height: auto;
-        transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-        transform: scale(1.05);
-    }
-
-    .header-title {
-        color: white;
-        font-size: 24px;
-        font-weight: 700;
-        margin-left: 15px;
-        font-family: 'Arial', sans-serif;
-    }
-
-    .header-nav {
-        display: flex;
-        gap: 20px;
-    }
-
-    .header-nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 8px 15px;
-        border-radius: 20px;
-        transition: background-color 0.3s;
-    }
-
-    .header-nav a:hover, .header-nav a.active {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .header-nav a.active {
-        font-weight: bold;
-    }
-
-    .user-role-badge {
-        background-color: white;
-        color: #ff5100;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 14px;
-        margin-left: 10px;
-    }
-
-    .user-controls {
-        display: flex;
-        align-items: center;
-        margin-left: 20px;
-    }
-
-    .username {
-        color: white;
-        font-weight: 500;
-        margin-right: 10px;
-    }
-
-    .logout-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.3s;
-    }
-
-    .logout-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Menu specifici */
-    .menu-container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .menu-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .add-item-btn {
-        background: #ff5100;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .add-item-btn:hover {
-        background: #e04600;
-    }
-
-    .categories-nav {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    }
-
-    .category-btn {
-        padding: 8px 15px;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        background: white;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .category-btn.active {
-        background: #ff5100;
-        color: white;
-        border-color: #ff5100;
-    }
-
-    .menu-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .menu-item {
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
-    }
-
-    .menu-item:hover {
-        transform: translateY(-5px);
-    }
-
-    .menu-item-image {
-        height: 180px;
-        background-size: cover;
-        background-position: center;
-    }
-
-    .menu-item-details {
-        padding: 15px;
-    }
-
-    .menu-item-title {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-    }
-
-    .menu-item-title h3 {
-        margin: 0;
-        font-size: 18px;
-    }
-
-    .menu-item-price {
-        font-weight: bold;
-        color: #ff5100;
-    }
-
-    .menu-item-description {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 15px;
-    }
-
-    .menu-item-actions {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .action-btn {
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 13px;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
-
-    .edit-btn {
-        background: #e7f7ee;
-        color: #00a86b;
-    }
-
-    .delete-btn {
-        background: #ffe7e7;
-        color: #ff4d4d;
-    }
-
-    .action-btn:hover {
-        opacity: 0.8;
-    }
-
-    .active-badge {
-        background: #e7f7ee;
-        color: #00a86b;
-        padding: 3px 8px;
-        border-radius: 10px;
-        font-size: 12px;
-        margin-left: 10px;
-    }
-
-    .inactive-badge {
-        background: #f0f0f0;
-        color: #777;
-        padding: 3px 8px;
-        border-radius: 10px;
-        font-size: 12px;
-        margin-left: 10px;
-    }
-
-    /* Media queries per responsività */
-    @media (max-width: 768px) {
-        header {
+        body {
+            background-color: var(--gray);
+            background-image: 
+                radial-gradient(circle at 25% 10%, rgba(94, 96, 206, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(72, 191, 227, 0.05) 0%, transparent 40%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
-            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        /* === EFFETTI DI BASE === */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-hover-effect {
+            transition: var(--transition-spring);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .card-hover-effect:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 0 20px 40px rgba(94, 96, 206, 0.2);
+        }
+
+        .text-gradient {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-glow:hover::after {
+            opacity: 0.2;
+            animation: glowPulse 1.5s ease infinite;
+        }
+
+        @keyframes glowPulse {
+            0% { opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
+
+        /* === HEADER E NAVIGAZIONE === */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 0;
+            box-shadow: var(--shadow-colored);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        header:hover {
+            box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, 
+                rgba(0, 0, 0, 0), 
+                rgba(255, 255, 255, 0.1),
+                rgba(0, 0, 0, 0));
+            background-size: 200% 100%;
+            animation: headerShimmer 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes headerShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: var(--transition-spring);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .logo:hover::after {
+            animation: logoPulse 1.5s ease-out infinite;
+            opacity: 1;
+        }
+
+        @keyframes logoPulse {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+
+        .header-title:hover::after {
+            width: 100%;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(5px);
+        }
+
+        .header-nav a i {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 16px;
+        }
+
+        .header-nav a::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, 
+                rgba(255, 255, 255, 0), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0));
+            top: 0;
+            left: -100%;
+            transition: var(--transition);
+            transform: skewX(-15deg);
+        }
+
+        .header-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-nav a:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .header-nav a:hover::before {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        .header-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stile per il pulsante Homepage nella navbar */
+        .header-nav a.home-button {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-nav a.home-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            animation: homeButtonShimmer 3s infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes homeButtonShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) rotate(45deg); }
+        }
+
+        .header-nav a.home-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .header-nav a.home-button i {
+            color: var(--accent);
+            transition: var(--transition-spring);
+        }
+
+        .header-nav a.home-button:hover i {
+            transform: scale(1.2);
+        }
+
+        .user-role-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            animation: badgePulse 3s infinite alternate;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-left: 10px;
+        }
+
+        @keyframes badgePulse {
+            0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+            100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+        }
+
+        .user-role-badge i {
+            font-size: 14px;
+            animation: rotateIcon 5s linear infinite;
+        }
+
+        @keyframes rotateIcon {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ff6b6b, #e63946);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+            border: 2px solid white;
+            animation: notificationPulse 1.5s infinite alternate;
+        }
+
+        @keyframes notificationPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .username {
+            color: white;
+            font-weight: 500;
+            margin-right: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            letter-spacing: 0.3px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, 
+                rgba(255, 255, 255, 0), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0));
+            top: 0;
+            left: -100%;
+            transition: var(--transition);
+            transform: skewX(-15deg);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .logout-btn:hover::before {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        /* === PARTICLES BACKGROUND === */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: rgba(94, 96, 206, 0.1);
+            border-radius: 50%;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, -80px); }
         }
         
-        .header-nav {
-            margin-top: 15px;
+        @keyframes particleFade {
+            0% { opacity: 0.05; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.05; }
+        }
+
+        /* === CUSTOMIZED SCROLLBAR === */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary-light), var(--primary));
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--primary), var(--primary-dark));
+        }
+
+        /* === MENU CONTAINER === */
+        .menu-container {
+            padding: 30px 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-header {
+            margin-bottom: 30px;
+        }
+
+        .menu-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-header h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -8px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .menu-header p {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* === MENU ACTIONS === */
+        .menu-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .menu-actions:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .add-item-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-item-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .add-item-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(94, 96, 206, 0.3);
+        }
+
+        .add-item-btn:hover::before {
+            animation: btnShimmer 1.5s ease-out;
+            opacity: 1;
+        }
+
+        @keyframes btnShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .filter-select {
+            position: relative;
+            min-width: 200px;
+        }
+
+        .filter-select select {
+            appearance: none;
+            width: 100%;
+            padding: 12px 20px;
+            padding-right: 40px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--gray-dark);
+            background: var(--gray-light);
+            color: var(--text);
+            font-size: 15px;
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .filter-select select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(94, 96, 206, 0.2);
+            background-color: white;
+        }
+
+        .filter-select::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .filter-select:hover::after {
+            color: var(--primary);
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        /* === CATEGORIES NAVIGATION === */
+        .categories-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
             flex-wrap: wrap;
-            justify-content: center;
+            padding: 5px 0;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--gray-dark);
+            border-radius: 25px;
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition-spring);
+            font-weight: 500;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-btn i {
+            font-size: 16px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .category-btn:hover i {
+            color: var(--primary);
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .category-btn:hover::before {
+            animation: btnShimmer 1.5s ease-out;
+            opacity: 1;
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.3);
+        }
+
+        .category-btn.active i {
+            color: white;
+        }
+
+        /* === MENU GRID === */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition-spring);
+            transform: translateZ(0);
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .menu-item-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .menu-item-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 70%, rgba(0, 0, 0, 0.5));
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover .menu-item-image::before {
+            opacity: 0.9;
+        }
+
+        .menu-item:hover .menu-item-image {
+            transform: scale(1.05);
+        }
+
+        .menu-item-details {
+            padding: 20px;
+            position: relative;
+        }
+
+        .menu-item-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .menu-item-title h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
-        
-        .menu-actions {
-            flex-direction: column;
-            gap: 15px;
-            align-items: flex-start;
+
+        .menu-item-price {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
         }
-        
-        .categories-nav {
-            overflow-x: auto;
-            padding-bottom: 10px;
-            white-space: nowrap;
+
+        .menu-item-price::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            bottom: -5px;
+            left: -5px;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            opacity: 0.1;
+            border-radius: var(--radius-sm);
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover .menu-item-price::before {
+            opacity: 0.2;
+            transform: scale(1.05);
+        }
+
+        .menu-item-description {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .active-badge, .inactive-badge {
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
             display: flex;
-            flex-wrap: nowrap;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+            white-space: nowrap;
         }
-    }
-</style>
+
+        .active-badge {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+        }
+
+        .inactive-badge {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-light);
+        }
+
+        .active-badge i, .inactive-badge i {
+            font-size: 12px;
+        }
+
+        .menu-item-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .action-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .edit-btn {
+            background-color: rgba(94, 96, 206, 0.1);
+            color: var(--primary);
+        }
+
+        .delete-btn {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-red);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: var(--accent-red);
+            color: white;
+        }
+
+        .action-btn:hover::before {
+            animation: btnShimmer 1.5s ease-out;
+            opacity: 1;
+        }
+
+        .menu-item-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            z-index: 5;
+        }
+
+        .menu-item-badge.bestseller {
+            background: linear-gradient(135deg, #f7b733, #fc4a1a);
+        }
+
+        .menu-item-badge.new {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+
+        .menu-item-badge.promo {
+            background: linear-gradient(135deg, var(--accent-green), #27ae60);
+        }
+
+        .menu-item-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 6px 12px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .menu-item-category i {
+            font-size: 12px;
+        }
+
+        /* === TOAST NOTIFICATION === */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 350px;
+        }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-success .toast-icon {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+        }
+
+        .toast-error .toast-icon {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--accent-red);
+        }
+
+        .toast-warning .toast-icon {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .toast-close {
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-light);
+            transition: var(--transition);
+            padding: 5px;
+        }
+
+        .toast-close:hover {
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            width: 90%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.open .modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            position: relative;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            border-top: 1px solid var(--gray-dark);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-dark);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(94, 96, 206, 0.2);
+        }
+
+        /* === ANIMATIONS === */
+        .animate-in {
+            animation: fadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 1200px) {
+            .header-nav a span {
+                display: none;
+            }
+            
+            .header-nav a {
+                padding: 10px;
+                font-size: 16px;
+                justify-content: center;
+            }
+            
+            .header-nav a i {
+                margin: 0;
+            }
+            
+            .user-role-badge {
+                padding: 8px 12px;
+            }
+            
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .logo-container {
+                margin-right: auto;
+            }
+            
+            .user-controls {
+                margin-left: auto;
+            }
+            
+            header {
+                height: auto;
+                padding: 10px 0;
+            }
+            
+            .menu-container {
+                padding: 20px 15px;
+            }
+            
+            .menu-actions {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .filter-select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin: 10px 0;
+            }
+            
+            .logo-container, .user-controls {
+                margin: 0;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .categories-nav {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 15px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none; /* Firefox */
+            }
+            
+            .categories-nav::-webkit-scrollbar {
+                display: none; /* WebKit */
+            }
+            
+            .category-btn {
+                white-space: nowrap;
+            }
+            
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+            }
+            
+            .menu-item {
+                margin: 0 auto;
+                max-width: 450px;
+            }
+            
+            .menu-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-actions {
+                padding: 15px;
+            }
+            
+            .categories-nav {
+                margin-bottom: 15px;
+            }
+            
+            .add-item-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body class="capo-role">
-    <!-- Header migliorato con gradiente arancione -->
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header migliorato -->
     <header>
-    <div class="logo-container">
-       <img src="/img/logo.png" alt="YourBite Logo" class="logo">
-        <h1 class="header-title">YourBite</h1>
-    </div>
-    
-    <div class="header-nav">
-    <a href="/dashboard">Dashboard</a>
-    <a href="/ordini">Ordini</a>
-    <a href="/menu">Menu</a>
-    <a href="/clienti">Clienti</a>
-    <a href="/impostazioni">Impostazioni</a>
-    
-    <div style="position: relative; margin-left: 10px;">
-        <span id="notification-badge" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -5px; display: none;">0</span>
-        <span class="user-role-badge">Capo</span>
-    </div>
-</div>
-<div class="user-controls">
-    <span class="username">{{user.username}}</span>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-</div>
-</header>
-    <div class="menu-container">
-        <h1>Gestione Menu</h1>
-        <p>Aggiungi, modifica o rimuovi prodotti dal tuo menu</p>
-
-        <div class="menu-actions">
-            <div>
-                <button class="add-item-btn">+ Aggiungi Prodotto</button>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="/img/logo.png" alt="YourBite Logo" class="logo">
+                <h1 class="header-title">YourBite</h1>
             </div>
-            <div>
-                <select>
+            
+            <div class="header-nav">
+                <!-- Pulsante Homepage con effetto speciale -->
+                <a href="/homepage_capo" class="home-button">
+                    <i class="fas fa-home"></i> <span>Homepage</span>
+                </a>
+                <a href="/dashboard">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </a>
+                <a href="/ordini">
+                    <i class="fas fa-shopping-bag"></i> <span>Ordini</span>
+                </a>
+                <a href="/menu" class="active">
+                    <i class="fas fa-utensils"></i> <span>Menu</span>
+                </a>
+                <a href="/clienti">
+                    <i class="fas fa-users"></i> <span>Clienti</span>
+                </a>
+                <a href="/impostazioni">
+                    <i class="fas fa-cog"></i> <span>Impostazioni</span>
+                </a>
+                
+                <div style="position: relative; margin-left: 10px;">
+                    <span id="notification-badge" style="display: none;">0</span>
+                    <span class="user-role-badge">
+                        <i class="fas fa-crown"></i> Capo
+                    </span>
+                </div>
+            </div>
+            
+            <div class="user-controls">
+                <span class="username">{{user.username}}</span>
+                <button class="logout-btn btn-glow" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="menu-container">
+        <!-- Menu Header -->
+        <div class="menu-header animate-in">
+            <h1 class="text-gradient">Gestione Menu</h1>
+            <p>Aggiungi, modifica o rimuovi prodotti dal tuo menu</p>
+        </div>
+
+        <!-- Menu Actions -->
+        <div class="menu-actions animate-in animate-delay-1">
+            <button class="add-item-btn btn-glow" id="addProductBtn">
+                <i class="fas fa-plus-circle"></i> Aggiungi Prodotto
+            </button>
+            <div class="filter-select">
+                <select id="product-filter">
                     <option value="all">Tutti i prodotti</option>
                     <option value="active">Prodotti attivi</option>
                     <option value="inactive">Prodotti inattivi</option>
+                    <option value="bestseller">Prodotti più venduti</option>
+                    <option value="new">Nuovi prodotti</option>
                 </select>
             </div>
         </div>
 
-        <div class="categories-nav">
-            <button class="category-btn active">Tutti</button>
-            <button class="category-btn">Panini</button>
-            <button class="category-btn">Pizze</button>
-            <button class="category-btn">Patatine</button>
-            <button class="category-btn">Bevande</button>
-            <button class="category-btn">Dessert</button>
+        <!-- Categories Nav -->
+        <div class="categories-nav animate-in animate-delay-2">
+            <button class="category-btn active" data-category="all">
+                <i class="fas fa-border-all"></i> Tutti
+            </button>
+            <button class="category-btn" data-category="panini">
+                <i class="fas fa-hamburger"></i> Panini
+            </button>
+            <button class="category-btn" data-category="pizze">
+                <i class="fas fa-pizza-slice"></i> Pizze
+            </button>
+            <button class="category-btn" data-category="patatine">
+                <i class="fas fa-french-fries"></i> Patatine
+            </button>
+            <button class="category-btn" data-category="bevande">
+                <i class="fas fa-glass-cheers"></i> Bevande
+            </button>
+            <button class="category-btn" data-category="dessert">
+                <i class="fas fa-ice-cream"></i> Dessert
+            </button>
         </div>
 
-        <div class="menu-grid">
-            <div class="menu-item">
+        <!-- Menu Grid -->
+        <div class="menu-grid animate-in animate-delay-3">
+            <!-- Menu Item 1 -->
+            <div class="menu-item card-hover-effect" data-category="panini">
+                <div class="menu-item-badge bestseller">Bestseller</div>
+                <div class="menu-item-category"><i class="fas fa-hamburger"></i> Panino</div>
                 <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?burger')"></div>
                 <div class="menu-item-details">
                     <div class="menu-item-title">
-                        <h3>Burger Classic <span class="active-badge">Attivo</span></h3>
+                        <h3>
+                            Burger Classic
+                            <span class="active-badge"><i class="fas fa-check-circle"></i> Attivo</span>
+                        </h3>
                         <div class="menu-item-price">€8.90</div>
                     </div>
                     <div class="menu-item-description">
-                        Hamburger di manzo, insalata, pomodoro, cipolla e salsa speciale.
+                        Hamburger di manzo 150g, insalata iceberg, pomodoro fresco, cipolla rossa caramellata e la nostra salsa speciale.
                     </div>
                     <div class="menu-item-actions">
-                        <button class="action-btn edit-btn">Modifica</button>
-                        <button class="action-btn delete-btn">Elimina</button>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
                     </div>
                 </div>
             </div>
 
-            <div class="menu-item">
+            <!-- Menu Item 2 -->
+            <div class="menu-item card-hover-effect" data-category="pizze">
+                <div class="menu-item-category"><i class="fas fa-pizza-slice"></i> Pizza</div>
                 <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?pizza')"></div>
                 <div class="menu-item-details">
                     <div class="menu-item-title">
-                        <h3>Pizza Margherita <span class="active-badge">Attivo</span></h3>
+                        <h3>
+                            Pizza Margherita
+                            <span class="active-badge"><i class="fas fa-check-circle"></i> Attivo</span>
+                        </h3>
                         <div class="menu-item-price">€9.50</div>
                     </div>
                     <div class="menu-item-description">
-                        Pomodoro, mozzarella, basilico e olio d'oliva.
+                        Pizza tradizionale con pomodoro San Marzano, mozzarella fior di latte, basilico fresco e olio extra vergine d'oliva.
                     </div>
                     <div class="menu-item-actions">
-                        <button class="action-btn edit-btn">Modifica</button>
-                        <button class="action-btn delete-btn">Elimina</button>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
                     </div>
                 </div>
             </div>
 
-            <div class="menu-item">
+            <!-- Menu Item 3 -->
+            <div class="menu-item card-hover-effect" data-category="patatine">
+                <div class="menu-item-badge promo">Promo</div>
+                <div class="menu-item-category"><i class="fas fa-french-fries"></i> Contorno</div>
                 <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?fries')"></div>
                 <div class="menu-item-details">
                     <div class="menu-item-title">
-                        <h3>Patatine Fritte <span class="active-badge">Attivo</span></h3>
+                        <h3>
+                            Patatine Fritte
+                            <span class="active-badge"><i class="fas fa-check-circle"></i> Attivo</span>
+                        </h3>
                         <div class="menu-item-price">€3.50</div>
                     </div>
                     <div class="menu-item-description">
-                        Patatine croccanti servite con ketchup o maionese.
+                        Patatine tagliate a mano, fritte due volte per una croccantezza perfetta, servite con ketchup o maionese a scelta.
                     </div>
                     <div class="menu-item-actions">
-                        <button class="action-btn edit-btn">Modifica</button>
-                        <button class="action-btn delete-btn">Elimina</button>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
                     </div>
                 </div>
             </div>
 
-            <div class="menu-item">
-                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?chicken')"></div>
+            <!-- Menu Item 4 -->
+            <div class="menu-item card-hover-effect" data-category="panini">
+                <div class="menu-item-category"><i class="fas fa-hamburger"></i> Panino</div>
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?chicken-burger')"></div>
                 <div class="menu-item-details">
                     <div class="menu-item-title">
-                        <h3>Chicken Burger <span class="active-badge">Attivo</span></h3>
+                        <h3>
+                            Chicken Burger
+                            <span class="active-badge"><i class="fas fa-check-circle"></i> Attivo</span>
+                        </h3>
                         <div class="menu-item-price">€7.90</div>
                     </div>
                     <div class="menu-item-description">
-                        Hamburger di pollo, insalata, pomodoro e salsa ai peperoni.
+                        Hamburger di pollo croccante, insalata fresca, pomodoro, cipolla rossa e la nostra salsa speciale ai peperoni.
                     </div>
                     <div class="menu-item-actions">
-                        <button class="action-btn edit-btn">Modifica</button>
-                        <button class="action-btn delete-btn">Elimina</button>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
                     </div>
                 </div>
             </div>
 
-            <div class="menu-item">
+            <!-- Menu Item 5 -->
+            <div class="menu-item card-hover-effect" data-category="bevande">
+                <div class="menu-item-category"><i class="fas fa-glass-cheers"></i> Bevanda</div>
                 <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?cola')"></div>
                 <div class="menu-item-details">
                     <div class="menu-item-title">
-                        <h3>Cola <span class="active-badge">Attivo</span></h3>
+                        <h3>
+                            Cola
+                            <span class="active-badge"><i class="fas fa-check-circle"></i> Attivo</span>
+                        </h3>
                         <div class="menu-item-price">€2.50</div>
                     </div>
                     <div class="menu-item-description">
-                        Bevanda gassata in lattina 33cl.
+                        Bevanda gassata in lattina 33cl, servita ghiacciata con una fetta di limone.
                     </div>
                     <div class="menu-item-actions">
-                        <button class="action-btn edit-btn">Modifica</button>
-                        <button class="action-btn delete-btn">Elimina</button>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
                     </div>
                 </div>
             </div>
 
-            <div class="menu-item">
-                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?dessert')"></div>
+            <!-- Menu Item 6 -->
+            <div class="menu-item card-hover-effect" data-category="dessert">
+                <div class="menu-item-badge new">Nuovo</div>
+                <div class="menu-item-category"><i class="fas fa-ice-cream"></i> Dessert</div>
+                <div class="menu-item-image" style="background-image: url('https://source.unsplash.com/random/300x200/?tiramisu')"></div>
                 <div class="menu-item-details">
                     <div class="menu-item-title">
-                        <h3>Tiramisù <span class="inactive-badge">Inattivo</span></h3>
+                        <h3>
+                            Tiramisù
+                            <span class="inactive-badge"><i class="fas fa-clock"></i> Inattivo</span>
+                        </h3>
                         <div class="menu-item-price">€4.90</div>
                     </div>
                     <div class="menu-item-description">
-                        Dolce cremoso al mascarpone con caffè e cacao.
+                        Classico dolce italiano con crema al mascarpone, savoiardi bagnati nel caffè e cacao in polvere.
                     </div>
                     <div class="menu-item-actions">
-                        <button class="action-btn edit-btn">Modifica</button>
-                        <button class="action-btn delete-btn">Elimina</button>
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Aggiungi Nuovo Prodotto</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nome Prodotto</label>
+                    <input type="text" class="form-control" id="productName" placeholder="Inserisci il nome del prodotto">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoria</label>
+                    <select class="form-control" id="productCategory">
+                        <option value="">Seleziona categoria</option>
+                        <option value="panini">Panini</option>
+                        <option value="pizze">Pizze</option>
+                        <option value="patatine">Patatine</option>
+                        <option value="bevande">Bevande</option>
+                        <option value="dessert">Dessert</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prezzo (€)</label>
+                    <input type="number" class="form-control" id="productPrice" placeholder="0.00" step="0.10">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrizione</label>
+                    <textarea class="form-control" id="productDescription" rows="4" placeholder="Descrivi il prodotto..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Immagine URL</label>
+                    <input type="text" class="form-control" id="productImage" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stato</label>
+                    <select class="form-control" id="productStatus">
+                        <option value="active">Attivo</option>
+                        <option value="inactive">Inattivo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Badge (opzionale)</label>
+                    <select class="form-control" id="productBadge">
+                        <option value="">Nessun badge</option>
+                        <option value="bestseller">Bestseller</option>
+                        <option value="new">Nuovo</option>
+                        <option value="promo">Promo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-primary" id="cancelBtn">Annulla</button>
+                <button class="btn btn-primary" id="saveProductBtn">Salva Prodotto</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Salva questo file come public/js/capo-panel.js
-
-// Funzione per il logout
-function logout() {
-    fetch('/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            window.location.href = '/login';
-        }
-    })
-    .catch(error => console.error('Errore durante il logout:', error));
-}
-
-// Funzione per caricare statistiche nella dashboard
-function loadDashboardStats() {
-    fetch('/statistiche')
-        .then(response => response.json())
-        .then(data => {
-            // Aggiorna i dati della dashboard con i dati ricevuti
-            document.getElementById('vendite-oggi').textContent = `€${data.venditeOggi}`;
-            document.getElementById('ordini-oggi').textContent = data.ordiniOggi;
-            document.getElementById('nuovi-clienti').textContent = data.clientiNuovi;
-            // Aggiorna altri elementi della dashboard...
-        })
-        .catch(error => console.error('Errore caricamento statistiche:', error));
-}
-
-// Funzione per caricare notifiche
-function loadNotifications() {
-    fetch('/notifiche')
-        .then(response => response.json())
-        .then(notifications => {
-            const notificationBadge = document.getElementById('notification-badge');
-            const unreadCount = notifications.filter(n => !n.letto).length;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create particles background
+            createParticles();
             
-            if (unreadCount > 0) {
-                notificationBadge.textContent = unreadCount;
-                notificationBadge.style.display = 'inline-block';
-            } else {
-                notificationBadge.style.display = 'none';
+            // Set active navigation link
+            setActiveNavLink();
+            
+            // Load notifications
+            loadNotifications();
+            
+            // Setup category filters
+            setupCategoryFilters();
+            
+            // Setup product filter
+            setupProductFilter();
+            
+            // Setup modal
+            setupModal();
+            
+            // Setup action buttons
+            setupActionButtons();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('Menu caricato', 'Visualizzazione dei prodotti aggiornata', 'success');
+            }, 1000);
+        });
+        
+        // Create background particles
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            if (!particles) return;
+            
+            // Clear any existing particles
+            particles.innerHTML = '';
+            
+            // Settings
+            const particleCount = 50; // Number of particles
+            
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 10 + 2;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.5 + 0.1;
+                
+                // Random animation duration
+                const duration = Math.random() * 60 + 30;
+                
+                // Apply styles
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = opacity;
+                
+                // Alternate between primary and secondary colors
+                if (i % 2 === 0) {
+                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
+                } else {
+                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+                }
+                
+                // Add floating animation
+                particle.style.animation = `
+                    particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
+                    particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
+                `;
+                
+                // Append to container
+                particles.appendChild(particle);
             }
-        })
-        .catch(error => console.error('Errore caricamento notifiche:', error));
-}
-
-// Inizializza il pannello di controllo
-document.addEventListener('DOMContentLoaded', function() {
-    // Imposta la classe "active" sul link di navigazione corrente
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.header-nav a');
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
         }
-    });
-    
-    // Carica dati se siamo nella dashboard
-    if (currentPath === '/dashboard') {
-        loadDashboardStats();
-    }
-    
-    // Carica notifiche ogni minuto
-    loadNotifications();
-    setInterval(loadNotifications, 60000);
-});
+        
+        // Set the active navigation link
+        function setActiveNavLink() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.header-nav a');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (currentPath === link.getAttribute('href')) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Load notifications
+                // Load notifications
+        function loadNotifications() {
+            try {
+                fetch('/notifiche')
+                    .then(response => response.json())
+                    .then(notifications => {
+                        const badge = document.getElementById('notification-badge');
+                        if (!badge) return;
+                        
+                        const unreadCount = notifications.filter(n => !n.letto).length;
+                        badge.textContent = unreadCount;
+                        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                        
+                        if (unreadCount > 0) {
+                            showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
+                        }
+                    })
+                    .catch(error => console.error('Errore caricamento notifiche:', error));
+            } catch (e) {
+                console.log('Caricamento notifiche non disponibile in questa pagina');
+            }
+        }
+        
+        // Setup category filters
+        function setupCategoryFilters() {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get category
+                    const category = this.dataset.category;
+                    
+                    // Filter items
+                    menuItems.forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'block';
+                            // Add animation
+                            item.classList.add('animate-in');
+                            setTimeout(() => {
+                                item.classList.remove('animate-in');
+                            }, 800);
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    showToast('Categoria filtrata', `Visualizzazione: ${getCategoryDisplayName(category)}`, 'success');
+                });
+            });
+        }
+        
+        // Get category display name
+        function getCategoryDisplayName(category) {
+            switch (category) {
+                case 'all': return 'Tutti i prodotti';
+                case 'panini': return 'Panini';
+                case 'pizze': return 'Pizze';
+                case 'patatine': return 'Patatine';
+                case 'bevande': return 'Bevande';
+                case 'dessert': return 'Dessert';
+                default: return category;
+            }
+        }
+        
+        // Setup product filter
+        function setupProductFilter() {
+            const productFilter = document.getElementById('product-filter');
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            if (productFilter) {
+                productFilter.addEventListener('change', function() {
+                    const value = this.value;
+                    
+                    menuItems.forEach(item => {
+                        // Reset display
+                        item.style.display = 'block';
+                        
+                        switch (value) {
+                            case 'active':
+                                if (!item.querySelector('.active-badge')) {
+                                    item.style.display = 'none';
+                                }
+                                break;
+                            case 'inactive':
+                                if (!item.querySelector('.inactive-badge')) {
+                                    item.style.display = 'none';
+                                }
+                                break;
+                            case 'bestseller':
+                                if (!item.querySelector('.menu-item-badge.bestseller')) {
+                                    item.style.display = 'none';
+                                }
+                                break;
+                            case 'new':
+                                if (!item.querySelector('.menu-item-badge.new')) {
+                                    item.style.display = 'none';
+                                }
+                                break;
+                            case 'promo':
+                                if (!item.querySelector('.menu-item-badge.promo')) {
+                                    item.style.display = 'none';
+                                }
+                                break;
+                            // 'all' case - show everything by default
+                        }
+                    });
+                    
+                    // Add animation to visible items
+                    const visibleItems = document.querySelectorAll('.menu-item[style="display: block;"]');
+                    visibleItems.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('animate-in');
+                            setTimeout(() => {
+                                item.classList.remove('animate-in');
+                            }, 800);
+                        }, index * 100); // Staggered animation
+                    });
+                    
+                    showToast('Filtro applicato', `Filtro: ${productFilter.options[productFilter.selectedIndex].text}`, 'success');
+                });
+            }
+        }
+        
+        // Setup modal
+        function setupModal() {
+            const modalOverlay = document.getElementById('productModal');
+            const modalClose = document.querySelector('.modal-close');
+            const addProductBtn = document.getElementById('addProductBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const saveProductBtn = document.getElementById('saveProductBtn');
+            
+            // Open modal
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', function() {
+                    modalOverlay.classList.add('open');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                });
+            }
+            
+            // Close modal functions
+            const closeModal = () => {
+                modalOverlay.classList.remove('open');
+                document.body.style.overflow = ''; // Restore scrolling
+                
+                // Reset form
+                const form = document.querySelector('.modal form');
+                if (form) form.reset();
+            };
+            
+            if (modalClose) {
+                modalClose.addEventListener('click', closeModal);
+            }
+            
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', closeModal);
+            }
+            
+            // Close on overlay click (not on modal content)
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            // Save product
+            if (saveProductBtn) {
+                saveProductBtn.addEventListener('click', function() {
+                    // Get form values
+                    const name = document.getElementById('productName').value;
+                    const category = document.getElementById('productCategory').value;
+                    const price = document.getElementById('productPrice').value;
+                    const description = document.getElementById('productDescription').value;
+                    const image = document.getElementById('productImage').value;
+                    const status = document.getElementById('productStatus').value;
+                    const badge = document.getElementById('productBadge').value;
+                    
+                    // Validate form (simple validation)
+                    if (!name || !category || !price || !description) {
+                        showToast('Errore validazione', 'Compila tutti i campi obbligatori', 'error');
+                        return;
+                    }
+                    
+                    // In a real implementation, you would make an API call here
+                    // For this demo, we'll just show a success message and close the modal
+                    
+                    showToast('Prodotto salvato', `Il prodotto ${name} è stato salvato con successo`, 'success');
+                    closeModal();
+                    
+                    // Optionally, you could add the new product to the UI
+                    addNewProductToUI(name, category, price, description, image, status, badge);
+                });
+            }
+        }
+        
+        // Add new product to UI
+        function addNewProductToUI(name, category, price, description, image, status, badge) {
+            const menuGrid = document.querySelector('.menu-grid');
+            if (!menuGrid) return;
+            
+            // Create new menu item
+            const menuItem = document.createElement('div');
+            menuItem.className = 'menu-item card-hover-effect animate-in';
+            menuItem.dataset.category = category;
+            
+            // Default image if none provided
+            const imageUrl = image || `https://source.unsplash.com/random/300x200/?${category}`;
+            
+            // Badge HTML if badge selected
+            let badgeHtml = '';
+            if (badge) {
+                badgeHtml = `<div class="menu-item-badge ${badge}">${badge.charAt(0).toUpperCase() + badge.slice(1)}</div>`;
+            }
+            
+            // Category HTML
+            let categoryIcon = 'utensils';
+            switch(category) {
+                case 'panini': categoryIcon = 'hamburger'; break;
+                case 'pizze': categoryIcon = 'pizza-slice'; break;
+                case 'patatine': categoryIcon = 'french-fries'; break;
+                case 'bevande': categoryIcon = 'glass-cheers'; break;
+                case 'dessert': categoryIcon = 'ice-cream'; break;
+            }
+            
+            const categoryDisplayName = getCategoryDisplayName(category);
+            const categoryHtml = `<div class="menu-item-category"><i class="fas fa-${categoryIcon}"></i> ${categoryDisplayName}</div>`;
+            
+            // Status badge
+            const statusBadge = status === 'active' ? 
+                `<span class="active-badge"><i class="fas fa-check-circle"></i> Attivo</span>` : 
+                `<span class="inactive-badge"><i class="fas fa-clock"></i> Inattivo</span>`;
+            
+            // Construct HTML
+            menuItem.innerHTML = `
+                ${badgeHtml}
+                ${categoryHtml}
+                <div class="menu-item-image" style="background-image: url('${imageUrl}')"></div>
+                <div class="menu-item-details">
+                    <div class="menu-item-title">
+                        <h3>
+                            ${name}
+                            ${statusBadge}
+                        </h3>
+                        <div class="menu-item-price">€${parseFloat(price).toFixed(2)}</div>
+                    </div>
+                    <div class="menu-item-description">
+                        ${description}
+                    </div>
+                    <div class="menu-item-actions">
+                        <button class="action-btn edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                        <button class="action-btn delete-btn"><i class="fas fa-trash-alt"></i> Elimina</button>
+                    </div>
+                </div>
+            `;
+            
+            // Prepend to menu grid (add at the top)
+            menuGrid.insertBefore(menuItem, menuGrid.firstChild);
+            
+            // Setup action buttons for the new item
+            setupItemActionButtons(menuItem);
+        }
+        
+        // Setup action buttons
+        function setupActionButtons() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                setupItemActionButtons(item);
+            });
+        }
+        
+        // Setup action buttons for a specific item
+        function setupItemActionButtons(menuItem) {
+            const editBtn = menuItem.querySelector('.edit-btn');
+            const deleteBtn = menuItem.querySelector('.delete-btn');
+            
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    const productName = menuItem.querySelector('.menu-item-title h3').childNodes[0].nodeValue.trim();
+                    showToast('Modifica prodotto', `Modifica del prodotto: ${productName}`, 'info');
+                    
+                    // In a real implementation, you would open the modal with product data
+                    // For this demo, we'll just show a toast
+                });
+            }
+            
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    const productName = menuItem.querySelector('.menu-item-title h3').childNodes[0].nodeValue.trim();
+                    
+                    // Confirm delete
+                    if (confirm(`Sei sicuro di voler eliminare ${productName}? Questa azione non può essere annullata.`)) {
+                        // Fade out animation
+                        menuItem.style.opacity = '0';
+                        menuItem.style.transform = 'scale(0.8)';
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            menuItem.remove();
+                            showToast('Prodotto eliminato', `Il prodotto ${productName} è stato eliminato`, 'success');
+                        }, 300);
+                    }
+                });
+            }
+        }
+        
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => {
+                toast.remove();
+            });
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            
+            // Icon based on type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <div class="toast-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Add show class after a small delay to trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Add event listener to close button
+            const closeButton = toast.querySelector('.toast-close');
+            closeButton.addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
+            
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+        
+        // Function for logout
+        function logout() {
+            // Show loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.style.position = 'fixed';
+            loadingOverlay.style.top = '0';
+            loadingOverlay.style.left = '0';
+            loadingOverlay.style.width = '100%';
+            loadingOverlay.style.height = '100%';
+            loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.flexDirection = 'column';
+            loadingOverlay.style.justifyContent = 'center';
+            loadingOverlay.style.alignItems = 'center';
+            loadingOverlay.style.zIndex = '2000';
+            loadingOverlay.style.backdropFilter = 'blur(5px)';
+            
+            const spinnerContainer = document.createElement('div');
+            spinnerContainer.style.width = '60px';
+            spinnerContainer.style.height = '60px';
+            spinnerContainer.style.position = 'relative';
+            
+            const spinner = document.createElement('div');
+            spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+            spinner.style.borderTopColor = '#5e60ce';
+            spinner.style.borderRadius = '50%';
+            spinner.style.width = '100%';
+            spinner.style.height = '100%';
+            spinner.style.animation = 'spin 1s linear infinite';
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            
+            document.head.appendChild(style);
+            spinnerContainer.appendChild(spinner);
+            
+            const loadingText = document.createElement('p');
+            loadingText.textContent = 'Logout in corso...';
+            loadingText.style.marginTop = '20px';
+            loadingText.style.color = 'var(--primary)';
+            loadingText.style.fontWeight = '500';
+            
+            loadingOverlay.appendChild(spinnerContainer);
+            loadingOverlay.appendChild(loadingText);
+            document.body.appendChild(loadingOverlay);
+            
+            // Perform logout
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    loadingText.textContent = 'Reindirizzamento...';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 800);
+                } else {
+                    throw new Error('Errore durante il logout');
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante il logout:', error);
+                loadingText.textContent = 'Si è verificato un errore. Riprova.';
+                
+                // Add retry button
+                const retryButton = document.createElement('button');
+                retryButton.textContent = 'Riprova';
+                retryButton.style.marginTop = '15px';
+                retryButton.style.padding = '8px 20px';
+                retryButton.style.background = 'var(--primary)';
+                retryButton.style.color = 'white';
+                retryButton.style.border = 'none';
+                retryButton.style.borderRadius = 'var(--radius-sm)';
+                retryButton.style.cursor = 'pointer';
+                retryButton.onclick = function() {
+                    document.body.removeChild(loadingOverlay);
+                    logout();
+                };
+                
+                loadingOverlay.appendChild(retryButton);
+            });
+        }
     </script>
 </body>
 </html>

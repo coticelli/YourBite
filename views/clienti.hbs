@@ -4,550 +4,4245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Gestione Clienti</title>
-<style>
-    /* Stili base */
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5;
-        color: #333;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.4/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
+    <style>
+        /* === VARIABILI E IMPOSTAZIONI BASE === */
+        :root {
+            /* Palette colori moderna e vibrante */
+            --primary: #5e60ce;
+            --primary-light: #6930c3;
+            --primary-dark: #5390d9;
+            --secondary: #48bfe3;
+            --secondary-light: #64dfdf;
+            --accent: #80ffdb;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --accent-purple: #9b59b6;
+            --accent-yellow: #f1c40f;
+            --dark: #1a1a2e;
+            --dark-blue: #16213e;
+            --medium-dark: #252941;
+            --light: #ffffff;
+            --gray: #f8f9fa;
+            --gray-light: #fafbfc;
+            --gray-dark: #e9ecef;
+            --text: #212529;
+            --text-light: #6c757d;
+            
+            /* Effetti e animazioni */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25);
+            --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25);
+            --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25);
+            --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25);
+            --shadow-purple: 0 8px 25px rgba(155, 89, 182, 0.25);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
+            --radius-xl: 30px;
+            --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --transition-bounce: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
-    /* Header e navigazione */
-    header {
-        background: linear-gradient(to right, #ff7e00, #ff5100);
-        padding: 15px 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: white;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Arial', sans-serif;
+            scroll-behavior: smooth;
+        }
 
-    .logo-container {
-        display: flex;
-        align-items: center;
-    }
-
-    .logo {
-        width: 50px;
-        height: auto;
-        transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-        transform: scale(1.05);
-    }
-
-    .header-title {
-        color: white;
-        font-size: 24px;
-        font-weight: 700;
-        margin-left: 15px;
-        font-family: 'Arial', sans-serif;
-    }
-
-    .header-nav {
-        display: flex;
-        gap: 20px;
-    }
-
-    .header-nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 8px 15px;
-        border-radius: 20px;
-        transition: background-color 0.3s;
-    }
-
-    .header-nav a:hover, .header-nav a.active {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .header-nav a.active {
-        font-weight: bold;
-    }
-
-    .user-role-badge {
-        background-color: white;
-        color: #ff5100;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 14px;
-        margin-left: 10px;
-    }
-
-    .user-controls {
-        display: flex;
-        align-items: center;
-        margin-left: 20px;
-    }
-
-    .username {
-        color: white;
-        font-weight: 500;
-        margin-right: 10px;
-    }
-
-    .logout-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.3s;
-    }
-
-    .logout-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Clienti specifici */
-    .customers-container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .customers-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .search-box {
-        display: flex;
-        gap: 10px;
-        max-width: 400px;
-    }
-
-    .search-box input {
-        flex-grow: 1;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    .search-btn {
-        background: #ff5100;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .search-btn:hover {
-        background: #e04600;
-    }
-
-    .export-btn {
-        background: #3a5bd9;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .export-btn:hover {
-        background: #2b4baa;
-    }
-
-    .customers-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .customers-table th, .customers-table td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid #eee;
-    }
-
-    .customers-table th {
-        background-color: #f8f8f8;
-        color: #555;
-        font-weight: 600;
-    }
-
-    .customers-table tr:last-child td {
-        border-bottom: none;
-    }
-
-    .customers-table tr:hover {
-        background-color: #f9f9f9;
-    }
-
-    .customer-status {
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-    }
-
-    .status-active {
-        background-color: #e7f7ee;
-        color: #00a86b;
-    }
-
-    .status-inactive {
-        background-color: #f0f0f0;
-        color: #777;
-    }
-
-    .action-btn {
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        font-size: 13px;
-        cursor: pointer;
-        margin-right: 5px;
-        transition: background 0.3s;
-    }
-
-    .view-btn {
-        background: #e7f1fd;
-        color: #3a5bd9;
-    }
-
-    .edit-btn {
-        background: #e7f7ee;
-        color: #00a86b;
-    }
-
-    .delete-btn {
-        background: #ffe7e7;
-        color: #ff4d4d;
-    }
-
-    .action-btn:hover {
-        opacity: 0.8;
-    }
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-        gap: 5px;
-    }
-
-    .pagination a {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        color: #555;
-        text-decoration: none;
-    }
-
-    .pagination a.active {
-        background-color: #ff5100;
-        color: white;
-        border-color: #ff5100;
-    }
-
-    .customer-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .customer-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-size: cover;
-        background-position: center;
-    }
-
-    .loyalty-points {
-        background: #fff8e6;
-        color: #ffa500;
-        padding: 3px 8px;
-        border-radius: 10px;
-        font-size: 12px;
-    }
-
-    /* Media queries per responsività */
-    @media (max-width: 768px) {
-        header {
+        body {
+            background-color: var(--gray);
+            background-image: 
+                radial-gradient(circle at 25% 10%, rgba(94, 96, 206, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(72, 191, 227, 0.05) 0%, transparent 40%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
-            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        /* === EFFETTI DI BASE === */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-hover-effect {
+            transition: var(--transition-spring);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .card-hover-effect:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 0 20px 40px rgba(94, 96, 206, 0.2);
+        }
+
+        .text-gradient {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-glow:hover::after {
+            opacity: 0.2;
+            animation: glowPulse 1.5s ease infinite;
+        }
+
+        @keyframes glowPulse {
+            0% { opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
+
+        /* === HEADER E NAVIGAZIONE === */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 0;
+            box-shadow: var(--shadow-colored);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        header:hover {
+            box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, 
+                rgba(0, 0, 0, 0), 
+                rgba(255, 255, 255, 0.1),
+                rgba(0, 0, 0, 0));
+            background-size: 200% 100%;
+            animation: headerShimmer 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes headerShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: var(--transition-spring);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .logo:hover::after {
+            animation: logoPulse 1.5s ease-out infinite;
+            opacity: 1;
+        }
+
+        @keyframes logoPulse {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+
+        .header-title:hover::after {
+            width: 100%;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(5px);
+        }
+
+        .header-nav a i {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 16px;
+        }
+
+        .header-nav a::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, 
+                rgba(255, 255, 255, 0), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0));
+            top: 0;
+            left: -100%;
+            transition: var(--transition);
+            transform: skewX(-15deg);
+        }
+
+        .header-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-nav a:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .header-nav a:hover::before {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        .header-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stile per il pulsante Homepage nella navbar */
+        .header-nav a.home-button {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-nav a.home-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            animation: homeButtonShimmer 3s infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes homeButtonShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) rotate(45deg); }
+        }
+
+        .header-nav a.home-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .header-nav a.home-button i {
+            color: var(--accent);
+            transition: var(--transition-spring);
+        }
+
+        .header-nav a.home-button:hover i {
+            transform: scale(1.2);
+        }
+
+        .user-role-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            animation: badgePulse 3s infinite alternate;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-left: 10px;
+        }
+
+        @keyframes badgePulse {
+            0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+            100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+        }
+
+        .user-role-badge i {
+            font-size: 14px;
+            animation: rotateIcon 5s linear infinite;
+        }
+
+        @keyframes rotateIcon {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ff6b6b, #e63946);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+            border: 2px solid white;
+            animation: notificationPulse 1.5s infinite alternate;
+        }
+
+        @keyframes notificationPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .username {
+            color: white;
+            font-weight: 500;
+            margin-right: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            letter-spacing: 0.3px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, 
+                rgba(255, 255, 255, 0), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0));
+            top: 0;
+            left: -100%;
+            transition: var(--transition);
+            transform: skewX(-15deg);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .logout-btn:hover::before {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        /* === PARTICLES BACKGROUND === */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: rgba(94, 96, 206, 0.1);
+            border-radius: 50%;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, -80px); }
         }
         
-        .header-nav {
-            margin-top: 15px;
+        @keyframes particleFade {
+            0% { opacity: 0.05; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.05; }
+        }
+
+        /* === CUSTOMIZED SCROLLBAR === */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary-light), var(--primary));
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--primary), var(--primary-dark));
+        }
+
+        /* === CUSTOMERS CONTAINER === */
+        .customers-container {
+            padding: 30px 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .customers-header {
+            margin-bottom: 30px;
+        }
+
+        .customers-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .customers-header h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -8px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .customers-header p {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* === VIEW SWITCHER === */
+        .view-switcher {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 8px;
+            box-shadow: var(--shadow);
+            width: fit-content;
+            transition: var(--transition);
+        }
+
+        .view-switcher:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        .view-btn:not(.active):hover {
+            background-color: var(--gray-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .view-btn i {
+            font-size: 16px;
+        }
+
+        /* === SEARCH AND FILTERS === */
+        .search-filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
             flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px;
+            padding-left: 45px;
+            border: 2px solid var(--gray-dark);
+            border-radius: var(--radius-sm);
+            background-color: white;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(94, 96, 206, 0.15);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 18px;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus + i {
+            color: var(--primary);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .filter-dropdown select {
+            appearance: none;
+            padding: 14px 35px 14px 20px;
+            border: 2px solid var(--gray-dark);
+            border-radius: var(--radius-sm);
+            background-color: white;
+            font-size: 15px;
+            min-width: 150px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-dropdown select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(94, 96, 206, 0.15);
+        }
+
+        .filter-dropdown::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .filter-dropdown:hover::after {
+            color: var(--primary);
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--gray-dark);
+        }
+
+        .action-btn i {
+            transition: var(--transition-spring);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .action-btn:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .add-customer-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        .add-customer-btn:hover {
+            box-shadow: 0 8px 25px rgba(94, 96, 206, 0.3);
+            color: white;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            background: white;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-spring);
+            border: 2px solid var(--gray-dark);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .export-btn:hover i {
+            transform: scale(1.2) rotate(-10deg);
+        }
+
+        /* === CUSTOMER CARDS VIEW === */
+        .customers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .customer-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition-spring);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            position: relative;
+            height: 400px;
+        }
+
+        .customer-card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .customer-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .customer-card.flipped .customer-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .customer-card-front,
+        .customer-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .customer-card-back {
+            transform: rotateY(180deg);
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+        }
+
+        .customer-card-header {
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .customer-card-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .customer-card-body {
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .vip-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            color: white;
+            border-radius: 30px;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .vip-badge i {
+            font-size: 12px;
+        }
+
+        .customer-avatar-container {
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            transition: var(--transition-spring);
+        }
+
+        .customer-card:hover .customer-avatar-container {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .customer-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .customer-card:hover .customer-avatar {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .customer-info {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .customer-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 10px 0 5px;
+            color: var(--text);
+        }
+
+        .customer-email {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .customer-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .customer-stat {
+            background: var(--gray-light);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .customer-stat:hover {
+            background: white;
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 3px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .customer-actions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
             justify-content: center;
             gap: 10px;
         }
-        
-        .customers-header {
-            flex-direction: column;
-            gap: 15px;
-            align-items: flex-start;
+
+        .flip-btn,
+        .detail-btn,
+        .edit-btn {
+            padding: 8px 15px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: none;
+            flex: 1;
         }
-        
-        .search-box {
-            max-width: 100%;
-            width: 100%;
+
+        .flip-btn {
+            background-color: rgba(94, 96, 206, 0.1);
+            color: var(--primary);
         }
-        
+
+        .detail-btn {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--accent-green);
+        }
+
+        .edit-btn {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .flip-btn:hover,
+        .detail-btn:hover,
+        .edit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .flip-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .detail-btn:hover {
+            background-color: var(--accent-green);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: var(--accent-orange);
+            color: white;
+        }
+
+        /* Card back styles */
+        .card-back-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card-back-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .card-back-header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .stats-chart-container {
+            position: relative;
+            height: 180px;
+            margin-bottom: 20px;
+        }
+
+        .loyalty-progress {
+            margin-bottom: 20px;
+        }
+
+        .loyalty-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .loyalty-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loyalty-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--secondary-light));
+            border-radius: 6px;
+            position: relative;
+            animation: growWidth 1.5s ease-out;
+        }
+
+        @keyframes growWidth {
+            from { width: 0; }
+        }
+
+        .loyalty-rewards {
+            margin-top: 5px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .loyalty-point {
+            position: relative;
+            width: 15px;
+            height: 15px;
+        }
+
+        .loyalty-point::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .loyalty-point.active::before {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(128, 255, 219, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(128, 255, 219, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(128, 255, 219, 0); }
+        }
+
+        .card-back-footer {
+            display: flex;
+            justify-content: center;
+        }
+
+        .back-to-front-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-to-front-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* === CUSTOMER TABLE VIEW === */
+        .customers-table-container {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
         .customers-table {
-            display: block;
-            overflow-x: auto;
+            width: 100%;
+            border-collapse: collapse;
         }
-    }
-</style>
+
+        .customers-table th, 
+        .customers-table td {
+            padding: 16px 20px;
+            text-align: left;
+        }
+
+        .customers-table th {
+            background-color: var(--gray-light);
+            color: var(--text);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .customers-table th:hover {
+            background-color: var(--gray);
+        }
+
+        .customers-table tbody tr {
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .customers-table tbody tr:hover {
+            background-color: rgba(94, 96, 206, 0.03);
+        }
+
+        .customers-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .customer-table-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .table-customer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gray-dark);
+            transition: var(--transition-spring);
+        }
+
+        .customers-table tr:hover .table-customer-avatar {
+            transform: scale(1.1) rotate(10deg);
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        .table-customer-name {
+            font-weight: 600;
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .table-customer-name:hover {
+            color: var(--primary);
+        }
+
+        .table-customer-email {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .customer-status {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+        }
+
+        .status-inactive {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-light);
+        }
+
+        .table-loyalty-points {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--accent-orange);
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-spring);
+            font-size: 15px;
+        }
+
+        .table-view-btn {
+            background-color: rgba(94, 96, 206, 0.1);
+            color: var(--primary);
+        }
+
+        .table-edit-btn {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .table-delete-btn {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-red);
+        }
+
+        .table-action-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        .table-view-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        .table-edit-btn:hover {
+            background-color: var(--accent-orange);
+            color: white;
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.2);
+        }
+
+        .table-delete-btn:hover {
+            background-color: var(--accent-red);
+            color: white;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+        }
+
+        /* === MAP VIEW === */
+        .customers-map-container {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .map-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .map-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .map-filter-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--gray-dark);
+            border-radius: 30px;
+            background: white;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .map-filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .map-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        .map-canvas-container {
+            position: relative;
+            height: 500px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius);
+            background-color: var(--gray-light);
+            background-image: url('https://maps.googleapis.com/maps/api/staticmap?center=Milan,IT&zoom=12&size=1200x500&key=YOUR_API_KEY');
+            background-position: center;
+            background-size: cover;
+        }
+
+        /* Map customer markers */
+        .customer-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: var(--transition-spring);
+            z-index: 5;
+        }
+
+        .customer-marker::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            bottom: -15px;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            left: 50%;
+        }
+
+        .customer-marker::before {
+            content: '';
+            position: absolute;
+            border-width: 10px;
+            border-style: solid;
+            border-color: var(--primary) transparent transparent transparent;
+            bottom: -25px;
+            left: calc(50% - 10px);
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+        }
+
+        .customer-marker img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .customer-marker:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .marker-active {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(94, 96, 206, 0.3);
+            border: 3px solid var(--primary);
+            z-index: 20;
+            transition: var(--transition-spring);
+            animation: markerPulse 2s infinite;
+            transform-origin: center bottom;
+        }
+
+        @keyframes markerPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .marker-active img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .marker-active::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: var(--primary);
+            border-radius: 50%;
+            bottom: -20px;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            left: 50%;
+        }
+
+        .marker-active::before {
+            content: '';
+            position: absolute;
+            border-width: 15px;
+            border-style: solid;
+            border-color: var(--primary) transparent transparent transparent;
+            bottom: -35px;
+            left: calc(50% - 15px);
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+        }
+
+        .marker-info {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            width: 200px;
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 30;
+            text-align: center;
+        }
+
+        .marker-info::after {
+            content: '';
+            position: absolute;
+            border-width: 10px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+            bottom: -20px;
+            left: calc(50% - 10px);
+        }
+
+        .marker-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .marker-info p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .marker-info-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .marker-info-btn {
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-light);
+            color: var(--text);
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .marker-info-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* === STATS VIEW === */
+        .customers-stats-container {
+            margin-bottom: 30px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-card {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition-spring);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-card::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: translateY(5px);
+            transition: var(--transition);
+        }
+
+        .stats-card:hover::after {
+            transform: translateY(0);
+        }
+
+        .stats-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-card-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            font-size: 20px;
+            transition: var(--transition-spring);
+        }
+
+        .stats-card:hover .stats-card-icon {
+            transform: rotateY(180deg);
+        }
+
+        .stats-card-body {
+            text-align: center;
+        }
+
+        .stats-card-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 5px;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-card-trend {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .trend-up {
+            color: var(--accent-green);
+        }
+
+        .trend-down {
+            color: var(--accent-red);
+        }
+
+        .stats-chart-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .stats-chart-container:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .stats-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-chart-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-chart-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-filter-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--gray-dark);
+            border-radius: var(--radius-sm);
+            background: white;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chart-filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .chart-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chart-wrapper {
+            height: 350px;
+            position: relative;
+        }
+
+        /* === PAGINATION === */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 10px;
+        }
+
+        .pagination a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--gray-dark);
+            border-radius: 50%;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-spring);
+        }
+
+        .pagination a:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .pagination a.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        /* === TOAST NOTIFICATION === */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 350px;
+        }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-success .toast-icon {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+        }
+
+        .toast-error .toast-icon {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--accent-red);
+        }
+
+        .toast-warning .toast-icon {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .toast-close {
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-light);
+            transition: var(--transition);
+            padding: 5px;
+        }
+
+        .toast-close:hover {
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        /* === MODAL === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            width: 90%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.open .modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            position: relative;
+        }
+
+            .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            border-top: 1px solid var(--gray-dark);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-dark);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(94, 96, 206, 0.2);
+        }
+
+        /* Customer profile modal */
+        .customer-profile-modal .modal {
+            max-width: 800px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('https://source.unsplash.com/random/800x200/?pattern') center/cover;
+            opacity: 0.1;
+        }
+
+        .profile-header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-info h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .profile-meta {
+            display: flex;
+            margin-top: 10px;
+            gap: 15px;
+        }
+
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .profile-tabs {
+            display: flex;
+            background: white;
+            padding: 0 30px;
+            border-bottom: 1px solid var(--gray-dark);
+        }
+
+        .profile-tab {
+            padding: 15px 20px;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .profile-tab:hover {
+            color: var(--primary);
+        }
+
+        .profile-tab.active {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .profile-content {
+            padding: 30px;
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-order-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .profile-order-item {
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .profile-order-item:hover {
+            background: white;
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+        }
+
+        .profile-order-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .profile-order-id {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .profile-order-date {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .profile-order-amount {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--text);
+        }
+
+        .profile-order-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .profile-stat-card {
+            background: var(--gray-light);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .profile-stat-card:hover {
+            background: white;
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+        }
+
+        .profile-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .profile-stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 1200px) {
+            .header-nav a span {
+                display: none;
+            }
+            
+            .header-nav a {
+                padding: 10px;
+                font-size: 16px;
+                justify-content: center;
+            }
+            
+            .header-nav a i {
+                margin: 0;
+            }
+            
+            .user-role-badge {
+                padding: 8px 12px;
+            }
+            
+            .customers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .stats-row {
+                flex-wrap: wrap;
+            }
+            
+            .stats-card {
+                flex: 0 0 calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .logo-container {
+                margin-right: auto;
+            }
+            
+            .user-controls {
+                margin-left: auto;
+            }
+            
+            header {
+                height: auto;
+                padding: 10px 0;
+            }
+            
+            .customers-container {
+                padding: 20px 15px;
+            }
+            
+            .search-filter-container {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .filter-controls {
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .filter-dropdown select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                margin: 10px 0;
+            }
+            
+            .logo-container, .user-controls {
+                margin: 0;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .customers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-card {
+                flex: 0 0 100%;
+            }
+            
+            .customers-table th:nth-child(n+4),
+            .customers-table td:nth-child(n+4) {
+                display: none;
+            }
+            
+            .table-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .view-switcher {
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .customers-header h1 {
+                font-size: 24px;
+            }
+            
+            .search-filter-container {
+                gap: 10px;
+            }
+            
+            .filter-dropdown {
+                width: 100%;
+            }
+            
+            .filter-dropdown select {
+                width: 100%;
+            }
+            
+            .map-filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
 <body class="capo-role">
-    <!-- Header migliorato con gradiente arancione -->
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header migliorato -->
     <header>
-    <div class="logo-container">
-        <img src="/img/logo.png" alt="YourBite Logo" class="logo">
-        <h1 class="header-title">YourBite</h1>
-    </div>
-    
-<div class="header-nav">
-    <a href="/dashboard">Dashboard</a>
-    <a href="/ordini">Ordini</a>
-    <a href="/menu">Menu</a>
-    <a href="/clienti">Clienti</a>
-    <a href="/impostazioni">Impostazioni</a>
-    
-    <div style="position: relative; margin-left: 10px;">
-        <span id="notification-badge" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -5px; display: none;">0</span>
-        <span class="user-role-badge">Capo</span>
-    </div>
-</div>
-<div class="user-controls">
-    <span class="username">{{user.username}}</span>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-</div>
-</header>
-    <div class="customers-container">
-        <h1>Gestione Clienti</h1>
-        <p>Visualizza e gestisci i clienti del tuo locale</p>
-
-        <div class="customers-header">
-            <div class="search-box">
-                <input type="text" placeholder="Cerca cliente...">
-                <button class="search-btn">Cerca</button>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="/img/logo.png" alt="YourBite Logo" class="logo">
+                <h1 class="header-title">YourBite</h1>
             </div>
-            <button class="export-btn">Esporta Dati</button>
+            
+            <div class="header-nav">
+                <!-- Pulsante Homepage con effetto speciale -->
+                <a href="/homepage_capo" class="home-button">
+                    <i class="fas fa-home"></i> <span>Homepage</span>
+                </a>
+                <a href="/dashboard">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </a>
+                <a href="/ordini">
+                    <i class="fas fa-shopping-bag"></i> <span>Ordini</span>
+                </a>
+                <a href="/menu">
+                    <i class="fas fa-utensils"></i> <span>Menu</span>
+                </a>
+                <a href="/clienti" class="active">
+                    <i class="fas fa-users"></i> <span>Clienti</span>
+                </a>
+                <a href="/impostazioni">
+                    <i class="fas fa-cog"></i> <span>Impostazioni</span>
+                </a>
+                
+                <div style="position: relative; margin-left: 10px;">
+                    <span id="notification-badge" style="display: none;">0</span>
+                    <span class="user-role-badge">
+                        <i class="fas fa-crown"></i> Capo
+                    </span>
+                </div>
+            </div>
+            
+            <div class="user-controls">
+                <span class="username">{{user.username}}</span>
+                <button class="logout-btn btn-glow" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="customers-container">
+        <!-- Customers Header -->
+        <div class="customers-header animate-in">
+            <h1 class="text-gradient">Gestione Clienti</h1>
+            <p>Visualizza, analizza e gestisci i clienti del tuo locale</p>
         </div>
 
-        <table class="customers-table">
-            <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Email</th>
-                    <th>Numero Telefono</th>
-                    <th>Ordini</th>
-                    <th>Punti Fedeltà</th>
-                    <th>Stato</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="customer-info">
-                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?man')"></div>
-                            Marco Rossi
-                        </div>
-                    </td>
-                    <td>marco.rossi@email.com</td>
-                    <td>+39 123 456 7890</td>
-                    <td>12</td>
-                    <td><span class="loyalty-points">250 punti</span></td>
-                    <td><span class="customer-status status-active">Attivo</span></td>
-                    <td>
-                        <button class="action-btn view-btn">Visualizza</button>
-                        <button class="action-btn edit-btn">Modifica</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="customer-info">
-                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?woman')"></div>
-                            Laura Bianchi
-                        </div>
-                    </td>
-                    <td>laura.bianchi@email.com</td>
-                    <td>+39 123 456 7891</td>
-                    <td>8</td>
-                    <td><span class="loyalty-points">180 punti</span></td>
-                    <td><span class="customer-status status-active">Attivo</span></td>
-                    <td>
-                        <button class="action-btn view-btn">Visualizza</button>
-                        <button class="action-btn edit-btn">Modifica</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="customer-info">
-                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?man2')"></div>
-                            Giuseppe Verdi
-                        </div>
-                    </td>
-                    <td>giuseppe.verdi@email.com</td>
-                    <td>+39 123 456 7892</td>
-                    <td>15</td>
-                    <td><span class="loyalty-points">320 punti</span></td>
-                    <td><span class="customer-status status-active">Attivo</span></td>
-                    <td>
-                        <button class="action-btn view-btn">Visualizza</button>
-                        <button class="action-btn edit-btn">Modifica</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="customer-info">
-                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?woman2')"></div>
-                            Francesca Neri
-                        </div>
-                    </td>
-                    <td>francesca.neri@email.com</td>
-                    <td>+39 123 456 7893</td>
-                    <td>5</td>
-                    <td><span class="loyalty-points">90 punti</span></td>
-                    <td><span class="customer-status status-active">Attivo</span></td>
-                    <td>
-                        <button class="action-btn view-btn">Visualizza</button>
-                        <button class="action-btn edit-btn">Modifica</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="customer-info">
-                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?man3')"></div>
-                            Antonio Russo
-                        </div>
-                    </td>
-                    <td>antonio.russo@email.com</td>
-                    <td>+39 123 456 7894</td>
-                    <td>3</td>
-                    <td><span class="loyalty-points">60 punti</span></td>
-                    <td><span class="customer-status status-inactive">Inattivo</span></td>
-                    <td>
-                        <button class="action-btn view-btn">Visualizza</button>
-                        <button class="action-btn edit-btn">Modifica</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="customer-info">
-                            <div class="customer-avatar" style="background-image: url('https://source.unsplash.com/random/100x100/?woman3')"></div>
-                            Elena Martini
-                        </div>
-                    </td>
-                    <td>elena.martini@email.com</td>
-                    <td>+39 123 456 7895</td>
-                    <td>10</td>
-                    <td><span class="loyalty-points">210 punti</span></td>
-                    <td><span class="customer-status status-active">Attivo</span></td>
-                    <td>
-                        <button class="action-btn view-btn">Visualizza</button>
-                        <button class="action-btn edit-btn">Modifica</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Customer Overview Stats -->
+        <div class="stats-row animate-in animate-delay-1">
+            <div class="stats-card card-hover-effect">
+                <div class="stats-card-header">
+                    <span class="stats-card-title">Clienti Totali</span>
+                    <div class="stats-card-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-card-value">248</div>
+                    <div class="stats-card-trend trend-up">
+                        <i class="fas fa-arrow-up"></i> +12% questo mese
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-card card-hover-effect">
+                <div class="stats-card-header">
+                    <span class="stats-card-title">Clienti Attivi</span>
+                    <div class="stats-card-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-card-value" style="background: linear-gradient(120deg, #2ecc71, #27ae60); -webkit-background-clip: text;">215</div>
+                    <div class="stats-card-trend trend-up">
+                        <i class="fas fa-arrow-up"></i> +8% questo mese
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-card card-hover-effect">
+                <div class="stats-card-header">
+                    <span class="stats-card-title">Spesa Media</span>
+                    <div class="stats-card-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-card-value" style="background: linear-gradient(120deg, #f39c12, #e67e22); -webkit-background-clip: text;">€24,70</div>
+                    <div class="stats-card-trend trend-up">
+                        <i class="fas fa-arrow-up"></i> +5.5% questo mese
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-card card-hover-effect">
+                <div class="stats-card-header">
+                    <span class="stats-card-title">Clienti VIP</span>
+                    <div class="stats-card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-card-value" style="background: linear-gradient(120deg, #9b59b6, #8e44ad); -webkit-background-clip: text;">32</div>
+                    <div class="stats-card-trend trend-up">
+                        <i class="fas fa-arrow-up"></i> +15% questo mese
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- View Switcher -->
+        <div class="view-switcher animate-in animate-delay-1">
+            <button class="view-btn active" data-view="cards">
+                <i class="fas fa-id-card"></i> Schede
+            </button>
+            <button class="view-btn" data-view="table">
+                <i class="fas fa-table"></i> Tabella
+            </button>
+            <button class="view-btn" data-view="map">
+                <i class="fas fa-map-marker-alt"></i> Mappa
+            </button>
+            <button class="view-btn" data-view="stats">
+                <i class="fas fa-chart-pie"></i> Statistiche
+            </button>
+        </div>
 
+        <!-- Search and Filter -->
+        <div class="search-filter-container animate-in animate-delay-2">
+            <div class="search-box">
+                <input type="text" placeholder="Cerca cliente per nome, email, indirizzo...">
+                <i class="fas fa-search"></i>
+            </div>
+            
+            <div class="filter-controls">
+                <div class="filter-dropdown">
+                    <select id="status-filter">
+                        <option value="all">Tutti gli stati</option>
+                        <option value="active">Attivi</option>
+                        <option value="inactive">Inattivi</option>
+                        <option value="vip">VIP</option>
+                    </select>
+                </div>
+                
+                <div class="filter-dropdown">
+                    <select id="sort-filter">
+                        <option value="newest">Più recenti</option>
+                        <option value="oldest">Meno recenti</option>
+                        <option value="spend-high">Spesa maggiore</option>
+                        <option value="spend-low">Spesa minore</option>
+                        <option value="orders-high">Più ordini</option>
+                        <option value="orders-low">Meno ordini</option>
+                        <option value="loyalty">Punti fedeltà</option>
+                    </select>
+                </div>
+                
+                <button class="add-customer-btn action-btn">
+                    <i class="fas fa-plus"></i> Nuovo Cliente
+                </button>
+                
+                <button class="export-btn">
+                    <i class="fas fa-file-export"></i> Esporta
+                </button>
+            </div>
+        </div>
+        
+        <!-- CARDS VIEW -->
+        <div id="cards-view" class="view-content animate-in animate-delay-3">
+            <div class="customers-grid">
+                <!-- Customer Card 1 -->
+                <div class="customer-card card-hover-effect" data-customer-id="1">
+                    <div class="customer-card-inner">
+                        <!-- Front -->
+                        <div class="customer-card-front">
+                            <div class="vip-badge">
+                                <i class="fas fa-crown"></i> VIP
+                            </div>
+                            
+                            <div class="customer-card-header">
+                                <!-- Decorative background -->
+                            </div>
+                            
+                            <div class="customer-avatar-container">
+                                <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi" class="customer-avatar">
+                            </div>
+                            
+                            <div class="customer-card-body">
+                                <div class="customer-info">
+                                    <h3 class="customer-name">Marco Rossi</h3>
+                                    <p class="customer-email">marco.rossi@email.com</p>
+                                    
+                                    <div class="customer-stats">
+                                        <div class="customer-stat">
+                                            <div class="stat-value">12</div>
+                                            <div class="stat-label">Ordini</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">250</div>
+                                            <div class="stat-label">Punti</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">€320</div>
+                                            <div class="stat-label">Totale</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">8</div>
+                                            <div class="stat-label">Mesi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    <button class="flip-btn">
+                                        <i class="fas fa-chart-line"></i> Statistiche
+                                    </button>
+                                    <button class="detail-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="edit-btn">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back -->
+                        <div class="customer-card-back">
+                            <div class="card-back-header">
+                                <h3>Marco Rossi</h3>
+                                <p>Statistiche del cliente</p>
+                            </div>
+                            
+                            <div class="stats-chart-container">
+                                <canvas id="customer-chart-1"></canvas>
+                            </div>
+                            
+                            <div class="loyalty-progress">
+                                <div class="loyalty-title">
+                                    <span>Programma Fedeltà</span>
+                                    <span>250/500 punti</span>
+                                </div>
+                                <div class="loyalty-bar">
+                                    <div class="loyalty-progress-bar" style="width: 50%"></div>
+                                </div>
+                                <div class="loyalty-rewards">
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-back-footer">
+                                <button class="back-to-front-btn">
+                                    <i class="fas fa-arrow-left"></i> Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Card 2 -->
+                <div class="customer-card card-hover-effect" data-customer-id="2">
+                    <div class="customer-card-inner">
+                        <!-- Front -->
+                        <div class="customer-card-front">
+                            <div class="customer-card-header">
+                                <!-- Decorative background -->
+                            </div>
+                            
+                            <div class="customer-avatar-container">
+                                <img src="https://source.unsplash.com/random/100x100/?woman" alt="Laura Bianchi" class="customer-avatar">
+                            </div>
+                            
+                            <div class="customer-card-body">
+                                <div class="customer-info">
+                                    <h3 class="customer-name">Laura Bianchi</h3>
+                                    <p class="customer-email">laura.bianchi@email.com</p>
+                                    
+                                    <div class="customer-stats">
+                                        <div class="customer-stat">
+                                            <div class="stat-value">8</div>
+                                            <div class="stat-label">Ordini</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">180</div>
+                                            <div class="stat-label">Punti</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">€210</div>
+                                            <div class="stat-label">Totale</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">5</div>
+                                            <div class="stat-label">Mesi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    <button class="flip-btn">
+                                        <i class="fas fa-chart-line"></i> Statistiche
+                                    </button>
+                                    <button class="detail-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="edit-btn">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back -->
+                        <div class="customer-card-back">
+                            <div class="card-back-header">
+                                <h3>Laura Bianchi</h3>
+                                <p>Statistiche del cliente</p>
+                            </div>
+                            
+                            <div class="stats-chart-container">
+                                <canvas id="customer-chart-2"></canvas>
+                            </div>
+                            
+                            <div class="loyalty-progress">
+                                <div class="loyalty-title">
+                                    <span>Programma Fedeltà</span>
+                                    <span>180/500 punti</span>
+                                </div>
+                                <div class="loyalty-bar">
+                                    <div class="loyalty-progress-bar" style="width: 36%"></div>
+                                </div>
+                                <div class="loyalty-rewards">
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-back-footer">
+                                <button class="back-to-front-btn">
+                                    <i class="fas fa-arrow-left"></i> Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Card 3 -->
+                <div class="customer-card card-hover-effect" data-customer-id="3">
+                    <div class="customer-card-inner">
+                        <!-- Front -->
+                        <div class="customer-card-front">
+                            <div class="vip-badge">
+                                <i class="fas fa-crown"></i> VIP
+                            </div>
+                            
+                            <div class="customer-card-header">
+                                <!-- Decorative background -->
+                            </div>
+                            
+                            <div class="customer-avatar-container">
+                                <img src="https://source.unsplash.com/random/100x100/?man2" alt="Giuseppe Verdi" class="customer-avatar">
+                            </div>
+                            
+                            <div class="customer-card-body">
+                                <div class="customer-info">
+                                    <h3 class="customer-name">Giuseppe Verdi</h3>
+                                    <p class="customer-email">giuseppe.verdi@email.com</p>
+                                    
+                                    <div class="customer-stats">
+                                        <div class="customer-stat">
+                                            <div class="stat-value">15</div>
+                                            <div class="stat-label">Ordini</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">320</div>
+                                            <div class="stat-label">Punti</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">€420</div>
+                                            <div class="stat-label">Totale</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">10</div>
+                                            <div class="stat-label">Mesi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    <button class="flip-btn">
+                                        <i class="fas fa-chart-line"></i> Statistiche
+                                    </button>
+                                    <button class="detail-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="edit-btn">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back -->
+                        <div class="customer-card-back">
+                            <div class="card-back-header">
+                                <h3>Giuseppe Verdi</h3>
+                                <p>Statistiche del cliente</p>
+                            </div>
+                            
+                            <div class="stats-chart-container">
+                                <canvas id="customer-chart-3"></canvas>
+                            </div>
+                            
+                            <div class="loyalty-progress">
+                                <div class="loyalty-title">
+                                    <span>Programma Fedeltà</span>
+                                    <span>320/500 punti</span>
+                                </div>
+                                <div class="loyalty-bar">
+                                    <div class="loyalty-progress-bar" style="width: 64%"></div>
+                                </div>
+                                <div class="loyalty-rewards">
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-back-footer">
+                                <button class="back-to-front-btn">
+                                    <i class="fas fa-arrow-left"></i> Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Card 4 -->
+                <div class="customer-card card-hover-effect" data-customer-id="4">
+                    <div class="customer-card-inner">
+                        <!-- Front -->
+                        <div class="customer-card-front">
+                            <div class="customer-card-header">
+                                <!-- Decorative background -->
+                            </div>
+                            
+                            <div class="customer-avatar-container">
+                                <img src="https://source.unsplash.com/random/100x100/?woman2" alt="Francesca Neri" class="customer-avatar">
+                            </div>
+                            
+                            <div class="customer-card-body">
+                                <div class="customer-info">
+                                    <h3 class="customer-name">Francesca Neri</h3>
+                                    <p class="customer-email">francesca.neri@email.com</p>
+                                    
+                                    <div class="customer-stats">
+                                        <div class="customer-stat">
+                                            <div class="stat-value">5</div>
+                                            <div class="stat-label">Ordini</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">90</div>
+                                            <div class="stat-label">Punti</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">€85</div>
+                                            <div class="stat-label">Totale</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">3</div>
+                                            <div class="stat-label">Mesi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    <button class="flip-btn">
+                                        <i class="fas fa-chart-line"></i> Statistiche
+                                    </button>
+                                    <button class="detail-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="edit-btn">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back -->
+                        <div class="customer-card-back">
+                            <div class="card-back-header">
+                                <h3>Francesca Neri</h3>
+                                <p>Statistiche del cliente</p>
+                            </div>
+                            
+                            <div class="stats-chart-container">
+                                <canvas id="customer-chart-4"></canvas>
+                            </div>
+                            
+                            <div class="loyalty-progress">
+                                <div class="loyalty-title">
+                                    <span>Programma Fedeltà</span>
+                                    <span>90/500 punti</span>
+                                </div>
+                                <div class="loyalty-bar">
+                                    <div class="loyalty-progress-bar" style="width: 18%"></div>
+                                </div>
+                                <div class="loyalty-rewards">
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-back-footer">
+                                <button class="back-to-front-btn">
+                                    <i class="fas fa-arrow-left"></i> Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Card 5 -->
+                <div class="customer-card card-hover-effect" data-customer-id="5">
+                    <div class="customer-card-inner">
+                        <!-- Front -->
+                        <div class="customer-card-front">
+                            <div class="customer-card-header">
+                                <!-- Decorative background -->
+                            </div>
+                            
+                            <div class="customer-avatar-container">
+                                <img src="https://source.unsplash.com/random/100x100/?man3" alt="Antonio Russo" class="customer-avatar">
+                            </div>
+                            
+                            <div class="customer-card-body">
+                                <div class="customer-info">
+                                    <h3 class="customer-name">Antonio Russo</h3>
+                                    <p class="customer-email">antonio.russo@email.com</p>
+                                    
+                                    <div class="customer-stats">
+                                        <div class="customer-stat">
+                                            <div class="stat-value">3</div>
+                                            <div class="stat-label">Ordini</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">60</div>
+                                            <div class="stat-label">Punti</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">€75</div>
+                                            <div class="stat-label">Totale</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">2</div>
+                                            <div class="stat-label">Mesi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    <button class="flip-btn">
+                                        <i class="fas fa-chart-line"></i> Statistiche
+                                    </button>
+                                    <button class="detail-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="edit-btn">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back -->
+                        <div class="customer-card-back">
+                            <div class="card-back-header">
+                                <h3>Antonio Russo</h3>
+                                <p>Statistiche del cliente</p>
+                            </div>
+                            
+                            <div class="stats-chart-container">
+                                <canvas id="customer-chart-5"></canvas>
+                            </div>
+                            
+                            <div class="loyalty-progress">
+                                <div class="loyalty-title">
+                                    <span>Programma Fedeltà</span>
+                                    <span>60/500 punti</span>
+                                </div>
+                                <div class="loyalty-bar">
+                                    <div class="loyalty-progress-bar" style="width: 12%"></div>
+                                </div>
+                                <div class="loyalty-rewards">
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-back-footer">
+                                <button class="back-to-front-btn">
+                                    <i class="fas fa-arrow-left"></i> Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Card 6 -->
+                <div class="customer-card card-hover-effect" data-customer-id="6">
+                    <div class="customer-card-inner">
+                        <!-- Front -->
+                        <div class="customer-card-front">
+                            <div class="vip-badge">
+                                <i class="fas fa-crown"></i> VIP
+                            </div>
+                            
+                            <div class="customer-card-header">
+                                <!-- Decorative background -->
+                            </div>
+                            
+                            <div class="customer-avatar-container">
+                                <img src="https://source.unsplash.com/random/100x100/?woman3" alt="Elena Martini" class="customer-avatar">
+                            </div>
+                            
+                            <div class="customer-card-body">
+                                <div class="customer-info">
+                                    <h3 class="customer-name">Elena Martini</h3>
+                                    <p class="customer-email">elena.martini@email.com</p>
+                                    
+                                    <div class="customer-stats">
+                                        <div class="customer-stat">
+                                            <div class="stat-value">10</div>
+                                            <div class="stat-label">Ordini</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">210</div>
+                                            <div class="stat-label">Punti</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">€280</div>
+                                            <div class="stat-label">Totale</div>
+                                        </div>
+                                        <div class="customer-stat">
+                                            <div class="stat-value">7</div>
+                                            <div class="stat-label">Mesi</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    <button class="flip-btn">
+                                        <i class="fas fa-chart-line"></i> Statistiche
+                                    </button>
+                                    <button class="detail-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="edit-btn">
+                                        <i class="fas fa-edit"></i> Modifica
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Back -->
+                        <div class="customer-card-back">
+                            <div class="card-back-header">
+                                <h3>Elena Martini</h3>
+                                <p>Statistiche del cliente</p>
+                            </div>
+                            
+                            <div class="stats-chart-container">
+                                <canvas id="customer-chart-6"></canvas>
+                            </div>
+                            
+                            <div class="loyalty-progress">
+                                <div class="loyalty-title">
+                                    <span>Programma Fedeltà</span>
+                                    <span>210/500 punti</span>
+                                </div>
+                                <div class="loyalty-bar">
+                                    <div class="loyalty-progress-bar" style="width: 42%"></div>
+                                </div>
+                                <div class="loyalty-rewards">
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point active"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                    <span class="loyalty-point"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-back-footer">
+                                <button class="back-to-front-btn">
+                                    <i class="fas fa-arrow-left"></i> Indietro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TABLE VIEW (hidden by default) -->
+        <div id="table-view" class="view-content" style="display: none;">
+            <div class="customers-table-container animate-in">
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Contatti</th>
+                            <th>Ordini</th>
+                            <th>Punti Fedeltà</th>
+                            <th>Stato</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="animate-in">
+                            <td>
+                                <div class="customer-table-info">
+                                    <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi" class="table-customer-avatar">
+                                    <div>
+                                        <div class="table-customer-name">Marco Rossi</div>
+                                        <div class="table-customer-email">marco.rossi@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>+39 123 456 7890</td>
+                            <td>12 ordini - €320</td>
+                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 250 punti</span></td>
+                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="animate-in animate-delay-1">
+                            <td>
+                                <div class="customer-table-info">
+                                    <img src="https://source.unsplash.com/random/100x100/?woman" alt="Laura Bianchi" class="table-customer-avatar">
+                                    <div>
+                                        <div class="table-customer-name">Laura Bianchi</div>
+                                        <div class="table-customer-email">laura.bianchi@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>+39 123 456 7891</td>
+                            <td>8 ordini - €210</td>
+                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 180 punti</span></td>
+                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="animate-in animate-delay-2">
+                            <td>
+                                <div class="customer-table-info">
+                                    <img src="https://source.unsplash.com/random/100x100/?man2" alt="Giuseppe Verdi" class="table-customer-avatar">
+                                    <div>
+                                        <div class="table-customer-name">Giuseppe Verdi</div>
+                                        <div class="table-customer-email">giuseppe.verdi@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>+39 123 456 7892</td>
+                            <td>15 ordini - €420</td>
+                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 320 punti</span></td>
+                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="animate-in animate-delay-3">
+                            <td>
+                                <div class="customer-table-info">
+                                    <img src="https://source.unsplash.com/random/100x100/?woman2" alt="Francesca Neri" class="table-customer-avatar">
+                                    <div>
+                                        <div class="table-customer-name">Francesca Neri</div>
+                                        <div class="table-customer-email">francesca.neri@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>+39 123 456 7893</td>
+                            <td>5 ordini - €85</td>
+                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 90 punti</span></td>
+                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="animate-in animate-delay-4">
+                            <td>
+                                <div class="customer-table-info">
+                                    <img src="https://source.unsplash.com/random/100x100/?man3" alt="Antonio Russo" class="table-customer-avatar">
+                                    <div>
+                                        <div class="table-customer-name">Antonio Russo</div>
+                                        <div class="table-customer-email">antonio.russo@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>+39 123 456 7894</td>
+                            <td>3 ordini - €75</td>
+                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 60 punti</span></td>
+                            <td><span class="customer-status status-inactive"><i class="fas fa-circle"></i> Inattivo</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="animate-in animate-delay-5">
+                            <td>
+                                <div class="customer-table-info">
+                                    <img src="https://source.unsplash.com/random/100x100/?woman3" alt="Elena Martini" class="table-customer-avatar">
+                                    <div>
+                                        <div class="table-customer-name">Elena Martini</div>
+                                        <div class="table-customer-email">elena.martini@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>+39 123 456 7895</td>
+                            <td>10 ordini - €280</td>
+                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 210 punti</span></td>
+                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- MAP VIEW (hidden by default) -->
+        <div id="map-view" class="view-content" style="display: none;">
+            <div class="customers-map-container animate-in">
+                <div class="map-header">
+                    <div class="map-title">
+                        <i class="fas fa-map-marker-alt"></i> Distribuzione Clienti
+                    </div>
+                    <div class="map-filters">
+                        <button class="map-filter-btn active" data-filter="all">
+                            <i class="fas fa-users"></i> Tutti
+                        </button>
+                        <button class="map-filter-btn" data-filter="active">
+                            <i class="fas fa-user-check"></i> Attivi
+                        </button>
+                        <button class="map-filter-btn" data-filter="inactive">
+                            <i class="fas fa-user-slash"></i> Inattivi
+                        </button>
+                        <button class="map-filter-btn" data-filter="vip">
+                            <i class="fas fa-crown"></i> VIP
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="map-canvas-container">
+                    <div class="map-canvas">
+                        <!-- Customer Markers -->
+                        <div class="customer-marker" style="top: 150px; left: 350px;">
+                            <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi">
+                        </div>
+                        <div class="customer-marker" style="top: 180px; left: 500px;">
+                            <img src="https://source.unsplash.com/random/100x100/?woman" alt="Laura Bianchi">
+                        </div>
+                        <div class="customer-marker" style="top: 300px; left: 600px;">
+                            <img src="https://source.unsplash.com/random/100x100/?man2" alt="Giuseppe Verdi">
+                        </div>
+                        <div class="customer-marker" style="top: 250px; left: 200px;">
+                            <img src="https://source.unsplash.com/random/100x100/?woman2" alt="Francesca Neri">
+                        </div>
+                        <div class="customer-marker" style="top: 350px; left: 400px;">
+                            <img src="https://source.unsplash.com/random/100x100/?man3" alt="Antonio Russo">
+                        </div>
+                        
+                        <!-- Active Marker with Info -->
+                        <div class="marker-active" style="top: 220px; left: 300px;">
+                            <img src="https://source.unsplash.com/random/100x100/?woman3" alt="Elena Martini">
+                            
+                            <div class="marker-info">
+                                <h3>Elena Martini</h3>
+                                <p>Via Roma 123, Milano</p>
+                                <div class="marker-info-actions">
+                                    <button class="marker-info-btn">
+                                        <i class="fas fa-user"></i> Profilo
+                                    </button>
+                                    <button class="marker-info-btn">
+                                        <i class="fas fa-route"></i> Indicazioni
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- STATS VIEW (hidden by default) -->
+        <div id="stats-view" class="view-content" style="display: none;">
+            <!-- Customer Demographics Chart -->
+            <div class="stats-chart-container animate-in">
+                <div class="stats-chart-header">
+                    <div class="stats-chart-title">
+                        <i class="fas fa-chart-pie"></i> Demografia Clienti
+                    </div>
+                    <div class="stats-chart-filters">
+                        <button class="chart-filter-btn active" data-period="age">Età</button>
+                        <button class="chart-filter-btn" data-period="gender">Genere</button>
+                        <button class="chart-filter-btn" data-period="location">Località</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="demographics-chart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Customer Acquisition Chart -->
+            <div class="stats-chart-container animate-in animate-delay-1">
+                <div class="stats-chart-header">
+                    <div class="stats-chart-title">
+                        <i class="fas fa-chart-line"></i> Acquisizione Clienti
+                    </div>
+                    <div class="stats-chart-filters">
+                        <button class="chart-filter-btn active" data-period="month">Mensile</button>
+                        <button class="chart-filter-btn" data-period="quarter">Trimestrale</button>
+                        <button class="chart-filter-btn" data-period="year">Annuale</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="acquisition-chart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Ordering Habits Chart -->
+            <div class="stats-chart-container animate-in animate-delay-2">
+                <div class="stats-chart-header">
+                    <div class="stats-chart-title">
+                        <i class="fas fa-utensils"></i> Abitudini Ordini
+                    </div>
+                    <div class="stats-chart-filters">
+                        <button class="chart-filter-btn active" data-period="category">Categoria</button>
+                        <button class="chart-filter-btn" data-period="time">Ora</button>
+                        <button class="chart-filter-btn" data-period="day">Giorno</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="habits-chart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Customer Retention Rate -->
+            <div class="stats-chart-container animate-in animate-delay-3">
+                <div class="stats-chart-header">
+                    <div class="stats-chart-title">
+                        <i class="fas fa-user-clock"></i> Tasso di Fidelizzazione
+                    </div>
+                    <div class="stats-chart-filters">
+                        <button class="chart-filter-btn active" data-period="3m">3 mesi</button>
+                        <button class="chart-filter-btn" data-period="6m">6 mesi</button>
+                        <button class="chart-filter-btn" data-period="1y">1 anno</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="retention-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
         <div class="pagination">
-            <a href="#">&laquo;</a>
+            <a href="#"><i class="fas fa-chevron-left"></i></a>
             <a href="#" class="active">1</a>
             <a href="#">2</a>
             <a href="#">3</a>
-            <a href="#">&raquo;</a>
+            <a href="#"><i class="fas fa-chevron-right"></i></a>
         </div>
     </div>
-    <script>// Salva questo file come public/js/capo-panel.js
-
-// Funzione per il logout
-function logout() {
-    fetch('/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            window.location.href = '/login';
-        }
-    })
-    .catch(error => console.error('Errore durante il logout:', error));
-}
-
-// Funzione per caricare statistiche nella dashboard
-function loadDashboardStats() {
-    fetch('/statistiche')
-        .then(response => response.json())
-        .then(data => {
-            // Aggiorna i dati della dashboard con i dati ricevuti
-            document.getElementById('vendite-oggi').textContent = `€${data.venditeOggi}`;
-            document.getElementById('ordini-oggi').textContent = data.ordiniOggi;
-            document.getElementById('nuovi-clienti').textContent = data.clientiNuovi;
-            // Aggiorna altri elementi della dashboard...
-        })
-        .catch(error => console.error('Errore caricamento statistiche:', error));
-}
-
-// Funzione per caricare notifiche
-function loadNotifications() {
-    fetch('/notifiche')
-        .then(response => response.json())
-        .then(notifications => {
-            const notificationBadge = document.getElementById('notification-badge');
-            const unreadCount = notifications.filter(n => !n.letto).length;
+    
+    <!-- Customer Profile Modal (Hidden) -->
+    <div class="modal-overlay customer-profile-modal" id="customerProfileModal">
+        <div class="modal">
+            <div class="profile-header">
+                <div class="profile-header-content">
+                    <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi" class="profile-avatar">
+                    <div class="profile-info">
+                        <h3>Marco Rossi</h3>
+                        <p>Cliente dal 12 Settembre 2024</p>
+                        <div class="profile-meta">
+                            <div class="profile-meta-item"><i class="fas fa-crown"></i> VIP</div>
+                            <div class="profile-meta-item"><i class="fas fa-star"></i> 250 Punti</div>
+                            <div class="profile-meta-item"><i class="fas fa-shopping-bag"></i> 12 Ordini</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="modal-close">&times;</button>
+            </div>
             
-            if (unreadCount > 0) {
-                notificationBadge.textContent = unreadCount;
-                notificationBadge.style.display = 'inline-block';
-            } else {
-                notificationBadge.style.display = 'none';
-            }
-        })
-        .catch(error => console.error('Errore caricamento notifiche:', error));
-}
+            <div class="profile-tabs">
+                <div class="profile-tab active" data-tab="info">Informazioni</div>
+                <div class="profile-tab" data-tab="orders">Ordini</div>
+                <div class="profile-tab" data-tab="stats">Statistiche</div>
+                <div class="profile-tab" data-tab="notes">Note</div>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-section profile-tab-content" data-tab="info">
+                    <div class="profile-section-title">
+                        <i class="fas fa-user"></i> Dettagli Personali
+                    </div>
+                    <!-- Info content -->
+                </div>
+                <!-- Other tab contents -->
+            </div>
+        </div>
+    </div>
 
-// Inizializza il pannello di controllo
-document.addEventListener('DOMContentLoaded', function() {
-    // Imposta la classe "active" sul link di navigazione corrente
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.header-nav a');
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create particles background
+            createParticles();
+            
+            // Set active navigation link
+            setActiveNavLink();
+            
+            // Load notifications
+            loadNotifications();
+            
+            // Setup view switcher
+            setupViewSwitcher();
+            
+            // Setup customer cards
+            setupCustomerCards();
+            
+            // Initialize charts
+            initializeCharts();
+            
+            // Setup action buttons
+            setupActionButtons();
+
+                        // Setup interactive map
+            setupMap();
+            
+            // Setup modal functionality
+            setupModals();
+            
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('Clienti caricati', 'Gestione clienti inizializzata correttamente', 'success');
+            }, 1000);
+        });
+        
+        // Create background particles
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            if (!particles) return;
+            
+            // Clear any existing particles
+            particles.innerHTML = '';
+            
+            // Settings
+            const particleCount = 50; // Number of particles
+            
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 10 + 2;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.5 + 0.1;
+                
+                // Random animation duration
+                const duration = Math.random() * 60 + 30;
+                
+                // Apply styles
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = opacity;
+                
+                // Alternate between primary and secondary colors
+                if (i % 2 === 0) {
+                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
+                } else {
+                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+                }
+                
+                // Add floating animation
+                particle.style.animation = `
+                    particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
+                    particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
+                `;
+                
+                // Append to container
+                particles.appendChild(particle);
+            }
         }
-    });
-    
-    // Carica dati se siamo nella dashboard
-    if (currentPath === '/dashboard') {
-        loadDashboardStats();
-    }
-    
-    // Carica notifiche ogni minuto
-    loadNotifications();
-    setInterval(loadNotifications, 60000);
-});</script>
+        
+        // Set active navigation link
+        function setActiveNavLink() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.header-nav a');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (currentPath === link.getAttribute('href')) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Load notifications
+        function loadNotifications() {
+            try {
+                fetch('/notifiche')
+                    .then(response => response.json())
+                    .then(notifications => {
+                        const badge = document.getElementById('notification-badge');
+                        if (!badge) return;
+                        
+                        const unreadCount = notifications.filter(n => !n.letto).length;
+                        badge.textContent = unreadCount;
+                        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                        
+                        if (unreadCount > 0) {
+                            showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
+                        }
+                    })
+                    .catch(error => console.error('Errore caricamento notifiche:', error));
+            } catch (e) {
+                console.log('Caricamento notifiche non disponibile in questa pagina');
+                
+                // Demo data for presentation
+                setTimeout(() => {
+                    const badge = document.getElementById('notification-badge');
+                    if (badge) {
+                        badge.textContent = "3";
+                        badge.style.display = 'flex';
+                    }
+                }, 3000);
+            }
+        }
+        
+        // Setup view switcher
+        function setupViewSwitcher() {
+            const viewButtons = document.querySelectorAll('.view-btn');
+            const viewContents = document.querySelectorAll('.view-content');
+            
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const view = this.dataset.view;
+                    
+                    // Remove active class from all buttons
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Hide all views
+                    viewContents.forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // Show selected view
+                    const selectedView = document.getElementById(`${view}-view`);
+                    if (selectedView) {
+                        selectedView.style.display = 'block';
+                        
+                        // Special handling for map view
+                        if (view === 'map') {
+                            // In a real implementation, you would initialize or refresh the map here
+                            simulateMapAnimation();
+                        }
+                        
+                        // Special handling for stats view
+                        if (view === 'stats') {
+                            // In a real implementation, you would initialize or refresh the charts here
+                            refreshCharts();
+                        }
+                    }
+                    
+                    // Show toast notification
+                    showToast('Vista cambiata', `Visualizzazione: ${getViewName(view)}`, 'success');
+                });
+            });
+        }
+        
+        // Get view name
+        function getViewName(view) {
+            switch (view) {
+                case 'cards': return 'Schede Cliente';
+                case 'table': return 'Tabella Cliente';
+                case 'map': return 'Mappa Distribuzione';
+                case 'stats': return 'Statistiche Cliente';
+                default: return view;
+            }
+        }
+        
+        // Setup customer cards
+        function setupCustomerCards() {
+            const flipBtns = document.querySelectorAll('.flip-btn');
+            const backToFrontBtns = document.querySelectorAll('.back-to-front-btn');
+            const detailBtns = document.querySelectorAll('.detail-btn');
+            
+            // Flip card to show stats
+            flipBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const card = this.closest('.customer-card');
+                    card.classList.add('flipped');
+                    
+                    // Get customer ID
+                    const customerId = card.dataset.customerId;
+                    
+                    // Initialize or update chart
+                    initializeCustomerChart(customerId);
+                });
+            });
+            
+            // Flip card back
+            backToFrontBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const card = this.closest('.customer-card');
+                    card.classList.remove('flipped');
+                });
+            });
+            
+            // Show detail profile modal
+            detailBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const card = this.closest('.customer-card');
+                    const customerId = card.dataset.customerId;
+                    
+                    // Show profile modal
+                    showProfileModal(customerId);
+                });
+            });
+        }
+        
+        // Initialize customer specific chart
+        function initializeCustomerChart(customerId) {
+            const chartId = `customer-chart-${customerId}`;
+            const ctx = document.getElementById(chartId);
+            
+            if (!ctx) return;
+            
+            // Destroy existing chart if any
+            if (window[`customerChart${customerId}`]) {
+                window[`customerChart${customerId}`].destroy();
+            }
+            
+            // Generate random data for demo
+            const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'];
+            const data = months.map(() => Math.floor(Math.random() * 100) + 20);
+            
+            // Create chart
+            window[`customerChart${customerId}`] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Spesa Mensile',
+                        data: data,
+                        borderColor: 'rgba(255, 255, 255, 0.8)',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: 'rgba(255, 255, 255, 0.8)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                callback: function(value) {
+                                    return '€' + value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize all charts for statistics view
+        function initializeCharts() {
+            // Demographics chart
+            const demographicsCtx = document.getElementById('demographics-chart');
+            if (demographicsCtx) {
+                window.demographicsChart = new Chart(demographicsCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['18-25', '26-35', '36-45', '46-55', '56+'],
+                        datasets: [{
+                            data: [15, 30, 25, 20, 10],
+                            backgroundColor: [
+                                '#5e60ce',
+                                '#5390d9',
+                                '#4ea8de',
+                                '#48bfe3',
+                                '#56cfe1'
+                            ],
+                            borderColor: 'white',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: {
+                                        family: 'Montserrat'
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Distribuzione per Età',
+                                font: {
+                                    size: 16,
+                                    family: 'Montserrat',
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Acquisition chart
+            const acquisitionCtx = document.getElementById('acquisition-chart');
+            if (acquisitionCtx) {
+                window.acquisitionChart = new Chart(acquisitionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
+                        datasets: [{
+                            label: 'Nuovi Clienti',
+                            data: [12, 19, 14, 15, 22, 18],
+                            backgroundColor: 'rgba(94, 96, 206, 0.7)',
+                            borderColor: 'rgba(94, 96, 206, 1)',
+                            borderWidth: 2,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Habits chart
+            const habitsCtx = document.getElementById('habits-chart');
+            if (habitsCtx) {
+                window.habitsChart = new Chart(habitsCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert'],
+                        datasets: [{
+                            label: 'Ordini per categoria',
+                            data: [65, 75, 45, 80, 32],
+                            backgroundColor: 'rgba(94, 96, 206, 0.3)',
+                            borderColor: 'rgba(94, 96, 206, 1)',
+                            pointBackgroundColor: 'rgba(94, 96, 206, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(94, 96, 206, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                ticks: {
+                                    backdropColor: 'transparent'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Retention chart
+            const retentionCtx = document.getElementById('retention-chart');
+            if (retentionCtx) {
+                window.retentionChart = new Chart(retentionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
+                        datasets: [{
+                            label: 'Tasso di Fidelizzazione',
+                            data: [85, 82, 88, 90, 92, 95],
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                suggestedMin: 75,
+                                suggestedMax: 100
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Refresh charts for stats view
+        function refreshCharts() {
+            // If charts are initialized, update them with new animations
+            if (window.demographicsChart) {
+                window.demographicsChart.options.animation = {
+                    duration: 800,
+                    easing: 'easeOutBounce'
+                };
+                window.demographicsChart.update();
+            }
+            
+            if (window.acquisitionChart) {
+                window.acquisitionChart.options.animation = {
+                    duration: 800,
+                    easing: 'easeOutBounce'
+                };
+                window.acquisitionChart.update();
+            }
+            
+            if (window.habitsChart) {
+                window.habitsChart.options.animation = {
+                    duration: 800,
+                    easing: 'easeOutBounce'
+                };
+                window.habitsChart.update();
+            }
+            
+            if (window.retentionChart) {
+                window.retentionChart.options.animation = {
+                    duration: 800,
+                    easing: 'easeOutBounce'
+                };
+                window.retentionChart.update();
+            }
+        }
+        
+        // Simulate map animation
+        function simulateMapAnimation() {
+            const markers = document.querySelectorAll('.customer-marker');
+            
+            markers.forEach((marker, index) => {
+                setTimeout(() => {
+                    marker.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        marker.style.transform = '';
+                    }, 300);
+                }, index * 200);
+            });
+        }
+        
+        // Setup interactive map
+        function setupMap() {
+            // Setup map filter buttons
+            const mapFilters = document.querySelectorAll('.map-filter-btn');
+            
+            mapFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // Remove active class from all filters
+                    mapFilters.forEach(f => f.classList.remove('active'));
+                    
+                    // Add active class to clicked filter
+                    this.classList.add('active');
+                    
+                    // Filter map markers (in a real implementation)
+                    const filterType = this.dataset.filter;
+                    
+                    // Show toast notification
+                    showToast('Filtro applicato', `Filtro: ${getFilterName(filterType)}`, 'success');
+                });
+            });
+            
+            // Setup marker clicks
+            const markers = document.querySelectorAll('.customer-marker');
+            
+            markers.forEach(marker => {
+                marker.addEventListener('click', function() {
+                    // Remove active class from all markers
+                    document.querySelectorAll('.marker-active').forEach(m => {
+                        m.classList.remove('marker-active');
+                        m.classList.add('customer-marker');
+                    });
+                    
+                    // Make this marker active (in a real implementation)
+                    // For demo, just show a toast
+                    const img = this.querySelector('img');
+                    const name = img ? img.alt : 'Cliente';
+                    
+                    showToast('Cliente selezionato', `Hai selezionato ${name}`, 'success');
+                });
+            });
+        }
+        
+        // Get filter name
+        function getFilterName(filter) {
+            switch (filter) {
+                case 'all': return 'Tutti i clienti';
+                case 'active': return 'Clienti attivi';
+                case 'inactive': return 'Clienti inattivi';
+                case 'vip': return 'Clienti VIP';
+                default: return filter;
+            }
+        }
+        
+        // Setup modals
+        function setupModals() {
+            const modalOverlays = document.querySelectorAll('.modal-overlay');
+            const closeBtns = document.querySelectorAll('.modal-close');
+            
+            // Close modal on X button click
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modal = this.closest('.modal-overlay');
+                    closeModal(modal);
+                });
+            });
+            
+            // Close modal on overlay click
+            modalOverlays.forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this);
+                    }
+                });
+            });
+            
+            // Setup profile tabs
+            const profileTabs = document.querySelectorAll('.profile-tab');
+            
+            profileTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Get tab ID
+                    const tabId = this.dataset.tab;
+                    
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.profile-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all tab contents
+                    document.querySelectorAll('.profile-tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // Show selected tab content
+                    const selectedContent = document.querySelector(`.profile-tab-content[data-tab="${tabId}"]`);
+                    if (selectedContent) {
+                        selectedContent.style.display = 'block';
+                    }
+                });
+            });
+        }
+        
+        // Close modal
+        function closeModal(modal) {
+            modal.classList.remove('open');
+        }
+        
+        // Show profile modal
+        function showProfileModal(customerId) {
+            const modal = document.getElementById('customerProfileModal');
+            if (!modal) return;
+            
+            // In a real implementation, you would load customer data based on ID
+            // For this demo, we'll just show the modal
+            
+            modal.classList.add('open');
+            
+            // Show toast notification
+            showToast('Profilo cliente', 'Visualizzazione del profilo cliente', 'success');
+        }
+        
+        // Setup action buttons for table view
+        function setupActionButtons() {
+            // Table view buttons
+            const viewBtns = document.querySelectorAll('.table-view-btn');
+            const editBtns = document.querySelectorAll('.table-edit-btn');
+            const deleteBtns = document.querySelectorAll('.table-delete-btn');
+            
+            // View profile
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const name = row.querySelector('.table-customer-name').textContent;
+                    
+                    // Show profile modal
+                    showProfileModal(1); // Using a dummy ID for demo
+                    
+                    // Show toast notification
+                    showToast('Profilo cliente', `Visualizzazione del profilo di ${name}`, 'success');
+                });
+            });
+            
+            // Edit customer
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const name = row.querySelector('.table-customer-name').textContent;
+                    
+                    // Show toast notification
+                    showToast('Modifica cliente', `Modifica di ${name}`, 'info');
+                });
+            });
+            
+            // Delete customer
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const name = row.querySelector('.table-customer-name').textContent;
+                    
+                    // Confirm delete
+                    if (confirm(`Sei sicuro di voler eliminare ${name}?`)) {
+                        // Remove row with animation
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(-20px)';
+                        
+                        setTimeout(() => {
+                            row.remove();
+                            
+                            // Show toast notification
+                            showToast('Cliente eliminato', `${name} è stato eliminato`, 'success');
+                        }, 300);
+                    }
+                });
+            });
+            
+            // Add customer button
+            const addBtn = document.querySelector('.add-customer-btn');
+            if (addBtn) {
+                addBtn.addEventListener('click', function() {
+                    // In a real implementation, you would show a form modal
+                    // For this demo, just show a toast
+                    showToast('Nuovo cliente', 'Funzionalità di aggiunta nuovo cliente', 'info');
+                });
+            }
+            
+            // Export button
+            const exportBtn = document.querySelector('.export-btn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    // In a real implementation, you would trigger export
+                    // For this demo, just show a toast
+                    showToast('Esporta dati', 'Esportazione dati clienti in corso...', 'info');
+                    
+                    // Simulate export success
+                    setTimeout(() => {
+                        showToast('Esportazione completata', 'I dati dei clienti sono stati esportati con successo', 'success');
+                    }, 2000);
+                });
+            }
+        }
+        
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => {
+                toast.remove();
+            });
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            
+            // Icon based on type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <div class="toast-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Add show class after a small delay to trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Add event listener to close button
+            const closeButton = toast.querySelector('.toast-close');
+            closeButton.addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
+            
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+        
+        // Function for logout
+        function logout() {
+            // Show loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.style.position = 'fixed';
+            loadingOverlay.style.top = '0';
+            loadingOverlay.style.left = '0';
+            loadingOverlay.style.width = '100%';
+            loadingOverlay.style.height = '100%';
+            loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.flexDirection = 'column';
+            loadingOverlay.style.justifyContent = 'center';
+            loadingOverlay.style.alignItems = 'center';
+            loadingOverlay.style.zIndex = '2000';
+            loadingOverlay.style.backdropFilter = 'blur(5px)';
+            
+            const spinnerContainer = document.createElement('div');
+            spinnerContainer.style.width = '60px';
+            spinnerContainer.style.height = '60px';
+            spinnerContainer.style.position = 'relative';
+            
+            const spinner = document.createElement('div');
+            spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+            spinner.style.borderTopColor = '#5e60ce';
+            spinner.style.borderRadius = '50%';
+            spinner.style.width = '100%';
+            spinner.style.height = '100%';
+            spinner.style.animation = 'spin 1s linear infinite';
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            
+            document.head.appendChild(style);
+            spinnerContainer.appendChild(spinner);
+            
+            const loadingText = document.createElement('p');
+            loadingText.textContent = 'Logout in corso...';
+            loadingText.style.marginTop = '20px';
+            loadingText.style.color = 'var(--primary)';
+            loadingText.style.fontWeight = '500';
+            
+            loadingOverlay.appendChild(spinnerContainer);
+            loadingOverlay.appendChild(loadingText);
+            document.body.appendChild(loadingOverlay);
+            
+            // Perform logout
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    loadingText.textContent = 'Reindirizzamento...';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 800);
+                } else {
+                    throw new Error('Errore durante il logout');
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante il logout:', error);
+                loadingText.textContent = 'Si è verificato un errore. Riprova.';
+                
+                // Add retry button
+                const retryButton = document.createElement('button');
+                retryButton.textContent = 'Riprova';
+                retryButton.style.marginTop = '15px';
+                retryButton.style.padding = '8px 20px';
+                retryButton.style.background = 'var(--primary)';
+                retryButton.style.color = 'white';
+                retryButton.style.border = 'none';
+                retryButton.style.borderRadius = 'var(--radius-sm)';
+                retryButton.style.cursor = 'pointer';
+                retryButton.onclick = function() {
+                    document.body.removeChild(loadingOverlay);
+                    logout();
+                };
+                
+                loadingOverlay.appendChild(retryButton);
+            });
+        }
+    </script>
 </body>
 </html>
