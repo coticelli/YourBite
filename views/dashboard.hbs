@@ -4,403 +4,1944 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Dashboard Capo</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js deve essere caricato prima dei nostri script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
     <style>
-    /* Stili base */
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5;
-        color: #333;
-    }
+        /* === VARIABILI E IMPOSTAZIONI BASE === */
+        :root {
+            /* Palette colori moderna e vibrante */
+            --primary: #5e60ce;
+            --primary-light: #6930c3;
+            --primary-dark: #5390d9;
+            --secondary: #48bfe3;
+            --secondary-light: #64dfdf;
+            --accent: #80ffdb;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
+            --dark: #1a1a2e;
+            --dark-blue: #16213e;
+            --medium-dark: #252941;
+            --light: #ffffff;
+            --gray: #f8f9fa;
+            --gray-light: #fafbfc;
+            --gray-dark: #e9ecef;
+            --text: #212529;
+            --text-light: #6c757d;
+            
+            /* Effetti e animazioni */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25);
+            --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25);
+            --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25);
+            --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
+            --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-    /* Header e navigazione */
-    header {
-        background: linear-gradient(to right, #ff7e00, #ff5100);
-        padding: 15px 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: white;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Arial', sans-serif;
+            scroll-behavior: smooth;
+        }
 
-    .logo-container {
-        display: flex;
-        align-items: center;
-    }
+        body {
+            background-color: var(--gray);
+            background-image: 
+                radial-gradient(circle at 25% 10%, rgba(94, 96, 206, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(72, 191, 227, 0.05) 0%, transparent 40%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
 
-    .logo {
-        width: 50px;
-        height: auto;
-        transition: transform 0.3s ease;
-    }
+        /* === EFFETTI DI BASE === */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-    .logo:hover {
-        transform: scale(1.05);
-    }
+        .card-hover-effect {
+            transition: var(--transition-spring);
+            transform-style: preserve-3d;
+            position: relative;
+        }
 
-    .header-title {
-        color: white;
-        font-size: 24px;
-        font-weight: 700;
-        margin-left: 15px;
-        font-family: 'Arial', sans-serif;
-    }
+        .card-hover-effect:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 0 20px 40px rgba(94, 96, 206, 0.2);
+        }
 
-    .header-nav {
-        display: flex;
-        gap: 20px;
-    }
+        .text-gradient {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
 
-    .header-nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 8px 15px;
-        border-radius: 20px;
-        transition: background-color 0.3s;
-    }
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
 
-    .header-nav a:hover, .header-nav a.active {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-    .header-nav a.active {
-        font-weight: bold;
-    }
+        .btn-glow:hover::after {
+            opacity: 0.2;
+            animation: glowPulse 1.5s ease infinite;
+        }
 
-    .user-role-badge {
-        background-color: white;
-        color: #ff5100;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 14px;
-        margin-left: 10px;
-    }
+        @keyframes glowPulse {
+            0% { opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
 
-    .user-controls {
-        display: flex;
-        align-items: center;
-        margin-left: 20px;
-    }
-
-    .username {
-        color: white;
-        font-weight: 500;
-        margin-right: 10px;
-    }
-
-    .logout-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background 0.3s;
-    }
-
-    .logout-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Dashboard specifici */
-    .dashboard-container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-    }
-
-    .stat-card {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-    }
-
-    .stat-card h3 {
-        color: #ff5100;
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-
-    .stat-card .number {
-        font-size: 32px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .stat-card .trend {
-        font-size: 14px;
-        color: green;
-        margin-top: 5px;
-    }
-
-    .trend.up::before {
-        content: "↑ ";
-    }
-
-    .trend.down::before {
-        content: "↓ ";
-        color: red;
-    }
-
-    .chart-container {
-        margin-top: 30px;
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .chart-container h2 {
-        color: #333;
-        margin-bottom: 15px;
-    }
-
-    .recent-orders {
-        margin-top: 30px;
-    }
-
-    .recent-orders h2 {
-        color: #333;
-        margin-bottom: 15px;
-    }
-
-    .order-list {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .order-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 15px 0;
-        border-bottom: 1px solid #eee;
-    }
-
-    .order-item:last-child {
-        border-bottom: none;
-    }
-
-    /* Media queries per responsività */
-    @media (max-width: 768px) {
+        /* === HEADER E NAVIGAZIONE === */
         header {
-            flex-direction: column;
-            padding: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 0;
+            box-shadow: var(--shadow-colored);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            height: 70px;
+            display: flex;
+            align-items: center;
         }
-        
+
+        header:hover {
+            box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(120deg, 
+                rgba(0, 0, 0, 0), 
+                rgba(255, 255, 255, 0.1),
+                rgba(0, 0, 0, 0));
+            background-size: 200% 100%;
+            animation: headerShimmer 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes headerShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: var(--transition-spring);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .logo:hover::after {
+            animation: logoPulse 1.5s ease-out infinite;
+            opacity: 1;
+        }
+
+        @keyframes logoPulse {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+
+        .header-title:hover::after {
+            width: 100%;
+        }
+
         .header-nav {
-            margin-top: 15px;
-            flex-wrap: wrap;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(5px);
+        }
+
+        .header-nav a i {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 16px;
+        }
+
+        .header-nav a::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, 
+                rgba(255, 255, 255, 0), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0));
+            top: 0;
+            left: -100%;
+            transition: var(--transition);
+            transform: skewX(-15deg);
+        }
+
+        .header-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-nav a:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .header-nav a:hover::before {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        .header-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-role-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            animation: badgePulse 3s infinite alternate;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-left: 10px;
+        }
+
+        @keyframes badgePulse {
+            0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+            100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+        }
+
+        .user-role-badge i {
+            font-size: 14px;
+            animation: rotateIcon 5s linear infinite;
+        }
+
+        @keyframes rotateIcon {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #ff6b6b, #e63946);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+            border: 2px solid white;
+            animation: notificationPulse 1.5s infinite alternate;
         }
-        
+
+        @keyframes notificationPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .username {
+            color: white;
+            font-weight: 500;
+            margin-right: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            letter-spacing: 0.3px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-spring);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logout-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, 
+                rgba(255, 255, 255, 0), 
+                rgba(255, 255, 255, 0.2), 
+                rgba(255, 255, 255, 0));
+            top: 0;
+            left: -100%;
+            transition: var(--transition);
+            transform: skewX(-15deg);
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .logout-btn:hover::before {
+            left: 100%;
+            transition: all 0.7s ease;
+        }
+
+        /* === DASHBOARD CONTAINER === */
+        .dashboard-container {
+            padding: 30px 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+            perspective: 1000px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .dashboard-header h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -8px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .dashboard-header p {
+            font-size: 16px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* === STATS GRID === */
         .stats-grid {
-            grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
         }
-        
-        .order-item {
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition-spring);
+            position: relative;
+            overflow: hidden;
+            display: flex;
             flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 1;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: var(--transition);
+            z-index: 2;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card:hover::before {
+            height: 7px;
+        }
+
+        .stat-card h3 {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card .icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            box-shadow: 0 8px 20px rgba(94, 96, 206, 0.3);
+            position: relative;
+            z-index: 2;
+            transition: var(--transition-spring);
+        }
+
+        .stat-card:hover .icon {
+            transform: rotateY(180deg);
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 5px 0;
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-card .trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background-color: var(--gray-light);
+        }
+
+        .trend.up {
+            color: var(--accent-green);
+        }
+
+        .trend.down {
+            color: var(--accent-red);
+        }
+
+        .trend.up::before {
+            content: "↑";
+            font-size: 16px;
+        }
+
+        .trend.down::before {
+            content: "↓";
+            font-size: 16px;
+        }
+
+        /* === CHART CONTAINER === */
+        .chart-container {
+            margin-bottom: 35px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .chart-container:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .chart-container h2 {
+            color: var(--text);
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 22px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .chart-container h2::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -8px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .chart-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-filter {
+            display: flex;
             gap: 10px;
         }
-    }
-</style>
+
+        .chart-filter-btn {
+            padding: 8px 15px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-light);
+            border: 1px solid var(--gray-dark);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .chart-filter-btn:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-filter-btn.active {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+        #sales-chart {
+            border-radius: var(--radius-sm);
+        }
+
+        /* === RECENT ORDERS === */
+        .recent-orders {
+            margin-bottom: 35px;
+        }
+
+        .recent-orders h2 {
+            color: var(--text);
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 22px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .recent-orders h2::after {
+            content: '';
+            position: absolute;
+            width: 40%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            bottom: -8px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+        .order-list {
+            background: white;
+            border-radius: var(--radius);
+            padding: 5px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .order-list:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+            border-radius: var(--radius-sm);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item:hover {
+            background-color: var(--gray-light);
+            transform: translateX(5px);
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-id i {
+            color: var(--primary-light);
+            font-size: 18px;
+        }
+
+        .order-price {
+            font-weight: 700;
+            color: var(--text);
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .order-time {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .order-status {
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .order-status.completed {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+        }
+
+        .order-status.processing {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .order-status.cancelled {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--accent-red);
+        }
+
+        /* === PARTICLES BACKGROUND === */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: rgba(94, 96, 206, 0.1);
+            border-radius: 50%;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, -80px); }
+        }
+        
+        @keyframes particleFade {
+            0% { opacity: 0.05; }
+            50% { opacity: 0.2; }
+            100% { opacity: 0.05; }
+        }
+
+        /* === CUSTOMIZED SCROLLBAR === */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary-light), var(--primary));
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--primary), var(--primary-dark));
+        }
+
+        /* === QUICK STATS SUMMARY === */
+        .quick-summary {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+            perspective: 1000px;
+        }
+
+        .summary-card {
+            flex: 1;
+            padding: 20px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition-spring);
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .summary-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-title {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .summary-card.positive .summary-value {
+            color: var(--accent-green);
+        }
+
+        .summary-card.negative .summary-value {
+            color: var(--accent-red);
+        }
+
+        .summary-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            box-shadow: 0 8px 20px rgba(94, 96, 206, 0.3);
+            transition: var(--transition-spring);
+        }
+
+        .summary-card:hover .summary-icon {
+            transform: rotateY(180deg);
+        }
+
+        .summary-card.positive .summary-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: var(--shadow-success);
+        }
+
+        .summary-card.negative .summary-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: var(--shadow-danger);
+        }
+
+        .summary-card.warning .summary-icon {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            box-shadow: var(--shadow-warning);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 1200px) {
+            .header-nav a span {
+                display: none;
+            }
+            
+            .header-nav a {
+                padding: 10px;
+                font-size: 16px;
+                justify-content: center;
+            }
+            
+            .header-nav a i {
+                margin: 0;
+            }
+            
+            .user-role-badge {
+                padding: 8px 12px;
+            }
+            
+            .quick-summary {
+                flex-wrap: wrap;
+            }
+            
+            .summary-card {
+                min-width: calc(50% - 10px);
+                flex: 0 0 calc(50% - 10px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .logo-container {
+                margin-right: auto;
+            }
+            
+            .user-controls {
+                margin-left: auto;
+            }
+            
+            header {
+                height: auto;
+                padding: 10px 0;
+            }
+            
+            .dashboard-container {
+                padding: 20px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin: 10px 0;
+            }
+            
+            .logo-container, .user-controls {
+                margin: 0;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-card {
+                min-width: 100%;
+                flex: 0 0 100%;
+            }
+            
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .chart-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-summary {
+                flex-direction: column;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 24px;
+            }
+            
+            .chart-filter {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* === TOAST NOTIFICATION === */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px 20px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 350px;
+        }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-success .toast-icon {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: var(--accent-green);
+        }
+
+        .toast-error .toast-icon {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--accent-red);
+        }
+
+        .toast-warning .toast-icon {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .toast-close {
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-light);
+            transition: var(--transition);
+            padding: 5px;
+        }
+
+        .toast-close:hover {
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        /* === UTILITY CLASSES === */
+        .animate-in {
+            animation: fadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
 </head>
 <body class="capo-role">
-    <!-- Header migliorato con gradiente arancione -->
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Header migliorato -->
     <header>
-<div class="logo-container">
-     <img src="/img/logo.png" alt="YourBite Logo" class="logo">
-    <h1 class="header-title">YourBite</h1>
-</div>
-    
-    <div class="header-nav">
-    <a href="/dashboard">Dashboard</a>
-    <a href="/ordini">Ordini</a>
-    <a href="/menu">Menu</a>
-    <a href="/clienti">Clienti</a>
-    <a href="/impostazioni">Impostazioni</a>
-    
-    <div style="position: relative; margin-left: 10px;">
-        <span id="notification-badge" style="background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -5px; right: -5px; display: none;">0</span>
-        <span class="user-role-badge">Capo</span>
-    </div>
-</div>
-<div class="user-controls">
-    <span class="username">{{user.username}}</span>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-</div>
-</header>
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="/img/logo.png" alt="YourBite Logo" class="logo">
+                <h1 class="header-title">YourBite</h1>
+            </div>
+            
+            <div class="header-nav">
+                <a href="/dashboard" class="active">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </a>
+                <a href="/ordini">
+                    <i class="fas fa-shopping-bag"></i> <span>Ordini</span>
+                </a>
+                <a href="/menu">
+                    <i class="fas fa-utensils"></i> <span>Menu</span>
+                </a>
+                <a href="/clienti">
+                    <i class="fas fa-users"></i> <span>Clienti</span>
+                </a>
+                <a href="/impostazioni">
+                    <i class="fas fa-cog"></i> <span>Impostazioni</span>
+                </a>
+                
+                <div style="position: relative; margin-left: 10px;">
+                    <span id="notification-badge" style="display: none;">0</span>
+                    <span class="user-role-badge">
+                        <i class="fas fa-crown"></i> Capo
+                    </span>
+                </div>
+            </div>
+            
+            <div class="user-controls">
+                <span class="username">{{user.username}}</span>
+                <button class="logout-btn btn-glow" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
 
     <div class="dashboard-container">
-        <h1>Dashboard</h1>
-        <p>Panoramica delle prestazioni del tuo fast food</p>
+        <div class="dashboard-header animate-in">
+            <h1 class="text-gradient">Dashboard</h1>
+            <p>Panoramica delle prestazioni del tuo fast food</p>
+        </div>
 
-        <div class="stats-grid">
-    <div class="stat-card">
-        <h3>Ordini Totali</h3>
-        <div class="number" id="ordini-oggi">247</div>
-        <div class="trend up">+12% rispetto a ieri</div>
-    </div>
-    <div class="stat-card">
-        <h3>Vendite Giornaliere</h3>
-        <div class="number" id="vendite-oggi">€1,895</div>
-        <div class="trend up">+8% rispetto a ieri</div>
-    </div>
-    <div class="stat-card">
-        <h3>Clienti Nuovi</h3>
-        <div class="number" id="nuovi-clienti">18</div>
-        <div class="trend up">+5% rispetto a ieri</div>
-    </div>
-    <div class="stat-card">
-        <h3>Tempo Medio Preparazione</h3>
-        <div class="number">12 min</div>
-        <div class="trend down">+2 min rispetto a ieri</div>
-    </div>
-</div>
-
-        <div class="chart-container">
-            <h2>Andamento Vendite</h2>
-            <div id="sales-chart" style="height: 300px; background: #f5f5f5; border-radius: 5px; display: flex; justify-content: center; align-items: center;">
-                <!-- Qui andrà il grafico delle vendite -->
-                <p>Grafico vendite - Dati in caricamento</p>
+        <!-- Quick Summary Section -->
+        <div class="quick-summary">
+            <div class="summary-card positive animate-in animate-delay-1">
+                <div class="summary-info">
+                    <div class="summary-title">Vendite di oggi</div>
+                    <div class="summary-value" id="total-sales-today">€1,895</div>
+                </div>
+                <div class="summary-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+            </div>
+            
+            <div class="summary-card animate-in animate-delay-2">
+                <div class="summary-info">
+                    <div class="summary-title">Clienti attivi</div>
+                    <div class="summary-value" id="active-customers">78</div>
+                </div>
+                <div class="summary-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+            
+            <div class="summary-card warning animate-in animate-delay-3">
+                <div class="summary-info">
+                    <div class="summary-title">Ordini in corso</div>
+                    <div class="summary-value" id="pending-orders">12</div>
+                </div>
+                <div class="summary-icon">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
             </div>
         </div>
 
-        <div class="recent-orders">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card card-hover-effect animate-in">
+                <div class="icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h3>Ordini Totali</h3>
+                <div class="number" id="ordini-oggi">247</div>
+                <div class="trend up">+12% rispetto a ieri</div>
+            </div>
+            
+            <div class="stat-card card-hover-effect animate-in animate-delay-1">
+                <div class="icon">
+                    <i class="fas fa-euro-sign"></i>
+                </div>
+                <h3>Vendite Giornaliere</h3>
+                <div class="number" id="vendite-oggi">€1,895</div>
+                <div class="trend up">+8% rispetto a ieri</div>
+            </div>
+            
+            <div class="stat-card card-hover-effect animate-in animate-delay-2">
+                <div class="icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h3>Clienti Nuovi</h3>
+                <div class="number" id="nuovi-clienti">18</div>
+                <div class="trend up">+5% rispetto a ieri</div>
+            </div>
+            
+            <div class="stat-card card-hover-effect animate-in animate-delay-3">
+                <div class="icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Tempo Medio Preparazione</h3>
+                <div class="number">12 min</div>
+                <div class="trend down">+2 min rispetto a ieri</div>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container animate-in">
+            <div class="chart-actions">
+                <h2>Andamento Vendite</h2>
+                <div class="chart-filter">
+                    <button class="chart-filter-btn active" data-period="day">Oggi</button>
+                    <button class="chart-filter-btn" data-period="week">Settimana</button>
+                    <button class="chart-filter-btn" data-period="month">Mese</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="sales-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-orders animate-in">
             <h2>Ordini Recenti</h2>
             <div class="order-list">
                 <div class="order-item">
-                    <div>Ordine #1038</div>
-                    <div>€25.90</div>
-                    <div>10 minuti fa</div>
-                    <div style="color: green;">Completato</div>
+                    <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1038</div>
+                    <div class="order-price">€25.90</div>
+                    <div class="order-time">10 minuti fa</div>
+                    <div class="order-status completed"><i class="fas fa-check-circle"></i> Completato</div>
                 </div>
+                
                 <div class="order-item">
-                    <div>Ordine #1037</div>
-                    <div>€18.50</div>
-                    <div>22 minuti fa</div>
-                    <div style="color: green;">Completato</div>
+                    <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1037</div>
+                    <div class="order-price">€18.50</div>
+                    <div class="order-time">22 minuti fa</div>
+                    <div class="order-status completed"><i class="fas fa-check-circle"></i> Completato</div>
                 </div>
+                
                 <div class="order-item">
-                    <div>Ordine #1036</div>
-                    <div>€32.75</div>
-                    <div>35 minuti fa</div>
-                    <div style="color: green;">Completato</div>
+                    <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1036</div>
+                    <div class="order-price">€32.75</div>
+                    <div class="order-time">35 minuti fa</div>
+                    <div class="order-status processing"><i class="fas fa-spinner fa-spin"></i> In preparazione</div>
                 </div>
+                
                 <div class="order-item">
-                    <div>Ordine #1035</div>
-                    <div>€15.20</div>
-                    <div>45 minuti fa</div>
-                    <div style="color: green;">Completato</div>
+                    <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1035</div>
+                    <div class="order-price">€15.20</div>
+                    <div class="order-time">45 minuti fa</div>
+                    <div class="order-status completed"><i class="fas fa-check-circle"></i> Completato</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-    // Funzione per logout
-    function logout() {
-        fetch('/logout', {
-            method: 'POST',
-        })
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '/login';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verifica che Chart.js sia caricato
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js non è stato caricato correttamente. Carico dinamicamente...');
+                
+                // Carica Chart.js dinamicamente
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js';
+                script.onload = function() {
+                    console.log('Chart.js caricato con successo');
+                    initializeAll();
+                };
+                script.onerror = function() {
+                    console.error('Impossibile caricare Chart.js');
+                    showFallbackChart();
+                };
+                document.head.appendChild(script);
+            } else {
+                console.log('Chart.js già caricato');
+                initializeAll();
             }
-        })
-        .catch(error => console.error('Errore durante il logout:', error));
-    }
 
-    // Funzione sicura per aggiornare elementi DOM (controlla se esistono)
-    function updateElementText(id, text) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = text;
-        }
-    }
+            function initializeAll() {
+                // Create particles background
+                createParticles();
+                
+                // Initialize the sales chart
+                initSalesChart();
+                
+                // Set active navigation link
+                setActiveNavLink();
+                
+                // Load dashboard data
+                loadDashboardData();
+                
+                // Add interactivity to chart filter buttons
+                setupChartFilters();
+                
+                // Simulate dashboard activity
+                simulateActivity();
+                
+                // Show welcome toast
+                setTimeout(() => {
+                    showToast('Dashboard pronta', 'Benvenuto nel pannello di controllo YourBite', 'success');
+                }, 1000);
+            }
 
-    // Imposta la classe 'active' sul link di navigazione corrente
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentPath = window.location.pathname;
-        const navLinks = document.querySelectorAll('.header-nav a');
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (currentPath === link.getAttribute('href')) {
-                link.classList.add('active');
+            function showFallbackChart() {
+                const chartWrapper = document.querySelector('.chart-wrapper');
+                if (chartWrapper) {
+                    chartWrapper.innerHTML = `
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 350px; background: rgba(94, 96, 206, 0.05); border-radius: 12px; padding: 20px;">
+                            <i class="fas fa-chart-line" style="font-size: 48px; color: var(--primary); margin-bottom: 15px;"></i>
+                            <p style="font-weight: 500; color: var(--text); margin-bottom: 10px;">Impossibile caricare il grafico</p>
+                            <button onclick="location.reload()" class="chart-filter-btn" style="cursor: pointer;">
+                                <i class="fas fa-redo"></i> Ricarica pagina
+                            </button>
+                        </div>
+                    `;
+                }
             }
         });
+        
+        // Create background particles
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            if (!particles) return;
+            
+            // Clear any existing particles
+            particles.innerHTML = '';
+            
+            // Settings
+            const particleCount = 50; // Number of particles
+            
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 10 + 2;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.5 + 0.1;
+                
+                // Random animation duration
+                const duration = Math.random() * 60 + 30;
+                
+                // Apply styles
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = opacity;
+                
+                // Alternate between primary and secondary colors
+                if (i % 2 === 0) {
+                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
+                } else {
+                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+                }
+                
+                // Add floating animation
+                particle.style.animation = `
+                    particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
+                    particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
+                `;
+                
+                // Append to container
+                particles.appendChild(particle);
+            }
+        }
+        
+        // Initialize the sales chart
+        function initSalesChart() {
+            try {
+                const chartWrapper = document.querySelector('.chart-wrapper');
+                if (!chartWrapper) {
+                    console.error('Chart wrapper not found');
+                    return;
+                }
 
-        // Funzione sicura per caricare statistiche
-        function loadDashboardStats() {
+                const canvas = document.getElementById('sales-chart');
+                if (!canvas) {
+                    console.error('Canvas element not found');
+                    return;
+                }
+
+                // Make sure the canvas has a proper size
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Failed to get 2D context');
+                    return;
+                }
+
+                // Clear any existing chart instance
+                if (window.salesChart instanceof Chart) {
+                    window.salesChart.destroy();
+                }
+                
+                console.log('Creating gradient for chart...');
+                // Gradient background
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(94, 96, 206, 0.2)');
+                gradient.addColorStop(1, 'rgba(94, 96, 206, 0)');
+                
+                console.log('Setting up chart data...');
+                // Chart data
+                const data = {
+                    labels: ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                    datasets: [{
+                        label: 'Vendite (€)',
+                        data: [120, 210, 380, 290, 320, 490, 380, 290],
+                        borderColor: '#5e60ce',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#5e60ce',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: gradient
+                    }]
+                };
+                
+                console.log('Setting up chart options...');
+                // Chart options
+                const options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(26, 26, 46, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                family: 'Montserrat'
+                            },
+                            bodyFont: {
+                                size: 14,
+                                family: 'Montserrat'
+                            },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Montserrat'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Montserrat'
+                                },
+                                callback: function(value) {
+                                    return '€' + value;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'easeInOutCubic',
+                            from: 0.4,
+                            to: 0.4,
+                            loop: true
+                        }
+                    }
+                };
+                
+                console.log('Creating chart instance...');
+                // Create chart
+                window.salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: options
+                });
+                
+                console.log('Chart successfully created!');
+            } catch (error) {
+                console.error('Error initializing chart:', error);
+                showFallbackChart();
+            }
+        }
+        
+        function showFallbackChart() {
+            const chartWrapper = document.querySelector('.chart-wrapper');
+            if (chartWrapper) {
+                chartWrapper.innerHTML = `
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 350px; background: rgba(94, 96, 206, 0.05); border-radius: 12px; padding: 20px;">
+                        <i class="fas fa-chart-line" style="font-size: 48px; color: var(--primary); margin-bottom: 15px;"></i>
+                        <p style="font-weight: 500; color: var(--text); margin-bottom: 10px;">Impossibile caricare il grafico</p>
+                        <button onclick="location.reload()" class="chart-filter-btn" style="cursor: pointer;">
+                            <i class="fas fa-redo"></i> Ricarica pagina
+                        </button>
+                    </div>
+                `;
+                
+                showToast('Errore grafico', 'Non è stato possibile inizializzare il grafico delle vendite', 'error');
+            }
+        }
+        
+        // Set the active navigation link
+        function setActiveNavLink() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.header-nav a');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (currentPath === link.getAttribute('href')) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Load dashboard data
+        function loadDashboardData() {
             try {
                 fetch('/statistiche')
                     .then(response => response.json())
                     .then(data => {
-                        // Usa la funzione sicura per aggiornare elementi
                         updateElementText('vendite-oggi', `€${data.venditeOggi || 0}`);
                         updateElementText('ordini-oggi', data.ordiniOggi || 0);
                         updateElementText('nuovi-clienti', data.clientiNuovi || 0);
+                        
+                        // Update summary cards
+                        updateElementText('total-sales-today', `€${data.venditeOggi || 0}`);
+                        updateElementText('active-customers', data.clientiAttivi || 78);
+                        updateElementText('pending-orders', data.ordiniInCorso || 12);
+                        
+                        // Show success toast
+                        showToast('Dati aggiornati', 'Le statistiche della dashboard sono state aggiornate', 'success');
                     })
-                    .catch(error => console.error('Errore caricamento statistiche:', error));
+                    .catch(error => {
+                        console.error('Errore caricamento statistiche:', error);
+                        
+                        // Show error toast
+                        showToast('Errore di caricamento', 'Impossibile caricare le statistiche più recenti', 'error');
+                        
+                        // Use placeholder data
+                        usePlaceholderData();
+                    });
+                    
+                // Load notifications
+                loadNotifications();
             } catch (e) {
                 console.log('Caricamento statistiche non disponibile in questa pagina');
+                usePlaceholderData();
             }
         }
-
-        // Funzione sicura per caricare notifiche
+        
+        // Load notifications
         function loadNotifications() {
             try {
                 fetch('/notifiche')
                     .then(response => response.json())
                     .then(notifications => {
                         const badge = document.getElementById('notification-badge');
-                        if (!badge) return; // Esci se l'elemento non esiste
+                        if (!badge) return;
                         
                         const unreadCount = notifications.filter(n => !n.letto).length;
                         badge.textContent = unreadCount;
-                        badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+                        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                        
+                        if (unreadCount > 0) {
+                            showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
+                        }
                     })
                     .catch(error => console.error('Errore caricamento notifiche:', error));
             } catch (e) {
                 console.log('Caricamento notifiche non disponibile in questa pagina');
             }
         }
-
-        // Solo per la dashboard, aggiungi elementi mancanti
-        if (currentPath === '/dashboard') {
-            // Aggiungi gli elementi mancanti se siamo nella dashboard
-            const container = document.querySelector('.dashboard-container');
-            if (container) {
-                // Aggiungi elementi per le statistiche e notifiche se necessario
-                if (!document.getElementById('notification-badge')) {
-                    const badgeContainer = document.createElement('div');
-                    badgeContainer.innerHTML = '<span id="notification-badge" style="display:none;">0</span>';
-                    document.querySelector('.header-nav').appendChild(badgeContainer);
+        
+        // Setup chart filters
+        function setupChartFilters() {
+            const filterButtons = document.querySelectorAll('.chart-filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update chart data based on selected period
+                    updateChartData(this.dataset.period);
+                });
+            });
+        }
+        
+        // Update chart data based on period
+        function updateChartData(period) {
+            try {
+                if (!window.salesChart) {
+                    console.error('Chart not initialized');
+                    initSalesChart();
+                    return;
                 }
                 
-                // Chiama le funzioni di caricamento
-                loadDashboardStats();
-                loadNotifications();
+                let labels, data;
+                
+                switch(period) {
+                    case 'day':
+                        labels = ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+                        data = [120, 210, 380, 290, 320, 490, 380, 290];
+                        break;
+                    case 'week':
+                        labels = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+                        data = [1480, 1290, 1350, 1690, 2100, 2400, 1950];
+                        break;
+                    case 'month':
+                        labels = ['Sett 1', 'Sett 2', 'Sett 3', 'Sett 4'];
+                        data = [8500, 9200, 8900, 9600];
+                        break;
+                    default:
+                        return;
+                }
+                
+                // Update chart data
+                window.salesChart.data.labels = labels;
+                window.salesChart.data.datasets[0].data = data;
+                window.salesChart.update();
+                
+                // Show toast notification
+                showToast('Grafico aggiornato', `Visualizzazione dati per ${getPeriodName(period)}`, 'success');
+            } catch (error) {
+                console.error('Error updating chart data:', error);
+                showToast('Errore aggiornamento', 'Impossibile aggiornare il grafico', 'error');
             }
         }
-    });
-</script>
+        
+        // Get period name in Italian
+        function getPeriodName(period) {
+            switch(period) {
+                case 'day': return 'oggi';
+                case 'week': return 'questa settimana';
+                case 'month': return 'questo mese';
+                default: return period;
+            }
+        }
+        
+        // Use placeholder data when fetch fails
+        function usePlaceholderData() {
+            updateElementText('vendite-oggi', '€1,895');
+            updateElementText('ordini-oggi', '247');
+            updateElementText('nuovi-clienti', '18');
+            updateElementText('total-sales-today', '€1,895');
+            updateElementText('active-customers', '78');
+            updateElementText('pending-orders', '12');
+        }
+        
+        // Helper function to update element text if element exists
+        function updateElementText(id, text) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = text;
+            }
+        }
+        
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => {
+                toast.remove();
+            });
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+            
+                       // Icon based on type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <div class="toast-close">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Add show class after a small delay to trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Add event listener to close button
+            const closeButton = toast.querySelector('.toast-close');
+            closeButton.addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            });
+            
+            // Auto close after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+        
+        // Simulate dashboard activity
+        function simulateActivity() {
+            // Random updates every 30-60 seconds
+            setInterval(() => {
+                const activities = [
+                    () => {
+                        // Update pending orders
+                        const pendingOrders = document.getElementById('pending-orders');
+                        if (pendingOrders) {
+                            const currentValue = parseInt(pendingOrders.textContent);
+                            const newValue = currentValue + Math.floor(Math.random() * 3) - 1;
+                            if (newValue >= 0) {
+                                pendingOrders.textContent = newValue;
+                                
+                                if (newValue > currentValue) {
+                                    showToast('Nuovo ordine', 'È stato ricevuto un nuovo ordine', 'success');
+                                }
+                            }
+                        }
+                    },
+                    () => {
+                        // Update active customers
+                        const activeCustomers = document.getElementById('active-customers');
+                        if (activeCustomers) {
+                            const currentValue = parseInt(activeCustomers.textContent);
+                            const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
+                            const newValue = Math.max(0, currentValue + change);
+                            activeCustomers.textContent = newValue;
+                        }
+                    },
+                    () => {
+                        // Update sales chart if available
+                        if (window.salesChart) {
+                            try {
+                                const lastValue = window.salesChart.data.datasets[0].data[window.salesChart.data.datasets[0].data.length - 1];
+                                const change = Math.random() * 50 - 20; // -20 to +30
+                                window.salesChart.data.datasets[0].data[window.salesChart.data.datasets[0].data.length - 1] = Math.max(0, lastValue + change);
+                                window.salesChart.update();
+                            } catch (error) {
+                                console.error('Error updating chart during simulation', error);
+                            }
+                        }
+                    }
+                ];
+                
+                // Execute a random activity
+                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                randomActivity();
+                
+            }, Math.random() * 30000 + 30000); // 30-60 seconds
+        }
+        
+        // Function for logout
+        function logout() {
+            // Show loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.style.position = 'fixed';
+            loadingOverlay.style.top = '0';
+            loadingOverlay.style.left = '0';
+            loadingOverlay.style.width = '100%';
+            loadingOverlay.style.height = '100%';
+            loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.style.flexDirection = 'column';
+            loadingOverlay.style.justifyContent = 'center';
+            loadingOverlay.style.alignItems = 'center';
+            loadingOverlay.style.zIndex = '2000';
+            loadingOverlay.style.backdropFilter = 'blur(5px)';
+            
+            const spinnerContainer = document.createElement('div');
+            spinnerContainer.style.width = '60px';
+            spinnerContainer.style.height = '60px';
+            spinnerContainer.style.position = 'relative';
+            
+            const spinner = document.createElement('div');
+            spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+            spinner.style.borderTopColor = '#5e60ce';
+            spinner.style.borderRadius = '50%';
+            spinner.style.width = '100%';
+            spinner.style.height = '100%';
+            spinner.style.animation = 'spin 1s linear infinite';
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            
+            document.head.appendChild(style);
+            spinnerContainer.appendChild(spinner);
+            
+            const loadingText = document.createElement('p');
+            loadingText.textContent = 'Logout in corso...';
+            loadingText.style.marginTop = '20px';
+            loadingText.style.color = 'var(--primary)';
+            loadingText.style.fontWeight = '500';
+            
+            loadingOverlay.appendChild(spinnerContainer);
+            loadingOverlay.appendChild(loadingText);
+            document.body.appendChild(loadingOverlay);
+            
+            // Perform logout
+            fetch('/logout', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    loadingText.textContent = 'Reindirizzamento...';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 800);
+                } else {
+                    throw new Error('Errore durante il logout');
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante il logout:', error);
+                loadingText.textContent = 'Si è verificato un errore. Riprova.';
+                
+                // Add retry button
+                const retryButton = document.createElement('button');
+                retryButton.textContent = 'Riprova';
+                retryButton.style.marginTop = '15px';
+                retryButton.style.padding = '8px 20px';
+                retryButton.style.background = 'var(--primary)';
+                retryButton.style.color = 'white';
+                retryButton.style.border = 'none';
+                retryButton.style.borderRadius = 'var(--radius-sm)';
+                retryButton.style.cursor = 'pointer';
+                retryButton.onclick = function() {
+                    document.body.removeChild(loadingOverlay);
+                    logout();
+                };
+                
+                loadingOverlay.appendChild(retryButton);
+            });
+        }
+    </script>
 </body>
 </html>
