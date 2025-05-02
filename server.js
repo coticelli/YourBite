@@ -1143,69 +1143,99 @@ app.post('/login', (req, res) => {
 });
 
 // Route per la registrazione
-app.post('/signup', (req, res) => {
-    console.log('Dati ricevuti:', req.body); // Log per il debug
-    const { username, email, password, tipo } = req.body;
+app.post('/signup', async (req, res) => {
+    try {
+        console.log('Richiesta di registrazione ricevuta');
+        
+        const { username, email, password, tipo } = req.body;
+        console.log('Dati ricevuti:', { username, email, tipo, password: '***hidden***' });
 
-    // Verifica che tutti i campi siano presenti
-    if (!username || !email || !password || !tipo) {
-        return res.status(400).json({ error: 'Tutti i campi sono obbligatori.' });
-    }
-
-    // Validazione della password (minimo 8 caratteri, almeno una lettera e un numero)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-        return res.status(400).json({ error: 'La password deve essere lunga almeno 8 caratteri e contenere almeno una lettera e un numero.' });
-    }
-
-    // Verifica che il tipo utente sia valido
-    const validTypes = ['cliente', 'amministratore', 'capo'];
-    if (!validTypes.includes(tipo)) {
-        return res.status(400).json({ error: 'Tipo utente non valido.' });
-    }
-
-    // Cripta la password
-    const hashedPassword = bcrypt.hashSync(password, 10);
-
-    // Verifica se l'email è già in uso
-    db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, row) => {
-        if (err) {
-            console.error('Errore durante la verifica dell\'email:', err.message);
-            return res.status(500).json({ error: 'Errore del server.' });
+        // Verifica che tutti i campi siano presenti
+        if (!username || !email || !password || !tipo) {
+            return res.status(400).json({ error: 'Tutti i campi sono obbligatori.' });
         }
 
-        if (row) {
-            return res.status(400).json({ error: 'Questa email è già in uso.' });
+        // Validazione dell'email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Formato email non valido.' });
         }
 
-        // Inserisce il nuovo utente nel database
-        db.run(`INSERT INTO utenti (username, email, password, tipo) VALUES (?, ?, ?, ?)`,
-            [username, email, hashedPassword, tipo], function (err) {
+        // Validazione della password (minimo 8 caratteri, almeno una lettera e un numero)
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ error: 'La password deve essere lunga almeno 8 caratteri e contenere almeno una lettera e un numero.' });
+        }
+
+        // Verifica che il tipo utente sia valido
+        const validTypes = ['cliente', 'amministratore', 'capo'];
+        if (!validTypes.includes(tipo)) {
+            return res.status(400).json({ error: 'Tipo utente non valido.' });
+        }
+
+        // Verifica se l'email è già in uso
+        return new Promise((resolve, reject) => {
+            db.get('SELECT * FROM utenti WHERE email = ?', [email], (err, row) => {
                 if (err) {
-                    console.error('Errore durante l\'inserimento del nuovo utente:', err.message);
-                    return res.status(500).json({ error: 'Errore durante la registrazione.' });
+                    console.error('Errore database durante la verifica email:', err.message);
+                    return res.status(500).json({ error: 'Errore del server durante la verifica dell\'email.' });
                 }
 
-                console.log(`Nuovo utente registrato: ${username}`);
-                // Definisci una URL di redirect in base al tipo utente
-                let redirectUrl = '';
-                switch (tipo) {
-                    case 'cliente':
-                        redirectUrl = '/homepage_cliente'; // Nuovo
-                        break;
-                    case 'amministratore':
-                        redirectUrl = '/homepage_admin'; // Nuovo
-                        break;
-                    case 'capo':
-                        redirectUrl = '/homepage_capo'; // Nuovo
-                        break;
-                    default:
-                        redirectUrl = '/login'; // Nuovo
-                        break;
+                if (row) {
+                    return res.status(400).json({ error: 'Questa email è già in uso.' });
                 }
-                res.json({ success: true, message: 'Registrazione avvenuta con successo.', redirectUrl });
+
+                // Verifica se l'username è già in uso
+                db.get('SELECT * FROM utenti WHERE username = ?', [username], (err, row) => {
+                    if (err) {
+                        console.error('Errore database durante la verifica username:', err.message);
+                        return res.status(500).json({ error: 'Errore del server durante la verifica dell\'username.' });
+                    }
+
+                    if (row) {
+                        return res.status(400).json({ error: 'Questo username è già in uso.' });
+                    }
+
+                    // Cripta la password
+                    const hashedPassword = bcrypt.hashSync(password, 10);
+
+                    // Inserisce il nuovo utente nel database
+                    db.run(
+                        `INSERT INTO utenti (username, email, password, tipo, created_at) 
+                         VALUES (?, ?, ?, ?, datetime('now'))`,
+                        [username, email, hashedPassword, tipo],
+                        function (err) {
+                            if (err) {
+                                console.error('Errore durante l\'inserimento del nuovo utente:', err.message);
+                                return res.status(500).json({ error: 'Errore durante la registrazione.' });
+                            }
+
+                            console.log(`Nuovo utente registrato: ${username} (ID: ${this.lastID}, Tipo: ${tipo})`);
+                            
+                            // Definisci una URL di redirect in base al tipo utente
+                            const redirectMap = {
+                                'cliente': '/homepage_cliente',
+                                'amministratore': '/homepage_admin',
+                                'capo': '/homepage_capo'
+                            };
+                            
+                            const redirectUrl = redirectMap[tipo] || '/login';
+                            
+                            res.json({ 
+                                success: true, 
+                                message: 'Registrazione avvenuta con successo.',
+                                userId: this.lastID,
+                                redirectUrl 
+                            });
+                        }
+                    );
+                });
             });
-    });
+        });
+    } catch (error) {
+        console.error('Errore inaspettato durante la registrazione:', error);
+        res.status(500).json({ error: 'Si è verificato un errore inaspettato. Riprova più tardi.' });
+    }
 });
 
 app.get('/logout', (req, res) => {

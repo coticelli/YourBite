@@ -61,54 +61,41 @@
     {{!-- Lo script JS rimane uguale, si interfaccia con l'API /signup --}}
     <script>
         document.getElementById('signupForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const tipo = document.getElementById('userType').value;
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const tipo = document.getElementById('userType').value;
 
-            fetch('/signup', { // Questo endpoint è già gestito in server.js
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password, tipo })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Prova a leggere il corpo dell'errore come JSON per messaggi più specifici
-                    return response.json().then(errData => {
-                        throw new Error(errData.error || `Network response was not ok: ${response.statusText}`);
-                    }).catch(() => {
-                        // Se il corpo dell'errore non è JSON o c'è un altro problema
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Risposta dal server:', data);
-                if (data.error) { // Anche se la risposta è 200, potrebbe contenere un errore logico (improbabile con la gestione sopra, ma per sicurezza)
-                    document.getElementById('message').innerText = data.error;
-                    console.error('Errore logico dal server:', data.error);
-                } else if (data.success && data.redirectUrl) {
-                    // Salva i dati dell'utente nel localStorage (OPZIONALE, la sessione è lato server)
-                    // localStorage.setItem('username', username); // Potresti non averne bisogno se usi la sessione correttamente
-                    // localStorage.setItem('userType', tipo);
-
-                    // Redirige alla URL fornita dal server
-                    window.location.href = data.redirectUrl;
-                } else {
-                    // Caso imprevisto
-                     document.getElementById('message').innerText = 'Risposta inattesa dal server.';
-                     console.error('Risposta inattesa:', data);
-                }
-            })
-            .catch(error => {
-                console.error('Errore durante la registrazione:', error);
-                // Mostra il messaggio di errore specifico ricevuto o uno generico
-                document.getElementById('message').innerText = error.message || 'Errore durante la registrazione. Riprova.';
-            });
+    fetch('/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password, tipo })
+    })
+    .then(response => {
+        // Always try to parse the response as JSON, regardless of status code
+        return response.json().then(data => {
+            if (!response.ok) {
+                // If server returned an error message, throw it
+                throw new Error(data.error || `Error: ${response.status}`);
+            }
+            return data;
         });
+    })
+    .then(data => {
+        console.log('Risposta dal server:', data);
+        if (data.success && data.redirectUrl) {
+            window.location.href = data.redirectUrl;
+        } else {
+            document.getElementById('message').innerText = 'Risposta inattesa dal server.';
+        }
+    })
+    .catch(error => {
+        console.error('Errore durante la registrazione:', error);
+        document.getElementById('message').innerText = error.message || 'Errore durante la registrazione. Riprova.';
+    });
+});
     </script>
 </body>
 </html>
