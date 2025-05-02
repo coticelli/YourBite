@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -1202,636 +1203,665 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Imposta la data di oggi
-            setTodayDate();
-            
-            // Inizializza il WebSocket
-            initializeWebSocket();
-            
-            // Setup emoji picker
-            setupEmojiPicker();
-            
-            // Setup message input
-            setupMessageInput();
-            
-            // Setup send functionality
-            setupSendButton();
-            
-            // Setup attachment button
-            setupAttachButton();
-            
-            // Update username if needed
-            updateUsername();
-            
-            // Setup logout button
-            setupLogoutButton();
+<script>
+// Sostituisci completamente il codice JavaScript per la comunicazione
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Imposta la data di oggi
+    setTodayDate();
+    
+    // Inizializza Socket.IO anziché WebSocket
+    initializeSocketIO();
+    
+    // Setup emoji picker
+    setupEmojiPicker();
+    
+    // Setup message input
+    setupMessageInput();
+    
+    // Setup send button
+    setupSendButton();
+    
+    // Setup attachment button
+    setupAttachButton();
+    
+    // Update username if needed
+    updateUsername();
+    
+    // Setup logout button
+    setupLogoutButton();
+});
+
+// Set today's date
+function setTodayDate() {
+    const today = new Date();
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('todayDate').textContent = today.toLocaleDateString('it-IT', options);
+}
+
+// Variabili globali
+let socket;
+const userType = 'cliente';
+const username = getUsername();
+let userId = 'client_' + Math.random().toString(36).substring(2, 9);
+
+// Inizializza Socket.IO
+function initializeSocketIO() {
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionText = document.getElementById('connectionText');
+    
+    connectionStatus.classList.add('show');
+    connectionText.textContent = 'Connessione in corso...';
+    
+    // Connetti a Socket.IO
+    socket = io();
+    
+    // Evento di connessione stabilita
+    socket.on('connect', function() {
+        console.log('Socket.IO connection established');
+        connectionText.textContent = 'Connesso';
+        connectionStatus.classList.add('connected');
+        
+        // Dopo un po', nascondi lo stato della connessione
+        setTimeout(() => {
+            connectionStatus.classList.remove('show');
+        }, 3000);
+        
+        // Invia informazioni utente e unisciti alla stanza di supporto
+        socket.emit('userJoin', {
+            userId: userId,
+            username: username,
+            userType: userType
         });
         
-        // Set today's date
-        function setTodayDate() {
-            const today = new Date();
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('todayDate').textContent = today.toLocaleDateString('it-IT', options);
+        // Carica la cronologia messaggi
+        loadChatHistory();
+    });
+    
+    // Gestione messaggi in arrivo
+    socket.on('message', function(data) {
+        console.log('Messaggio ricevuto:', data);
+        
+        // Mostra il messaggio solo se non è stato inviato da questo utente
+        if (data.sender !== userId) {
+            addOperatorMessage(data.content, data.timestamp);
         }
-        
-        // Global WebSocket object
-        let socket;
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 5;
-        const username = getUsername();
-        const userType = 'cliente';
-        
-        // Initialize WebSocket
-        function initializeWebSocket() {
-            const connectionStatus = document.getElementById('connectionStatus');
-            const connectionText = document.getElementById('connectionText');
-            
-            connectionStatus.classList.add('show');
-            
-            // WebSocket URL - adjust to your server configuration
-            // In un'applicazione reale, usa il protocollo wss:// per connessioni sicure
-            const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-            const wsUrl = `${protocol}${window.location.host}/ws/chat`;
-            
-            // Create WebSocket connection
-            socket = new WebSocket(wsUrl);
-            
-            // Connection opened
-            socket.addEventListener('open', function(event) {
-                console.log('WebSocket connection established');
-                connectionText.textContent = 'Connesso';
-                connectionStatus.classList.add('connected');
-                connectionStatus.classList.add('show');
-                
-                // Reset reconnect attempts
-                reconnectAttempts = 0;
-                
-                // Send identification message
-                sendIdentification();
-                
-                // After a while, hide the connection status
-                setTimeout(() => {
-                    connectionStatus.classList.remove('show');
-                }, 3000);
-                
-                // Load chat history
-                loadChatHistory();
-            });
-            
-            // Listen for messages
-            socket.addEventListener('message', function(event) {
-                const data = JSON.parse(event.data);
-                console.log('Message from server:', data);
-                
-                switch(data.type) {
-                    case 'chat_message':
-                        // Handle incoming message
-                        if (data.sender !== userType) {
-                            addOperatorMessage(data.message, data.timestamp);
-                        }
-                        break;
-                    
-                    case 'typing':
-                        // Handle typing indicator
-                        if (data.sender !== userType && data.is_typing) {
-                            showTypingIndicator();
-                        } else if (data.sender !== userType && !data.is_typing) {
-                            hideTypingIndicator();
-                        }
-                        break;
-                        
-                    case 'chat_history':
-                        // Handle chat history
-                        displayChatHistory(data.messages);
-                        break;
-                    
-                    case 'operator_status':
-                        // Handle operator status change
-                        updateOperatorStatus(data.is_online);
-                        break;
-                        
-                    default:
-                        console.log('Unknown message type:', data.type);
-                }
-            });
-            
-            // Connection closed
-            socket.addEventListener('close', function(event) {
-                console.log('WebSocket connection closed');
-                connectionText.textContent = 'Connessione interrotta';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
-                
-                // Try to reconnect if not closed normally and max attempts not reached
-                if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
-                    reconnectAttempts++;
-                    connectionText.textContent = `Riconnessione in corso (${reconnectAttempts}/${maxReconnectAttempts})...`;
-                    
-                    setTimeout(() => {
-                        initializeWebSocket();
-                    }, 3000);
-                } else if (reconnectAttempts >= maxReconnectAttempts) {
-                    connectionText.textContent = 'Impossibile connettersi. Ricarica la pagina.';
-                }
-            });
-            
-            // Connection error
-            socket.addEventListener('error', function(event) {
-                console.error('WebSocket error:', event);
-                connectionText.textContent = 'Errore di connessione';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
-            });
-        }
-        
-        // Send identification message
-        function sendIdentification() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'identification',
-                    user_type: userType,
-                    username: username
-                }));
-            }
-        }
-        
-        // Load chat history
-        function loadChatHistory() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'get_history'
-                }));
-            }
-        }
-        
-        // Display chat history
-        function displayChatHistory(messages) {
-            const container = document.getElementById('messagesContainer');
-            container.innerHTML = ''; // Clear existing messages
-            
-            if (!messages || messages.length === 0) {
-                // Add a welcome message if no history
-                addSystemMessage('Benvenuto nella chat di assistenza YourBite!');
-                return;
-            }
-            
-            // Add messages in chronological order
-            messages.forEach(msg => {
-                if (msg.sender === userType) {
-                    addUserMessage(msg.message, msg.timestamp, true);
-                } else if (msg.sender === 'system') {
-                    addSystemMessage(msg.message, msg.timestamp);
-                } else {
-                    addOperatorMessage(msg.message, msg.timestamp);
-                }
-            });
-            
-            // Scroll to bottom
-            scrollToBottom();
-        }
-        
-        // Get username
-        function getUsername() {
-            // Try to get the username from the DOM
-            const usernameEl = document.getElementById('username');
-            if (usernameEl && usernameEl.textContent && usernameEl.textContent !== 'Cliente') {
-                return usernameEl.textContent;
-            }
-            
-            // Try to get from localStorage
-            const savedUsername = localStorage.getItem('username');
-            if (savedUsername) {
-                return savedUsername;
-            }
-            
-            // Fallback
-            return 'Cliente';
-        }
-        
-        // Update operator status
-        function updateOperatorStatus(isOnline) {
-            const statusText = document.getElementById('operatorStatus');
-            const statusIndicator = document.querySelector('.status-indicator');
-            
-            if (isOnline) {
-                statusText.textContent = 'Online';
-                statusIndicator.style.backgroundColor = 'var(--accent-green)';
-            } else {
-                statusText.textContent = 'Offline';
-                statusIndicator.style.backgroundColor = 'var(--text-light)';
-                hideTypingIndicator();
-            }
-        }
-        
-        // Add user message
-        function addUserMessage(messageText, timestamp = null, isHistory = false) {
-            const container = document.getElementById('messagesContainer');
-            const now = timestamp ? new Date(timestamp) : new Date();
-            const timeString = formatTime(now);
-            
-            const messageHTML = `
-                <div class="message-group user">
-                    <div class="message-content">
-                        <div class="message-text">${messageText}</div>
-                        <div class="message-meta">
-                            <span class="message-time">${timeString}</span>
-                            <span class="message-status ${isHistory ? 'status-read' : 'status-sent'}">
-                                <i class="${isHistory ? 'fas fa-check-double' : 'fas fa-check'}"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', messageHTML);
-            
-            // If not from history, show delivered/read status animation
-            if (!isHistory) {
-                const messageStatus = container.querySelector('.message-group.user:last-child .message-status');
-                
-                // Simulate message being delivered
-                setTimeout(() => {
-                    messageStatus.classList.remove('status-sent');
-                    messageStatus.classList.add('status-delivered');
-                    messageStatus.innerHTML = '<i class="fas fa-check-double"></i>';
-                }, 1000);
-                
-                // Simulate message being read
-                setTimeout(() => {
-                    messageStatus.classList.remove('status-delivered');
-                    messageStatus.classList.add('status-read');
-                }, 2000);
-            }
-            
-            scrollToBottom();
-        }
-        
-        // Add operator message
-        function addOperatorMessage(messageText, timestamp = null) {
-            const container = document.getElementById('messagesContainer');
-            const now = timestamp ? new Date(timestamp) : new Date();
-            const timeString = formatTime(now);
-            
-            // Remove typing indicator if it exists
+    });
+    
+    // Gestione dell'evento operatorJoin
+    socket.on('operatorJoin', function(data) {
+        console.log('Operatore entrato:', data);
+        addSystemMessage(`Un operatore dell'assistenza è ora disponibile.`);
+        updateOperatorStatus(true); // Aggiorna lo stato dell'operatore a online
+    });
+    
+    // Gestione dell'evento typing
+    socket.on('typing', function(data) {
+        console.log('Typing event:', data);
+        if (data.isTyping) {
+            showTypingIndicator();
+        } else {
             hideTypingIndicator();
-            
-            const messageHTML = `
-                <div class="message-group operator">
-                    <div class="message-content">
-                        <div class="message-text">${messageText}</div>
-                        <div class="message-meta">
-                            <span class="message-time">${timeString}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', messageHTML);
-            scrollToBottom();
         }
+    });
+    
+    // Gestione disconnessione
+    socket.on('disconnect', function() {
+        console.log('Socket.IO disconnected');
+        connectionText.textContent = 'Connessione interrotta';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
         
-        // Add system message
-        function addSystemMessage(messageText, timestamp = null) {
-            const container = document.getElementById('messagesContainer');
-            
-            const messageHTML = `
-                <div class="message-group system">
-                    <div class="message-content">
-                        <div class="message-text">${messageText}</div>
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', messageHTML);
-            scrollToBottom();
-        }
+        // Aggiorna lo stato operatore a offline
+        updateOperatorStatus(false);
+    });
+    
+    // Gestione riconnessione
+    socket.on('reconnect', function() {
+        console.log('Socket.IO reconnected');
+        connectionText.textContent = 'Connesso';
+        connectionStatus.classList.add('connected');
         
-        // Show typing indicator
-        function showTypingIndicator() {
-            const container = document.getElementById('messagesContainer');
-            
-            // Check if indicator already exists
-            if (document.getElementById('typingIndicator')) return;
-            
-            const typingHTML = `
-                <div class="typing-indicator" id="typingIndicator">
-                    <div class="typing-text">Assistenza sta scrivendo</div>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                </div>
-            `;
-            
-            container.insertAdjacentHTML('beforeend', typingHTML);
-            scrollToBottom();
-        }
+        // Dopo un po', nascondi lo stato della connessione
+        setTimeout(() => {
+            connectionStatus.classList.remove('show');
+        }, 3000);
         
-        // Hide typing indicator
-        function hideTypingIndicator() {
-            const typingIndicator = document.getElementById('typingIndicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
+        // Ricongiungiti alla stanza
+        socket.emit('userJoin', {
+            userId: userId,
+            username: username,
+            userType: userType
+        });
+    });
+    
+    // Gestione errore di connessione
+    socket.on('connect_error', function(error) {
+        console.error('Socket.IO connection error:', error);
+        connectionText.textContent = 'Errore di connessione';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
+    });
+}
+
+// Load chat history
+function loadChatHistory() {
+    const roomId = `support_${userId}`;
+    
+    // Recupera la cronologia dei messaggi tramite AJAX
+    fetch(`/api/chat/history/${roomId}`)
+        .then(response => response.json())
+        .then(messages => {
+            if (messages && messages.length > 0) {
+                displayChatHistory(messages);
+            } else {
+                // Aggiungi messaggio di benvenuto se non ci sono messaggi
+                addSystemMessage('Benvenuto nella chat di assistenza YourBite!');
             }
+        })
+        .catch(error => {
+            console.error('Error fetching chat history:', error);
+            // Mostra comunque un messaggio di benvenuto
+            addSystemMessage('Benvenuto nella chat di assistenza YourBite!');
+        });
+}
+
+// Display chat history
+function displayChatHistory(messages) {
+    const container = document.getElementById('messagesContainer');
+    container.innerHTML = ''; // Clear existing messages
+    
+    if (!messages || messages.length === 0) {
+        // Add a welcome message if no history
+        addSystemMessage('Benvenuto nella chat di assistenza YourBite!');
+        return;
+    }
+    
+    // Add messages in chronological order
+    messages.forEach(msg => {
+        // Verifica se il messaggio è stato inviato dal cliente o dall'operatore
+        if (msg.sender_id === userId || msg.sender_id === 'client_' + userId) {
+            addUserMessage(msg.message, msg.timestamp, true);
+        } else if (msg.sender_id === 'system') {
+            addSystemMessage(msg.message, msg.timestamp);
+        } else {
+            addOperatorMessage(msg.message, msg.timestamp);
         }
+    });
+    
+    // Scroll to bottom
+    scrollToBottom();
+}
+
+// Get username
+function getUsername() {
+    // Try to get the username from the DOM
+    const usernameEl = document.getElementById('username');
+    if (usernameEl && usernameEl.textContent && usernameEl.textContent !== 'Cliente') {
+        return usernameEl.textContent;
+    }
+    
+    // Try to get from localStorage
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+        return savedUsername;
+    }
+    
+    // Fallback
+    return 'Cliente';
+}
+
+// Update operator status
+function updateOperatorStatus(isOnline) {
+    const statusText = document.getElementById('operatorStatus');
+    const statusIndicator = document.querySelector('.status-indicator');
+    
+    if (isOnline) {
+        statusText.textContent = 'Online';
+        statusIndicator.style.backgroundColor = 'var(--accent-green)';
+    } else {
+        statusText.textContent = 'Offline';
+        statusIndicator.style.backgroundColor = 'var(--text-light)';
+        hideTypingIndicator();
+    }
+}
+
+// Add user message
+function addUserMessage(messageText, timestamp = null, isHistory = false) {
+    const container = document.getElementById('messagesContainer');
+    const now = timestamp ? new Date(timestamp) : new Date();
+    const timeString = formatTime(now);
+    
+    const messageHTML = `
+        <div class="message-group user">
+            <div class="message-content">
+                <div class="message-text">${messageText}</div>
+                <div class="message-meta">
+                    <span class="message-time">${timeString}</span>
+                    <span class="message-status ${isHistory ? 'status-read' : 'status-sent'}">
+                        <i class="${isHistory ? 'fas fa-check-double' : 'fas fa-check'}"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', messageHTML);
+    
+    // If not from history, show delivered/read status animation
+    if (!isHistory) {
+        const messageStatus = container.querySelector('.message-group.user:last-child .message-status');
         
-        // Format time
-        function formatTime(date) {
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${hours}:${minutes}`;
+        // Simulate message being delivered
+        setTimeout(() => {
+            messageStatus.classList.remove('status-sent');
+            messageStatus.classList.add('status-delivered');
+            messageStatus.innerHTML = '<i class="fas fa-check-double"></i>';
+        }, 1000);
+        
+        // Simulate message being read
+        setTimeout(() => {
+            messageStatus.classList.remove('status-delivered');
+            messageStatus.classList.add('status-read');
+        }, 2000);
+    }
+    
+    scrollToBottom();
+}
+
+// Add operator message
+function addOperatorMessage(messageText, timestamp = null) {
+    const container = document.getElementById('messagesContainer');
+    const now = timestamp ? new Date(timestamp) : new Date();
+    const timeString = formatTime(now);
+    
+    // Remove typing indicator if it exists
+    hideTypingIndicator();
+    
+    const messageHTML = `
+        <div class="message-group operator">
+            <div class="message-content">
+                <div class="message-text">${messageText}</div>
+                <div class="message-meta">
+                    <span class="message-time">${timeString}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', messageHTML);
+    scrollToBottom();
+}
+
+// Add system message
+function addSystemMessage(messageText, timestamp = null) {
+    const container = document.getElementById('messagesContainer');
+    
+    const messageHTML = `
+        <div class="message-group system">
+            <div class="message-content">
+                <div class="message-text">${messageText}</div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', messageHTML);
+    scrollToBottom();
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const container = document.getElementById('messagesContainer');
+    
+    // Check if indicator already exists
+    if (document.getElementById('typingIndicator')) return;
+    
+    const typingHTML = `
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-text">Assistenza sta scrivendo</div>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', typingHTML);
+    scrollToBottom();
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+// Format time
+function formatTime(date) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
+// Send typing indicator
+let typingTimeout;
+function sendTypingStatus(isTyping) {
+    if (socket && socket.connected) {
+        clearTimeout(typingTimeout);
+        
+        socket.emit('typing', {
+            userId: userId, 
+            username: username,
+            isTyping: isTyping
+        });
+        
+        if (isTyping) {
+            typingTimeout = setTimeout(() => {
+                sendTypingStatus(false);
+            }, 2000);
         }
+    }
+}
+
+// Send message
+function sendMessage(messageText) {
+    if (!messageText.trim()) return;
+    
+    if (socket && socket.connected) {
+        const timestamp = new Date().toISOString();
+        // Add message to chat
+        addUserMessage(messageText);
+        
+        // Send message via Socket.IO
+        socket.emit('message', {
+            sender: userId,
+            senderName: username,
+            content: messageText,
+            timestamp: timestamp,
+            roomId: `support_${userId}`
+        });
+        
+        // Clear typing indicator
+        sendTypingStatus(false);
+    } else {
+        // Connection closed, show error
+        addSystemMessage('Errore: Impossibile inviare il messaggio. La connessione è stata interrotta.');
+        
+        // Show connection status
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionText = document.getElementById('connectionText');
+        connectionText.textContent = 'Connessione interrotta';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
+    }
+}
+
+
+
+
+
+
+// Setup emoji picker
+function setupEmojiPicker() {
+    const emojiBtn = document.getElementById('emojiBtn');
+    const emojiPicker = document.getElementById('emojiPicker');
+    const emojiItems = document.querySelectorAll('.emoji-item');
+    const emojiTabs = document.querySelectorAll('.emoji-tab');
+    
+    if (!emojiBtn || !emojiPicker) return;
+    
+    // Toggle emoji picker
+    emojiBtn.addEventListener('click', () => {
+        emojiPicker.classList.toggle('show');
+    });
+    
+    // Close emoji picker when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+            emojiPicker.classList.remove('show');
+        }
+    });
+    
+    // Add emoji to input
+    emojiItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value += item.innerText;
+            messageInput.focus();
+            
+            // Trigger input event to resize textarea
+            const event = new Event('input', { bubbles: true });
+            messageInput.dispatchEvent(event);
+        });
+    });
+    
+    // Switch emoji tabs
+    emojiTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            emojiTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+}
+
+// Setup message input
+function setupMessageInput() {
+    const messageInput = document.getElementById('messageInput');
+    if (!messageInput) return;
+    
+    // Auto-resize textarea
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
         
         // Send typing indicator
-        let typingTimeout;
-        function sendTypingStatus(isTyping) {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'typing',
-                    is_typing: isTyping
-                }));
-            }
-        }
+        clearTimeout(typingTimeout);
         
-        // Send message
-        function sendMessage(messageText) {
-            if (!messageText.trim()) return;
+        if (this.value.trim() !== '') {
+            sendTypingStatus(true);
             
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                // Add message to chat
-                addUserMessage(messageText);
-                
-                // Send message via WebSocket
-                socket.send(JSON.stringify({
-                    type: 'chat_message',
-                    message: messageText
-                }));
-                
-                // Clear typing indicator
+            typingTimeout = setTimeout(() => {
                 sendTypingStatus(false);
-            } else {
-                // Connection closed, show error
-                addSystemMessage('Errore: Impossibile inviare il messaggio. La connessione è stata interrotta.');
-                
-                // Show connection status
-                const connectionStatus = document.getElementById('connectionStatus');
-                const connectionText = document.getElementById('connectionText');
-                connectionText.textContent = 'Connessione interrotta';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
-                
-                // Try to reconnect
-                initializeWebSocket();
+            }, 2000);
+        } else {
+            sendTypingStatus(false);
+        }
+    });
+    
+    // Send on Enter (but not with Shift+Enter)
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const message = this.value.trim();
+            if (message) {
+                sendMessage(message);
+                this.value = '';
+                this.style.height = 'auto';
             }
         }
-        
-        // Setup emoji picker
-        function setupEmojiPicker() {
-            const emojiBtn = document.getElementById('emojiBtn');
-            const emojiPicker = document.getElementById('emojiPicker');
-            const emojiItems = document.querySelectorAll('.emoji-item');
-            const emojiTabs = document.querySelectorAll('.emoji-tab');
-            
-            // Toggle emoji picker
-            emojiBtn.addEventListener('click', () => {
-                emojiPicker.classList.toggle('show');
-            });
-            
-            // Close emoji picker when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
-                    emojiPicker.classList.remove('show');
-                }
-            });
-            
-            // Add emoji to input
-            emojiItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const messageInput = document.getElementById('messageInput');
-                    messageInput.value += item.innerText;
-                    messageInput.focus();
-                    
-                    // Trigger input event to resize textarea
-                    const event = new Event('input', { bubbles: true });
-                    messageInput.dispatchEvent(event);
-                });
-            });
-            
-            // Switch emoji tabs
-            emojiTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    emojiTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    // In a real app, you would load different emoji categories here
-                });
-            });
-        }
-        
-        // Setup message input
-        function setupMessageInput() {
-            const messageInput = document.getElementById('messageInput');
-            
-            // Auto-resize textarea
-            messageInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-                
-                // Send typing indicator
-                clearTimeout(typingTimeout);
-                
-                if (this.value.trim() !== '') {
-                    sendTypingStatus(true);
-                    
-                                        typingTimeout = setTimeout(() => {
-                        sendTypingStatus(false);
-                    }, 2000);
-                } else {
-                    sendTypingStatus(false);
-                }
-            });
-            
-            // Send on Enter (but not with Shift+Enter)
-            messageInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    const message = this.value.trim();
-                    if (message) {
-                        sendMessage(message);
-                        this.value = '';
-                        this.style.height = 'auto';
-                    }
-                }
-            });
-        }
-        
-        // Setup send button
-        function setupSendButton() {
-            const sendBtn = document.getElementById('sendBtn');
-            
-            sendBtn.addEventListener('click', () => {
-                const messageInput = document.getElementById('messageInput');
-                const message = messageInput.value.trim();
-                
-                if (message) {
-                    sendMessage(message);
-                    messageInput.value = '';
-                    messageInput.style.height = 'auto';
-                    messageInput.focus();
-                }
-            });
-        }
-        
-        // Setup attachment button
-        function setupAttachButton() {
-            const attachBtn = document.getElementById('attachBtn');
-            
-            attachBtn.addEventListener('click', () => {
-                // In un'implementazione reale, aprirebbe un selezionatore di file
-                // Per ora, mostriamo un messaggio informativo
-                addSystemMessage("La funzionalità di allegati sarà disponibile presto!");
-            });
-        }
-        
-        // Scroll to bottom
-        function scrollToBottom() {
-            const chatBody = document.getElementById('chatBody');
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-        
-        // Update username
-        function updateUsername() {
-            const usernameEl = document.getElementById('username');
-            
-            fetch('/api/user/info')
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.username) {
-                        usernameEl.textContent = data.username;
-                        localStorage.setItem('username', data.username);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching username:', error);
-                    // Try to get from localStorage as fallback
-                    const savedUsername = localStorage.getItem('username');
-                    if (savedUsername && usernameEl.textContent === 'Cliente') {
-                        usernameEl.textContent = savedUsername;
-                    }
-                });
-        }
-        
-        // Setup logout button
-        function setupLogoutButton() {
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            logoutBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Show loading overlay
-                const loadingOverlay = document.createElement('div');
-                loadingOverlay.style.position = 'fixed';
-                loadingOverlay.style.top = '0';
-                loadingOverlay.style.left = '0';
-                loadingOverlay.style.width = '100%';
-                loadingOverlay.style.height = '100%';
-                loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                loadingOverlay.style.display = 'flex';
-                loadingOverlay.style.flexDirection = 'column';
-                loadingOverlay.style.justifyContent = 'center';
-                loadingOverlay.style.alignItems = 'center';
-                loadingOverlay.style.zIndex = '2000';
-                loadingOverlay.style.backdropFilter = 'blur(5px)';
-                
-                const spinnerContainer = document.createElement('div');
-                spinnerContainer.style.width = '60px';
-                spinnerContainer.style.height = '60px';
-                spinnerContainer.style.position = 'relative';
-                
-                const spinner = document.createElement('div');
-                spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
-                spinner.style.borderTopColor = 'var(--primary)';
-                spinner.style.borderRadius = '50%';
-                spinner.style.width = '100%';
-                spinner.style.height = '100%';
-                spinner.style.animation = 'spin 1s linear infinite';
-                
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                `;
-                
-                document.head.appendChild(style);
-                spinnerContainer.appendChild(spinner);
-                
-                const loadingText = document.createElement('p');
-                loadingText.textContent = 'Logout in corso...';
-                loadingText.style.marginTop = '20px';
-                loadingText.style.color = 'var(--primary)';
-                loadingText.style.fontWeight = '500';
-                
-                loadingOverlay.appendChild(spinnerContainer);
-                loadingOverlay.appendChild(loadingText);
-                document.body.appendChild(loadingOverlay);
-                
-                // Chiudi la connessione WebSocket
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.close(1000, "User logged out");
-                }
-                
-                // Esegui il logout
-                fetch('/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        loadingText.textContent = 'Reindirizzamento...';
-                        setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 800);
-                    } else {
-                        throw new Error('Errore durante il logout');
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore durante il logout:', error);
-                    loadingText.textContent = 'Si è verificato un errore. Riprova.';
-                    
-                    // Add retry button
-                    const retryButton = document.createElement('button');
-                    retryButton.textContent = 'Riprova';
-                    retryButton.style.marginTop = '15px';
-                    retryButton.style.padding = '8px 20px';
-                    retryButton.style.background = 'var(--primary)';
-                    retryButton.style.color = 'white';
-                    retryButton.style.border = 'none';
-                    retryButton.style.borderRadius = 'var(--radius-sm)';
-                    retryButton.style.cursor = 'pointer';
-                    
-                    retryButton.onclick = function() {
-                        document.body.removeChild(loadingOverlay);
-                        setupLogoutButton();
-                    };
-                    
-                    loadingOverlay.appendChild(retryButton);
-                });
-            });
-        }
+    });
+}
 
-        // Close WebSocket when page unloads
-        window.addEventListener('beforeunload', () => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.close(1000, "Page unloaded");
+// Setup send button
+function setupSendButton() {
+    const sendBtn = document.getElementById('sendBtn');
+    if (!sendBtn) return;
+    
+    sendBtn.addEventListener('click', () => {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            sendMessage(message);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            messageInput.focus();
+        }
+    });
+}
+
+// Setup attachment button
+function setupAttachButton() {
+    const attachBtn = document.getElementById('attachBtn');
+    if (!attachBtn) return;
+    
+    attachBtn.addEventListener('click', () => {
+        addSystemMessage("La funzionalità di allegati sarà disponibile presto!");
+    });
+}
+
+// Scroll to bottom
+function scrollToBottom() {
+    const chatBody = document.getElementById('chatBody');
+    if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+}
+
+// Update username
+function updateUsername() {
+    const usernameEl = document.getElementById('username');
+    if (!usernameEl) return;
+    
+    /* In una vera implementazione:
+    fetch('/api/user/info')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.username) {
+                usernameEl.textContent = data.username;
+                localStorage.setItem('username', data.username);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching username:', error);
+            // Try to get from localStorage as fallback
+            const savedUsername = localStorage.getItem('username');
+            if (savedUsername && usernameEl.textContent === 'Cliente') {
+                usernameEl.textContent = savedUsername;
             }
         });
-    </script>
+    */
+    
+    // Per test, solo mostra il nome corrente
+    if (usernameEl.textContent === 'Cliente') {
+        const savedUsername = localStorage.getItem('username');
+        if (savedUsername) {
+            usernameEl.textContent = savedUsername;
+        }
+    }
+}
+
+// Setup logout button
+function setupLogoutButton() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!logoutBtn) return;
+    
+    logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Show loading overlay
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.style.position = 'fixed';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.flexDirection = 'column';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.zIndex = '2000';
+        loadingOverlay.style.backdropFilter = 'blur(5px)';
+        
+        const spinnerContainer = document.createElement('div');
+        spinnerContainer.style.width = '60px';
+        spinnerContainer.style.height = '60px';
+        spinnerContainer.style.position = 'relative';
+        
+        const spinner = document.createElement('div');
+        spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+        spinner.style.borderTopColor = 'var(--primary)';
+        spinner.style.borderRadius = '50%';
+        spinner.style.width = '100%';
+        spinner.style.height = '100%';
+        spinner.style.animation = 'spin 1s linear infinite';
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        
+        document.head.appendChild(style);
+        spinnerContainer.appendChild(spinner);
+        
+        const loadingText = document.createElement('p');
+        loadingText.textContent = 'Logout in corso...';
+        loadingText.style.marginTop = '20px';
+        loadingText.style.color = 'var(--primary)';
+        loadingText.style.fontWeight = '500';
+        
+        loadingOverlay.appendChild(spinnerContainer);
+        loadingOverlay.appendChild(loadingText);
+        document.body.appendChild(loadingOverlay);
+        
+        // Simula un logout 
+        setTimeout(() => {
+            loadingText.textContent = 'Reindirizzamento...';
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 800);
+        }, 1500);
+        
+        /* In una vera implementazione:
+        // Esegui il logout
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                loadingText.textContent = 'Reindirizzamento...';
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 800);
+            } else {
+                throw new Error('Errore durante il logout');
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante il logout:', error);
+            loadingText.textContent = 'Si è verificato un errore. Riprova.';
+            
+            // Add retry button
+            const retryButton = document.createElement('button');
+            retryButton.textContent = 'Riprova';
+            retryButton.style.marginTop = '15px';
+            retryButton.style.padding = '8px 20px';
+            retryButton.style.background = 'var(--primary)';
+            retryButton.style.color = 'white';
+            retryButton.style.border = 'none';
+            retryButton.style.borderRadius = 'var(--radius-sm)';
+            retryButton.style.cursor = 'pointer';
+            
+            retryButton.onclick = function() {
+                document.body.removeChild(loadingOverlay);
+                setupLogoutButton();
+            };
+            
+            loadingOverlay.appendChild(retryButton);
+        });
+        */
+    });
+}
+</script>
 </body>
 </html>

@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -889,6 +890,32 @@
             animation: fadeIn 0.3s forwards;
         }
 
+
+            .error-message {
+        padding: 20px;
+        background-color: #ffeeee;
+        color: #d85030;
+        border-radius: 8px;
+        margin: 20px;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .refresh-button {
+        margin-top: 15px;
+        padding: 8px 16px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .refresh-button:hover {
+        background-color: #4850e0;
+    }
+
         .typing-dots {
             display: flex;
             align-items: center;
@@ -1293,736 +1320,953 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Create particles background
-            createParticles();
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Verifica i cookie prima di tutto
+    checkCookieStatus();
+    
+    // Verifica la sessione ma senza reindirizzamenti automatici
+    checkSessionStatusWithoutRedirect();
+    
+    // Initialize Socket.IO connection
+    initializeSocketIO();
+    
+    // Setup message input autoresize
+    setupMessageInput();
+    
+    // Setup logout button
+    setupLogoutButton();
+});
+
+// Controlla se ci sono problemi con i cookie
+function checkCookieStatus() {
+    const cookies = document.cookie;
+    console.log("Cookie attuali:", cookies);
+    
+    // Verifica se il cookie di sessione esiste
+    if (!cookies.includes('connect.sid')) {
+        console.warn("Il cookie di sessione connect.sid non è presente!");
+    }
+}
+
+function checkSessionStatusWithoutRedirect() {
+    console.log("Verifico lo stato della sessione...");
+    
+    fetch('/auth-status')
+        .then(response => {
+            console.log("Risposta completa:", response);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Stato autenticazione completo:", data);
             
-            // Initialize WebSocket
-            initializeWebSocket();
-            
-            // Setup message input autoresize
-            setupMessageInput();
-            
-            // Setup logout button
-            setupLogoutButton();
-            
-            // Get chats
-            loadChats();
+            if (!data.isAuthenticated) {
+                console.error("Utente non autenticato");
+                document.body.innerHTML += '<div style="position:fixed;bottom:10px;right:10px;background:white;border:1px solid red;padding:10px;z-index:10000">Debug: Autenticazione fallita. Sessione scaduta o cookie mancanti.</div>';
+            } else {
+                console.log("Autenticazione verificata con successo");
+            }
+        })
+        .catch(error => {
+            console.error("Errore nella verifica della sessione:", error);
+        });
+}
+
+
+// Mostra avviso di autenticazione
+function showAuthAlert(title, message, showLoginButton = false) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'auth-alert';
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.backgroundColor = '#f8d7da';
+    alertDiv.style.borderColor = '#f5c6cb';
+    alertDiv.style.color = '#721c24';
+    alertDiv.style.padding = '12px 20px';
+    alertDiv.style.borderRadius = '5px';
+    alertDiv.style.boxShadow = '0 3px 6px rgba(0,0,0,0.1)';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.style.maxWidth = '400px';
+    
+    alertDiv.innerHTML = `
+        <h4 style="margin-top:0;margin-bottom:10px;font-size:18px">${title}</h4>
+        <p style="margin-bottom: ${showLoginButton ? '15px' : '0'};margin-top:0">${message}</p>
+        ${showLoginButton ? '<button id="redirectLoginBtn" style="background:#dc3545;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer">Vai al login</button>' : ''}
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    if (showLoginButton) {
+        document.getElementById('redirectLoginBtn').addEventListener('click', function() {
+            window.location.href = '/login';
+        });
+    }
+    
+    // Auto-nascondi dopo 10 secondi se non c'è il pulsante login
+    if (!showLoginButton) {
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.parentNode.removeChild(alertDiv);
+            }
+        }, 10000);
+    }
+}
+
+// Create particles background (se necessario)
+function createParticles() {
+    const particles = document.getElementById('particles');
+    if (!particles) return;
+    
+    // Implementazione delle particelle, se presente nel tuo progetto
+    console.log("Particles background would be created here");
+}
+
+// Variabili globali
+let socket;
+const userType = 'capo';
+const operatorId = 'operator_' + Math.random().toString(36).substring(2, 9);
+const operatorName = 'Assistenza YourBite';
+let activeChat = null;
+let clients = [];
+
+// Inizializza Socket.IO
+function initializeSocketIO() {
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionText = document.getElementById('connectionText');
+    
+    connectionStatus.classList.add('show');
+    connectionText.textContent = 'Connessione in corso...';
+    
+    // Connetti a Socket.IO
+    socket = io();
+    
+    // Evento di connessione stabilita
+    socket.on('connect', function() {
+        console.log('Socket.IO connection established');
+        connectionText.textContent = 'Connesso';
+        connectionStatus.classList.add('connected');
+        
+        // Dopo un po', nascondi lo stato della connessione
+        setTimeout(() => {
+            connectionStatus.classList.remove('show');
+        }, 3000);
+        
+        // Invia informazioni operatore
+        socket.emit('operatorJoin', {
+            userId: operatorId,
+            username: operatorName
         });
         
-        // Create particles background
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            if (!particles) return;
-            
-            // Clear any existing particles
-            particles.innerHTML = '';
-            
-            // Settings
-            const particleCount = 30;
-            
-            // Create particles
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // Random position
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                
-                // Random size
-                const size = Math.random() * 10 + 2;
-                
-                // Random opacity
-                const opacity = Math.random() * 0.5 + 0.1;
-                
-                // Random animation duration
-                const duration = Math.random() * 60 + 30;
-                
-                // Apply styles
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.opacity = opacity;
-                
-                // Alternate between primary and secondary colors
-                if (i % 2 === 0) {
-                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
-                } else {
-                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+        // Carica le richieste di assistenza
+        loadSupportRequests();
+    });
+    
+    // Gestione nuove richieste di supporto
+    socket.on('new_support_request', function(data) {
+        console.log('Nuova richiesta di supporto:', data);
+        
+        // Aggiungi il client alla lista se non esiste già
+        const existingClientIndex = clients.findIndex(c => c.id === data.user.userId);
+        if (existingClientIndex === -1) {
+            const newClient = {
+                id: data.user.userId,
+                name: data.user.username || 'Cliente',
+                roomId: data.roomId,
+                online: true,
+                unreadCount: 1,
+                avatar: `https://source.unsplash.com/random/100x100/?face&${data.user.userId}`,
+                lastMessage: {
+                    text: 'Nuova richiesta di assistenza',
+                    timestamp: new Date().toISOString()
                 }
-                
-                // Add floating animation
-                particle.style.animation = `
-                    particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
-                    particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
-                `;
-                
-                // Append to container
-                particles.appendChild(particle);
-            }
-        }
-        
-        // Global WebSocket object
-        let socket;
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 5;
-        const userType = 'capo';
-        let activeChat = null;
-        let clients = [];
-        
-        // Initialize WebSocket
-        function initializeWebSocket() {
-            const connectionStatus = document.getElementById('connectionStatus');
-            const connectionText = document.getElementById('connectionText');
-            
-            connectionStatus.classList.add('show');
-            
-            // WebSocket URL - adjust to your server configuration
-            // In un'applicazione reale, usa il protocollo wss:// per connessioni sicure
-            const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-            const wsUrl = `${protocol}${window.location.host}/ws/chat`;
-            
-            // Create WebSocket connection
-            socket = new WebSocket(wsUrl);
-            
-            // Connection opened
-            socket.addEventListener('open', function(event) {
-                console.log('WebSocket connection established');
-                connectionText.textContent = 'Connesso';
-                connectionStatus.classList.add('connected');
-                connectionStatus.classList.add('show');
-                
-                // Reset reconnect attempts
-                reconnectAttempts = 0;
-                
-                // Send identification message
-                sendIdentification();
-                
-                // After a while, hide the connection status
-                setTimeout(() => {
-                    connectionStatus.classList.remove('show');
-                }, 3000);
-                
-                // Reload available chats
-                loadChats();
-            });
-            
-            // Listen for messages
-            socket.addEventListener('message', function(event) {
-                const data = JSON.parse(event.data);
-                console.log('Message from server:', data);
-                
-                switch(data.type) {
-                    case 'chat_message':
-                        // Handle incoming message
-                        if (data.sender !== userType) {
-                            handleIncomingMessage(data);
-                        }
-                        break;
-                    
-                    case 'typing':
-                        // Handle typing indicator
-                        if (data.sender !== userType && data.userId === activeChat) {
-                            if (data.is_typing) {
-                                showTypingIndicator();
-                            } else {
-                                hideTypingIndicator();
-                            }
-                        }
-                        break;
-                        
-                    case 'chat_history':
-                        // Handle chat history
-                        displayChatHistory(data.messages);
-                        break;
-                    
-                    case 'client_list':
-                        // Handle client list
-                        updateClientList(data.clients);
-                        break;
-                        
-                    default:
-                        console.log('Unknown message type:', data.type);
-                }
-            });
-            
-            // Connection closed
-            socket.addEventListener('close', function(event) {
-                console.log('WebSocket connection closed');
-                connectionText.textContent = 'Connessione interrotta';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
-                
-                // Try to reconnect if not closed normally and max attempts not reached
-                if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
-                    reconnectAttempts++;
-                    connectionText.textContent = `Riconnessione in corso (${reconnectAttempts}/${maxReconnectAttempts})...`;
-                    
-                    setTimeout(() => {
-                        initializeWebSocket();
-                    }, 3000);
-                } else if (reconnectAttempts >= maxReconnectAttempts) {
-                    connectionText.textContent = 'Impossibile connettersi. Ricarica la pagina.';
-                }
-            });
-            
-            // Connection error
-            socket.addEventListener('error', function(event) {
-                console.error('WebSocket error:', event);
-                connectionText.textContent = 'Errore di connessione';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
-            });
-        }
-        
-        // Send identification message
-        function sendIdentification() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'identification',
-                    user_type: userType,
-                    username: 'Capo'
-                }));
-            }
-        }
-        
-        // Setup message input
-        function setupMessageInput() {
-            const chatInput = document.getElementById('chatInput');
-            if (!chatInput) return;
-            
-            chatInput.addEventListener('input', function() {
-                // Auto-resize textarea
-                this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-                
-                // Send typing indicator
-                sendTypingStatus(this.value.trim() !== '');
-            });
-            
-            chatInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendChatMessage();
-                }
-            });
-            
-            const chatSend = document.getElementById('chatSend');
-            chatSend.addEventListener('click', sendChatMessage);
-        }
-        
-        // Send typing status
-        let typingTimeout;
-        function sendTypingStatus(isTyping) {
-            if (!activeChat) return;
-            
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                clearTimeout(typingTimeout);
-                
-                socket.send(JSON.stringify({
-                    type: 'typing',
-                    is_typing: isTyping,
-                    to_user: activeChat
-                }));
-                
-                if (isTyping) {
-                    typingTimeout = setTimeout(() => {
-                        sendTypingStatus(false);
-                    }, 3000);
-                }
-            }
-        }
-        
-        // Send chat message
-        function sendChatMessage() {
-            if (!activeChat) return;
-            
-            const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value.trim();
-            
-            if (!message) return;
-            
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'chat_message',
-                    message: message,
-                    to_user: activeChat
-                }));
-                
-                // Add message to chat
-                addMessageToChat('outgoing', message);
-                
-                // Clear input
-                chatInput.value = '';
-                chatInput.style.height = 'auto';
-                chatInput.focus();
-                
-                // Update chat list
-                updateChatListItem(activeChat, message);
-                
-                // Clear typing indicator
-                sendTypingStatus(false);
-            } else {
-                addSystemMessage('Errore: Impossibile inviare il messaggio. Riconnessione in corso...');
-                
-                // Try to reconnect
-                initializeWebSocket();
-            }
-        }
-        
-        // Handle incoming message
-        function handleIncomingMessage(data) {
-            const message = data.message;
-            const senderId = data.userId;
-            
-            // Update chat list
-            updateChatListItem(senderId, message, true);
-            
-            // If this is the active chat, add message
-            if (activeChat === senderId) {
-                addMessageToChat('incoming', message);
-                hideTypingIndicator();
-            }
-            
-            // Play notification sound
-            playNotificationSound();
-        }
-        
-        // Play notification sound
-        function playNotificationSound() {
-            const audio = new Audio('/sounds/notification.mp3');
-            audio.volume = 0.5;
-            audio.play().catch(e => console.log('Audio play failed:', e));
-        }
-        
-        // Load chats
-        function loadChats() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'get_clients'
-                }));
-            } else {
-                console.log('Socket not ready, waiting...');
-                setTimeout(loadChats, 1000);
-            }
-        }
-        
-        // Update client list
-        function updateClientList(newClients) {
-            clients = newClients;
-            const chatList = document.getElementById('chatList');
-            if (!chatList) return;
-            
-            chatList.innerHTML = '';
-            
-            if (!clients.length) {
-                const emptyItem = document.createElement('li');
-                emptyItem.className = 'chat-item';
-                emptyItem.innerHTML = '<div class="chat-item-content"><div class="chat-name">Nessun cliente disponibile</div></div>';
-                chatList.appendChild(emptyItem);
-                return;
-            }
-            
-            clients.forEach((client, index) => {
-                const chatItem = document.createElement('li');
-                chatItem.className = 'chat-item';
-                chatItem.dataset.userId = client.id;
-                
-                // Format last message time
-                let timeText = '';
-                if (client.lastMessage && client.lastMessage.timestamp) {
-                    const msgDate = new Date(client.lastMessage.timestamp);
-                    const now = new Date();
-                    const isToday = msgDate.toDateString() === now.toDateString();
-                    
-                    if (isToday) {
-                        timeText = msgDate.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
-                    } else {
-                        timeText = msgDate.toLocaleDateString('it-IT', {day: '2-digit', month: '2-digit'});
-                    }
-                }
-                
-                chatItem.innerHTML = `
-                    <img src="${client.avatar || 'https://source.unsplash.com/random/100x100/?person'}" alt="${client.name}" class="chat-avatar">
-                    <div class="chat-item-content">
-                        <div class="chat-item-header">
-                            <div class="chat-name">${client.name}</div>
-                            <div class="chat-time">${timeText}</div>
-                        </div>
-                        <div class="chat-message">${client.lastMessage ? client.lastMessage.text : 'Nessun messaggio'}</div>
-                        <div class="chat-item-status">
-                            <div class="chat-status">${client.online ? 'Online' : 'Offline'}</div>
-                            ${client.unreadCount ? `<div class="message-count">${client.unreadCount}</div>` : ''}
-                        </div>
-                    </div>
-                `;
-                
-                chatItem.addEventListener('click', () => {
-                    openChat(client.id);
-                });
-                
-                chatList.appendChild(chatItem);
-            });
-        }
-        
-        // Update chat list item
-        function updateChatListItem(userId, message, isIncoming = false) {
-            const chatList = document.getElementById('chatList');
-            if (!chatList) return;
-            
-            // Find client
-            const clientIndex = clients.findIndex(c => c.id === userId);
-            if (clientIndex === -1) return;
-            
-            const client = clients[clientIndex];
-            
-            // Update client data
-            client.lastMessage = {
-                text: message,
-                timestamp: new Date().toISOString()
             };
             
-            if (isIncoming && activeChat !== userId) {
-                client.unreadCount = (client.unreadCount || 0) + 1;
-            }
-            
-            // Move this client to the top of the list
-            clients.splice(clientIndex, 1);
-            clients.unshift(client);
-            
-            // Redraw the chat list
+            clients.unshift(newClient); // Aggiungi in cima alla lista
             updateClientList(clients);
             
-            // If this was the active chat, highlight it
-            if (activeChat === userId) {
-                const chatItems = chatList.querySelectorAll('.chat-item');
-                chatItems.forEach(item => {
-                    item.classList.remove('active');
-                    if (item.dataset.userId === activeChat) {
-                        item.classList.add('active');
-                    }
-                });
-            }
+            // Notifica audio
+            playNotificationSound();
+        } else {
+            // Aggiorna lo stato del client esistente
+            clients[existingClientIndex].online = true;
+            updateClientList(clients);
         }
+    });
+    
+    // Gestione messaggi in arrivo
+    socket.on('message', function(data) {
+        console.log('Messaggio ricevuto:', data);
         
-        // Open chat
-        function openChat(userId) {
-            if (activeChat === userId) return;
-            
-            activeChat = userId;
-            
-            // Update UI
-            const chatItems = document.querySelectorAll('.chat-item');
-            chatItems.forEach(item => item.classList.remove('active'));
-            
-            const selectedChat = document.querySelector(`.chat-item[data-userId="${userId}"]`);
-            if (selectedChat) selectedChat.classList.add('active');
-            
-                        // Show chat content and footer
-            document.getElementById('chatPlaceholder').style.display = 'none';
-            document.getElementById('chatContent').style.display = 'flex';
-            document.getElementById('chatFooter').style.display = 'flex';
-            
-            // Clear chat content
-            document.getElementById('chatContent').innerHTML = '';
-            
-            // Clear any existing typing indicator
-            hideTypingIndicator();
-            
-            // Reset unread count
-            const clientIndex = clients.findIndex(c => c.id === userId);
-            if (clientIndex !== -1) {
-                clients[clientIndex].unreadCount = 0;
-                updateClientList(clients);
-            }
-            
-            // Get chat history
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'get_history',
-                    with_user: userId
-                }));
-            }
-            
-            // Focus chat input
-            setTimeout(() => {
-                document.getElementById('chatInput').focus();
-            }, 100);
-        }
-        
-        // Load chat history
-        function displayChatHistory(messages) {
-            const chatContent = document.getElementById('chatContent');
-            if (!chatContent) return;
-            
-            // Clear existing messages
-            chatContent.innerHTML = '';
-            
-            if (!messages || messages.length === 0) {
-                addSystemMessage('Inizia a chattare con questo cliente!');
-                return;
-            }
-            
-            // Group messages by day
-            const messagesByDay = groupMessagesByDay(messages);
-            
-            // Display messages grouped by day
-            Object.keys(messagesByDay).forEach(day => {
-                // Add day divider
-                const dayDivider = document.createElement('div');
-                dayDivider.className = 'chat-day';
-                dayDivider.innerHTML = `<span>${formatDay(day)}</span>`;
-                chatContent.appendChild(dayDivider);
-                
-                // Add messages for this day
-                messagesByDay[day].forEach(msg => {
-                    const type = msg.sender === userType ? 'outgoing' : 'incoming';
-                    addMessageToChat(type, msg.message, msg.timestamp, true);
-                });
+        // Se il messaggio è da un cliente
+        if (data.sender !== operatorId && data.sender.startsWith('client_')) {
+            handleIncomingMessage({
+                userId: data.sender,
+                senderName: data.senderName || 'Cliente',
+                message: data.content,
+                timestamp: data.timestamp
             });
-            
-            // Scroll to bottom
-            scrollToBottom();
         }
-        
-        // Group messages by day
-        function groupMessagesByDay(messages) {
-            const messagesByDay = {};
-            
-            messages.forEach(msg => {
-                const date = new Date(msg.timestamp);
-                const day = date.toISOString().split('T')[0]; // YYYY-MM-DD
-                
-                if (!messagesByDay[day]) {
-                    messagesByDay[day] = [];
-                }
-                
-                messagesByDay[day].push(msg);
-            });
-            
-            return messagesByDay;
-        }
-        
-        // Format day for display
-        function formatDay(dateString) {
-            const date = new Date(dateString);
-            const today = new Date();
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            
-            if (date.toISOString().split('T')[0] === today.toISOString().split('T')[0]) {
-                return 'Oggi';
-            } else if (date.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]) {
-                return 'Ieri';
+    });
+    
+    // Gestione dell'evento typing
+    socket.on('typing', function(data) {
+        console.log('Typing event:', data);
+        if (activeChat === data.userId) {
+            if (data.isTyping) {
+                showTypingIndicator();
             } else {
-                return date.toLocaleDateString('it-IT', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
+                hideTypingIndicator();
             }
         }
+    });
+    
+    // Gestione utente che lascia la chat
+    socket.on('userLeave', function(data) {
+        console.log('Utente ha lasciato la chat:', data);
         
-        // Add message to chat
-        function addMessageToChat(type, text, timestamp = null, isHistory = false) {
-            const chatContent = document.getElementById('chatContent');
-            if (!chatContent) return;
-            
-            const now = timestamp ? new Date(timestamp) : new Date();
-            const timeString = formatTime(now);
-            
-            const message = document.createElement('div');
-            message.className = `message ${type}`;
-            
-            message.innerHTML = `
-                <div class="message-bubble">${text}</div>
-                <div class="message-meta">
-                    <span class="message-time">${timeString}</span>
-                    ${type === 'outgoing' ? '<span class="message-status"><i class="fas fa-check"></i></span>' : ''}
-                </div>
-            `;
-            
-            chatContent.appendChild(message);
-            
-            // If not loading history, scroll to bottom
-            if (!isHistory) {
-                scrollToBottom();
-            }
+        // Trova il client e imposta offline
+        const clientIndex = clients.findIndex(c => c.id === data.userId);
+        if (clientIndex !== -1) {
+            clients[clientIndex].online = false;
+            updateClientList(clients);
         }
+    });
+    
+    // Gestione disconnessione
+    socket.on('disconnect', function() {
+        console.log('Socket.IO disconnected');
+        connectionText.textContent = 'Connessione interrotta';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
+    });
+    
+    // Gestione riconnessione
+    socket.on('reconnect', function() {
+        console.log('Socket.IO reconnected');
+        connectionText.textContent = 'Connesso';
+        connectionStatus.classList.add('connected');
         
-        // Add system message
-        function addSystemMessage(text) {
-            const chatContent = document.getElementById('chatContent');
-            if (!chatContent) return;
-            
-            const message = document.createElement('div');
-            message.className = 'chat-day';
-            message.innerHTML = `<span>${text}</span>`;
-            
-            chatContent.appendChild(message);
-            scrollToBottom();
-        }
+        // Dopo un po', nascondi lo stato della connessione
+        setTimeout(() => {
+            connectionStatus.classList.remove('show');
+        }, 3000);
         
-        // Show typing indicator
-        function showTypingIndicator() {
-            const chatContent = document.getElementById('chatContent');
-            if (!chatContent) return;
-            
-            // Remove existing indicator if any
-            hideTypingIndicator();
-            
-            const indicator = document.createElement('div');
-            indicator.className = 'typing-indicator';
-            indicator.id = 'typingIndicator';
-            
-            indicator.innerHTML = `
-                <div class="typing-dots">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            `;
-            
-            chatContent.appendChild(indicator);
-            scrollToBottom();
-        }
-        
-        // Hide typing indicator
-        function hideTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) indicator.remove();
-        }
-        
-        // Format time for messages
-        function formatTime(date) {
-            return date.toLocaleTimeString('it-IT', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        
-        // Scroll chat to bottom
-        function scrollToBottom() {
-            const chatContent = document.getElementById('chatContent');
-            if (chatContent) {
-                chatContent.scrollTop = chatContent.scrollHeight;
-            }
-        }
-        
-        // Setup logout button
-        function setupLogoutButton() {
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (!logoutBtn) return;
-            
-            logoutBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Show loading overlay
-                const loadingOverlay = document.createElement('div');
-                loadingOverlay.style.position = 'fixed';
-                loadingOverlay.style.top = '0';
-                loadingOverlay.style.left = '0';
-                loadingOverlay.style.width = '100%';
-                loadingOverlay.style.height = '100%';
-                loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                loadingOverlay.style.display = 'flex';
-                loadingOverlay.style.flexDirection = 'column';
-                loadingOverlay.style.justifyContent = 'center';
-                loadingOverlay.style.alignItems = 'center';
-                loadingOverlay.style.zIndex = '2000';
-                loadingOverlay.style.backdropFilter = 'blur(5px)';
-                
-                const spinnerContainer = document.createElement('div');
-                spinnerContainer.style.width = '60px';
-                spinnerContainer.style.height = '60px';
-                spinnerContainer.style.position = 'relative';
-                
-                const spinner = document.createElement('div');
-                spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
-                spinner.style.borderTopColor = 'var(--primary)';
-                spinner.style.borderRadius = '50%';
-                spinner.style.width = '100%';
-                spinner.style.height = '100%';
-                spinner.style.animation = 'spin 1s linear infinite';
-                
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                `;
-                
-                document.head.appendChild(style);
-                spinnerContainer.appendChild(spinner);
-                
-                const loadingText = document.createElement('p');
-                loadingText.textContent = 'Logout in corso...';
-                loadingText.style.marginTop = '20px';
-                loadingText.style.color = 'var(--primary)';
-                loadingText.style.fontWeight = '500';
-                
-                loadingOverlay.appendChild(spinnerContainer);
-                loadingOverlay.appendChild(loadingText);
-                document.body.appendChild(loadingOverlay);
-                
-                // Chiudi la connessione WebSocket
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    socket.close(1000, "User logged out");
-                }
-                
-                // Esegui il logout
-                fetch('/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        loadingText.textContent = 'Reindirizzamento...';
-                        setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 800);
-                    } else {
-                        throw new Error('Errore durante il logout');
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore durante il logout:', error);
-                    loadingText.textContent = 'Si è verificato un errore. Riprova.';
-                    
-                    // Add retry button
-                    const retryButton = document.createElement('button');
-                    retryButton.textContent = 'Riprova';
-                    retryButton.style.marginTop = '15px';
-                    retryButton.style.padding = '8px 20px';
-                    retryButton.style.background = 'var(--primary)';
-                    retryButton.style.color = 'white';
-                    retryButton.style.border = 'none';
-                    retryButton.style.borderRadius = 'var(--radius-sm)';
-                    retryButton.style.cursor = 'pointer';
-                    
-                    retryButton.onclick = function() {
-                        document.body.removeChild(loadingOverlay);
-                        setupLogoutButton();
-                    };
-                    
-                    loadingOverlay.appendChild(retryButton);
-                });
-            });
-        }
-        
-        // Close WebSocket when page unloads
-        window.addEventListener('beforeunload', () => {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.close(1000, "Page unloaded");
-            }
+        // Ricongiungiti come operatore
+        socket.emit('operatorJoin', {
+            userId: operatorId,
+            username: operatorName
         });
-    </script>
+        
+        // Se c'è una chat attiva, ricongiungersi
+        if (activeChat) {
+            socket.emit('operatorJoin', {
+                userId: operatorId,
+                username: operatorName,
+                roomId: `support_${activeChat}`
+            });
+        }
+        
+        // Ricarica le richieste di supporto
+        loadSupportRequests();
+    });
+    
+    // Gestione errore di connessione
+    socket.on('connect_error', function(error) {
+        console.error('Socket.IO connection error:', error);
+        connectionText.textContent = 'Errore di connessione';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
+    });
+    
+    // Gestione dei messaggi passati
+    socket.on('past_messages', function(data) {
+        console.log('Messaggi passati ricevuti:', data);
+        
+        if (data.roomId === `support_${activeChat}`) {
+            displayChatHistory(data.messages);
+        }
+    });
+}
+
+// Carica le richieste di assistenza esistenti
+function loadSupportRequests() {
+    console.log("Carico le richieste di assistenza...");
+    
+    // Recupera le stanze di chat esistenti tramite API
+    fetch('/api/chat/rooms')
+        .then(response => {
+            if (response.status === 403) {
+                console.error("Errore di autorizzazione: accesso negato alle chat rooms");
+                // Aggiungi un messaggio informativo nella UI
+                const chatList = document.getElementById('chatList');
+                if (chatList) {
+                    chatList.innerHTML = '<div class="error-message">Non hai i permessi necessari per visualizzare le chat. <br>Verifica di aver effettuato l\'accesso come Capo o Amministratore. <br><button id="refreshBtn" class="refresh-button">Riprova</button></div>';
+                    document.getElementById('refreshBtn').addEventListener('click', () => {
+                        window.location.reload();
+                    });
+                }
+                throw new Error("Errore 403: Accesso negato");
+            }
+            if (!response.ok) {
+                throw new Error(`Errore ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Dati stanze ricevuti:", data);
+            
+            if (data.rooms && data.rooms.length > 0) {
+                // Converti il formato delle stanze nel formato dei client
+                const loadedClients = data.rooms.map(room => {
+                    // Estrai l'ID utente dal room_id (rimuovi il prefisso "support_")
+                    const userId = room.room_id.replace('support_', '');
+                    
+                    return {
+                        id: userId,
+                        name: room.sender_name || 'Cliente',
+                        roomId: room.room_id,
+                        online: true,
+                        unreadCount: 0,
+                        avatar: `https://source.unsplash.com/random/100x100/?face&${userId}`,
+                        lastMessage: {
+                            text: room.last_message || 'Conversazione iniziata',
+                            timestamp: new Date().toISOString()
+                        }
+                    };
+                });
+                
+                console.log("Client caricati:", loadedClients);
+                clients = loadedClients;
+                updateClientList(clients);
+            } else {
+                console.log("Nessuna stanza trovata, utilizzo mock data");
+                // Fallback ai dati mock se non ci sono clienti
+                createMockClients();
+            }
+        })
+        .catch(error => {
+            console.error('Errore nel caricamento delle chat:', error);
+            createMockClients();
+        });
+}
+
+// Crea clienti di esempio per testing
+function createMockClients() {
+    clients = [
+        {
+            id: 'client_123',
+            name: 'Mario Rossi',
+            roomId: 'support_client_123',
+            online: true,
+            unreadCount: 2,
+            avatar: 'https://source.unsplash.com/random/100x100/?face&1',
+            lastMessage: {
+                text: 'Ho un problema con il mio ordine',
+                timestamp: new Date().toISOString()
+            }
+        },
+        {
+            id: 'client_456',
+            name: 'Giulia Bianchi',
+            roomId: 'support_client_456',
+            online: true,
+            unreadCount: 0,
+            avatar: 'https://source.unsplash.com/random/100x100/?face&2',
+            lastMessage: {
+                text: 'Grazie per l\'assistenza',
+                timestamp: new Date(Date.now() - 3600000).toISOString()
+            }
+        }
+    ];
+    updateClientList(clients);
+}
+
+// Gestisci messaggio in arrivo
+function handleIncomingMessage(data) {
+    const message = data.message;
+    const senderId = data.userId;
+    
+    console.log("Messaggio ricevuto da:", senderId, "Contenuto:", message);
+    
+    // Verifica se questo cliente esiste già nella lista
+    let clientIndex = clients.findIndex(c => c.id === senderId);
+    
+    // Se il cliente non esiste, aggiungilo alla lista
+    if (clientIndex === -1) {
+        const newClient = {
+            id: senderId,
+            name: data.senderName || 'Cliente',
+            roomId: `support_${senderId}`,
+            online: true,
+            unreadCount: 1,
+            avatar: `https://source.unsplash.com/random/100x100/?face&${senderId}`,
+            lastMessage: {
+                text: message,
+                timestamp: data.timestamp || new Date().toISOString()
+            }
+        };
+        
+        clients.unshift(newClient);
+        clientIndex = 0;
+        
+        console.log("Aggiunto nuovo cliente:", newClient);
+    } else {
+        // Aggiorna l'ultimo messaggio e incrementa il contatore non letti
+        clients[clientIndex].lastMessage = {
+            text: message,
+            timestamp: data.timestamp || new Date().toISOString()
+        };
+        
+        // Incrementa il contatore non letti solo se non è la chat attiva
+        if (activeChat !== senderId) {
+            clients[clientIndex].unreadCount = (clients[clientIndex].unreadCount || 0) + 1;
+        }
+        
+        // Sposta questo cliente in cima alla lista
+        const client = clients.splice(clientIndex, 1)[0];
+        clients.unshift(client);
+    }
+    
+    // Aggiorna la UI della lista clienti
+    updateClientList(clients);
+    
+    // Se questa è la chat attiva, aggiungi il messaggio alla chat
+    if (activeChat === senderId) {
+        addMessageToChat('incoming', message, data.timestamp);
+        hideTypingIndicator();
+    }
+    
+    // Riproduci suono di notifica
+    playNotificationSound();
+}
+
+// Funzione per riprodurre suono di notifica
+function playNotificationSound() {
+    try {
+        const audio = new Audio('/sounds/notification.mp3');
+        audio.volume = 0.5;
+        audio.play();
+    } catch (e) {
+        console.log('Audio play failed:', e);
+    }
+}
+
+// Apri la chat di un cliente
+function openChat(userId) {
+    if (activeChat === userId) return;
+    
+    // Salva l'id del cliente attivo
+    activeChat = userId;
+    
+    // Aggiorna UI
+    const chatItems = document.querySelectorAll('.chat-item');
+    chatItems.forEach(item => item.classList.remove('active'));
+    
+    const selectedChat = document.querySelector(`.chat-item[data-userId="${userId}"]`);
+    if (selectedChat) selectedChat.classList.add('active');
+    
+    // Mostra il contenuto della chat e il footer
+    document.getElementById('chatPlaceholder').style.display = 'none';
+    document.getElementById('chatContent').style.display = 'flex';
+    document.getElementById('chatFooter').style.display = 'flex';
+    
+    // Pulisci il contenuto della chat
+    document.getElementById('chatContent').innerHTML = '';
+    
+    // Rimuovi eventuali indicatori di digitazione
+    hideTypingIndicator();
+    
+    // Resetta il contatore non letti
+    const clientIndex = clients.findIndex(c => c.id === userId);
+    if (clientIndex !== -1) {
+        clients[clientIndex].unreadCount = 0;
+        updateClientList(clients);
+    }
+    
+    // Unisciti alla stanza del cliente con Socket.IO
+    const roomId = `support_${userId}`;
+    socket.emit('operatorJoin', {
+        userId: operatorId,
+        username: operatorName,
+        roomId: roomId
+    });
+    
+    // Aggiungi messaggio di caricamento
+    addSystemMessage('Caricamento messaggi in corso...');
+    
+    // Carica la cronologia messaggi con gestione degli errori migliorata
+    fetch(`/api/chat/history/${roomId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Errore ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(messages => {
+            console.log("Messaggi ricevuti:", messages); // Log per debug
+            document.getElementById('chatContent').innerHTML = ''; // Pulisci il messaggio di caricamento
+            
+            if (messages && messages.length > 0) {
+                displayChatHistory(messages);
+            } else {
+                addSystemMessage('Nessun messaggio. Inizia a chattare con questo cliente!');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching chat history:', error);
+            document.getElementById('chatContent').innerHTML = ''; // Pulisci il messaggio di caricamento
+            addSystemMessage(`Errore nel caricamento dei messaggi: ${error.message}`);
+        });
+    
+    // Focus sull'input
+    setTimeout(() => {
+        document.getElementById('chatInput').focus();
+    }, 100);
+}
+
+// Visualizza cronologia chat
+function displayChatHistory(messages) {
+    const chatContent = document.getElementById('chatContent');
+    
+    if (!chatContent) return;
+    
+    // Pulisci messaggi esistenti
+    chatContent.innerHTML = '';
+    
+    if (!messages || messages.length === 0) {
+        addSystemMessage('Nessun messaggio. Inizia a chattare con questo cliente!');
+        return;
+    }
+    
+    console.log("Mostrando messaggi:", messages.length);
+    
+    // Aggiungi tutti i messaggi in ordine cronologico
+    messages.forEach(msg => {
+        console.log("Elaborazione messaggio:", msg);
+        
+        if (msg.sender_id === 'system') {
+            // Messaggio di sistema
+            addSystemMessage(msg.message, msg.timestamp);
+        } else if (msg.sender_id.startsWith('operator_') || msg.sender_name === 'Assistenza YourBite' || msg.sender_name === 'Capo') {
+            // Messaggio inviato da operatore o capo
+            addMessageToChat('outgoing', msg.message, msg.timestamp, true);
+        } else {
+            // Messaggio ricevuto dal cliente
+            addMessageToChat('incoming', msg.message, msg.timestamp, true);
+        }
+    });
+    
+    // Scorri in fondo
+    scrollToBottom();
+}
+
+// Raggruppa messaggi per giorno
+function groupMessagesByDay(messages) {
+    const messagesByDay = {};
+    
+    messages.forEach(msg => {
+        // Converti timestamp in data YYYY-MM-DD
+        const date = new Date(msg.timestamp);
+        const day = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        if (!messagesByDay[day]) {
+            messagesByDay[day] = [];
+        }
+        
+        messagesByDay[day].push(msg);
+    });
+    
+    return messagesByDay;
+}
+
+// Format day for display
+function formatDay(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toISOString().split('T')[0] === today.toISOString().split('T')[0]) {
+        return 'Oggi';
+    } else if (date.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]) {
+        return 'Ieri';
+    } else {
+        return date.toLocaleDateString('it-IT', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+}
+
+// Invia messaggio al cliente
+function sendChatMessage() {
+    if (!activeChat) return;
+    
+    const chatInput = document.getElementById('chatInput');
+    const message = chatInput.value.trim();
+    
+    if (!message) return;
+    
+    if (socket && socket.connected) {
+        const timestamp = new Date().toISOString();
+        const roomId = `support_${activeChat}`;
+        
+        // Aggiungi messaggio alla chat locale
+        addMessageToChat('outgoing', message);
+        
+        // Invia messaggio tramite Socket.IO
+        socket.emit('message', {
+            sender: operatorId,
+            senderName: operatorName,
+            content: message,
+            timestamp: timestamp,
+            roomId: roomId
+        });
+        
+        // Pulisci l'input
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        chatInput.focus();
+        
+        // Aggiorna elemento nella lista chat
+        updateChatListItem(activeChat, message);
+        
+        // Annulla l'indicatore di digitazione
+        sendTypingStatus(false);
+    } else {
+        addSystemMessage('Errore: Impossibile inviare il messaggio. Riconnessione in corso...');
+    }
+}
+
+// Send typing status
+let typingTimeout;
+function sendTypingStatus(isTyping) {
+    if (!activeChat || !socket || !socket.connected) return;
+    
+    clearTimeout(typingTimeout);
+    
+    socket.emit('typing', {
+        userId: operatorId,
+        username: operatorName,
+        isTyping: isTyping,
+        roomId: `support_${activeChat}`
+    });
+    
+    if (isTyping) {
+        typingTimeout = setTimeout(() => {
+            sendTypingStatus(false);
+        }, 3000);
+    }
+}
+
+// Update client list
+function updateClientList(newClients) {
+    clients = newClients;
+    const chatList = document.getElementById('chatList');
+    if (!chatList) return;
+    
+    chatList.innerHTML = '';
+    
+    if (!clients || !clients.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'chat-item';
+        emptyItem.innerHTML = '<div class="chat-item-content"><div class="chat-name">Nessun cliente disponibile</div></div>';
+        chatList.appendChild(emptyItem);
+        return;
+    }
+    
+    clients.forEach((client, index) => {
+        const chatItem = document.createElement('li');
+        chatItem.className = 'chat-item';
+        chatItem.dataset.userId = client.id;
+        
+        if (client.id === activeChat) {
+            chatItem.classList.add('active');
+        }
+        
+        // Format last message time
+        let timeText = '';
+        if (client.lastMessage && client.lastMessage.timestamp) {
+            const msgDate = new Date(client.lastMessage.timestamp);
+            const now = new Date();
+            const isToday = msgDate.toDateString() === now.toDateString();
+            
+            if (isToday) {
+                timeText = msgDate.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
+            } else {
+                timeText = msgDate.toLocaleDateString('it-IT', {day: '2-digit', month: '2-digit'});
+            }
+        }
+        
+        // Make sure client name is unique and not empty
+        const displayName = client.name || `Cliente ${index + 1}`;
+        
+        chatItem.innerHTML = `
+            <img src="${client.avatar || 'https://source.unsplash.com/random/100x100/?person'}" alt="${displayName}" class="chat-avatar">
+            <div class="chat-item-content">
+                <div class="chat-item-header">
+                    <div class="chat-name">${displayName} (ID: ${client.id.substring(0, 5)}...)</div>
+                    <div class="chat-time">${timeText}</div>
+                </div>
+                <div class="chat-message">${client.lastMessage ? client.lastMessage.text : 'Nessun messaggio'}</div>
+                <div class="chat-item-status">
+                    <div class="chat-status">${client.online ? 'Online' : 'Offline'}</div>
+                    ${client.unreadCount ? `<div class="message-count">${client.unreadCount}</div>` : ''}
+                </div>
+            </div>
+        `;
+        
+        chatItem.addEventListener('click', () => {
+            openChat(client.id);
+        });
+        
+        chatList.appendChild(chatItem);
+    });
+}
+
+// Update chat list item
+function updateChatListItem(userId, message, isIncoming = false) {
+    const chatList = document.getElementById('chatList');
+    if (!chatList) return;
+    
+    // Find client
+    const clientIndex = clients.findIndex(c => c.id === userId);
+    if (clientIndex === -1) return;
+    
+    const client = clients[clientIndex];
+    
+    // Update client data
+    client.lastMessage = {
+        text: message,
+        timestamp: new Date().toISOString()
+    };
+    
+    if (isIncoming && activeChat !== userId) {
+        client.unreadCount = (client.unreadCount || 0) + 1;
+    }
+    
+    // Move this client to the top of the list
+    clients.splice(clientIndex, 1);
+    clients.unshift(client);
+    
+    // Redraw the chat list
+    updateClientList(clients);
+}
+
+// Setup message input
+function setupMessageInput() {
+    const chatInput = document.getElementById('chatInput');
+    if (!chatInput) return;
+    
+    chatInput.addEventListener('input', function() {
+        // Auto-resize textarea
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        
+        // Send typing indicator
+        sendTypingStatus(this.value.trim() !== '');
+    });
+    
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+    
+    const chatSend = document.getElementById('chatSend');
+    if (chatSend) {
+        chatSend.addEventListener('click', sendChatMessage);
+    }
+}
+
+// Add message to chat
+function addMessageToChat(type, text, timestamp = null, isHistory = false) {
+    const chatContent = document.getElementById('chatContent');
+    if (!chatContent) return;
+    
+    const now = timestamp ? new Date(timestamp) : new Date();
+    const timeString = formatTime(now);
+    
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+    
+    message.innerHTML = `
+        <div class="message-bubble">${text}</div>
+        <div class="message-meta">
+            <span class="message-time">${timeString}</span>
+            ${type === 'outgoing' ? '<span class="message-status"><i class="fas fa-check"></i></span>' : ''}
+        </div>
+    `;
+    
+    chatContent.appendChild(message);
+    
+    // If not loading history, scroll to bottom
+    if (!isHistory) {
+        scrollToBottom();
+    }
+}
+
+// Add system message
+function addSystemMessage(text, timestamp = null) {
+    const chatContent = document.getElementById('chatContent');
+    if (!chatContent) return;
+    
+    const message = document.createElement('div');
+    message.className = 'chat-day';
+    message.innerHTML = `<span>${text}</span>`;
+    
+    chatContent.appendChild(message);
+    scrollToBottom();
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const chatContent = document.getElementById('chatContent');
+    if (!chatContent) return;
+    
+    // Remove existing indicator if any
+    hideTypingIndicator();
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    
+    indicator.innerHTML = `
+        <div class="typing-dots">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    
+    chatContent.appendChild(indicator);
+    scrollToBottom();
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) indicator.remove();
+}
+
+// Format time for messages
+function formatTime(date) {
+    return date.toLocaleTimeString('it-IT', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Scroll chat to bottom
+function scrollToBottom() {
+    const chatContent = document.getElementById('chatContent');
+    if (chatContent) {
+        chatContent.scrollTop = chatContent.scrollHeight;
+    }
+}
+
+// Setup logout button
+function setupLogoutButton() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!logoutBtn) return;
+    
+    logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Show loading overlay
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.style.position = 'fixed';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.flexDirection = 'column';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.zIndex = '2000';
+        loadingOverlay.style.backdropFilter = 'blur(5px)';
+        
+        const spinnerContainer = document.createElement('div');
+        spinnerContainer.style.width = '60px';
+        spinnerContainer.style.height = '60px';
+        spinnerContainer.style.position = 'relative';
+        
+        const spinner = document.createElement('div');
+        spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+        spinner.style.borderTopColor = 'var(--primary)';
+        spinner.style.borderRadius = '50%';
+        spinner.style.width = '100%';
+        spinner.style.height = '100%';
+        spinner.style.animation = 'spin 1s linear infinite';
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        
+        document.head.appendChild(style);
+        spinnerContainer.appendChild(spinner);
+        
+        const loadingText = document.createElement('p');
+        loadingText.textContent = 'Logout in corso...';
+        loadingText.style.marginTop = '20px';
+        loadingText.style.color = 'var(--primary)';
+        loadingText.style.fontWeight = '500';
+        
+        loadingOverlay.appendChild(spinnerContainer);
+        loadingOverlay.appendChild(loadingText);
+        document.body.appendChild(loadingOverlay);
+        
+        // In una vera implementazione:
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                loadingText.textContent = 'Reindirizzamento...';
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 800);
+            } else {
+                throw new Error('Errore durante il logout');
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante il logout:', error);
+            loadingText.textContent = 'Si è verificato un errore. Riprova.';
+            
+            // Add retry button
+            const retryButton = document.createElement('button');
+            retryButton.textContent = 'Riprova';
+            retryButton.style.marginTop = '15px';
+            retryButton.style.padding = '8px 20px';
+            retryButton.style.background = 'var(--primary)';
+            retryButton.style.color = 'white';
+            retryButton.style.border = 'none';
+            retryButton.style.borderRadius = 'var(--radius-sm)';
+            retryButton.style.cursor = 'pointer';
+            
+            retryButton.onclick = function() {
+                document.body.removeChild(loadingOverlay);
+                setupLogoutButton();
+            };
+            
+            loadingOverlay.appendChild(retryButton);
+        });
+    });
+}
+</script>
 </body>
 </html>

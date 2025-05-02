@@ -357,6 +357,182 @@ app.delete('/menu/:id', verificaRuoloCapo, (req, res) => {
     });
 });
 
+const messages = [];
+let messageCounter = 0;
+const clients = {};
+const typingStatus = {};
+
+// Identifica un utente
+app.post('/api/chat/identify', (req, res) => {
+    const { user_type, username, client_id } = req.body;
+    
+    clients[client_id] = {
+        id: client_id,
+        type: user_type,
+        name: username,
+        online: true,
+        lastActivity: Date.now()
+    };
+    
+    // Se si tratta di un cliente, notifica tutti i manager
+    if (user_type === 'cliente') {
+        const clientList = Object.values(clients)
+            .filter(c => c.type === 'cliente')
+            .map(c => ({
+                id: c.id,
+                name: c.name,
+                online: c.online,
+                lastMessage: getLastMessageForClient(c.id)
+            }));
+        
+        // Aggiungi messaggio alla coda per i manager
+        messages.push({
+            id: ++messageCounter,
+            type: 'client_list',
+            clients: clientList,
+            timestamp: new Date().toISOString()
+        });
+    }
+    
+    res.json({ success: true });
+});
+
+// Poll per nuovi messaggi
+app.get('/api/chat/poll', (req, res) => {
+    const { client_id, last_message_id } = req.query;
+    const lastId = parseInt(last_message_id) || 0;
+    
+    // Aggiorna l'ultimo accesso del client
+    if (clients[client_id]) {
+        clients[client_id].lastActivity = Date.now();
+    }
+    
+    // Filtra i messaggi per questo client
+    const newMessages = messages
+        .filter(m => m.id > lastId && 
+            (m.to_user === client_id || 
+             m.client_id === client_id || 
+             m.type === 'client_list' && clients[client_id]?.type === 'capo'))
+        .map(m => ({ ...m }));
+    
+    res.json({
+        success: true,
+        messages: newMessages
+    });
+});
+
+// Invia un messaggio
+app.post('/api/chat/send', (req, res) => {
+    const { type, message, client_id, to_user, timestamp } = req.body;
+    
+    // Aggiungi il messaggio alla coda
+    const newMessage = {
+        id: ++messageCounter,
+        type,
+        message,
+        sender: clients[client_id]?.type || 'unknown',
+        userId: client_id,
+        to_user,
+        timestamp,
+    };
+    
+    messages.push(newMessage);
+    
+    res.json({ success: true, message_id: newMessage.id });
+});
+
+// Ottieni la cronologia della chat
+app.get('/api/chat/history', (req, res) => {
+    const { client_id } = req.query;
+    
+    // Filtra i messaggi di tipo chat_message rilevanti per questo client
+    const chatHistory = messages.filter(m => 
+        m.type === 'chat_message' && 
+        (m.userId === client_id || m.to_user === client_id)
+    );
+    
+    res.json({
+        success: true,
+        messages: chatHistory
+    });
+});
+
+// Ottieni la lista dei client (solo per manager)
+app.get('/api/chat/clients', (req, res) => {
+    const { manager_id } = req.query;
+    
+    // Verifica che sia un manager
+    if (!clients[manager_id] || clients[manager_id].type !== 'capo') {
+        return res.status(403).json({
+            success: false,
+            error: 'Unauthorized'
+        });
+    }
+    
+    // Prepara la lista dei client
+    const clientList = Object.values(clients)
+        .filter(c => c.type === 'cliente')
+        .map(c => ({
+            id: c.id,
+            name: c.name,
+            online: c.online,
+            lastMessage: getLastMessageForClient(c.id)
+        }));
+    
+    res.json({
+        success: true,
+        clients: clientList
+    });
+});
+
+// Aggiorna lo stato di digitazione
+app.post('/api/chat/typing', (req, res) => {
+    const { is_typing, client_id } = req.body;
+    
+    // Ottieni il tipo di utente
+    const userType = clients[client_id]?.type;
+    
+    // Aggiungi il messaggio alla coda
+    messages.push({
+        id: ++messageCounter,
+        type: 'typing',
+        is_typing,
+        sender: userType,
+        userId: client_id,
+        timestamp: new Date().toISOString()
+    });
+    
+    res.json({ success: true });
+});
+
+// Funzione di utilità per ottenere l'ultimo messaggio per un cliente
+function getLastMessageForClient(clientId) {
+    for (let i = messages.length - 1; i >= 0; i--) {
+        const msg = messages[i];
+        if (msg.type === 'chat_message' && 
+            (msg.userId === clientId || msg.to_user === clientId)) {
+            return {
+                text: msg.message,
+                timestamp: msg.timestamp
+            };
+        }
+    }
+    return null;
+}
+
+// Clean up clients periodically
+setInterval(() => {
+    const now = Date.now();
+    Object.keys(clients).forEach(id => {
+        if (now - clients[id].lastActivity > 60000) { // 1 minuto
+            clients[id].online = false;
+        }
+        if (now - clients[id].lastActivity > 3600000) { // 1 ora
+            delete clients[id];
+        }
+    });
+}, 30000);
+
 // ============= ROTTE GESTIONE CLIENTI =============
 // Pagina Clienti
 app.get('/clienti', verificaRuoloCapo, (req, res) => {
