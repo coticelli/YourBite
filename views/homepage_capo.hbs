@@ -856,7 +856,7 @@
         .chat-send {
             background: var(--primary);
             border: none;
-            color: var(--light);
+            color: var (--light);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -1089,10 +1089,10 @@
 
             <nav class="nav-menu">
                 <a href="#" class="nav-link active">Dashboard</a>
-                <a href="#" class="nav-link">Ordini</a>
-                <a href="#" class="nav-link">Menu</a>
-                <a href="#" class="nav-link">Statistiche</a>
-                <a href="#" class="nav-link">Personale</a>
+                <a href="ordini" class="nav-link">Ordini</a>
+                <a href="Menu" class="nav-link">Menu</a>
+                <a href="Statistiche" class="nav-link">Statistiche</a>
+                <a href="Personale" class="nav-link">Personale</a>
             </nav>
 
             <div class="user-menu">
@@ -1121,31 +1121,31 @@
                 <h3 class="section-title">Menu</h3>
                 <ul class="menu-list">
                     <li>
-                        <a href="#" class="menu-item active">
+                        <a href="Dashboard" class="menu-item active">
                             <i class="fas fa-home"></i>
                             Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="menu-item">
+                        <a href="Ordini" class="menu-item">
                             <i class="fas fa-shopping-bag"></i>
                             Ordini
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="menu-item">
+                        <a href="Menu" class="menu-item">
                             <i class="fas fa-utensils"></i>
                             Menu
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="menu-item">
+                        <a href="Statistiche" class="menu-item">
                             <i class="fas fa-chart-bar"></i>
                             Statistiche
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="menu-item">
+                        <a href="Personale" class="menu-item">
                             <i class="fas fa-users"></i>
                             Personale
                         </a>
@@ -1157,19 +1157,19 @@
                 <h3 class="section-title">Strumenti</h3>
                 <ul class="menu-list">
                     <li>
-                        <a href="#" class="menu-item">
+                        <a href="Impostazioni" class="menu-item">
                             <i class="fas fa-cog"></i>
                             Impostazioni
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="menu-item">
+                        <a href="Profilo" class="menu-item">
                             <i class="fas fa-user-cog"></i>
                             Profilo
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="menu-item" id="logoutBtn">
+                        <a href="Login" class="menu-item" id="logoutBtn">
                             <i class="fas fa-sign-out-alt"></i>
                             Logout
                         </a>
@@ -1526,23 +1526,25 @@ function initializeSocketIO() {
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
     
-    connectionStatus.classList.add('show');
-    connectionText.textContent = 'Connessione in corso...';
+    // Nascondi l'indicatore all'avvio - MODIFICATO
+    connectionStatus.classList.remove('show');
     
     // Connetti a Socket.IO
     socket = io();
     
+    // Aggiungi un timeout per mostrare l'indicatore solo se la connessione è lenta
+    const connectionTimeout = setTimeout(() => {
+        connectionStatus.classList.add('show');
+        connectionText.textContent = 'Connessione in corso...';
+    }, 2000); // Mostra solo dopo 2 secondi se ancora non connesso
+    
     // Evento di connessione stabilita
     socket.on('connect', function() {
         console.log('Socket.IO connection established');
-        connectionText.textContent = 'Connesso';
-        connectionStatus.classList.add('connected');
+        clearTimeout(connectionTimeout); // Annulla il timeout
+        connectionStatus.classList.remove('show'); // Mantieni nascosto
         
-        // Dopo un po', nascondi lo stato della connessione
-        setTimeout(() => {
-            connectionStatus.classList.remove('show');
-        }, 3000);
-        
+        // Il resto del codice rimane invariato
         // Invia informazioni operatore
         socket.emit('operatorJoin', {
             userId: operatorId,
