@@ -1213,8 +1213,9 @@ function requireStaff(req, res, next) {
         (req.session.user.tipo === 'amministratore' || req.session.user.tipo === 'capo')) {
         return next();
     } else {
-        return res.status(403).render('error', {
-            message: 'Accesso negato. Non hai i permessi necessari per visualizzare questa pagina.'
+        // Usa JSON invece di render per evitare problemi con la vista mancante
+        return res.status(403).json({
+            error: 'Accesso negato. Non hai i permessi necessari.'
         });
     }
 }

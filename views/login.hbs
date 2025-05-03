@@ -97,6 +97,22 @@
                 document.getElementById('message').innerText = error.message || 'Errore durante il login. Riprova.';
             });
         });
+
+        // Aggiungi questo script alla pagina di login prima di inviare il form
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    
+    // Assicurati che lo username sia correttamente codificato
+    const encodedUsername = encodeURIComponent(username);
+    
+    // Imposta manualmente un cookie con username codificato
+    document.cookie = `user_session=${encodedUsername}; path=/`;
+    
+    // Continua con il submit del form
+    this.submit();
+});
     </script>
 </body>
 </html>
