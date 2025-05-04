@@ -392,7 +392,7 @@
                     </div>
                     <div class="settings-section-footer">
                         <button class="btn btn-secondary btn-reset" data-section="profile"> <i class="fas fa-undo"></i> Ripristina </button>
-                        <button class="btn btn-primary btn-save" data-section="profile"> <i class="fas fa-save"></i> Salva Modifiche </button>
+                        <button class="btn btn-primary btn-save" data-section="appearance">Salva Modifiche</button>
                     </div>
                 </section>
 
@@ -771,798 +771,1031 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js"></script> -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            createParticles();
-            setActiveNavLink();
-            // loadNotifications(); // Funzione fittizia o da API reale
-            setupSettingsNav();
-            setupFormInteractions();
-            initializeDefaultValues(); // Inizializza sezioni
-            // setupLogoutButton(); // Aggiungi se hai un bottone logout separato qui
+<script>
+    const themeColors = {
+    primary: {
+        '--primary': '#5e60ce',
+        '--primary-light': '#6930c3',
+        '--primary-dark': '#5390d9',
+        '--secondary': '#48bfe3',
+        '--secondary-light': '#64dfdf'
+    },
+    blue: {
+        '--primary': '#3498db',
+        '--primary-light': '#5dade2',
+        '--primary-dark': '#2980b9',
+        '--secondary': '#2cc3ff',
+        '--secondary-light': '#7fd4f7'
+    },
+    green: {
+        '--primary': '#2ecc71',
+        '--primary-light': '#66cc99',
+        '--primary-dark': '#27ae60',
+        '--secondary': '#3fc380',
+        '--secondary-light': '#72e59d'
+    },
+    purple: {
+        '--primary': '#9b59b6',
+        '--primary-light': '#b07cc6',
+        '--primary-dark': '#8e44ad',
+        '--secondary': '#bf7fdd',
+        '--secondary-light': '#d2a5e2'
+    },
+    orange: {
+        '--primary': '#e67e22',
+        '--primary-light': '#f39c12',
+        '--primary-dark': '#d35400',
+        '--secondary': '#f3a333',
+        '--secondary-light': '#f8c471'
+    },
+    red: {
+        '--primary': '#e74c3c',
+        '--primary-light': '#ec7063',
+        '--primary-dark': '#c0392b',
+        '--secondary': '#f1948a',
+        '--secondary-light': '#f5b7b1'
+    }
+};
 
-            // Mostra un messaggio iniziale se vuoi
-            // showToast('info', 'Benvenuto', 'Gestisci le impostazioni del tuo locale.');
+document.addEventListener('DOMContentLoaded', function() {
+    createParticles();
+    setActiveNavLink();
+    setupSettingsNav();
+    setupFormInteractions();
+    
+    // Carica il tema salvato all'avvio
+    loadSavedTheme();
+    
+    initializeDefaultValues(); // Inizializza sezioni
+});
+
+// Funzione per generare URL avatar utente (placeholder o real service)
+function getAvatarUrl(name, size = 50) {
+    // Iniziali dell'utente per colore univoco
+    const initials = (name || '??').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    // Calcola colore basato su initials per consistenza
+    const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#16a085', '#8e44ad', '#2980b9', '#d35400', '#c0392b'];
+    const colorIndex = (initials.charCodeAt(0) || 0) % colors.length;
+    
+    // Ritorna URL per servizio reale o genera SVG inline
+    try {
+        // Ritorniamo un data URL di un SVG con le iniziali
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+                <rect width="${size}" height="${size}" fill="${colors[colorIndex]}"/>
+                <text x="50%" y="50%" dy=".1em" fill="white" font-family="Arial" font-size="${size * 0.4}" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${initials}</text>
+            </svg>
+        `;
+        return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+    } catch (e) {
+        console.warn('Errore nella generazione SVG avatar:', e);
+        // Fallback a un servizio online di avatar
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${colors[colorIndex].substring(1)}&color=fff&size=${size}`;
+    }
+}
+
+// Sistema di notifiche toast
+function showToast(title, message, type = 'info', duration = 4000) {
+    // Container per i toast (crealo se non esiste)
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Crea il toast
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        display: flex;
+        align-items: center;
+        background-color: white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-top: 5px;
+        min-width: 280px;
+        max-width: 400px;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        border-left: 4px solid var(--primary);
+    `;
+    
+    // Colore e icona in base al tipo
+    switch (type) {
+        case 'success':
+            toast.style.borderColor = '#2ecc71';
+            break;
+        case 'error':
+            toast.style.borderColor = '#e74c3c';
+            break;
+        case 'warning':
+            toast.style.borderColor = '#f39c12';
+            break;
+        default: // info
+            toast.style.borderColor = 'var(--primary)';
+    }
+    
+    // Contenuto del toast
+    toast.innerHTML = `
+        <div style="padding-right:10px;font-size:1.2rem;color:${toast.style.borderColor};">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        </div>
+        <div style="flex-grow:1;">
+            <div style="font-weight:500;margin-bottom:3px;">${title}</div>
+            <div style="font-size:0.9rem;color:#666;">${message}</div>
+        </div>
+        <button style="background:none;border:none;cursor:pointer;font-size:1rem;color:#999;padding:0 0 0 10px;">&times;</button>
+    `;
+    
+    // Aggiungi al container e anima l'entrata
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Chiudi quando si clicca sul pulsante
+    const closeBtn = toast.querySelector('button');
+    closeBtn.addEventListener('click', () => closeToast(toast));
+    
+    // Chiudi automaticamente dopo la durata specificata
+    setTimeout(() => closeToast(toast), duration);
+}
+
+// Funzione per chiudere il toast
+function closeToast(toast) {
+    if (!toast) return;
+    toast.style.transform = 'translateX(120%)';
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+} 
+
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('yourbite_theme') || 'primary';
+    
+    // Applica il tema salvato
+    applyTheme(savedTheme);
+    
+    // Seleziona visivamente l'opzione corrispondente
+    const colorOptionsList = document.getElementById('color-options-list');
+    if (colorOptionsList) {
+        colorOptionsList.querySelectorAll('.color-option').forEach(opt => {
+            opt.classList.remove('selected');
+            if (opt.dataset.color === savedTheme) {
+                opt.classList.add('selected');
+            }
         });
+    }
+    
+    // Aggiorna l'anteprima
+    updateThemePreview(savedTheme);
+}
 
-        // Funzione per popolare particelle (ottimizzata)
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            if (!particlesContainer) return;
-            particlesContainer.innerHTML = ''; // Pulisci prima
-            const particleCount = Math.floor(window.innerWidth / 50); // Adatta al viewport
+// Funzione per popolare particelle (ottimizzata)
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (!particlesContainer) return;
+    particlesContainer.innerHTML = ''; // Pulisci prima
+    const particleCount = Math.floor(window.innerWidth / 50); // Adatta al viewport
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 5 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                // Assegna variabili CSS per animazione
-                particle.style.setProperty('--x', (Math.random() - 0.5) * 150);
-                particle.style.setProperty('--y', (Math.random() - 0.5) * 150);
-                particle.style.animationDuration = `${Math.random() * 30 + 20}s, ${Math.random() * 30 + 20}s`;
-                 particle.style.backgroundColor = i % 2 === 0 ? 'rgba(94, 96, 206, 0.08)' : 'rgba(72, 191, 227, 0.08)';
-                particlesContainer.appendChild(particle);
-            }
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const size = Math.random() * 5 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        // Assegna variabili CSS per animazione
+        particle.style.setProperty('--x', (Math.random() - 0.5) * 150);
+        particle.style.setProperty('--y', (Math.random() - 0.5) * 150);
+        particle.style.animationDuration = `${Math.random() * 30 + 20}s, ${Math.random() * 30 + 20}s`;
+        particle.style.backgroundColor = i % 2 === 0 ? 'rgba(94, 96, 206, 0.08)' : 'rgba(72, 191, 227, 0.08)';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Imposta link attivo nella navbar principale
+function setActiveNavLink() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPath) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
         }
+    });
+}
 
-        // Imposta link attivo nella navbar principale
-        function setActiveNavLink() {
-            // Mantenere logica originale o adattare se necessario
-            // ... (codice come prima)
-        }
+// --- Gestione Navigazione Impostazioni ---
+function setupSettingsNav() {
+    const navItems = document.querySelectorAll('.settings-nav-item');
+    const sections = document.querySelectorAll('.settings-section');
+    const settingsContent = document.querySelector('.settings-content'); // Contenitore delle sezioni
 
-        // Funzione per logout (dall'header)
-        const logoutBtnHeader = document.getElementById('logoutBtnHeader');
-        if (logoutBtnHeader) {
-            logoutBtnHeader.addEventListener('click', (e) => {
-                e.preventDefault();
-                handleLogout(); // Usa la funzione logout generica
-            });
-        }
+    if (!navItems.length || !sections.length || !settingsContent) {
+        console.error("Elementi di navigazione o sezioni non trovati.");
+        return;
+    }
 
-        // --- Gestione Navigazione Impostazioni ---
-        function setupSettingsNav() {
-            const navItems = document.querySelectorAll('.settings-nav-item');
-            const sections = document.querySelectorAll('.settings-section');
-            const settingsContent = document.querySelector('.settings-content'); // Contenitore delle sezioni
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const targetId = `${this.dataset.target}-section`;
+            const targetSection = document.getElementById(targetId);
 
-            if (!navItems.length || !sections.length || !settingsContent) {
-                console.error("Elementi di navigazione o sezioni non trovati.");
-                return;
-            }
+            if (targetSection) {
+                 // Aggiorna stato attivo nav
+                 navItems.forEach(i => i.classList.remove('active'));
+                 this.classList.add('active');
 
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const targetId = `${this.dataset.target}-section`;
-                    const targetSection = document.getElementById(targetId);
-
-                    if (targetSection) {
-                         // Aggiorna stato attivo nav
-                         navItems.forEach(i => i.classList.remove('active'));
-                         this.classList.add('active');
-
-                         // Nascondi tutte le sezioni con transizione
-                         sections.forEach(section => {
-                             if (section.id !== targetId && section.classList.contains('active')) {
-                                 section.style.opacity = '0';
-                                 setTimeout(() => {
-                                      section.classList.remove('active');
-                                      section.style.opacity = ''; // Resetta per future animazioni
-                                  }, 300); // Tempo per fade out
-                             }
-                         });
-
-                         // Mostra sezione target con transizione
-                         targetSection.style.opacity = '0'; // Inizia nascosta
-                         targetSection.classList.add('active');
+                 // Nascondi tutte le sezioni con transizione
+                 sections.forEach(section => {
+                     if (section.id !== targetId && section.classList.contains('active')) {
+                         section.style.opacity = '0';
                          setTimeout(() => {
-                              targetSection.style.opacity = '1';
-                              // Scroll to section (optional, consider user experience)
-                              // targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          }, 50); // Leggero ritardo per rendering
-
-                          // showToast('Navigazione', `Sezione: ${this.querySelector('span').textContent}`, 'info'); // Toast opzionale
-                     } else {
-                         console.warn(`Sezione con ID ${targetId} non trovata.`);
-                         showToast('Errore', `Impossibile trovare la sezione '${this.dataset.target}'.`, 'error');
-                     }
-                });
-            });
-        }
-
-        // --- Inizializzazione valori/elementi di default ---
-        function initializeDefaultValues() {
-            // Orari Apertura: Popola con valori di default
-            const scheduleList = document.getElementById('schedule-list');
-            if (scheduleList) {
-                const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-                scheduleList.innerHTML = days.map(day => createScheduleDayHTML(day, true, [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '23:00' }])).join('');
-                // Aggiungi listener ai nuovi bottoni "+" e "x"
-                scheduleList.querySelectorAll('.add-hours-btn').forEach(btn => btn.addEventListener('click', handleAddHours));
-                scheduleList.querySelectorAll('.remove-hours-btn').forEach(btn => btn.addEventListener('click', handleRemoveHours));
-                scheduleList.querySelectorAll('.day-toggle input[type="checkbox"]').forEach(toggle => toggle.addEventListener('change', handleDayToggle));
-                initializeTimePickers(scheduleList); // Inizializza flatpickr per gli orari
-            }
-
-            // Gestione Utenti: Popola con utenti di esempio
-            const userListContainer = document.getElementById('user-list-container');
-            if (userListContainer) {
-                 const users = [
-                     { id: 1, name: 'Mario Rossi', role: 'Capo (Tu)', avatarName: 'MR' },
-                     { id: 2, name: 'Laura Bianchi', role: 'Manager', avatarName: 'LB' },
-                     { id: 3, name: 'Giuseppe Verdi', role: 'Cassiere', avatarName: 'GV' }
-                 ];
-                 userListContainer.innerHTML = users.map(user => createUserItemHTML(user.id, user.name, user.role, user.avatarName)).join('');
-                 // Aggiungi listener ai nuovi bottoni modifica/elimina
-                 userListContainer.querySelectorAll('.user-action.edit').forEach(btn => btn.addEventListener('click', handleEditUser));
-                 userListContainer.querySelectorAll('.user-action.delete').forEach(btn => btn.addEventListener('click', handleDeleteUser));
-            }
-
-             // Sessioni Attive: Popola con esempi
-             const sessionsList = document.getElementById('active-sessions-list');
-             if(sessionsList) {
-                 sessionsList.innerHTML = `
-                     <div class="user-item">
-                         <div class="user-avatar" style="font-size: 20px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-desktop"></i></div>
-                         <div class="user-info">
-                             <div class="user-name">Questo Browser (Chrome, Linux)</div>
-                             <div class="user-role">Milano, Italia • Attivo ora</div>
-                         </div>
-                         <div class="user-actions"><button class="user-action delete" title="Termina sessione" data-session-id="current" disabled><i class="fas fa-times"></i></button></div>
-                     </div>
-                     <div class="user-item">
-                          <div class="user-avatar" style="font-size: 20px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-mobile-alt"></i></div>
-                          <div class="user-info">
-                             <div class="user-name">App Mobile (iOS)</div>
-                             <div class="user-role">Roma, Italia • 2 ore fa</div>
-                          </div>
-                          <div class="user-actions"><button class="user-action delete" title="Termina sessione" data-session-id="mobile123"><i class="fas fa-times"></i></button></div>
-                     </div>
-                 `;
-                 sessionsList.querySelectorAll('.user-action.delete').forEach(btn => btn.addEventListener('click', handleTerminateSession));
-             }
-
-              // Cronologia Backup: Popola con esempi
-              const backupHistoryList = document.getElementById('backup-history-list');
-              if(backupHistoryList) {
-                  backupHistoryList.innerHTML = `
-                      <li style="padding: 10px; border-bottom: 1px solid var(--gray-dark); display: flex; justify-content: space-between; align-items: center;">
-                          <span>Backup Manuale - ${new Date(Date.now() - 86400000).toLocaleString('it-IT')}</span>
-                          <button class="btn btn-sm btn-secondary" style="padding: 5px 10px; font-size: 12px;"><i class="fas fa-download"></i> Scarica</button>
-                      </li>
-                      <li style="padding: 10px; border-bottom: 1px solid var(--gray-dark); display: flex; justify-content: space-between; align-items: center;">
-                          <span>Backup Automatico - ${new Date(Date.now() - 172800000).toLocaleString('it-IT')}</span>
-                          <button class="btn btn-sm btn-secondary" style="padding: 5px 10px; font-size: 12px;"><i class="fas fa-download"></i> Scarica</button>
-                      </li>
-                  `;
-              }
-
-              // Aggiorna anteprima tema iniziale
-              updateThemePreview('primary'); // Colore di default
-        }
-
-        // --- Funzioni HTML Helper ---
-        function createScheduleDayHTML(dayName, isChecked, timeSlots = []) {
-            const dayId = dayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Rimuovi accenti per ID
-            return `
-                <div class="schedule-day" data-day="${dayId}">
-                    <div class="day-toggle">
-                        <label class="switch">
-                            <input type="checkbox" ${isChecked ? 'checked' : ''} data-day-toggle="${dayId}">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                    <div class="day-name">${dayName}</div>
-                    <div class="day-hours" ${!isChecked ? 'style="display: none;"' : ''}>
-                        ${timeSlots.map(slot => createTimeSlotHTML(slot.start, slot.end)).join('')}
-                        <button class="add-hours-btn"> <i class="fas fa-plus-circle"></i> Aggiungi </button>
-                    </div>
-                </div>`;
-        }
-
-        function createTimeSlotHTML(startTime = '09:00', endTime = '17:00') {
-            return `
-                <div class="time-slot">
-                    <input type="time" class="form-input time-input" value="${startTime}">
-                    <span>-</span>
-                    <input type="time" class="form-input time-input" value="${endTime}">
-                    <button class="remove-hours-btn" title="Rimuovi fascia oraria"> <i class="fas fa-times"></i> </button>
-                </div>`;
-        }
-
-        function createUserItemHTML(id, name, role, avatarName) {
-             const avatarUrl = getAvatarUrl(avatarName || name, 50);
-             return `
-                 <div class="user-item" data-user-id="${id}">
-                     <div class="user-avatar"> <img src="${avatarUrl}" alt="${name}" onerror="this.onerror=null; this.src=getAvatarUrl('??', 50);"> </div>
-                     <div class="user-info">
-                         <div class="user-name">${name}</div>
-                         <div class="user-role">${role}</div>
-                     </div>
-                     <div class="user-actions">
-                         <button class="user-action edit" title="Modifica utente"> <i class="fas fa-edit"></i> </button>
-                         ${role.includes('Capo') ? '' : '<button class="user-action delete" title="Elimina utente"> <i class="fas fa-trash-alt"></i> </button>'}
-                     </div>
-                 </div>`;
-         }
-
-
-        // --- Gestione Interazioni Form ---
-        function setupFormInteractions() {
-            // Date/Time Pickers
-            if (typeof flatpickr !== 'undefined') {
-                flatpickr('input[type="date"]', { dateFormat: "Y-m-d", locale: { firstDayOfWeek: 1 }});
-                // Defer time picker initialization until needed
-            } else {
-                 console.warn("Flatpickr non caricato.");
-             }
-
-             // Inizializza Color Picker
-             const colorOptionsList = document.getElementById('color-options-list');
-             if (colorOptionsList) {
-                 colorOptionsList.addEventListener('click', (e) => {
-                     if (e.target.classList.contains('color-option')) {
-                         colorOptionsList.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
-                         e.target.classList.add('selected');
-                         updateThemePreview(e.target.dataset.color);
-                         showToast('Info', `Tema colore selezionato: ${e.target.dataset.color}`, 'info');
+                              section.classList.remove('active');
+                              section.style.opacity = ''; // Resetta per future animazioni
+                          }, 300); // Tempo per fade out
                      }
                  });
-             }
 
-            // Inizializza Payment Methods Toggle
-            const paymentMethodsList = document.getElementById('payment-methods-list');
-            if (paymentMethodsList) {
-                paymentMethodsList.addEventListener('click', (e) => {
-                    const method = e.target.closest('.payment-method');
-                    if (method) {
-                        method.classList.toggle('active');
-                        const isActive = method.classList.contains('active');
-                         showToast('Info', `Metodo ${method.dataset.method} ${isActive ? 'attivato' : 'disattivato'}`, 'info');
-                    }
-                });
-            }
-
-            // Inizializza File Upload (solo preview)
-            document.querySelectorAll('.upload-input').forEach(input => {
-                input.addEventListener('change', handleFileUpload);
-            });
-
-             // Listener per bottoni Aggiungi/Rimuovi Ore (delegato)
-             const scheduleContainer = document.getElementById('schedule-list');
-             if (scheduleContainer) {
-                 scheduleContainer.addEventListener('click', (e) => {
-                     if (e.target.closest('.add-hours-btn')) {
-                         handleAddHours(e);
-                     } else if (e.target.closest('.remove-hours-btn')) {
-                         handleRemoveHours(e);
-                     }
-                 });
-                 scheduleContainer.addEventListener('change', (e) => {
-                     if (e.target.matches('.day-toggle input[type="checkbox"]')) {
-                         handleDayToggle(e);
-                     }
-                 });
-             }
-
-             // Listener per bottoni Azioni Utente (delegato)
-             const userListContainer = document.getElementById('user-list-container');
-             if (userListContainer) {
-                 userListContainer.addEventListener('click', (e) => {
-                     if (e.target.closest('.user-action.edit')) {
-                         handleEditUser(e);
-                     } else if (e.target.closest('.user-action.delete')) {
-                         handleDeleteUser(e);
-                     }
-                 });
-             }
-             const addUserBtn = document.getElementById('add-user-btn');
-             if(addUserBtn) addUserBtn.addEventListener('click', handleAddUser);
-
-              // Listener per Password Strength
-             const newPassInput = document.getElementById('new-password');
-             if(newPassInput) newPassInput.addEventListener('input', updatePasswordStrength);
-
-             // Listener per Azioni Sicurezza
-             const terminateAllBtn = document.getElementById('terminate-all-sessions-btn');
-             if(terminateAllBtn) terminateAllBtn.addEventListener('click', handleTerminateAllSessions);
-             const activeSessionsList = document.getElementById('active-sessions-list');
-             if(activeSessionsList) activeSessionsList.addEventListener('click', (e) => { if(e.target.closest('.user-action.delete')) handleTerminateSession(e); });
-
-              // Listener App Mobile
-              const sendPromoBtn = document.getElementById('send-promo-btn');
-              if(sendPromoBtn) sendPromoBtn.addEventListener('click', handleSendPromoMessage);
-
-              // Listener Integrazioni
-              const integrationsSection = document.getElementById('integrations-section');
-              if(integrationsSection) {
-                  integrationsSection.addEventListener('click', (e) => {
-                      if(e.target.classList.contains('connect-integration-btn')) handleConnectIntegration(e);
-                      if(e.target.classList.contains('disconnect-integration-btn')) handleDisconnectIntegration(e);
-                  });
-                  const addWebhookBtn = document.getElementById('add-webhook-btn');
-                  if(addWebhookBtn) addWebhookBtn.addEventListener('click', handleAddWebhook);
-              }
-
-               // Listener Backup & Restore
-               const manualBackupBtn = document.getElementById('manual-backup-btn');
-               if(manualBackupBtn) manualBackupBtn.addEventListener('click', handleManualBackup);
-               const restoreBtn = document.getElementById('restore-backup-btn');
-               if(restoreBtn) restoreBtn.addEventListener('click', () => document.getElementById('restore-file-input').click());
-               const restoreFileInput = document.getElementById('restore-file-input');
-               if(restoreFileInput) restoreFileInput.addEventListener('change', handleRestoreFromFile);
-
-               // Listener Avanzate
-               const clearCacheBtn = document.getElementById('clear-cache-btn');
-               if(clearCacheBtn) clearCacheBtn.addEventListener('click', handleClearCache);
-               const maintenanceToggle = document.getElementById('maintenance-mode-toggle');
-               if(maintenanceToggle) maintenanceToggle.addEventListener('change', handleMaintenanceToggle);
-               const regenApiKeyBtn = document.getElementById('regenerate-api-key-btn');
-               if(regenApiKeyBtn) regenApiKeyBtn.addEventListener('click', handleRegenerateApiKey);
-               const factoryResetBtn = document.getElementById('factory-reset-btn');
-               if(factoryResetBtn) factoryResetBtn.addEventListener('click', handleFactoryReset);
-
-
-            // Listener Generico per Bottoni Salva/Ripristina
-            document.querySelectorAll('.btn-save').forEach(btn => btn.addEventListener('click', handleSaveSection));
-            document.querySelectorAll('.btn-reset').forEach(btn => btn.addEventListener('click', handleResetSection));
-        }
-
-         // Inizializza Flatpickr su un set di elementi
-         function initializeTimePickers(container) {
-             if (typeof flatpickr !== 'undefined') {
-                 container.querySelectorAll('input[type="time"]').forEach(input => {
-                     flatpickr(input, { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
-                 });
-             }
-         }
-
-
-        // --- Gestori Eventi Specifici ---
-
-        function handleFileUpload(event) {
-            const input = event.target;
-            const previewContainer = input.closest('.upload-container')?.querySelector('.preview-container');
-            if (!previewContainer) return;
-
-            // Limita anteprime (es. max 1 per logo, 5 per immagini locale)
-            const maxPreviews = input.multiple ? 5 : 1;
-            if (!input.multiple) {
-                 previewContainer.innerHTML = ''; // Rimuovi vecchie anteprime per upload singolo
-             }
-
-            if (input.files) {
-                Array.from(input.files).slice(0, maxPreviews - previewContainer.children.length).forEach(file => {
-                    if (file.size > (input.multiple ? 5 * 1024 * 1024 : 2 * 1024 * 1024)) {
-                         showToast('Errore Upload', `Il file ${file.name} è troppo grande.`, 'error');
-                         return;
-                     }
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const previewItem = document.createElement('div');
-                        previewItem.className = 'preview-item';
-                        previewItem.innerHTML = `<img src="${e.target.result}" alt="Preview ${file.name}" class="preview-image"><button class="preview-remove" title="Rimuovi">&times;</button>`;
-                        previewContainer.appendChild(previewItem);
-                        previewItem.querySelector('.preview-remove').addEventListener('click', () => {
-                             previewItem.remove();
-                             // Se era upload singolo, potremmo voler resettare l'input file qui
-                             // input.value = ''; // Attenzione: questo resetta TUTTI i file selezionati
-                         });
-                    }
-                    reader.readAsDataURL(file);
-                });
-                if (input.files.length > maxPreviews) {
-                     showToast('Attenzione', `Mostrate solo le prime ${maxPreviews} immagini.`, 'warning');
-                 }
-            }
-             // Reset dell'input per permettere di caricare lo stesso file di nuovo
-            input.value = '';
-        }
-
-        function handleAddHours(event) {
-             const dayHoursContainer = event.target.closest('.day-hours');
-             if (!dayHoursContainer) return;
-             const newSlotHTML = createTimeSlotHTML(); // Crea HTML nuovo slot
-             const newSlotElement = document.createElement('div'); // Contenitore temporaneo
-             newSlotElement.innerHTML = newSlotHTML;
-             const timeSlotDiv = newSlotElement.firstElementChild; // Prendi il div time-slot
-
-             // Inserisci prima del bottone "+"
-             dayHoursContainer.insertBefore(timeSlotDiv, event.target.closest('.add-hours-btn'));
-
-             // Inizializza Flatpickr sui nuovi input
-             initializeTimePickers(timeSlotDiv);
-
-             // Aggiungi listener al nuovo bottone "x"
-             timeSlotDiv.querySelector('.remove-hours-btn').addEventListener('click', handleRemoveHours);
-             showToast('Info', 'Fascia oraria aggiunta.', 'info');
-        }
-
-        function handleRemoveHours(event) {
-            const timeSlot = event.target.closest('.time-slot');
-            if (timeSlot) {
-                timeSlot.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                timeSlot.style.opacity = '0';
-                timeSlot.style.transform = 'scale(0.9)';
-                setTimeout(() => timeSlot.remove(), 300);
-                showToast('Info', 'Fascia oraria rimossa.', 'info');
-            }
-        }
-
-        function handleDayToggle(event) {
-            const checkbox = event.target;
-            const dayContainer = checkbox.closest('.schedule-day');
-            const hoursContainer = dayContainer?.querySelector('.day-hours');
-            if (hoursContainer) {
-                hoursContainer.style.display = checkbox.checked ? 'flex' : 'none';
-                 showToast('Info', `Orari ${dayContainer.dataset.day} ${checkbox.checked ? 'abilitati' : 'disabilitati'}`, 'info');
-            }
-        }
-
-        function handleAddUser() {
-             // In un'app reale, aprirebbe un modal
-             const newName = prompt("Inserisci nome nuovo utente:");
-             const newRole = prompt("Inserisci ruolo (es. Manager, Cassiere):");
-             if (newName && newRole) {
-                  const newUser = {
-                      id: generateNewId(), // Dovresti avere una funzione per ID univoci
-                      name: newName,
-                      role: newRole,
-                      avatarName: newName.split(' ').map(n => n[0]).join('') // Iniziali
-                  };
-                  const userListContainer = document.getElementById('user-list-container');
-                  const newItemHTML = createUserItemHTML(newUser.id, newUser.name, newUser.role, newUser.avatarName);
-                  userListContainer.insertAdjacentHTML('beforeend', newItemHTML);
-                  // Aggiungi listener ai bottoni del nuovo utente
-                  const newItemElement = userListContainer.lastElementChild;
-                  newItemElement.querySelector('.user-action.edit').addEventListener('click', handleEditUser);
-                  newItemElement.querySelector('.user-action.delete').addEventListener('click', handleDeleteUser);
-
-                  showToast('Successo', `Utente ${newName} aggiunto (simulato).`, 'success');
-             } else {
-                  showToast('Info', 'Aggiunta utente annullata.', 'info');
-              }
-        }
-
-         function handleEditUser(event) {
-            const userItem = event.target.closest('.user-item');
-            const userId = userItem.dataset.userId;
-            const userName = userItem.querySelector('.user-name').textContent;
-            // In un'app reale, aprirebbe un modal di modifica
-             const updatedName = prompt(`Modifica nome per ${userName}:`, userName);
-             if(updatedName && updatedName !== userName) {
-                 userItem.querySelector('.user-name').textContent = updatedName;
-                 // Aggiorna anche l'avatar se basato sul nome
-                 const avatarImg = userItem.querySelector('.user-avatar img');
-                 if(avatarImg) avatarImg.src = getAvatarUrl(updatedName, 50);
-                 showToast('Successo', `Nome utente ${userId} aggiornato (simulato).`, 'success');
-              } else if (updatedName !== null) {
-                  showToast('Info', 'Nessuna modifica apportata.', 'info');
-              }
-        }
-
-         function handleDeleteUser(event) {
-             const userItem = event.target.closest('.user-item');
-             const userId = userItem.dataset.userId;
-             const userName = userItem.querySelector('.user-name').textContent;
-             if (confirm(`Sei sicuro di voler eliminare l'utente ${userName}?`)) {
-                 userItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                 userItem.style.opacity = '0';
-                 userItem.style.transform = 'translateX(-20px)';
+                 // Mostra sezione target con transizione
+                 targetSection.style.opacity = '0'; // Inizia nascosta
+                 targetSection.classList.add('active');
                  setTimeout(() => {
-                     userItem.remove();
-                     showToast('Successo', `Utente ${userName} eliminato (simulato).`, 'success');
-                 }, 300);
+                      targetSection.style.opacity = '1';
+                      // Scroll to section (optional, consider user experience)
+                      // targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 50); // Leggero ritardo per rendering
+             } else {
+                 console.warn(`Sezione con ID ${targetId} non trovata.`);
+                 showToast('Errore', `Impossibile trovare la sezione '${this.dataset.target}'.`, 'error');
              }
-         }
+        });
+    });
+}
 
-        function updatePasswordStrength() {
-             const password = document.getElementById('new-password').value;
-             const strengthBar = document.getElementById('password-strength-bar');
-             let score = 0;
-             if (password.length >= 8) score++;
-             if (password.match(/[A-Z]/)) score++;
-             if (password.match(/[a-z]/)) score++;
-             if (password.match(/[0-9]/)) score++;
-             if (password.match(/[^A-Za-z0-9]/)) score++;
+// --- Inizializzazione valori/elementi di default ---
+function initializeDefaultValues() {
+    // Orari Apertura: Popola con valori di default
+    const scheduleList = document.getElementById('schedule-list');
+    if (scheduleList) {
+        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        scheduleList.innerHTML = days.map(day => createScheduleDayHTML(day, true, [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '23:00' }])).join('');
+        // Aggiungi listener ai nuovi bottoni "+" e "x"
+        scheduleList.querySelectorAll('.add-hours-btn').forEach(btn => btn.addEventListener('click', handleAddHours));
+        scheduleList.querySelectorAll('.remove-hours-btn').forEach(btn => btn.addEventListener('click', handleRemoveHours));
+        scheduleList.querySelectorAll('.day-toggle input[type="checkbox"]').forEach(toggle => toggle.addEventListener('change', handleDayToggle));
+        initializeTimePickers(scheduleList); // Inizializza flatpickr per gli orari
+    }
 
-             strengthBar.className = 'password-strength-bar'; // Reset class
-             if (score <= 2) strengthBar.classList.add('weak');
-             else if (score <= 4) strengthBar.classList.add('medium');
-             else strengthBar.classList.add('strong');
-         }
+    // Gestione Utenti: Popola con utenti di esempio
+    const userListContainer = document.getElementById('user-list-container');
+    if (userListContainer) {
+         const users = [
+             { id: 1, name: 'Mario Rossi', role: 'Capo (Tu)', avatarName: 'MR' },
+             { id: 2, name: 'Laura Bianchi', role: 'Manager', avatarName: 'LB' },
+             { id: 3, name: 'Giuseppe Verdi', role: 'Cassiere', avatarName: 'GV' }
+         ];
+         userListContainer.innerHTML = users.map(user => createUserItemHTML(user.id, user.name, user.role, user.avatarName)).join('');
+         // Aggiungi listener ai nuovi bottoni modifica/elimina
+         userListContainer.querySelectorAll('.user-action.edit').forEach(btn => btn.addEventListener('click', handleEditUser));
+         userListContainer.querySelectorAll('.user-action.delete').forEach(btn => btn.addEventListener('click', handleDeleteUser));
+    }
 
-         function handleTerminateSession(event) {
-             const sessionItem = event.target.closest('.user-item');
-             const sessionId = event.target.closest('.user-action.delete').dataset.sessionId;
-             if (sessionId === 'current') {
-                 showToast('Info', 'Non puoi terminare la sessione corrente da qui.', 'info');
+     // Sessioni Attive: Popola con esempi
+     const sessionsList = document.getElementById('active-sessions-list');
+     if(sessionsList) {
+         sessionsList.innerHTML = `
+             <div class="user-item">
+                 <div class="user-avatar" style="font-size: 20px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-desktop"></i></div>
+                 <div class="user-info">
+                     <div class="user-name">Questo Browser (Chrome, Linux)</div>
+                     <div class="user-role">Milano, Italia • Attivo ora</div>
+                 </div>
+                 <div class="user-actions"><button class="user-action delete" title="Termina sessione" data-session-id="current" disabled><i class="fas fa-times"></i></button></div>
+             </div>
+             <div class="user-item">
+                  <div class="user-avatar" style="font-size: 20px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-mobile-alt"></i></div>
+                  <div class="user-info">
+                     <div class="user-name">App Mobile (iOS)</div>
+                     <div class="user-role">Roma, Italia • 2 ore fa</div>
+                  </div>
+                  <div class="user-actions"><button class="user-action delete" title="Termina sessione" data-session-id="mobile123"><i class="fas fa-times"></i></button></div>
+             </div>
+         `;
+         sessionsList.querySelectorAll('.user-action.delete').forEach(btn => btn.addEventListener('click', handleTerminateSession));
+     }
+
+      // Cronologia Backup: Popola con esempi
+      const backupHistoryList = document.getElementById('backup-history-list');
+      if(backupHistoryList) {
+          backupHistoryList.innerHTML = `
+              <li style="padding: 10px; border-bottom: 1px solid var(--gray-dark); display: flex; justify-content: space-between; align-items: center;">
+                  <span>Backup Manuale - ${new Date(Date.now() - 86400000).toLocaleString('it-IT')}</span>
+                  <button class="btn btn-sm btn-secondary" style="padding: 5px 10px; font-size: 12px;"><i class="fas fa-download"></i> Scarica</button>
+              </li>
+              <li style="padding: 10px; border-bottom: 1px solid var(--gray-dark); display: flex; justify-content: space-between; align-items: center;">
+                  <span>Backup Automatico - ${new Date(Date.now() - 172800000).toLocaleString('it-IT')}</span>
+                  <button class="btn btn-sm btn-secondary" style="padding: 5px 10px; font-size: 12px;"><i class="fas fa-download"></i> Scarica</button>
+              </li>
+          `;
+      }
+
+      // Aggiorna anteprima tema iniziale
+      updateThemePreview('primary'); // Colore di default
+}
+
+// --- Funzioni HTML Helper ---
+function createScheduleDayHTML(dayName, isChecked, timeSlots = []) {
+    const dayId = dayName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Rimuovi accenti per ID
+    return `
+        <div class="schedule-day" data-day="${dayId}">
+            <div class="day-toggle">
+                <label class="switch">
+                    <input type="checkbox" ${isChecked ? 'checked' : ''} data-day-toggle="${dayId}">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
+            <div class="day-name">${dayName}</div>
+            <div class="day-hours" ${!isChecked ? 'style="display: none;"' : ''}>
+                ${timeSlots.map(slot => createTimeSlotHTML(slot.start, slot.end)).join('')}
+                <button class="add-hours-btn"> <i class="fas fa-plus-circle"></i> Aggiungi </button>
+            </div>
+        </div>`;
+}
+
+function createTimeSlotHTML(startTime = '09:00', endTime = '17:00') {
+    return `
+        <div class="time-slot">
+            <input type="time" class="form-input time-input" value="${startTime}">
+            <span>-</span>
+            <input type="time" class="form-input time-input" value="${endTime}">
+            <button class="remove-hours-btn" title="Rimuovi fascia oraria"> <i class="fas fa-times"></i> </button>
+        </div>`;
+}
+
+function createUserItemHTML(id, name, role, avatarName) {
+     const avatarUrl = getAvatarUrl(avatarName || name, 50);
+     return `
+         <div class="user-item" data-user-id="${id}">
+             <div class="user-avatar"> <img src="${avatarUrl}" alt="${name}" onerror="this.onerror=null; this.src=getAvatarUrl('??', 50);"> </div>
+             <div class="user-info">
+                 <div class="user-name">${name}</div>
+                 <div class="user-role">${role}</div>
+             </div>
+             <div class="user-actions">
+                 <button class="user-action edit" title="Modifica utente"> <i class="fas fa-edit"></i> </button>
+                 ${role.includes('Capo') ? '' : '<button class="user-action delete" title="Elimina utente"> <i class="fas fa-trash-alt"></i> </button>'}
+             </div>
+         </div>`;
+}
+
+// --- Gestione Interazioni Form ---
+function setupFormInteractions() {
+    // Date/Time Pickers
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr('input[type="date"]', { dateFormat: "Y-m-d", locale: { firstDayOfWeek: 1 }});
+        // Defer time picker initialization until needed
+    } else {
+         console.warn("Flatpickr non caricato.");
+     }
+
+     // Inizializza Color Picker
+     const colorOptionsList = document.getElementById('color-options-list');
+     if (colorOptionsList) {
+         colorOptionsList.addEventListener('click', (e) => {
+             const colorOption = e.target.closest('.color-option');
+             if (colorOption) {
+                 colorOptionsList.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                 colorOption.classList.add('selected');
+                 updateThemePreview(colorOption.dataset.color);
+                 
+                 // Debug per verificare la selezione del colore
+                 console.log(`Colore tema selezionato: ${colorOption.dataset.color}`);
+             }
+         });
+     }
+
+    // Inizializza Payment Methods Toggle
+    const paymentMethodsList = document.getElementById('payment-methods-list');
+    if (paymentMethodsList) {
+        paymentMethodsList.addEventListener('click', (e) => {
+            const method = e.target.closest('.payment-method');
+            if (method) {
+                method.classList.toggle('active');
+                const isActive = method.classList.contains('active');
+                 showToast('Info', `Metodo ${method.dataset.method} ${isActive ? 'attivato' : 'disattivato'}`, 'info');
+            }
+        });
+    }
+
+    // Inizializza File Upload (solo preview)
+    document.querySelectorAll('.upload-input').forEach(input => {
+        input.addEventListener('change', handleFileUpload);
+    });
+
+     // Listener per bottoni Aggiungi/Rimuovi Ore (delegato)
+     const scheduleContainer = document.getElementById('schedule-list');
+     if (scheduleContainer) {
+         scheduleContainer.addEventListener('click', (e) => {
+             if (e.target.closest('.add-hours-btn')) {
+                 handleAddHours(e);
+             } else if (e.target.closest('.remove-hours-btn')) {
+                 handleRemoveHours(e);
+             }
+         });
+         scheduleContainer.addEventListener('change', (e) => {
+             if (e.target.matches('.day-toggle input[type="checkbox"]')) {
+                 handleDayToggle(e);
+             }
+         });
+     }
+
+     // Listener per bottoni Azioni Utente (delegato)
+     const userListContainer = document.getElementById('user-list-container');
+     if (userListContainer) {
+         userListContainer.addEventListener('click', (e) => {
+             if (e.target.closest('.user-action.edit')) {
+                 handleEditUser(e);
+             } else if (e.target.closest('.user-action.delete')) {
+                 handleDeleteUser(e);
+             }
+         });
+     }
+     const addUserBtn = document.getElementById('add-user-btn');
+     if(addUserBtn) addUserBtn.addEventListener('click', handleAddUser);
+
+      // Listener per Password Strength
+     const newPassInput = document.getElementById('new-password');
+     if(newPassInput) newPassInput.addEventListener('input', updatePasswordStrength);
+
+     // Listener per Azioni Sicurezza
+     const terminateAllBtn = document.getElementById('terminate-all-sessions-btn');
+     if(terminateAllBtn) terminateAllBtn.addEventListener('click', handleTerminateAllSessions);
+     const activeSessionsList = document.getElementById('active-sessions-list');
+     if(activeSessionsList) activeSessionsList.addEventListener('click', (e) => { if(e.target.closest('.user-action.delete')) handleTerminateSession(e); });
+
+      // Listener App Mobile
+      const sendPromoBtn = document.getElementById('send-promo-btn');
+      if(sendPromoBtn) sendPromoBtn.addEventListener('click', handleSendPromoMessage);
+
+      // Listener Integrazioni
+      const integrationsSection = document.getElementById('integrations-section');
+      if(integrationsSection) {
+          integrationsSection.addEventListener('click', (e) => {
+              if(e.target.classList.contains('connect-integration-btn')) handleConnectIntegration(e);
+              if(e.target.classList.contains('disconnect-integration-btn')) handleDisconnectIntegration(e);
+          });
+          const addWebhookBtn = document.getElementById('add-webhook-btn');
+          if(addWebhookBtn) addWebhookBtn.addEventListener('click', handleAddWebhook);
+      }
+
+       // Listener Backup & Restore
+       const manualBackupBtn = document.getElementById('manual-backup-btn');
+       if(manualBackupBtn) manualBackupBtn.addEventListener('click', handleManualBackup);
+       const restoreBtn = document.getElementById('restore-backup-btn');
+       if(restoreBtn) restoreBtn.addEventListener('click', () => document.getElementById('restore-file-input').click());
+       const restoreFileInput = document.getElementById('restore-file-input');
+       if(restoreFileInput) restoreFileInput.addEventListener('change', handleRestoreFromFile);
+
+       // Listener Avanzate
+       const clearCacheBtn = document.getElementById('clear-cache-btn');
+       if(clearCacheBtn) clearCacheBtn.addEventListener('click', handleClearCache);
+       const maintenanceToggle = document.getElementById('maintenance-mode-toggle');
+       if(maintenanceToggle) maintenanceToggle.addEventListener('change', handleMaintenanceToggle);
+       const regenApiKeyBtn = document.getElementById('regenerate-api-key-btn');
+       if(regenApiKeyBtn) regenApiKeyBtn.addEventListener('click', handleRegenerateApiKey);
+       const factoryResetBtn = document.getElementById('factory-reset-btn');
+       if(factoryResetBtn) factoryResetBtn.addEventListener('click', handleFactoryReset);
+
+    // Listener Generico per Bottoni Salva/Ripristina
+    document.querySelectorAll('.btn-save').forEach(btn => btn.addEventListener('click', handleSaveSection));
+    document.querySelectorAll('.btn-reset').forEach(btn => btn.addEventListener('click', handleResetSection));
+}
+
+// Inizializza Flatpickr su un set di elementi
+function initializeTimePickers(container) {
+     if (typeof flatpickr !== 'undefined') {
+         container.querySelectorAll('input[type="time"]').forEach(input => {
+             flatpickr(input, { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+         });
+     }
+}
+
+// --- Gestori Eventi Specifici ---
+function handleFileUpload(event) {
+    const input = event.target;
+    const previewContainer = input.closest('.upload-container')?.querySelector('.preview-container');
+    if (!previewContainer) return;
+
+    // Limita anteprime (es. max 1 per logo, 5 per immagini locale)
+    const maxPreviews = input.multiple ? 5 : 1;
+    if (!input.multiple) {
+         previewContainer.innerHTML = ''; // Rimuovi vecchie anteprime per upload singolo
+     }
+
+    if (input.files) {
+        Array.from(input.files).slice(0, maxPreviews - previewContainer.children.length).forEach(file => {
+            if (file.size > (input.multiple ? 5 * 1024 * 1024 : 2 * 1024 * 1024)) {
+                 showToast('Errore Upload', `Il file ${file.name} è troppo grande.`, 'error');
                  return;
              }
-             if (confirm(`Terminare la sessione ${sessionId}? L'utente dovrà effettuare nuovamente il login su quel dispositivo.`)) {
-                 // Simula terminazione
-                 sessionItem.style.opacity = '0';
-                 setTimeout(() => sessionItem.remove(), 300);
-                 showToast('Successo', `Sessione ${sessionId} terminata (simulato).`, 'success');
-             }
-         }
-
-        function handleTerminateAllSessions() {
-             if (confirm('Sei sicuro di voler terminare tutte le altre sessioni attive? Dovrai effettuare nuovamente il login su tutti gli altri dispositivi.')) {
-                  // Simula terminazione
-                 document.querySelectorAll('#active-sessions-list .user-item').forEach(item => {
-                     const btn = item.querySelector('.user-action.delete');
-                     if (btn && btn.dataset.sessionId !== 'current') {
-                          item.style.opacity = '0';
-                          setTimeout(() => item.remove(), 300);
-                      }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `<img src="${e.target.result}" alt="Preview ${file.name}" class="preview-image"><button class="preview-remove" title="Rimuovi">&times;</button>`;
+                previewContainer.appendChild(previewItem);
+                previewItem.querySelector('.preview-remove').addEventListener('click', () => {
+                     previewItem.remove();
+                     // Se era upload singolo, potremmo voler resettare l'input file qui
+                     // input.value = ''; // Attenzione: questo resetta TUTTI i file selezionati
                  });
-                 showToast('Successo', 'Tutte le altre sessioni terminate (simulato).', 'success');
+            }
+            reader.readAsDataURL(file);
+        });
+        if (input.files.length > maxPreviews) {
+             showToast('Attenzione', `Mostrate solo le prime ${maxPreviews} immagini.`, 'warning');
+         }
+    }
+     // Reset dell'input per permettere di caricare lo stesso file di nuovo
+    input.value = '';
+}
+
+function handleAddHours(event) {
+     const dayHoursContainer = event.target.closest('.day-hours');
+     if (!dayHoursContainer) return;
+     const newSlotHTML = createTimeSlotHTML(); // Crea HTML nuovo slot
+     const newSlotElement = document.createElement('div'); // Contenitore temporaneo
+     newSlotElement.innerHTML = newSlotHTML;
+     const timeSlotDiv = newSlotElement.firstElementChild; // Prendi il div time-slot
+
+     // Inserisci prima del bottone "+"
+     dayHoursContainer.insertBefore(timeSlotDiv, event.target.closest('.add-hours-btn'));
+
+     // Inizializza Flatpickr sui nuovi input
+     initializeTimePickers(timeSlotDiv);
+
+     // Aggiungi listener al nuovo bottone "x"
+     timeSlotDiv.querySelector('.remove-hours-btn').addEventListener('click', handleRemoveHours);
+     showToast('Info', 'Fascia oraria aggiunta.', 'info');
+}
+
+function handleRemoveHours(event) {
+    const timeSlot = event.target.closest('.time-slot');
+    if (timeSlot) {
+        timeSlot.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        timeSlot.style.opacity = '0';
+        timeSlot.style.transform = 'scale(0.9)';
+        setTimeout(() => timeSlot.remove(), 300);
+        showToast('Info', 'Fascia oraria rimossa.', 'info');
+    }
+}
+
+function handleDayToggle(event) {
+    const checkbox = event.target;
+    const dayContainer = checkbox.closest('.schedule-day');
+    const hoursContainer = dayContainer?.querySelector('.day-hours');
+    if (hoursContainer) {
+        hoursContainer.style.display = checkbox.checked ? 'flex' : 'none';
+         showToast('Info', `Orari ${dayContainer.dataset.day} ${checkbox.checked ? 'abilitati' : 'disabilitati'}`, 'info');
+    }
+}
+
+// Helper per generare ID univoci (per nuovi utenti, ecc.)
+function generateNewId() {
+    return Date.now() + Math.floor(Math.random() * 1000);
+}
+
+function handleAddUser() {
+     // In un'app reale, aprirebbe un modal
+     const newName = prompt("Inserisci nome nuovo utente:");
+     const newRole = prompt("Inserisci ruolo (es. Manager, Cassiere):");
+     if (newName && newRole) {
+          const newUser = {
+              id: generateNewId(), // Dovresti avere una funzione per ID univoci
+              name: newName,
+              role: newRole,
+              avatarName: newName.split(' ').map(n => n[0]).join('') // Iniziali
+          };
+          const userListContainer = document.getElementById('user-list-container');
+          const newItemHTML = createUserItemHTML(newUser.id, newUser.name, newUser.role, newUser.avatarName);
+          userListContainer.insertAdjacentHTML('beforeend', newItemHTML);
+          // Aggiungi listener ai bottoni del nuovo utente
+          const newItemElement = userListContainer.lastElementChild;
+          newItemElement.querySelector('.user-action.edit').addEventListener('click', handleEditUser);
+          newItemElement.querySelector('.user-action.delete').addEventListener('click', handleDeleteUser);
+
+          showToast('Successo', `Utente ${newName} aggiunto (simulato).`, 'success');
+     } else {
+          showToast('Info', 'Aggiunta utente annullata.', 'info');
+      }
+}
+
+function handleEditUser(event) {
+    const userItem = event.target.closest('.user-item');
+    const userId = userItem.dataset.userId;
+    const userName = userItem.querySelector('.user-name').textContent;
+    // In un'app reale, aprirebbe un modal di modifica
+     const updatedName = prompt(`Modifica nome per ${userName}:`, userName);
+     if(updatedName && updatedName !== userName) {
+         userItem.querySelector('.user-name').textContent = updatedName;
+         // Aggiorna anche l'avatar se basato sul nome
+         const avatarImg = userItem.querySelector('.user-avatar img');
+         if(avatarImg) avatarImg.src = getAvatarUrl(updatedName, 50);
+         showToast('Successo', `Nome utente ${userId} aggiornato (simulato).`, 'success');
+      } else if (updatedName !== null) {
+          showToast('Info', 'Nessuna modifica apportata.', 'info');
+      }
+}
+
+function handleDeleteUser(event) {
+     const userItem = event.target.closest('.user-item');
+     const userId = userItem.dataset.userId;
+     const userName = userItem.querySelector('.user-name').textContent;
+     if (confirm(`Sei sicuro di voler eliminare l'utente ${userName}?`)) {
+         userItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+         userItem.style.opacity = '0';
+         userItem.style.transform = 'translateX(-20px)';
+         setTimeout(() => {
+             userItem.remove();
+             showToast('Successo', `Utente ${userName} eliminato (simulato).`, 'success');
+         }, 300);
+     }
+}
+
+function updatePasswordStrength() {
+     const password = document.getElementById('new-password').value;
+     const strengthBar = document.getElementById('password-strength-bar');
+     let score = 0;
+     if (password.length >= 8) score++;
+     if (password.match(/[A-Z]/)) score++;
+     if (password.match(/[a-z]/)) score++;
+     if (password.match(/[0-9]/)) score++;
+     if (password.match(/[^A-Za-z0-9]/)) score++;
+
+     strengthBar.className = 'password-strength-bar'; // Reset class
+     if (score <= 2) strengthBar.classList.add('weak');
+     else if (score <= 4) strengthBar.classList.add('medium');
+     else strengthBar.classList.add('strong');
+}
+
+function handleTerminateSession(event) {
+     const sessionItem = event.target.closest('.user-item');
+     const sessionId = event.target.closest('.user-action.delete').dataset.sessionId;
+     if (sessionId === 'current') {
+         showToast('Info', 'Non puoi terminare la sessione corrente da qui.', 'info');
+         return;
+     }
+     if (confirm(`Terminare la sessione ${sessionId}? L'utente dovrà effettuare nuovamente il login su quel dispositivo.`)) {
+         // Simula terminazione
+         sessionItem.style.opacity = '0';
+         setTimeout(() => sessionItem.remove(), 300);
+         showToast('Successo', `Sessione ${sessionId} terminata (simulato).`, 'success');
+     }
+}
+
+function handleTerminateAllSessions() {
+     if (confirm('Sei sicuro di voler terminare tutte le altre sessioni attive? Dovrai effettuare nuovamente il login su tutti gli altri dispositivi.')) {
+          // Simula terminazione
+         document.querySelectorAll('#active-sessions-list .user-item').forEach(item => {
+             const btn = item.querySelector('.user-action.delete');
+             if (btn && btn.dataset.sessionId !== 'current') {
+                  item.style.opacity = '0';
+                  setTimeout(() => item.remove(), 300);
               }
+         });
+         showToast('Successo', 'Tutte le altre sessioni terminate (simulato).', 'success');
+      }
+}
+
+function handleSendPromoMessage() {
+     const message = document.getElementById('mobile-promo-msg').value;
+     if (message.trim()) {
+         showToast('Successo', `Messaggio promozionale "${message}" inviato (simulato).`, 'success');
+         document.getElementById('mobile-promo-msg').value = ''; // Clear input
+     } else {
+          showToast('Errore', 'Inserisci un messaggio promozionale.', 'error');
+      }
+}
+
+function handleConnectIntegration(event) {
+    const button = event.target;
+    const item = button.closest('.integration-item');
+    const serviceName = button.dataset.service;
+    const statusDiv = item.querySelector('.integration-status');
+
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connessione...';
+    button.disabled = true;
+
+     // Simula connessione API
+    setTimeout(() => {
+         button.innerHTML = '<i class="fas fa-times"></i> Disconnetti';
+         button.classList.remove('btn-primary', 'connect-integration-btn');
+         button.classList.add('btn-danger', 'disconnect-integration-btn');
+         button.disabled = false;
+         statusDiv.textContent = 'Connesso';
+         statusDiv.className = 'integration-status connected';
+         showToast('Successo', `Integrazione ${serviceName} connessa (simulato).`, 'success');
+     }, 1500);
+}
+
+function handleDisconnectIntegration(event) {
+    const button = event.target;
+    const item = button.closest('.integration-item');
+    const serviceName = button.dataset.service;
+    const statusDiv = item.querySelector('.integration-status');
+
+     if (confirm(`Sei sicuro di voler disconnettere l'integrazione ${serviceName}?`)) {
+         button.innerHTML = '<i class="fas fa-link"></i> Connetti';
+         button.classList.remove('btn-danger', 'disconnect-integration-btn');
+         button.classList.add('btn-primary', 'connect-integration-btn');
+         statusDiv.textContent = 'Non connesso';
+         statusDiv.className = 'integration-status disconnected';
+         showToast('Info', `Integrazione ${serviceName} disconnessa (simulato).`, 'info');
+     }
+}
+
+function handleAddWebhook() {
+     const url = document.getElementById('webhook-url').value;
+     if (url && url.startsWith('http')) {
+          showToast('Successo', `Webhook aggiunto per l'URL: ${url} (simulato).`, 'success');
+          document.getElementById('webhook-url').value = '';
+          // Qui potresti aggiungere l'URL a una lista visibile
+      } else {
+           showToast('Errore', 'Inserisci un URL valido per il webhook.', 'error');
+       }
+}
+
+function handleManualBackup() {
+     const btn = document.getElementById('manual-backup-btn');
+     const progressContainer = document.getElementById('manual-backup-progress-container');
+     const progressBar = document.getElementById('manual-backup-progress-bar');
+
+     btn.disabled = true;
+     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Backup in corso...';
+     progressContainer.style.display = 'block';
+     progressBar.style.width = '0%';
+
+     // Simula progresso backup
+     let progress = 0;
+     const interval = setInterval(() => {
+         progress += Math.random() * 15;
+         if (progress >= 100) {
+             progress = 100;
+             clearInterval(interval);
+             setTimeout(() => {
+                 btn.disabled = false;
+                 btn.innerHTML = '<i class="fas fa-download"></i> Esegui Backup Ora';
+                 progressContainer.style.display = 'none';
+                 showToast('Successo', 'Backup manuale completato con successo (simulato).', 'success');
+                 // Aggiungi alla cronologia (simulato)
+                 const historyList = document.getElementById('backup-history-list');
+                  if (historyList) {
+                      const firstItem = historyList.querySelector('li');
+                      if(firstItem && firstItem.textContent.includes('Nessun backup')) firstItem.remove(); // Rimuovi placeholder
+                      const newItem = document.createElement('li');
+                      newItem.style.cssText = "padding: 10px; border-bottom: 1px solid var(--gray-dark); display: flex; justify-content: space-between; align-items: center;";
+                      newItem.innerHTML = `<span>Backup Manuale - ${new Date().toLocaleString('it-IT')}</span><button class="btn btn-sm btn-secondary" style="padding: 5px 10px; font-size: 12px;"><i class="fas fa-download"></i> Scarica</button>`;
+                      historyList.prepend(newItem); // Aggiungi in cima
+                   }
+             }, 500);
          }
+         progressBar.style.width = `${progress}%`;
+     }, 300);
+}
 
-        function handleSendPromoMessage() {
-             const message = document.getElementById('mobile-promo-msg').value;
-             if (message.trim()) {
-                 showToast('Successo', `Messaggio promozionale "${message}" inviato (simulato).`, 'success');
-                 document.getElementById('mobile-promo-msg').value = ''; // Clear input
-             } else {
-                  showToast('Errore', 'Inserisci un messaggio promozionale.', 'error');
-              }
-         }
+function handleRestoreFromFile(event) {
+     const file = event.target.files[0];
+     const btn = document.getElementById('restore-backup-btn');
+     const progressContainer = document.getElementById('restore-backup-progress-container');
+     const progressBar = document.getElementById('restore-backup-progress-bar');
 
-        function handleConnectIntegration(event) {
-            const button = event.target;
-            const item = button.closest('.integration-item');
-            const serviceName = button.dataset.service;
-            const statusDiv = item.querySelector('.integration-status');
+     if (file) {
+          if (confirm(`Sei sicuro di voler ripristinare i dati dal file "${file.name}"? L'operazione sovrascriverà i dati attuali.`)) {
+              btn.disabled = true;
+              btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ripristino...';
+              progressContainer.style.display = 'block';
+              progressBar.style.width = '0%';
 
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connessione...';
-            button.disabled = true;
-
-             // Simula connessione API
-            setTimeout(() => {
-                 button.innerHTML = '<i class="fas fa-times"></i> Disconnetti';
-                 button.classList.remove('btn-primary', 'connect-integration-btn');
-                 button.classList.add('btn-danger', 'disconnect-integration-btn');
-                 button.disabled = false;
-                 statusDiv.textContent = 'Connesso';
-                 statusDiv.className = 'integration-status connected';
-                 showToast('Successo', `Integrazione ${serviceName} connessa (simulato).`, 'success');
-             }, 1500);
-        }
-
-        function handleDisconnectIntegration(event) {
-            const button = event.target;
-            const item = button.closest('.integration-item');
-            const serviceName = button.dataset.service;
-            const statusDiv = item.querySelector('.integration-status');
-
-             if (confirm(`Sei sicuro di voler disconnettere l'integrazione ${serviceName}?`)) {
-                 button.innerHTML = '<i class="fas fa-link"></i> Connetti';
-                 button.classList.remove('btn-danger', 'disconnect-integration-btn');
-                 button.classList.add('btn-primary', 'connect-integration-btn');
-                 statusDiv.textContent = 'Non connesso';
-                 statusDiv.className = 'integration-status disconnected';
-                 showToast('Info', `Integrazione ${serviceName} disconnessa (simulato).`, 'info');
-             }
-        }
-
-        function handleAddWebhook() {
-             const url = document.getElementById('webhook-url').value;
-             if (url && url.startsWith('http')) {
-                  showToast('Successo', `Webhook aggiunto per l'URL: ${url} (simulato).`, 'success');
-                  document.getElementById('webhook-url').value = '';
-                  // Qui potresti aggiungere l'URL a una lista visibile
-              } else {
-                   showToast('Errore', 'Inserisci un URL valido per il webhook.', 'error');
-               }
-        }
-
-         function handleManualBackup() {
-             const btn = document.getElementById('manual-backup-btn');
-             const progressContainer = document.getElementById('manual-backup-progress-container');
-             const progressBar = document.getElementById('manual-backup-progress-bar');
-
-             btn.disabled = true;
-             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Backup in corso...';
-             progressContainer.style.display = 'block';
-             progressBar.style.width = '0%';
-
-             // Simula progresso backup
-             let progress = 0;
-             const interval = setInterval(() => {
-                 progress += Math.random() * 15;
-                 if (progress >= 100) {
-                     progress = 100;
-                     clearInterval(interval);
-                     setTimeout(() => {
-                         btn.disabled = false;
-                         btn.innerHTML = '<i class="fas fa-download"></i> Esegui Backup Ora';
-                         progressContainer.style.display = 'none';
-                         showToast('Successo', 'Backup manuale completato con successo (simulato).', 'success');
-                         // Aggiungi alla cronologia (simulato)
-                         const historyList = document.getElementById('backup-history-list');
-                          if (historyList) {
-                              const firstItem = historyList.querySelector('li');
-                              if(firstItem && firstItem.textContent.includes('Nessun backup')) firstItem.remove(); // Rimuovi placeholder
-                              const newItem = document.createElement('li');
-                              newItem.style.cssText = "padding: 10px; border-bottom: 1px solid var(--gray-dark); display: flex; justify-content: space-between; align-items: center;";
-                              newItem.innerHTML = `<span>Backup Manuale - ${new Date().toLocaleString('it-IT')}</span><button class="btn btn-sm btn-secondary" style="padding: 5px 10px; font-size: 12px;"><i class="fas fa-download"></i> Scarica</button>`;
-                              historyList.prepend(newItem); // Aggiungi in cima
-                           }
-                     }, 500);
-                 }
-                 progressBar.style.width = `${progress}%`;
-             }, 300);
-         }
-
-        function handleRestoreFromFile(event) {
-             const file = event.target.files[0];
-             const btn = document.getElementById('restore-backup-btn');
-             const progressContainer = document.getElementById('restore-backup-progress-container');
-             const progressBar = document.getElementById('restore-backup-progress-bar');
-
-             if (file) {
-                  if (confirm(`Sei sicuro di voler ripristinare i dati dal file "${file.name}"? L'operazione sovrascriverà i dati attuali.`)) {
-                      btn.disabled = true;
-                      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ripristino...';
-                      progressContainer.style.display = 'block';
-                      progressBar.style.width = '0%';
-
-                      // Simula progresso ripristino
-                      let progress = 0;
-                      const interval = setInterval(() => {
-                          progress += Math.random() * 20;
-                          if (progress >= 100) {
-                              progress = 100;
-                              clearInterval(interval);
-                              setTimeout(() => {
-                                   btn.disabled = false;
-                                   btn.innerHTML = '<i class="fas fa-upload"></i> Seleziona File e Ripristina';
-                                   progressContainer.style.display = 'none';
-                                   showToast('Successo', `Ripristino dal file ${file.name} completato (simulato).`, 'success');
-                                   // Potrebbe essere necessario ricaricare la pagina o i dati
-                               }, 500);
-                          }
-                          progressBar.style.width = `${progress}%`;
-                      }, 250);
+              // Simula progresso ripristino
+              let progress = 0;
+              const interval = setInterval(() => {
+                  progress += Math.random() * 20;
+                  if (progress >= 100) {
+                      progress = 100;
+                      clearInterval(interval);
+                      setTimeout(() => {
+                           btn.disabled = false;
+                           btn.innerHTML = '<i class="fas fa-upload"></i> Seleziona File e Ripristina';
+                           progressContainer.style.display = 'none';
+                           showToast('Successo', `Ripristino dal file ${file.name} completato (simulato).`, 'success');
+                           // Potrebbe essere necessario ricaricare la pagina o i dati
+                       }, 500);
                   }
-              }
-              // Resetta l'input file per permettere di selezionare lo stesso file di nuovo
-              event.target.value = '';
+                  progressBar.style.width = `${progress}%`;
+              }, 250);
           }
+      }
+      // Resetta l'input file per permettere di selezionare lo stesso file di nuovo
+      event.target.value = '';
+}
 
-          function handleClearCache() {
-              if (confirm('Sei sicuro di voler svuotare la cache di sistema? Potrebbe essere necessario ricaricare la pagina.')) {
-                   showToast('Successo', 'Cache di sistema svuotata (simulato).', 'success');
-                   // Qui potresti inviare una richiesta al backend per pulire la cache lato server
-               }
-          }
+function handleClearCache() {
+      if (confirm('Sei sicuro di voler svuotare la cache di sistema? Potrebbe essere necessario ricaricare la pagina.')) {
+           showToast('Successo', 'Cache di sistema svuotata (simulato).', 'success');
+           // Qui potresti inviare una richiesta al backend per pulire la cache lato server
+       }
+}
 
-          function handleMaintenanceToggle(event) {
-              const isActive = event.target.checked;
-              const messageBox = document.getElementById('maintenance-message');
-              if(messageBox) messageBox.style.display = isActive ? 'block' : 'none';
-              showToast('Info', `Modalità manutenzione ${isActive ? 'ATTIVATA' : 'DISATTIVATA'} (simulato).`, isActive ? 'warning' : 'info');
-              // Invia stato al backend
-          }
+function handleMaintenanceToggle(event) {
+      const isActive = event.target.checked;
+      const messageBox = document.getElementById('maintenance-message');
+      if(messageBox) messageBox.style.display = isActive ? 'block' : 'none';
+      showToast('Info', `Modalità manutenzione ${isActive ? 'ATTIVATA' : 'DISATTIVATA'} (simulato).`, isActive ? 'warning' : 'info');
+      // Invia stato al backend
+}
 
-         function handleRegenerateApiKey() {
-              if (confirm('Sei sicuro di voler rigenerare la chiave API? La vecchia chiave smetterà immediatamente di funzionare.')) {
-                   // Simula rigenerazione
-                   const newKey = 'yb_api_' + Math.random().toString(36).substring(2) + '••••••••••';
-                   document.getElementById('yourbite-api-key').value = newKey;
-                   showToast('Successo', 'Nuova chiave API generata (simulato). Ricorda di aggiornare le tue integrazioni.', 'success');
-                   // Invia richiesta al backend per rigenerare e salvare la nuova chiave
-               }
-         }
+function handleRegenerateApiKey() {
+      if (confirm('Sei sicuro di voler rigenerare la chiave API? La vecchia chiave smetterà immediatamente di funzionare.')) {
+           // Simula rigenerazione
+           const newKey = 'yb_api_' + Math.random().toString(36).substring(2) + '••••••••••';
+           document.getElementById('yourbite-api-key').value = newKey;
+           showToast('Successo', 'Nuova chiave API generata (simulato). Ricorda di aggiornare le tue integrazioni.', 'success');
+           // Invia richiesta al backend per rigenerare e salvare la nuova chiave
+       }
+}
 
-        function handleFactoryReset() {
-             if (prompt("Azione pericolosa! Digita 'RESET' per confermare il ripristino delle impostazioni di fabbrica (i dati NON verranno toccati).") === 'RESET') {
-                  showToast('Successo', 'Impostazioni ripristinate ai valori di fabbrica (simulato).', 'success');
-                  // Invia richiesta al backend
-                  // Potrebbe essere utile ricaricare la pagina dopo questa operazione
-                  // setTimeout(() => window.location.reload(), 1500);
-              } else {
-                   showToast('Info', 'Reset impostazioni annullato.', 'info');
-               }
-         }
+function handleFactoryReset() {
+     if (prompt("Azione pericolosa! Digita 'RESET' per confermare il ripristino delle impostazioni di fabbrica (i dati NON verranno toccati).") === 'RESET') {
+          showToast('Successo', 'Impostazioni ripristinate ai valori di fabbrica (simulato).', 'success');
+          // Invia richiesta al backend
+          // Potrebbe essere utile ricaricare la pagina dopo questa operazione
+          // setTimeout(() => window.location.reload(), 1500);
+      } else {
+           showToast('Info', 'Reset impostazioni annullato.', 'info');
+       }
+}
 
+// Questa è la versione corretta della funzione handleSaveSection
+function handleSaveSection(event) {
+    const button = event.currentTarget;
+    const sectionId = button.dataset.section;
+    console.log(`Tentativo di salvare sezione: ${sectionId}`);
+    
+    const sectionElement = document.getElementById(`${sectionId}-section`);
+    if (!sectionElement) {
+        console.error(`Sezione ${sectionId} non trovata`);
+        return;
+    }
 
-        // --- Funzioni Generiche Save/Reset ---
-        function handleSaveSection(event) {
-            const button = event.target.closest('.btn-save');
-            const sectionId = button.dataset.section;
-            const sectionElement = document.getElementById(`${sectionId}-section`);
-            if (!sectionElement) return;
+    // Simula salvataggio
+    const originalHtml = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvo...`;
 
-            // Simula salvataggio
-            const originalHtml = button.innerHTML;
-            button.disabled = true;
-            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Salvo...`;
-
-             console.log(`Simulazione salvataggio per la sezione: ${sectionId}`);
-             // Qui raccoglieresti i dati dalla sezione specifica
-             // const formData = gatherSectionData(sectionElement);
-             // console.log("Dati raccolti:", formData);
-             // E invieresti i dati al backend con fetch(...)
-
-            setTimeout(() => {
-                button.disabled = false;
-                button.innerHTML = originalHtml;
-                showToast('Successo', `Impostazioni ${getSectionName(sectionId)} salvate (simulato).`, 'success');
-            }, 1200);
+    // Imposta un timer breve per simulare il caricamento
+    setTimeout(() => {
+        try {
+            // Se è la sezione aspetto, salva effettivamente il tema
+            if (sectionId === 'appearance') {
+                // Ottiene il colore selezionato dal colorOptionsList
+                const selectedOption = document.querySelector('#color-options-list .color-option.selected');
+                if (selectedOption) {
+                    const selectedColor = selectedOption.dataset.color || 'primary';
+                    console.log(`Applicazione tema: ${selectedColor}`);
+                    
+                    // Applica effettivamente il tema
+                    applyTheme(selectedColor);
+                    
+                    showToast('Successo', `Tema "${selectedColor}" applicato e salvato con successo!`, 'success');
+                } else {
+                    console.error('Nessun colore selezionato');
+                    showToast('Errore', 'Nessun colore tema selezionato', 'error');
+                }
+            } else {
+                // Per le altre sezioni, mantiene il comportamento simulato
+                console.log(`Simulazione salvataggio per la sezione: ${sectionId}`);
+                showToast('Successo', `Impostazioni ${getSectionName(sectionId)} salvate.`, 'success');
+            }
+        } catch (error) {
+            console.error('Errore durante il salvataggio:', error);
+            showToast('Errore', `Si è verificato un errore durante il salvataggio: ${error.message}`, 'error');
+        } finally {
+            // Ripristina lo stato del pulsante
+            button.disabled = false;
+            button.innerHTML = originalHtml;
         }
+    }, 800);
+}
 
-        function handleResetSection(event) {
-            const button = event.target.closest('.btn-reset');
-            const sectionId = button.dataset.section;
-            const sectionElement = document.getElementById(`${sectionId}-section`);
-            if (!sectionElement) return;
+function handleResetSection(event) {
+    const button = event.target.closest('.btn-reset');
+    const sectionId = button.dataset.section;
+    const sectionElement = document.getElementById(`${sectionId}-section`);
+    if (!sectionElement) return;
 
-            if (confirm(`Sei sicuro di voler ripristinare le impostazioni predefinite per la sezione ${getSectionName(sectionId)}? Le modifiche non salvate andranno perse.`)) {
-                 console.log(`Simulazione reset per la sezione: ${sectionId}`);
-                 // Qui dovresti ricaricare i valori di default per i campi della sezione
-                 // resetSectionFields(sectionElement);
-                 showToast('Info', `Impostazioni ${getSectionName(sectionId)} ripristinate (simulato).`, 'info');
-             }
-        }
+    if (confirm(`Sei sicuro di voler ripristinare le impostazioni predefinite per la sezione ${getSectionName(sectionId)}? Le modifiche non salvate andranno perse.`)) {
+         console.log(`Simulazione reset per la sezione: ${sectionId}`);
+         // Qui dovresti ricaricare i valori di default per i campi della sezione
+         // resetSectionFields(sectionElement);
+         showToast('Info', `Impostazioni ${getSectionName(sectionId)} ripristinate (simulato).`, 'info');
+     }
+}
 
-         // Funzione helper per ottenere nome leggibile sezione
-         function getSectionName(sectionId) {
-             const navItem = document.querySelector(`.settings-nav-item[data-target="${sectionId}"] span`);
-             return navItem ? navItem.textContent : sectionId;
-         }
+// Funzione helper per ottenere nome leggibile sezione
+function getSectionName(sectionId) {
+     const navItem = document.querySelector(`.settings-nav-item[data-target="${sectionId}"] span`);
+     return navItem ? navItem.textContent : sectionId;
+}
 
+// --- Funzione Logout Generica ---
+function handleLogout() {
+     const loadingOverlay = document.createElement('div'); 
+     loadingOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2000;backdrop-filter:blur(5px);'; 
+     
+     const spinnerContainer = document.createElement('div'); 
+     spinnerContainer.style.cssText = 'width:60px;height:60px;position:relative;'; 
+     
+     const spinner = document.createElement('div'); 
+     spinner.style.cssText = 'border:4px solid rgba(0,0,0,0.1);border-top-color:var(--primary);border-radius:50%;width:100%;height:100%;animation:spin 1s linear infinite;'; 
+     
+     const style = document.createElement('style'); 
+     style.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`; 
+     document.head.appendChild(style); 
+     
+     spinnerContainer.appendChild(spinner); 
+     
+     const loadingText = document.createElement('p'); 
+     loadingText.textContent = 'Logout in corso...'; 
+     loadingText.style.cssText = 'margin-top:20px;color:var(--primary);font-weight:500;'; 
+     
+     loadingOverlay.appendChild(spinnerContainer); 
+     loadingOverlay.appendChild(loadingText); 
+     document.body.appendChild(loadingOverlay);
+     
+     fetch('/logout', { method: 'POST' })
+         .then(response => response.ok ? response.json() : Promise.reject(new Error('Logout failed')))
+         .then(() => { 
+             loadingText.textContent = 'Reindirizzamento...'; 
+             setTimeout(() => window.location.href = '/login', 800); 
+         })
+         .catch(error => { 
+             console.error('Logout error:', error); 
+             loadingText.textContent = 'Errore Logout.'; 
+             setTimeout(() => loadingOverlay.remove(), 2000); 
+         });
+}
 
-        // --- Funzione Logout Generica ---
-        function handleLogout() {
-             const loadingOverlay = document.createElement('div'); loadingOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2000;backdrop-filter:blur(5px);'; const spinnerContainer = document.createElement('div'); spinnerContainer.style.cssText = 'width:60px;height:60px;position:relative;'; const spinner = document.createElement('div'); spinner.style.cssText = 'border:4px solid rgba(0,0,0,0.1);border-top-color:var(--primary);border-radius:50%;width:100%;height:100%;animation:spin 1s linear infinite;'; const style = document.createElement('style'); style.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`; document.head.appendChild(style); spinnerContainer.appendChild(spinner); const loadingText = document.createElement('p'); loadingText.textContent = 'Logout in corso...'; loadingText.style.cssText = 'margin-top:20px;color:var(--primary);font-weight:500;'; loadingOverlay.appendChild(spinnerContainer); loadingOverlay.appendChild(loadingText); document.body.appendChild(loadingOverlay);
-             fetch('/logout', { method: 'POST' })
-                 .then(response => response.ok ? response.json() : Promise.reject(new Error('Logout failed')))
-                 .then(() => { loadingText.textContent = 'Reindirizzamento...'; setTimeout(() => window.location.href = '/login', 800); })
-                 .catch(error => { console.error('Logout error:', error); loadingText.textContent = 'Errore Logout.'; setTimeout(() => loadingOverlay.remove(), 2000); });
-         }
+// Aggiungi listener al bottone logout nell'header
+const logoutBtnHeader = document.getElementById('logoutBtnHeader');
+if(logoutBtnHeader) logoutBtnHeader.addEventListener('click', handleLogout);
 
-        // Aggiungi listener al bottone logout nell'header
-        const logoutBtn = document.getElementById('logoutBtnHeader');
-        if(logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+function updateThemePreview(color) {
+    const themeHeader = document.querySelector('.theme-header');
+    const themePreview = document.querySelector('.theme-preview');
+    if (!themeHeader || !themePreview) return;
 
-        // Funzione per aggiornare anteprima tema (con colori di fallback)
-        function updateThemePreview(color) {
-             const themeHeader = document.querySelector('.theme-header');
-             const themePreview = document.querySelector('.theme-preview');
-             if (!themeHeader || !themePreview) return;
+    // Ottieni i colori dal nostro oggetto themeColors
+    const colors = themeColors[color] || themeColors.primary;
+    
+    // Imposta il gradiente nell'anteprima
+    themeHeader.style.background = `linear-gradient(135deg, ${colors['--primary']}, ${colors['--primary-dark']})`;
 
-             let primaryColor, primaryDarkColor;
-             switch (color) {
-                 case 'primary': primaryColor = '#5e60ce'; primaryDarkColor = '#5390d9'; break;
-                 case 'blue': primaryColor = '#3498db'; primaryDarkColor = '#2980b9'; break;
-                 case 'green': primaryColor = '#2ecc71'; primaryDarkColor = '#27ae60'; break;
-                 case 'purple': primaryColor = '#9b59b6'; primaryDarkColor = '#8e44ad'; break;
-                 case 'orange': primaryColor = '#e67e22'; primaryDarkColor = '#d35400'; break;
-                 case 'red': primaryColor = '#e74c3c'; primaryDarkColor = '#c0392b'; break;
-                 default: primaryColor = '#5e60ce'; primaryDarkColor = '#5390d9'; // Default
-             }
+    // Anima la preview
+    themePreview.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    themePreview.style.transform = 'scale(0.97)';
+    themePreview.style.opacity = '0.8';
+    setTimeout(() => {
+        themePreview.style.transform = 'scale(1)';
+        themePreview.style.opacity = '1';
+    }, 100);
+    
+    // Salva il colore selezionato come corrente (ma non lo applica ancora)
+    document.querySelector('.theme-preview').dataset.selectedColor = color;
+}
 
-             themeHeader.style.background = `linear-gradient(135deg, ${primaryColor}, ${primaryDarkColor})`;
-
-              // Anima la preview
-              themePreview.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-              themePreview.style.transform = 'scale(0.97)';
-              themePreview.style.opacity = '0.8';
-              setTimeout(() => {
-                  themePreview.style.transform = 'scale(1)';
-                  themePreview.style.opacity = '1';
-              }, 100);
-         }
-
-    </script>
+function applyTheme(color) {
+    // Ottieni i colori dal nostro oggetto themeColors
+    const colors = themeColors[color] || themeColors.primary;
+    
+    // Applica le variabili CSS al root
+    const root = document.documentElement;
+    Object.keys(colors).forEach(variable => {
+        root.style.setProperty(variable, colors[variable]);
+    });
+    
+    // Salva in localStorage
+    localStorage.setItem('yourbite_theme', color);
+    
+    console.log(`Tema "${color}" applicato a tutta l'interfaccia`);
+}
+</script>
 
 </body>
 </html>
