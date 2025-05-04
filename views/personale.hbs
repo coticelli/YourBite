@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Personale - YourBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -30,7 +32,7 @@
             --gray-dark: #e9ecef;
             --text: #212529;
             --text-light: #6c757d;
-            
+
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -79,6 +81,7 @@
             0% {
                 transform: translateY(0) rotate(0deg);
             }
+
             100% {
                 transform: translateY(-20px) rotate(360deg);
             }
@@ -88,6 +91,7 @@
             0% {
                 opacity: 0.3;
             }
+
             100% {
                 opacity: 0.6;
             }
@@ -222,6 +226,7 @@
             height: 32px;
             border-radius: var(--radius-sm);
             object-fit: cover;
+            background-color: var(--gray-light); /* Background for avatar */
         }
 
         .user-name {
@@ -605,11 +610,18 @@
             gap: 1rem;
             padding: 1.5rem;
         }
+         .no-results {
+            grid-column: 1 / -1; /* Span all columns */
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
 
         .staff-card {
             background: var(--light);
             border-radius: var(--radius);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             transition: var(--transition);
         }
@@ -654,6 +666,7 @@
             margin: 0 auto 15px;
             border: 3px solid var(--light);
             box-shadow: var(--shadow);
+            background-color: var(--gray-light); /* Added background */
         }
 
         .staff-name {
@@ -908,6 +921,7 @@
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
+             background-color: var(--gray-light); /* Added background */
         }
 
         .staff-details-info h3 {
@@ -990,7 +1004,7 @@
             margin-top: 10px;
         }
 
-        .schedule-table th, 
+        .schedule-table th,
         .schedule-table td {
             padding: 8px 10px;
             text-align: left;
@@ -1095,11 +1109,11 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background-color: var(--accent-green);
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             transform: translateX(22px);
         }
 
@@ -1109,6 +1123,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1439,6 +1454,7 @@
             from {
                 transform: translateX(0);
             }
+
             to {
                 transform: translateX(120%);
                 opacity: 0;
@@ -1491,28 +1507,28 @@
             .main-container {
                 padding: 1rem;
             }
-            
+
             .staff-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .details-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .filter-bar {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .calendar-day {
                 font-size: 0.8rem;
             }
-            
+
             .calendar-grid {
                 gap: 2px;
             }
@@ -1524,7 +1540,7 @@
                 align-items: flex-start;
                 gap: 10px;
             }
-            
+
             .section-actions {
                 width: 100%;
                 justify-content: space-between;
@@ -1539,23 +1555,24 @@
             .tabs-nav::-webkit-scrollbar {
                 display: none;
             }
-            
+
             .tab-item {
                 padding: 10px 15px;
                 white-space: nowrap;
             }
-            
+
             .hiring-steps {
                 flex-direction: column;
                 gap: 20px;
             }
-            
+
             .hiring-steps::before {
                 display: none;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Connection status indicator (nascosto come richiesto) -->
     <div class="connection-status" id="connectionStatus" style="display: none;">
@@ -1588,7 +1605,8 @@
                     <span class="notification-badge">3</span>
                 </button>
                 <div class="user-profile" id="userProfileBtn">
-                    <img src="https://source.unsplash.com/random/100x100/?person" alt="User" class="user-avatar">
+                     <!-- Avatar utente (potrebbe usare lo stesso sistema o essere fisso) -->
+                    <img src="https://ui-avatars.com/api/?name=Manager&background=random&color=fff&size=32" alt="User" class="user-avatar">
                     <span class="user-name">Manager</span>
                 </div>
             </div>
@@ -1673,15 +1691,15 @@
             <div class="sidebar-stats">
                 <div class="stat-item">
                     <span class="stat-label">Dipendenti attivi</span>
-                    <span class="stat-value">12</span>
+                    <span class="stat-value" id="activeStaffCount">0</span> <!-- Updated dynamically -->
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">In servizio oggi</span>
-                    <span class="stat-value">8</span>
+                    <span class="stat-value" id="onDutyTodayCount">0</span> <!-- Updated dynamically -->
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Prossime assunzioni</span>
-                    <span class="stat-value">2</span>
+                    <span class="stat-label">Totale Dipendenti</span>
+                    <span class="stat-value" id="totalStaffCount">0</span> <!-- Updated dynamically -->
                 </div>
             </div>
         </aside>
@@ -1697,52 +1715,48 @@
                             <i class="fas fa-users"></i>
                         </div>
                     </div>
-                    <div class="card-value">12</div>
+                    <div class="card-value" id="overviewTotalStaff">0</div>
                     <div class="card-footer">
-                        <i class="fas fa-arrow-up trend-up"></i>
-                        <span class="trend-up">+2 rispetto al mese scorso</span>
+                        <!-- Trend info (statico per ora) -->
                     </div>
                 </div>
 
                 <div class="overview-card">
                     <div class="card-header">
-                        <h3 class="card-title">In servizio oggi</h3>
+                        <h3 class="card-title">In servizio</h3>
                         <div class="card-icon active">
                             <i class="fas fa-user-check"></i>
                         </div>
                     </div>
-                    <div class="card-value">8</div>
-                    <div class="card-footer">
-                        <i class="fas fa-equals"></i>
-                        <span>Come da programma</span>
+                    <div class="card-value" id="overviewOnDuty">0</div>
+                     <div class="card-footer">
+                        <!-- Trend info (statico per ora) -->
                     </div>
                 </div>
 
                 <div class="overview-card">
                     <div class="card-header">
-                        <h3 class="card-title">Ore Lavorate (Mese)</h3>
-                        <div class="card-icon hours">
-                            <i class="fas fa-clock"></i>
+                        <h3 class="card-title">In Pausa</h3>
+                        <div class="card-icon performance"> <!-- Usiamo icona performance per pausa -->
+                           <i class="fas fa-mug-hot"></i>
                         </div>
                     </div>
-                    <div class="card-value">840</div>
-                    <div class="card-footer">
-                        <i class="fas fa-arrow-up trend-up"></i>
-                        <span class="trend-up">+5% rispetto al mese scorso</span>
+                    <div class="card-value" id="overviewOnBreak">0</div>
+                     <div class="card-footer">
+                        <!-- Trend info (statico per ora) -->
                     </div>
                 </div>
 
                 <div class="overview-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Performance Generale</h3>
-                        <div class="card-icon performance">
-                            <i class="fas fa-star"></i>
+                     <div class="card-header">
+                        <h3 class="card-title">Fuori Servizio</h3>
+                        <div class="card-icon hours"> <!-- Usiamo icona hours per offline -->
+                            <i class="fas fa-user-clock"></i>
                         </div>
                     </div>
-                    <div class="card-value">4.7/5</div>
+                    <div class="card-value" id="overviewOffline">0</div>
                     <div class="card-footer">
-                        <i class="fas fa-arrow-up trend-up"></i>
-                        <span class="trend-up">+0.2 rispetto al mese scorso</span>
+                       <!-- Trend info (statico per ora) -->
                     </div>
                 </div>
             </div>
@@ -1771,7 +1785,7 @@
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" class="search-input" id="staffSearch" placeholder="Cerca personale...">
                     </div>
-                    
+
                     <div class="filter-dropdown" id="departmentFilter">
                         <button class="filter-btn">
                             <i class="fas fa-building"></i>
@@ -1787,7 +1801,7 @@
                             <div class="filter-item" data-filter="pulizie">Pulizie</div>
                         </div>
                     </div>
-                    
+
                     <div class="filter-dropdown" id="statusFilter">
                         <button class="filter-btn">
                             <i class="fas fa-circle"></i>
@@ -1801,7 +1815,7 @@
                             <div class="filter-item" data-filter="offline">Fuori servizio</div>
                         </div>
                     </div>
-                    
+
                     <div class="filter-dropdown" id="shiftFilter">
                         <button class="filter-btn">
                             <i class="fas fa-clock"></i>
@@ -1839,19 +1853,19 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label" for="staffName">Nome</label>
-                            <input type="text" class="form-control" id="staffName" placeholder="Nome">
+                            <input type="text" class="form-control" id="staffName" placeholder="Nome" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="staffSurname">Cognome</label>
-                            <input type="text" class="form-control" id="staffSurname" placeholder="Cognome">
+                            <input type="text" class="form-control" id="staffSurname" placeholder="Cognome" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label" for="staffEmail">Email</label>
-                        <input type="email" class="form-control" id="staffEmail" placeholder="email@esempio.com">
+                        <input type="email" class="form-control" id="staffEmail" placeholder="email@esempio.com" required>
                     </div>
-                    
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label" for="staffPhone">Telefono</label>
@@ -1862,11 +1876,11 @@
                             <input type="date" class="form-control" id="staffBirthdate">
                         </div>
                     </div>
-                    
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label" for="staffPosition">Posizione</label>
-                            <select class="form-select" id="staffPosition">
+                            <select class="form-select" id="staffPosition" required>
                                 <option value="">Seleziona posizione</option>
                                 <option value="cuoco">Cuoco</option>
                                 <option value="cameriere">Cameriere</option>
@@ -1878,7 +1892,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="staffDepartment">Reparto</label>
-                            <select class="form-select" id="staffDepartment">
+                            <select class="form-select" id="staffDepartment" required>
                                 <option value="">Seleziona reparto</option>
                                 <option value="cucina">Cucina</option>
                                 <option value="servizio">Servizio</option>
@@ -1888,12 +1902,12 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label" for="staffHireDate">Data di assunzione</label>
                         <input type="date" class="form-control" id="staffHireDate">
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Giorni di disponibilità</label>
                         <div class="switch-container">
@@ -1948,10 +1962,11 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label" for="staffNotes">Note</label>
-                        <textarea class="form-control" id="staffNotes" rows="3" placeholder="Inserisci eventuali note..."></textarea>
+                        <textarea class="form-control" id="staffNotes" rows="3"
+                            placeholder="Inserisci eventuali note..."></textarea>
                     </div>
                 </form>
             </div>
@@ -1973,14 +1988,15 @@
             </div>
             <div class="modal-body">
                 <div class="staff-details-header">
-                                        <img src="" alt="Staff Avatar" class="staff-details-avatar" id="detailsAvatar">
+                     <!-- Immagine generata da UI Avatars -->
+                    <img src="" alt="Staff Avatar" class="staff-details-avatar" id="detailsAvatar">
                     <div class="staff-details-info">
                         <h3 id="detailsName">Nome Dipendente</h3>
                         <p id="detailsPosition">Posizione</p>
                         <span class="staff-details-badge badge-active" id="detailsStatus">In servizio</span>
                     </div>
                 </div>
-                
+
                 <div class="tabs-container">
                     <div class="tabs-nav">
                         <div class="tab-item active" data-tab="info">Informazioni</div>
@@ -1988,7 +2004,7 @@
                         <div class="tab-item" data-tab="performance">Performance</div>
                         <div class="tab-item" data-tab="documents">Documenti</div>
                     </div>
-                    
+
                     <div class="tab-content active" id="tab-info">
                         <div class="staff-details-section">
                             <h4><i class="fas fa-info-circle"></i> Informazioni Personali</h4>
@@ -2011,7 +2027,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="staff-details-section">
                             <h4><i class="fas fa-briefcase"></i> Informazioni Lavorative</h4>
                             <div class="details-grid">
@@ -2033,23 +2049,22 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="staff-details-section">
                             <h4><i class="fas fa-star"></i> Competenze</h4>
                             <div class="skills-container" id="detailsSkills">
+                                <!-- Competenze da popolare dinamicamente -->
                                 <span class="skill-badge">Servizio al tavolo</span>
                                 <span class="skill-badge">Gestione ordini</span>
-                                <span class="skill-badge">Inglese</span>
-                                <span class="skill-badge">Gestione clienti</span>
                             </div>
                         </div>
-                        
+
                         <div class="staff-details-section">
                             <h4><i class="fas fa-sticky-note"></i> Note</h4>
-                            <p id="detailsNotes">Dipendente molto affidabile, con ottime capacità di gestione clienti anche nei momenti di maggior afflusso.</p>
+                            <p id="detailsNotes">Nessuna nota.</p>
                         </div>
                     </div>
-                    
+
                     <div class="tab-content" id="tab-schedule">
                         <div class="staff-details-section">
                             <h4><i class="fas fa-calendar-week"></i> Turni Settimanali</h4>
@@ -2063,52 +2078,12 @@
                                     </tr>
                                 </thead>
                                 <tbody id="scheduleTableBody">
-                                    <tr>
-                                        <td>Lunedì</td>
-                                        <td>10:00 - 18:00</td>
-                                        <td>Servizio</td>
-                                        <td>Turno diurno</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Martedì</td>
-                                        <td>10:00 - 18:00</td>
-                                        <td>Servizio</td>
-                                        <td>Turno diurno</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mercoledì</td>
-                                        <td>18:00 - 02:00</td>
-                                        <td>Servizio</td>
-                                        <td>Turno serale</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Giovedì</td>
-                                        <td>18:00 - 02:00</td>
-                                        <td>Servizio</td>
-                                        <td>Turno serale</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Venerdì</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>Riposo</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sabato</td>
-                                        <td>16:00 - 00:00</td>
-                                        <td>Cassa</td>
-                                        <td>Turno serale</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Domenica</td>
-                                        <td>--</td>
-                                        <td>--</td>
-                                        <td>Riposo</td>
-                                    </tr>
+                                    <!-- Righe turni da popolare dinamicamente -->
+                                    <tr><td colspan="4">Dati turni non disponibili.</td></tr>
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="staff-details-section">
                             <h4><i class="fas fa-calendar-alt"></i> Calendario Mensile</h4>
                             <div class="calendar-container">
@@ -2132,92 +2107,52 @@
                                     <div class="calendar-day-header">Ven</div>
                                     <div class="calendar-day-header">Sab</div>
                                     <div class="calendar-day-header">Dom</div>
-                                    
                                     <!-- Calendario generato dinamicamente -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="tab-content" id="tab-performance">
                         <div class="staff-details-section">
                             <h4><i class="fas fa-chart-line"></i> Performance Generale</h4>
                             <div class="details-grid">
                                 <div class="details-item">
                                     <span class="details-label">Valutazione media</span>
-                                    <div class="details-value">4.8/5.0</div>
+                                    <div class="details-value" id="performanceRating">N/D</div>
                                     <div class="performance-meter">
-                                        <div class="performance-bar" style="width: 96%"></div>
+                                        <div class="performance-bar" id="performanceRatingBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                                 <div class="details-item">
-                                    <span class="details-label">Efficienza</span>
-                                    <div class="details-value">92%</div>
+                                    <span class="details-label">Efficienza (Esempio)</span>
+                                    <div class="details-value" id="performanceEfficiency">N/D</div>
                                     <div class="performance-meter">
-                                        <div class="performance-bar" style="width: 92%"></div>
+                                        <div class="performance-bar" id="performanceEfficiencyBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="staff-details-section">
-                            <h4><i class="fas fa-tasks"></i> Metriche Dettagliate</h4>
-                            <div class="progress-container">
+                            <h4><i class="fas fa-tasks"></i> Metriche Dettagliate (Esempio)</h4>
+                            <!-- Metriche esempio da popolare -->
+                             <div class="progress-container">
                                 <div class="progress-label">
                                     <span class="progress-title">Puntualità</span>
-                                    <span class="progress-percentage">98%</span>
+                                    <span class="progress-percentage">N/D</span>
                                 </div>
                                 <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 98%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Velocità di servizio</span>
-                                    <span class="progress-percentage">95%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 95%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Gestione ordini</span>
-                                    <span class="progress-percentage">90%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 90%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Soddisfazione clienti</span>
-                                    <span class="progress-percentage">97%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 97%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Collaborazione team</span>
-                                    <span class="progress-percentage">94%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 94%"></div>
+                                    <div class="progress-bar-fill" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="chart-container">
                             <canvas id="performanceChart"></canvas>
                         </div>
                     </div>
-                    
+
                     <div class="tab-content" id="tab-documents">
                         <div class="staff-details-section">
                             <h4><i class="fas fa-file-alt"></i> Documenti</h4>
@@ -2231,49 +2166,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Documento d'identità</td>
-                                        <td>15/03/2022</td>
-                                        <td>15/03/2032</td>
-                                        <td>
-                                            <button class="staff-card-action" title="Visualizza">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="staff-card-action" title="Scarica">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Contratto di lavoro</td>
-                                        <td>15/03/2022</td>
-                                        <td>15/03/2025</td>
-                                        <td>
-                                            <button class="staff-card-action" title="Visualizza">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="staff-card-action" title="Scarica">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Attestato HACCP</td>
-                                        <td>20/03/2022</td>
-                                        <td>20/03/2026</td>
-                                        <td>
-                                            <button class="staff-card-action" title="Visualizza">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="staff-card-action" title="Scarica">
-                                                <i class="fas fa-download"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                     <!-- Righe documenti da popolare dinamicamente -->
+                                    <tr><td colspan="4">Nessun documento disponibile.</td></tr>
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="staff-details-section">
                             <h4><i class="fas fa-upload"></i> Carica nuovo documento</h4>
                             <div class="form-group">
@@ -2287,17 +2185,17 @@
                                     <option value="other">Altro</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label class="form-label" for="docFile">File</label>
                                 <input type="file" class="form-control" id="docFile">
                             </div>
-                            
+
                             <div class="form-group">
                                 <label class="form-label" for="docExpiry">Data scadenza (se applicabile)</label>
                                 <input type="date" class="form-control" id="docExpiry">
                             </div>
-                            
+
                             <button class="action-btn primary" id="uploadDocBtn">
                                 <i class="fas fa-upload"></i>
                                 Carica documento
@@ -2329,7 +2227,7 @@
                         <div class="tab-item" data-tab="monthly">Mensile</div>
                         <div class="tab-item" data-tab="template">Modelli</div>
                     </div>
-                    
+
                     <div class="tab-content active" id="tab-weekly">
                         <div class="calendar-header">
                             <h3 class="calendar-title" id="weekTitle">Settimana 3-9 maggio 2025</h3>
@@ -2342,7 +2240,7 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <table class="schedule-table">
                             <thead>
                                 <tr>
@@ -2358,10 +2256,11 @@
                             </thead>
                             <tbody id="weeklyScheduleBody">
                                 <!-- Righe generate dinamicamente -->
+                                <tr><td colspan="8">Dati turni settimanali da caricare...</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="tab-content" id="tab-monthly">
                         <div class="calendar-header">
                             <h3 class="calendar-title" id="scheduleMonthTitle">Maggio 2025</h3>
@@ -2374,7 +2273,7 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="staff-details-section">
                             <h4><i class="fas fa-filter"></i> Filtra per dipendente</h4>
                             <select class="form-select" id="monthlyStaffFilter">
@@ -2382,19 +2281,30 @@
                                 <!-- Opzioni generate dinamicamente -->
                             </select>
                         </div>
-                        
+
                         <div class="calendar-container">
-                            <div class="calendar-grid" id="monthlyScheduleGrid">
+                             <!-- Aggiungere qui la struttura del calendario mensile per i turni -->
+                            <p>Visualizzazione calendario mensile turni da implementare.</p>
+                             <div class="calendar-grid" id="monthlyScheduleGrid">
+                                <!-- Giorni della settimana -->
+                                <div class="calendar-day-header">Lun</div>
+                                <div class="calendar-day-header">Mar</div>
+                                <div class="calendar-day-header">Mer</div>
+                                <div class="calendar-day-header">Gio</div>
+                                <div class="calendar-day-header">Ven</div>
+                                <div class="calendar-day-header">Sab</div>
+                                <div class="calendar-day-header">Dom</div>
                                 <!-- Calendario generato dinamicamente -->
+                                <div style="grid-column: 1 / -1; text-align: center; padding: 1rem; color: var(--text-light);">Calendario mensile turni...</div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="tab-content" id="tab-template">
                         <div class="staff-details-section">
                             <h4><i class="fas fa-copy"></i> Modelli di turni</h4>
                             <p>Salva e riutilizza modelli di turni settimanali per una pianificazione più veloce.</p>
-                            
+
                             <div class="form-group">
                                 <label class="form-label" for="templateSelect">Modelli salvati</label>
                                 <select class="form-select" id="templateSelect">
@@ -2404,12 +2314,13 @@
                                     <option value="weekend">Turni weekend intensivi</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label class="form-label" for="templateName">Nome nuovo modello</label>
-                                <input type="text" class="form-control" id="templateName" placeholder="Inserisci nome modello">
+                                <input type="text" class="form-control" id="templateName"
+                                    placeholder="Inserisci nome modello">
                             </div>
-                            
+
                             <div class="form-group">
                                 <button class="action-btn" id="loadTemplateBtn">
                                     <i class="fas fa-download"></i>
@@ -2437,36 +2348,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Nascondi sempre l'indicatore di stato della connessione
-            const connectionStatus = document.getElementById('connectionStatus');
-            if (connectionStatus) {
-                connectionStatus.style.display = 'none';
-            }
-            
-            // Inizializza i dati del personale
-            initializeStaffData();
-            
-            // Inizializza i dropdown di filtro
-            initializeFilterDropdowns();
-            
-            // Inizializza i tab nei modali
-            initializeTabs();
-            
-            // Inizializza i modal
-            initializeModals();
-            
-            // Inizializza il grafico delle performance
-            initializePerformanceChart();
-            
-            // Inizializza il calendario
-            initializeCalendar();
-            
-            // Inizializza gli eventi di ricerca
-            initializeSearch();
-        });
-
-        // Dati di esempio per il personale
+        // Dati di esempio - RIMOSSA PROPRIETA' avatar
         let staffData = [
             {
                 id: 1,
@@ -2475,7 +2357,6 @@
                 department: "cucina",
                 status: "active",
                 shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?man,1",
                 email: "marco.rossi@yourbite.it",
                 phone: "+39 333 1234567",
                 birthdate: "1985-05-15",
@@ -2491,7 +2372,6 @@
                 department: "servizio",
                 status: "active",
                 shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?woman,1",
                 email: "giulia.bianchi@yourbite.it",
                 phone: "+39 333 7654321",
                 birthdate: "1990-08-25",
@@ -2507,7 +2387,6 @@
                 department: "cucina",
                 status: "active",
                 shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?chef,1",
                 email: "alessandro.verdi@yourbite.it",
                 phone: "+39 333 9876543",
                 birthdate: "1982-02-10",
@@ -2516,14 +2395,13 @@
                 rating: 4.9,
                 availability: ["monday", "tuesday", "wednesday", "thursday", "friday"]
             },
-            {
+             {
                 id: 4,
                 name: "Sofia Neri",
                 position: "Cassiera",
                 department: "cassa",
                 status: "break",
                 shift: "afternoon",
-                avatar: "https://source.unsplash.com/random/100x100/?woman,2",
                 email: "sofia.neri@yourbite.it",
                 phone: "+39 333 5678901",
                 birthdate: "1995-11-30",
@@ -2539,7 +2417,6 @@
                 department: "consegna",
                 status: "offline",
                 shift: "night",
-                avatar: "https://source.unsplash.com/random/100x100/?man,2",
                 email: "luca.marini@yourbite.it",
                 phone: "+39 333 2345678",
                 birthdate: "1993-07-18",
@@ -2548,14 +2425,13 @@
                 rating: 4.6,
                 availability: ["monday", "tuesday", "thursday", "friday", "saturday"]
             },
-            {
+             {
                 id: 6,
                 name: "Elena Romano",
                 position: "Addetta Pulizie",
                 department: "pulizie",
                 status: "active",
                 shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?woman,3",
                 email: "elena.romano@yourbite.it",
                 phone: "+39 333 8765432",
                 birthdate: "1988-04-22",
@@ -2564,14 +2440,13 @@
                 rating: 4.4,
                 availability: ["monday", "wednesday", "friday"]
             },
-            {
+             {
                 id: 7,
                 name: "Roberto Ferretti",
                 position: "Cuoco",
                 department: "cucina",
                 status: "break",
                 shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?man,3",
                 email: "roberto.ferretti@yourbite.it",
                 phone: "+39 333 4567890",
                 birthdate: "1987-09-14",
@@ -2587,7 +2462,6 @@
                 department: "servizio",
                 status: "active",
                 shift: "afternoon",
-                avatar: "https://source.unsplash.com/random/100x100/?woman,4",
                 email: "laura.martini@yourbite.it",
                 phone: "+39 333 6789012",
                 birthdate: "1992-01-05",
@@ -2596,14 +2470,13 @@
                 rating: 4.6,
                 availability: ["wednesday", "thursday", "friday", "saturday", "sunday"]
             },
-            {
+             {
                 id: 9,
                 name: "Paolo Ricci",
                 position: "Rider",
                 department: "consegna",
                 status: "offline",
                 shift: "night",
-                avatar: "https://source.unsplash.com/random/100x100/?man,4",
                 email: "paolo.ricci@yourbite.it",
                 phone: "+39 333 7890123",
                 birthdate: "1994-06-30",
@@ -2619,7 +2492,6 @@
                 department: "cassa",
                 status: "active",
                 shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?woman,5",
                 email: "martina.ferrari@yourbite.it",
                 phone: "+39 333 8901234",
                 birthdate: "1991-12-15",
@@ -2635,7 +2507,6 @@
                 department: "servizio",
                 status: "active",
                 shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?man,5",
                 email: "andrea.belli@yourbite.it",
                 phone: "+39 333 9012345",
                 birthdate: "1985-03-20",
@@ -2651,7 +2522,6 @@
                 department: "cucina",
                 status: "break",
                 shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?woman,6",
                 email: "chiara.russo@yourbite.it",
                 phone: "+39 333 0123456",
                 birthdate: "1989-10-08",
@@ -2662,2287 +2532,239 @@
             },
         ];
 
-        // Funzione per inizializzare i dati del personale
+        // --- FUNZIONI HELPER ---
+
+        function capitalizeFirstLetter(string) { if (!string) return ''; return string.charAt(0).toUpperCase() + string.slice(1); }
+        function translateShift(shift) { const translations = { 'morning': 'Mattina', 'afternoon': 'Pomeriggio', 'evening': 'Sera', 'night': 'Notte' }; return translations[shift] || capitalizeFirstLetter(shift) || 'N/D'; }
+        function calculateAge(birthdateString) { if (!birthdateString) return '?'; try { const birthDate = new Date(birthdateString); const today = new Date(); let age = today.getFullYear() - birthDate.getFullYear(); const m = today.getMonth() - birthDate.getMonth(); if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) { age--; } return age >= 0 ? age : '?'; } catch (e) { console.error("Errore calcolo età:", e); return '?'; } }
+        function calculateSeniority(hireDateString) { if (!hireDateString) return '?'; try { const hireDate = new Date(hireDateString); const today = new Date(); if (hireDate > today) return 'Futuro'; let years = today.getFullYear() - hireDate.getFullYear(); let months = today.getMonth() - hireDate.getMonth(); let days = today.getDate() - hireDate.getDate(); if (days < 0) { months--; const prevMonthLastDay = new Date(today.getFullYear(), today.getMonth(), 0).getDate(); days += prevMonthLastDay; } if (months < 0) { years--; months += 12; } let result = ''; if (years > 0) result += `${years} ann${years > 1 ? 'i' : 'o'}`; if (months > 0) result += `${result ? ', ' : ''}${months} mes${months > 1 ? 'i' : 'e'}`; if (years === 0 && months === 0 && days >= 0) { result = `${days} giorn${days !== 1 ? 'i' : 'o'}`; } return result || 'Oggi'; } catch(e) { console.error("Errore calcolo anzianità:", e); return '?'; } }
+        function showToast(type = 'info', title = 'Notifica', message = '') { const toastContainer = document.getElementById('toastContainer'); if (!toastContainer) { console.warn('Contenitore toast non trovato!'); return; } const toast = document.createElement('div'); toast.className = `toast ${type}`; let iconClass = 'fa-info-circle'; if (type === 'success') iconClass = 'fa-check-circle'; if (type === 'error') iconClass = 'fa-times-circle'; if (type === 'warning') iconClass = 'fa-exclamation-triangle'; toast.innerHTML = `<i class="fas ${iconClass} toast-icon"></i><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><button class="toast-close"><i class="fas fa-times"></i></button>`; const closeButton = toast.querySelector('.toast-close'); closeButton.addEventListener('click', () => { toast.style.animation = 'slideOut 0.3s forwards'; toast.addEventListener('animationend', () => toast.remove(), { once: true }); }); toastContainer.appendChild(toast); setTimeout(() => { if (toast.parentElement) { toast.style.animation = 'slideOut 0.3s forwards'; toast.addEventListener('animationend', () => toast.remove(), { once: true }); } }, 5000); }
+        function generateWeeklySchedule() { console.log("Generazione programma settimanale (logica da implementare)"); const weeklyBody = document.getElementById('weeklyScheduleBody'); if(weeklyBody) { if (Array.isArray(staffData) && staffData.length > 0) { const staff = staffData[0]; let rowHtml = `<tr><td>${staff.name}</td>`; const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']; daysOfWeek.forEach(day => { rowHtml += `<td>${staff.availability.includes(day) ? '10-18' : 'Riposo'}</td>`; }); rowHtml += '</tr>'; for(let i = 1; i < 5; i++) { rowHtml += `<tr><td>Dipendente ${i+1}</td>${'<td>-</td>'.repeat(7)}</tr>`; } weeklyBody.innerHTML = rowHtml; } else { weeklyBody.innerHTML = '<tr><td colspan="8">Nessun dato dipendente disponibile.</td></tr>'; } } else { console.warn("Elemento 'weeklyScheduleBody' non trovato."); } }
+        function generateNewId() { if (!Array.isArray(staffData) || staffData.length === 0) { return 1; } const maxId = staffData.reduce((max, s) => s.id > max ? s.id : max, 0); return maxId + 1; }
+        function getSelectedAvailability() { const checkboxes = document.querySelectorAll('#staffForm input[name="availability[]"]:checked'); return Array.from(checkboxes).map(checkbox => checkbox.value); }
+        function determineShiftFromAvailability() { const availability = getSelectedAvailability(); const weekDays = availability.filter(d => !['saturday', 'sunday'].includes(d)).length; const weekendDays = availability.filter(d => ['saturday', 'sunday'].includes(d)).length; if (weekendDays > 0 && weekDays < 3) return 'evening'; if (availability.includes('monday') && availability.includes('tuesday')) return 'morning'; if (availability.length <= 3) return 'afternoon'; return ['morning', 'afternoon', 'evening', 'night'][Math.floor(Math.random() * 4)]; }
+        function getAvatarUrl(name, size = 100) {
+             // Usa ui-avatars.com per generare un avatar dalle iniziali del nome
+             const apiUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || '??')}&background=random&color=fff&size=${size}&bold=true`;
+             return apiUrl;
+         }
+
+
+        // --- INIZIALIZZAZIONE ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const connectionStatus = document.getElementById('connectionStatus'); if (connectionStatus) { connectionStatus.style.display = 'none'; }
+            initializeStaffData();
+            initializeFilterDropdowns();
+            initializeTabs();
+            initializeModals();
+            initializePerformanceChart();
+            initializeCalendar();
+            initializeSearch();
+            initializeSidebarActions();
+            initializeActionButtons();
+            updateOverviewCards(); // Update cards on initial load
+             updateSidebarStats(); // Update sidebar stats on initial load
+        });
+
+        // --- FUNZIONI DI INIZIALIZZAZIONE ---
+
         function initializeStaffData() {
-            renderStaffGrid(); // Renderizza la griglia del personale
-            
-            // Aggiungi listener per i pulsanti di azione
-            document.getElementById('addStaffBtn').addEventListener('click', function() {
-                showModal('staffModal');
-                document.getElementById('modalTitle').textContent = 'Aggiungi nuovo dipendente';
-                document.getElementById('staffForm').reset();
-            });
-            
-            document.getElementById('viewScheduleBtn').addEventListener('click', function() {
-                showModal('scheduleModal');
-                generateWeeklySchedule();
-            });
-            
-            // Salvataggio di un nuovo membro dello staff
-            document.getElementById('saveStaffBtn').addEventListener('click', function() {
-                saveStaffMember();
-            });
+            renderStaffGrid(); // Renderizza subito
+            const addStaffBtnMain = document.getElementById('addStaffBtn'); if (addStaffBtnMain) { addStaffBtnMain.addEventListener('click', openAddStaffModal); } else { console.warn("Bottone 'addStaffBtn' non trovato."); }
+            const viewScheduleBtnMain = document.getElementById('viewScheduleBtn'); if(viewScheduleBtnMain) { viewScheduleBtnMain.addEventListener('click', openScheduleModal); } else { console.warn("Bottone 'viewScheduleBtn' non trovato."); }
+            const saveStaffBtn = document.getElementById('saveStaffBtn'); if(saveStaffBtn) { saveStaffBtn.addEventListener('click', saveStaffMember); } else { console.warn("Bottone 'saveStaffBtn' non trovato."); }
         }
 
-        // Renderizza la griglia del personale
-        function renderStaffGrid(filterData = null) {
-            const staffGrid = document.getElementById('staffGrid');
+        function openAddStaffModal() {
+            document.getElementById('modalTitle').textContent = 'Aggiungi nuovo dipendente';
+            const staffForm = document.getElementById('staffForm'); if (staffForm) { staffForm.reset(); delete staffForm.dataset.editId; }
+            const availabilityCheckboxes = document.querySelectorAll('#staffForm input[name="availability[]"]'); availabilityCheckboxes.forEach(checkbox => { checkbox.checked = !['saturday', 'sunday'].includes(checkbox.value); });
+            showModal('staffModal');
+        }
+
+        function openScheduleModal() {
+            generateWeeklySchedule(); populateMonthlyStaffFilter(); activateTab('weekly'); showModal('scheduleModal');
+        }
+
+        function populateMonthlyStaffFilter() {
+            const select = document.getElementById('monthlyStaffFilter'); if (!select) return;
+            select.innerHTML = '<option value="all">Tutti i dipendenti</option>';
+            if (Array.isArray(staffData)) { staffData.sort((a, b) => a.name.localeCompare(b.name)).forEach(staff => { const option = document.createElement('option'); option.value = staff.id; option.textContent = staff.name; select.appendChild(option); }); }
+        }
+
+        function renderStaffGrid(filterData = staffData) {
+            const staffGrid = document.getElementById('staffGrid'); if (!staffGrid) { console.error("Elemento 'staffGrid' non trovato!"); return; }
             staffGrid.innerHTML = '';
-            
-            const dataToRender = filterData || staffData;
-            
-            if (dataToRender.length === 0) {
-                staffGrid.innerHTML = '<div class="no-results">Nessun dipendente trovato con i filtri selezionati</div>';
-                return;
-            }
-            
+            const dataToRender = Array.isArray(filterData) ? filterData : staffData;
+
+            if (dataToRender.length === 0) { staffGrid.innerHTML = '<div class="no-results">Nessun dipendente trovato con i filtri selezionati.</div>'; return; }
+
             dataToRender.forEach(staff => {
-                const statusClass = staff.status === 'active' ? '' : staff.status === 'break' ? 'break' : 'offline';
-                
-                const staffCard = document.createElement('div');
-                staffCard.className = 'staff-card';
-                staffCard.dataset.id = staff.id;
-                
+                let statusClass = 'offline'; if (staff.status === 'active') statusClass = ''; else if (staff.status === 'break') statusClass = 'break';
+                const staffCard = document.createElement('div'); staffCard.className = 'staff-card'; staffCard.dataset.id = staff.id;
+                // --- MODIFICA AVATAR ---
+                const avatarUrl = getAvatarUrl(staff.name, 80); // Genera URL per card (size 80)
+                // --- FINE MODIFICA ---
+
                 staffCard.innerHTML = `
                     <div class="staff-card-header">
                         <div class="staff-status ${statusClass}"></div>
-                        <img src="${staff.avatar}" alt="${staff.name}" class="staff-avatar">
-                        <h3 class="staff-name">${staff.name}</h3>
-                        <p class="staff-position">${staff.position}</p>
+                        <img src="${avatarUrl}" alt="${staff.name || 'Dipendente'}" class="staff-avatar" onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=Error';">
+                        <h3 class="staff-name">${staff.name || 'Nome Mancante'}</h3>
+                        <p class="staff-position">${staff.position || 'Posizione Mancante'}</p>
                     </div>
-                    
-                    <div class="staff-card-body">
-                        <div class="staff-stats">
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Reparto</div>
-                                <div class="stat-value-card">${capitalizeFirstLetter(staff.department)}</div>
-                            </div>
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Ore/Sett</div>
-                                <div class="stat-value-card">${staff.hours}</div>
-                            </div>
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Turno</div>
-                                <div class="stat-value-card">${translateShift(staff.shift)}</div>
-                            </div>
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Valutazione</div>
-                                <div class="stat-value-card">${staff.rating}/5</div>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    <div class="staff-card-body"><div class="staff-stats">
+                        <div class="staff-stat"><div class="stat-label-card">Reparto</div><div class="stat-value-card">${capitalizeFirstLetter(staff.department) || 'N/D'}</div></div>
+                        <div class="staff-stat"><div class="stat-label-card">Ore/Sett</div><div class="stat-value-card">${staff.hours || '?'}</div></div>
+                        <div class="staff-stat"><div class="stat-label-card">Turno</div><div class="stat-value-card">${translateShift(staff.shift)}</div></div>
+                        <div class="staff-stat"><div class="stat-label-card">Valutazione</div><div class="stat-value-card">${staff.rating || '?'}/5</div></div>
+                    </div></div>
                     <div class="staff-card-footer">
-                        <button class="staff-card-action view-staff" title="Visualizza dettagli" data-id="${staff.id}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="staff-card-action edit-staff" title="Modifica" data-id="${staff.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="staff-card-action schedule-staff" title="Turni" data-id="${staff.id}">
-                            <i class="fas fa-calendar-alt"></i>
-                        </button>
-                        <button class="staff-card-action message-staff" title="Invia messaggio" data-id="${staff.id}">
-                            <i class="fas fa-comment"></i>
-                        </button>
-                    </div>
-                `;
-                
+                        <button class="staff-card-action view-staff" title="Visualizza dettagli" data-id="${staff.id}"><i class="fas fa-eye"></i></button>
+                        <button class="staff-card-action edit-staff" title="Modifica" data-id="${staff.id}"><i class="fas fa-edit"></i></button>
+                        <button class="staff-card-action schedule-staff" title="Turni" data-id="${staff.id}"><i class="fas fa-calendar-alt"></i></button>
+                        <button class="staff-card-action message-staff" title="Invia messaggio" data-id="${staff.id}"><i class="fas fa-comment"></i></button>
+                        <button class="staff-card-action delete-staff" title="Elimina" data-id="${staff.id}" style="color: var(--accent-red);"><i class="fas fa-trash-alt"></i></button>
+                    </div>`;
                 staffGrid.appendChild(staffCard);
             });
-            
-            // Aggiungi listener ai pulsanti nelle card
             addStaffCardListeners();
         }
 
-        // Aggiungi listener ai pulsanti nelle card
         function addStaffCardListeners() {
-            // Visualizza dettagli dipendente
-            document.querySelectorAll('.view-staff').forEach(button => {
-                button.addEventListener('click', function() {
-                    const staffId = parseInt(this.dataset.id);
-                    showStaffDetails(staffId);
-                });
-            });
-            
-            // Modifica dipendente
-            document.querySelectorAll('.edit-staff').forEach(button => {
-                button.addEventListener('click', function() {
-                    const staffId = parseInt(this.dataset.id);
-                    editStaffMember(staffId);
-                });
-            });
-            
-            // Gestisci turni dipendente
-            document.querySelectorAll('.schedule-staff').forEach(button => {
-                button.addEventListener('click', function() {
-                    const staffId = parseInt(this.dataset.id);
-                    manageStaffSchedule(staffId);
-                });
-            });
-            
-            // Invia messaggio al dipendente
-            document.querySelectorAll('.message-staff').forEach(button => {
-                button.addEventListener('click', function() {
-                    const staffId = parseInt(this.dataset.id);
-                    messageStaffMember(staffId);
-                });
-            });
+            document.querySelectorAll('.view-staff').forEach(button => { button.removeEventListener('click', handleViewStaff); button.addEventListener('click', handleViewStaff); });
+            document.querySelectorAll('.edit-staff').forEach(button => { button.removeEventListener('click', handleEditStaff); button.addEventListener('click', handleEditStaff); });
+            document.querySelectorAll('.schedule-staff').forEach(button => { button.removeEventListener('click', handleScheduleStaff); button.addEventListener('click', handleScheduleStaff); });
+            document.querySelectorAll('.message-staff').forEach(button => { button.removeEventListener('click', handleMessageStaff); button.addEventListener('click', handleMessageStaff); });
+            document.querySelectorAll('.delete-staff').forEach(button => { button.removeEventListener('click', handleDeleteStaff); button.addEventListener('click', handleDeleteStaff); });
         }
 
-        // Mostra dettagli di un dipendente
+        function handleViewStaff(event) { const staffId = parseInt(event.currentTarget.dataset.id); showStaffDetails(staffId); }
+        function handleEditStaff(event) { const staffId = parseInt(event.currentTarget.dataset.id); editStaffMember(staffId); }
+        function handleScheduleStaff(event) { const staffId = parseInt(event.currentTarget.dataset.id); manageStaffSchedule(staffId); }
+        function handleMessageStaff(event) { const staffId = parseInt(event.currentTarget.dataset.id); messageStaffMember(staffId); }
+        function handleDeleteStaff(event) { const staffId = parseInt(event.currentTarget.dataset.id); deleteStaffMember(staffId); }
+
         function showStaffDetails(staffId) {
-            const staff = staffData.find(s => s.id === staffId);
-            if (!staff) return;
-            
-            // Popola i dettagli
-            document.getElementById('detailsAvatar').src = staff.avatar;
-            document.getElementById('detailsName').textContent = staff.name;
-            document.getElementById('detailsPosition').textContent = staff.position;
-            
-            // Imposta lo stato
-            const statusBadge = document.getElementById('detailsStatus');
-            statusBadge.className = 'staff-details-badge';
-            
-            if (staff.status === 'active') {
-                statusBadge.classList.add('badge-active');
-                statusBadge.textContent = 'In servizio';
-            } else if (staff.status === 'break') {
-                statusBadge.classList.add('badge-break');
-                statusBadge.textContent = 'In pausa';
-            } else {
-                statusBadge.classList.add('badge-offline');
-                statusBadge.textContent = 'Fuori servizio';
+            const staff = staffData.find(s => s.id === staffId); if (!staff) { showToast('error', 'Errore', `Dipendente con ID ${staffId} non trovato.`); return; }
+
+            // --- MODIFICA AVATAR ---
+            const avatarUrl = getAvatarUrl(staff.name, 80); // Genera URL per dettagli (size 80)
+            const detailsAvatarImg = document.getElementById('detailsAvatar');
+            if (detailsAvatarImg) {
+                detailsAvatarImg.src = avatarUrl;
+                detailsAvatarImg.onerror = function() { this.src='https://via.placeholder.com/80?text=Error'; };
             }
-            
-            // Informazioni personali
-            document.getElementById('detailsEmail').textContent = staff.email;
-            document.getElementById('detailsPhone').textContent = staff.phone;
-            
-            // Calcola età
-            const birthDate = new Date(staff.birthdate);
-            const formattedBirthdate = birthDate.toLocaleDateString('it-IT');
-            document.getElementById('detailsBirthdate').textContent = formattedBirthdate;
-            
-            const age = calculateAge(birthDate);
-            document.getElementById('detailsAge').textContent = `${age} anni`;
-            
-            // Informazioni lavorative
-            document.getElementById('detailsJobPosition').textContent = staff.position;
-            document.getElementById('detailsDepartment').textContent = capitalizeFirstLetter(staff.department);
-            
-            const hireDate = new Date(staff.hireDate);
-            document.getElementById('detailsHireDate').textContent = hireDate.toLocaleDateString('it-IT');
-            
-            const seniority = calculateSeniority(hireDate);
-            document.getElementById('detailsSeniority').textContent = seniority;
-            
-            // Mostra il modale
-            showModal('staffDetailsModal');
+            // --- FINE MODIFICA ---
+
+            document.getElementById('detailsName').textContent = staff.name || 'N/D';
+            document.getElementById('detailsPosition').textContent = staff.position || 'N/D';
+            const statusBadge = document.getElementById('detailsStatus'); statusBadge.className = 'staff-details-badge'; let statusText = 'Fuori servizio'; if (staff.status === 'active') { statusBadge.classList.add('badge-active'); statusText = 'In servizio'; } else if (staff.status === 'break') { statusBadge.classList.add('badge-break'); statusText = 'In pausa'; } else { statusBadge.classList.add('badge-offline'); } statusBadge.textContent = statusText;
+            document.getElementById('detailsEmail').textContent = staff.email || 'N/D'; document.getElementById('detailsPhone').textContent = staff.phone || 'N/D'; document.getElementById('detailsBirthdate').textContent = staff.birthdate ? new Date(staff.birthdate).toLocaleDateString('it-IT') : 'N/D'; document.getElementById('detailsAge').textContent = staff.birthdate ? `${calculateAge(staff.birthdate)} anni` : 'N/D';
+            document.getElementById('detailsJobPosition').textContent = staff.position || 'N/D'; document.getElementById('detailsDepartment').textContent = capitalizeFirstLetter(staff.department) || 'N/D'; document.getElementById('detailsHireDate').textContent = staff.hireDate ? new Date(staff.hireDate).toLocaleDateString('it-IT') : 'N/D'; document.getElementById('detailsSeniority').textContent = staff.hireDate ? calculateSeniority(staff.hireDate) : 'N/D';
+            const skillsContainer = document.getElementById('detailsSkills'); skillsContainer.innerHTML = '<span class="skill-badge">Esempio</span>'; // Placeholder
+            document.getElementById('detailsNotes').textContent = staff.notes || 'Nessuna nota.';
+            // Popola performance (esempio)
+            const rating = staff.rating || 0;
+             document.getElementById('performanceRating').textContent = `${rating}/5.0`;
+             document.getElementById('performanceRatingBar').style.width = `${(rating / 5) * 100}%`;
+             document.getElementById('performanceEfficiency').textContent = 'N/D'; // Placeholder
+             document.getElementById('performanceEfficiencyBar').style.width = `0%`;
+
+            activateTab('info'); showModal('staffDetailsModal');
         }
 
-        // Modifica un dipendente
         function editStaffMember(staffId) {
-            const staff = staffData.find(s => s.id === staffId);
-            if (!staff) return;
-            
-            // Popola il form di modifica
-            document.getElementById('staffName').value = staff.name.split(' ')[0];
-            document.getElementById('staffSurname').value = staff.name.split(' ')[1];
-            document.getElementById('staffEmail').value = staff.email;
-            document.getElementById('staffPhone').value = staff.phone;
-            document.getElementById('staffBirthdate').value = staff.birthdate;
-            document.getElementById('staffPosition').value = staff.position.toLowerCase();
-            document.getElementById('staffDepartment').value = staff.department;
-            document.getElementById('staffHireDate').value = staff.hireDate;
-            
-            // Imposta le disponibilità
-            const availabilityCheckboxes = document.querySelectorAll('input[name="availability[]"]');
-            availabilityCheckboxes.forEach(checkbox => {
-                checkbox.checked = staff.availability.includes(checkbox.value);
-            });
-            
-            // Imposta il titolo del modale
-            document.getElementById('modalTitle').textContent = 'Modifica dipendente';
-            
-            // Mostra il modale
-            showModal('staffModal');
-            
-            // Imposta ID dipendente da modificare
-            document.getElementById('staffForm').dataset.editId = staffId;
-        }
-
-        // Gestisci turni di un dipendente
-        function manageStaffSchedule(staffId) {
-            const staff = staffData.find(s => s.id === staffId);
-            if (!staff) return;
-            
-            // Mostra il modale dei turni
-            showModal('scheduleModal');
-            
-            // Imposta il dipendente selezionato nel filtro
-            const staffFilterSelect = document.getElementById('monthlyStaffFilter');
-            if (staffFilterSelect) {
-                // Assicurati che ci sia un'opzione per questo dipendente
-                let optionExists = false;
-                for (let i = 0; i < staffFilterSelect.options.length; i++) {
-                    if (staffFilterSelect.options[i].value == staffId) {
-                        optionExists = true;
-                        staffFilterSelect.selectedIndex = i;
+            const staff = staffData.find(s => s.id === staffId); if (!staff) { showToast('error', 'Errore', `Dipendente con ID ${staffId} non trovato.`); return; }
+            const nameParts = staff.name ? staff.name.split(' ') : ['', '']; document.getElementById('staffName').value = nameParts[0] || ''; document.getElementById('staffSurname').value = nameParts.slice(1).join(' ') || '';
+            document.getElementById('staffEmail').value = staff.email || ''; document.getElementById('staffPhone').value = staff.phone || ''; document.getElementById('staffBirthdate').value = staff.birthdate || '';
+            // Trova il valore corretto per la select posizione
+            const positionSelect = document.getElementById('staffPosition');
+            let positionValue = '';
+            if (staff.position) {
+                 const searchPosition = staff.position.toLowerCase().replace(/\s/g, ''); // Rimuove spazi per confronto
+                 for (let i = 0; i < positionSelect.options.length; i++) {
+                    if (positionSelect.options[i].value.toLowerCase() === searchPosition) {
+                        positionValue = positionSelect.options[i].value;
                         break;
-                    }
-                }
-                
-                if (!optionExists) {
-                    const option = document.createElement('option');
-                    option.value = staffId;
-                    option.textContent = staff.name;
-                    staffFilterSelect.appendChild(option);
-                    staffFilterSelect.value = staffId;
-                }
-            }
-            
-            // Passa alla scheda "Settimanale" e genera i turni
-            activateTab('weekly');
-            generateWeeklySchedule();
+                     } else if (positionSelect.options[i].text.toLowerCase().includes(searchPosition)) { // Fallback sul testo
+                         positionValue = positionSelect.options[i].value;
+                     }
+                 }
+             }
+             positionSelect.value = positionValue;
+             document.getElementById('staffDepartment').value = staff.department || '';
+            document.getElementById('staffHireDate').value = staff.hireDate || ''; document.getElementById('staffNotes').value = staff.notes || '';
+            const availabilityCheckboxes = document.querySelectorAll('#staffForm input[name="availability[]"]'); availabilityCheckboxes.forEach(checkbox => { checkbox.checked = Array.isArray(staff.availability) && staff.availability.includes(checkbox.value); });
+            document.getElementById('modalTitle').textContent = 'Modifica dipendente'; document.getElementById('staffForm').dataset.editId = staffId; showModal('staffModal');
         }
 
-        // Invia messaggio a un dipendente
-        function messageStaffMember(staffId) {
-            const staff = staffData.find(s => s.id === staffId);
-            if (!staff) return;
-            
-            // In una vera implementazione, questo aprirebbe una chat o una finestra di email
-            // Per questa demo, mostreremo un toast di conferma
-            showToast('success', 'Messaggio inviato', `Messaggio di prova inviato a ${staff.name}. Implementazione reale da completare.`);
-        }
-
-        // Salva un dipendente (nuovo o modifica)
         function saveStaffMember() {
-            const form = document.getElementById('staffForm');
-            
-            // Validazione base
-            const name = document.getElementById('staffName').value;
-            const surname = document.getElementById('staffSurname').value;
-            const email = document.getElementById('staffEmail').value;
-            const position = document.getElementById('staffPosition').value;
-            const department = document.getElementById('staffDepartment').value;
-            
-            if (!name || !surname || !email || !position || !department) {
-                showToast('error', 'Errore', 'Compila tutti i campi obbligatori');
-                return;
-            }
-            
-            // Raccogli i dati del form
-            const staffData = {
-                name: `${name} ${surname}`,
-                email: document.getElementById('staffEmail').value,
-                phone: document.getElementById('staffPhone').value,
-                birthdate: document.getElementById('staffBirthdate').value,
-                position: document.getElementById('staffPosition').options[document.getElementById('staffPosition').selectedIndex].text,
-                department: department,
-                hireDate: document.getElementById('staffHireDate').value || new Date().toISOString().split('T')[0],
-                status: 'active',
-                shift: determineShiftFromAvailability(),
-                hours: Math.floor(Math.random() * 15) + 25, // Esempio: ore casuali tra 25 e 40
-                rating: (Math.random() * 0.5 + 4.5).toFixed(1), // Valutazione casuale 4.5-5.0
-                availability: getSelectedAvailability(),
-                avatar: `https://source.unsplash.com/random/100x100/?person,${new Date().getTime()}`
-            };
-            
-            // Verifica se è una modifica o un nuovo inserimento
-            const editId = form.dataset.editId;
+            const form = document.getElementById('staffForm'); if (!form) return;
+            const name = document.getElementById('staffName').value.trim(); const surname = document.getElementById('staffSurname').value.trim(); const email = document.getElementById('staffEmail').value.trim(); const positionSelect = document.getElementById('staffPosition'); const department = document.getElementById('staffDepartment').value;
+            if (!name || !surname || !email || !positionSelect.value || !department) { showToast('error', 'Errore', 'Compila tutti i campi obbligatori.'); return; }
+            const staffDetails = { name: `${name} ${surname}`, email: email, phone: document.getElementById('staffPhone').value.trim(), birthdate: document.getElementById('staffBirthdate').value, position: positionSelect.options[positionSelect.selectedIndex].text, department: department, hireDate: document.getElementById('staffHireDate').value || new Date().toISOString().split('T')[0], notes: document.getElementById('staffNotes').value.trim(), availability: getSelectedAvailability(), shift: determineShiftFromAvailability() };
+            const editId = form.dataset.editId ? parseInt(form.dataset.editId) : null;
             if (editId) {
-                // Modifica dipendente esistente
-                const index = window.staffData.findIndex(s => s.id === parseInt(editId));
-                if (index !== -1) {
-                    // Mantieni ID e avatar
-                    staffData.id = parseInt(editId);
-                    staffData.avatar = window.staffData[index].avatar;
-                    
-                    // Aggiorna il dipendente
-                    window.staffData[index] = staffData;
-                    showToast('success', 'Dipendente aggiornato', `${staffData.name} aggiornato con successo!`);
-                }
+                const index = staffData.findIndex(s => s.id === editId); if (index !== -1) { const updatedStaff = { ...staffData[index], ...staffDetails }; staffData[index] = updatedStaff; showToast('success', 'Dipendente aggiornato', `${updatedStaff.name} aggiornato!`); } else { showToast('error', 'Errore', `Impossibile trovare dipendente ID ${editId}.`); }
             } else {
-                // Nuovo dipendente
-                staffData.id = generateNewId();
-                window.staffData.push(staffData);
-                showToast('success', 'Dipendente aggiunto', `${staffData.name} aggiunto con successo!`);
+                staffDetails.id = generateNewId();
+                // --- RIMOSSA GENERAZIONE AVATAR QUI ---
+                staffDetails.hours = Math.floor(Math.random() * 15) + 25; staffDetails.rating = (Math.random() * 0.5 + 4.5).toFixed(1); staffDetails.status = 'active';
+                staffData.push(staffDetails); showToast('success', 'Dipendente aggiunto', `${staffDetails.name} aggiunto!`);
             }
-            
-            // Aggiorna la UI
-            renderStaffGrid();
-            
-            // Chiudi il modale
-            hideModal('staffModal');
-            
-            // Resetta il form
-            form.reset();
-            delete form.dataset.editId;
+            renderStaffGrid(); updateOverviewCards(); updateSidebarStats(); hideModal('staffModal'); form.reset(); delete form.dataset.editId;
         }
 
-        // Ottieni i giorni di disponibilità selezionati
-        function getSelectedAvailability() {
-            const checkboxes = document.querySelectorAll('input[name="availability[]"]:checked');
-            return Array.from(checkboxes).map(checkbox => checkbox.value);
+        function deleteStaffMember(staffId) {
+            const staff = staffData.find(s => s.id === staffId); if (!staff) { showToast('error', 'Errore', `Dipendente ID ${staffId} non trovato.`); return; }
+            if (confirm(`Sei sicuro di voler eliminare ${staff.name}?`)) { staffData = staffData.filter(s => s.id !== staffId); showToast('success', 'Eliminato', `${staff.name} rimosso.`); renderStaffGrid(); updateOverviewCards(); updateSidebarStats(); }
         }
 
-        // Determina il turno basandosi sulla disponibilità
-        function determineShiftFromAvailability() {
-            const availability = getSelectedAvailability();
-            
-            // Se disponibile più nei weekend, probabilmente turno serale
-            if (availability.includes('saturday') && availability.includes('sunday')) {
-                return 'evening';
-            }
-            
-            // Se disponibile più durante la settimana, probabilmente turno mattutino
-            if (availability.includes('monday') && availability.includes('tuesday')) {
-                return 'morning';
-            }
-            
-            return ['morning', 'afternoon', 'evening', 'night'][Math.floor(Math.random() * 4)];
-        }
+        function manageStaffSchedule(staffId) { const staff = staffData.find(s => s.id === staffId); if (!staff) { showToast('error', 'Errore', `Dipendente ID ${staffId} non trovato.`); return; } openScheduleModal(); const staffFilterSelect = document.getElementById('monthlyStaffFilter'); if (staffFilterSelect) { staffFilterSelect.value = staffId; } }
+        function messageStaffMember(staffId) { const staff = staffData.find(s => s.id === staffId); if (!staff) return; showToast('info', 'Messaggio', `Funzione messaggio per ${staff.name} da implementare.`); }
 
-        // Genera un nuovo ID per un dipendente
-        function generateNewId() {
-            return Math.max(...window.staffData.map(s => s.id)) + 1;
-        }
+        function initializeFilterDropdowns() { const dropdowns = document.querySelectorAll('.filter-dropdown'); dropdowns.forEach(dropdown => { const btn = dropdown.querySelector('.filter-btn'); const content = dropdown.querySelector('.filter-dropdown-content'); if (!btn || !content) return; btn.addEventListener('click', (e) => { e.stopPropagation(); dropdowns.forEach(d => { if (d !== dropdown) d.classList.remove('active'); }); dropdown.classList.toggle('active'); }); content.addEventListener('click', (e) => { if (e.target.classList.contains('filter-item')) { const filterItems = content.querySelectorAll('.filter-item'); filterItems.forEach(i => i.classList.remove('active')); e.target.classList.add('active'); dropdown.classList.remove('active'); applyFilters(); } }); }); document.addEventListener('click', (e) => { dropdowns.forEach(dropdown => { const btn = dropdown.querySelector('.filter-btn'); if (!dropdown.contains(e.target) && e.target !== btn) { dropdown.classList.remove('active'); } }); }); }
+        function applyFilters() { const departmentFilter = document.querySelector('#departmentFilter .filter-item.active')?.dataset.filter || 'all'; const statusFilter = document.querySelector('#statusFilter .filter-item.active')?.dataset.filter || 'all'; const shiftFilter = document.querySelector('#shiftFilter .filter-item.active')?.dataset.filter || 'all'; const searchTerm = document.getElementById('staffSearch')?.value.toLowerCase() || ''; if (!Array.isArray(staffData)) { console.error("Errore: staffData non è un array valido:", staffData); renderStaffGrid([]); return; } const filteredStaff = staffData.filter(staff => { if (departmentFilter !== 'all' && staff.department !== departmentFilter) return false; if (statusFilter !== 'all' && staff.status !== statusFilter) return false; if (shiftFilter !== 'all' && staff.shift !== shiftFilter) return false; if (searchTerm) { const nameMatch = staff.name && staff.name.toLowerCase().includes(searchTerm); const positionMatch = staff.position && staff.position.toLowerCase().includes(searchTerm); const emailMatch = staff.email && staff.email.toLowerCase().includes(searchTerm); if (!(nameMatch || positionMatch || emailMatch)) return false; } return true; }); renderStaffGrid(filteredStaff); }
+        function initializeSearch() { const searchInput = document.getElementById('staffSearch'); if (searchInput) { let debounceTimer; searchInput.addEventListener('input', () => { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => { applyFilters(); }, 300); }); } else { console.warn("Elemento 'staffSearch' non trovato."); } }
+        function initializeTabs() { const tabsContainers = document.querySelectorAll('.tabs-container'); tabsContainers.forEach(container => { const tabItems = container.querySelectorAll('.tab-item'); tabItems.forEach(item => { item.addEventListener('click', () => { const tabId = item.dataset.tab; if (!tabId) return; container.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active')); container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active')); item.classList.add('active'); const activeContent = container.querySelector(`#tab-${tabId}`); if (activeContent) { activeContent.classList.add('active'); } else { console.warn(`Contenuto tab con ID 'tab-${tabId}' non trovato.`); } }); }); }); }
+        function activateTab(tabId) { const tabItem = document.querySelector(`.tab-item[data-tab="${tabId}"]`); if (tabItem) { tabItem.click(); } else { console.warn(`Tab item con data-tab="${tabId}" non trovato.`); } }
+        function initializeModals() { const modals = document.querySelectorAll('.modal-overlay'); modals.forEach(modalOverlay => { const modalId = modalOverlay.id; const closeButtons = modalOverlay.querySelectorAll('.modal-close, .btn-default[id^="cancel"], .btn-default[id^="close"]'); closeButtons.forEach(btn => { if(btn) { btn.addEventListener('click', () => hideModal(modalId)); } }); modalOverlay.addEventListener('click', (event) => { if (event.target === modalOverlay) { hideModal(modalId); } }); }); const editStaffBtnFromDetails = document.getElementById('editStaffBtn'); if(editStaffBtnFromDetails) { editStaffBtnFromDetails.addEventListener('click', () => { const name = document.getElementById('detailsName')?.textContent; if (!name) return; const staff = staffData.find(s => s.name === name); if (staff) { hideModal('staffDetailsModal'); editStaffMember(staff.id); } else { showToast('error', 'Errore', 'Dati dipendente non trovati.'); } }); } const saveScheduleBtn = document.getElementById('saveScheduleBtn'); if(saveScheduleBtn) { saveScheduleBtn.addEventListener('click', () => { showToast('success', 'Turni salvati', 'Turni salvati! (Simulazione)'); hideModal('scheduleModal'); }); } }
+        function showModal(modalId) { const modalOverlay = document.getElementById(modalId); if (modalOverlay) { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; } else { console.error(`Modal ID '${modalId}' non trovato!`); } }
+        function hideModal(modalId) { const modalOverlay = document.getElementById(modalId); if (modalOverlay) { modalOverlay.classList.remove('active'); const anyModalActive = document.querySelector('.modal-overlay.active'); if (!anyModalActive) { document.body.style.overflow = 'auto'; } } }
+        function initializePerformanceChart() { const ctx = document.getElementById('performanceChart')?.getContext('2d'); if (!ctx) { return; } if (window.performanceChartInstance) { window.performanceChartInstance.destroy(); } window.performanceChartInstance = new Chart(ctx, { type: 'line', data: { labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'], datasets: [{ label: 'Performance Media', data: [4.3, 4.5, 4.6, 4.7, 4.8, 4.8], borderColor: 'var(--primary)', backgroundColor: 'rgba(94, 96, 206, 0.1)', tension: 0.3, fill: true, pointBackgroundColor: 'var(--primary)', pointBorderColor: '#fff', pointHoverRadius: 6, pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'var(--primary)', }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'var(--dark)', titleColor: 'var(--light)', bodyColor: 'var(--light)', borderColor: 'var(--primary)', borderWidth: 1, callbacks: { label: function (context) { return ` Valutazione: ${context.formattedValue}/5`; } } } }, scales: { y: { beginAtZero: false, min: 3.5, max: 5, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { stepSize: 0.5 } }, x: { grid: { display: false } } } } }); }
+        function initializeCalendar() { updateCalendar(); const prevMonthBtn = document.getElementById('prevMonth'); if (prevMonthBtn) { prevMonthBtn.addEventListener('click', () => { showToast('info', 'Nav Calendario', 'Logica mese precedente da implementare.'); }); } const nextMonthBtn = document.getElementById('nextMonth'); if (nextMonthBtn) { nextMonthBtn.addEventListener('click', () => { showToast('info', 'Nav Calendario', 'Logica mese successivo da implementare.'); }); } }
+        function updateCalendar(month = new Date().getMonth(), year = new Date().getFullYear()) { const calendarGrid = document.getElementById('calendarGrid'); const calendarTitle = document.getElementById('calendarMonth'); if (!calendarGrid || !calendarTitle) return; calendarGrid.innerHTML = `<div class="calendar-day-header">Lun</div><div class="calendar-day-header">Mar</div><div class="calendar-day-header">Mer</div><div class="calendar-day-header">Gio</div><div class="calendar-day-header">Ven</div><div class="calendar-day-header">Sab</div><div class="calendar-day-header">Dom</div>`; const today = new Date(); const currentMonth = new Date(year, month, 1); const daysInMonth = new Date(year, month + 1, 0).getDate(); let firstDayOfWeek = currentMonth.getDay(); firstDayOfWeek = (firstDayOfWeek === 0) ? 6 : firstDayOfWeek - 1; calendarTitle.textContent = currentMonth.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }); const daysInPrevMonth = new Date(year, month, 0).getDate(); for (let i = 0; i < firstDayOfWeek; i++) { const dayCell = document.createElement('div'); dayCell.className = 'calendar-day other-month'; dayCell.innerHTML = `<span class="day-number">${daysInPrevMonth - firstDayOfWeek + i + 1}</span>`; calendarGrid.appendChild(dayCell); } for (let i = 1; i <= daysInMonth; i++) { const dayCell = document.createElement('div'); dayCell.className = 'calendar-day'; const currentDate = new Date(year, month, i); if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) { dayCell.classList.add('today'); } let staffInfo = 'Riposo'; const dayOfWeek = currentDate.getDay(); if (dayOfWeek !== 0 && dayOfWeek !== 6) { staffInfo = `${Math.floor(Math.random() * 4) + 5} ore`; } dayCell.innerHTML = `<span class="day-number">${i}</span><span class="day-staff">${staffInfo}</span>`; calendarGrid.appendChild(dayCell); } const totalCells = firstDayOfWeek + daysInMonth; const cellsNeeded = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7); for (let i = 1; i <= cellsNeeded; i++) { const dayCell = document.createElement('div'); dayCell.className = 'calendar-day other-month'; dayCell.innerHTML = `<span class="day-number">${i}</span>`; calendarGrid.appendChild(dayCell); } }
+        function initializeSidebarActions() { const addNewStaffBtnSidebar = document.getElementById('addNewStaffBtn'); if (addNewStaffBtnSidebar) { addNewStaffBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); openAddStaffModal(); }); } const schedulesBtnSidebar = document.getElementById('schedulesBtn'); if (schedulesBtnSidebar) { schedulesBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); openScheduleModal(); }); } const showAllStaffBtn = document.getElementById('showAllStaffBtn'); if (showAllStaffBtn) { showAllStaffBtn.addEventListener('click', (e) => { e.preventDefault(); document.querySelectorAll('.filter-item').forEach(item => item.classList.remove('active')); document.querySelector('#departmentFilter .filter-item[data-filter="all"]')?.classList.add('active'); document.querySelector('#statusFilter .filter-item[data-filter="all"]')?.classList.add('active'); document.querySelector('#shiftFilter .filter-item[data-filter="all"]')?.classList.add('active'); const searchInput = document.getElementById('staffSearch'); if (searchInput) searchInput.value = ''; applyFilters(); showToast('info', 'Filtri resettati', 'Visualizzazione di tutti i dipendenti.'); }); } }
+        function initializeActionButtons() { const uploadDocBtn = document.getElementById('uploadDocBtn'); if (uploadDocBtn) { uploadDocBtn.addEventListener('click', () => { const fileInput = document.getElementById('docFile'); const docType = document.getElementById('docType').value; if (fileInput && fileInput.files.length > 0 && docType) { showToast('success', 'Upload (Sim)', `Doc '${fileInput.files[0].name}' tipo '${docType}' caricato.`); document.getElementById('docType').value = ''; fileInput.value = ''; document.getElementById('docExpiry').value = ''; } else { showToast('warning', 'Upload fallito', 'Seleziona tipo e file.'); } }); } const loadTemplateBtn = document.getElementById('loadTemplateBtn'); if (loadTemplateBtn) { loadTemplateBtn.addEventListener('click', () => { const selectedTemplate = document.getElementById('templateSelect').value; if (selectedTemplate) { showToast('info', 'Carica Modello', `Caricamento '${selectedTemplate}' (Sim).`); } else { showToast('warning', 'Selezione Modello', 'Seleziona un modello.'); } }); } const saveTemplateBtn = document.getElementById('saveTemplateBtn'); if (saveTemplateBtn) { saveTemplateBtn.addEventListener('click', () => { const templateName = document.getElementById('templateName').value.trim(); if (templateName) { showToast('success', 'Salva Modello', `Modello '${templateName}' salvato (Sim).`); const select = document.getElementById('templateSelect'); const newOption = document.createElement('option'); newOption.value = templateName.toLowerCase().replace(/\s+/g, '-'); newOption.textContent = templateName; select.appendChild(newOption); document.getElementById('templateName').value = ''; } else { showToast('warning', 'Nome Modello', 'Inserisci un nome.'); } }); } const prevWeekBtn = document.getElementById('prevWeek'); if (prevWeekBtn) { prevWeekBtn.addEventListener('click', function () { showToast('info', 'Cambio settimana', 'Settimana precedente (Sim)'); }); } else { console.warn("ID 'prevWeek' non trovato."); } const nextWeekBtn = document.getElementById('nextWeek'); if (nextWeekBtn) { nextWeekBtn.addEventListener('click', function () { showToast('info', 'Cambio settimana', 'Settimana successiva (Sim)'); }); } else { console.warn("ID 'nextWeek' non trovato."); } const prevScheduleMonthBtn = document.getElementById('prevScheduleMonth'); if (prevScheduleMonthBtn) { prevScheduleMonthBtn.addEventListener('click', function () { showToast('info', 'Cambio mese', 'Mese precedente (Sim)'); }); } else { console.warn("ID 'prevScheduleMonth' non trovato."); } const nextScheduleMonthBtn = document.getElementById('nextScheduleMonth'); if (nextScheduleMonthBtn) { nextScheduleMonthBtn.addEventListener('click', function () { showToast('info', 'Cambio mese', 'Mese successivo (Sim)'); }); } else { console.warn("ID 'nextScheduleMonth' non trovato."); } }
 
-        // Inizializza i dropdown di filtro
-        function initializeFilterDropdowns() {
-            const dropdowns = document.querySelectorAll('.filter-dropdown');
-            
-            dropdowns.forEach(dropdown => {
-                const btn = dropdown.querySelector('.filter-btn');
-                const content = dropdown.querySelector('.filter-dropdown-content');
-                
-                // Toggle dropdown
-                btn.addEventListener('click', () => {
-                    dropdown.classList.toggle('active');
-                });
-                
-                // Gestisci click sugli elementi del filtro
-                const filterItems = content.querySelectorAll('.filter-item');
-                filterItems.forEach(item => {
-                    item.addEventListener('click', () => {
-                        // Deseleziona tutti gli elementi
-                        filterItems.forEach(i => i.classList.remove('active'));
-                        
-                        // Seleziona l'elemento cliccato
-                        item.classList.add('active');
-                        
-                        // Chiudi dropdown
-                        dropdown.classList.remove('active');
-                        
-                        // Applica filtro
-                        applyFilters();
-                    });
-                });
-                
-                // Chiudi dropdown quando si clicca fuori
-                document.addEventListener('click', (e) => {
-                    if (!dropdown.contains(e.target)) {
-                        dropdown.classList.remove('active');
-                    }
-                });
-            });
-        }
+         // Funzione per aggiornare i contatori nelle card di riepilogo e nella sidebar
+         function updateOverviewCards() {
+             if (!Array.isArray(staffData)) return;
+             const total = staffData.length;
+             const onDuty = staffData.filter(s => s.status === 'active').length;
+             const onBreak = staffData.filter(s => s.status === 'break').length;
+             const offline = staffData.filter(s => s.status === 'offline').length;
 
-        // Applica tutti i filtri selezionati
-        function applyFilters() {
-            const departmentFilter = document.querySelector('#departmentFilter .filter-item.active').dataset.filter;
-            const statusFilter = document.querySelector('#statusFilter .filter-item.active').dataset.filter;
-            const shiftFilter = document.querySelector('#shiftFilter .filter-item.active').dataset.filter;
-            const searchTerm = document.getElementById('staffSearch').value.toLowerCase();
-            
-            // Filtra i dati
-            const filteredStaff = window.staffData.filter(staff => {
-                // Applica filtro dipartimento
-                if (departmentFilter !== 'all' && staff.department !== departmentFilter) {
-                    return false;
-                }
-                
-                // Applica filtro stato
-                if (statusFilter !== 'all' && staff.status !== statusFilter) {
-                    return false;
-                }
-                
-                // Applica filtro turno
-                if (shiftFilter !== 'all' && staff.shift !== shiftFilter) {
-                    return false;
-                }
-                
-                // Applica filtro di ricerca
-                if (searchTerm) {
-                    return (
-                        staff.name.toLowerCase().includes(searchTerm) ||
-                        staff.position.toLowerCase().includes(searchTerm) ||
-                        staff.email.toLowerCase().includes(searchTerm)
-                    );
-                }
-                
-                return true;
-            });
-            
-            // Aggiorna la visualizzazione
-            renderStaffGrid(filteredStaff);
-        }
+             document.getElementById('overviewTotalStaff').textContent = total;
+             document.getElementById('overviewOnDuty').textContent = onDuty;
+             document.getElementById('overviewOnBreak').textContent = onBreak;
+             document.getElementById('overviewOffline').textContent = offline;
+         }
 
-        // Inizializza la ricerca
-        function initializeSearch() {
-            const searchInput = document.getElementById('staffSearch');
-            
-            searchInput.addEventListener('input', () => {
-                // Debounce per evitare troppe esecuzioni
-                clearTimeout(searchInput.debounceTimer);
-                searchInput.debounceTimer = setTimeout(() => {
-                    applyFilters();
-                }, 300);
-            });
-        }
+         function updateSidebarStats() {
+             if (!Array.isArray(staffData)) return;
+              const total = staffData.length;
+              const onDuty = staffData.filter(s => s.status === 'active').length;
+              // 'In servizio oggi' potrebbe richiedere una logica più complessa basata sui turni reali
+              const onDutyToday = onDuty; // Semplificato per ora
 
-        // Inizializza i tab nei modali
-        function initializeTabs() {
-            const tabsContainers = document.querySelectorAll('.tabs-container');
-            
-            tabsContainers.forEach(container => {
-                const tabItems = container.querySelectorAll('.tab-item');
-                
-                tabItems.forEach(item => {
-                    item.addEventListener('click', () => {
-                        const tabId = item.dataset.tab;
-                        
-                        // Deseleziona tutti i tab
-                        container.querySelectorAll('.tab-item').forEach(tab => {
-                            tab.classList.remove('active');
-                        });
-                        
-                        // Nasconde tutti i contenuti
-                        container.querySelectorAll('.tab-content').forEach(content => {
-                            content.classList.remove('active');
-                        });
-                        
-                        // Attiva il tab selezionato
-                        item.classList.add('active');
-                        container.querySelector(`#tab-${tabId}`).classList.add('active');
-                    });
-                });
-            });
-        }
+              document.getElementById('activeStaffCount').textContent = onDuty;
+              document.getElementById('onDutyTodayCount').textContent = onDutyToday;
+              document.getElementById('totalStaffCount').textContent = total;
+         }
 
-        // Attiva un tab specifico
-        function activateTab(tabId) {
-            const tabItem = document.querySelector(`.tab-item[data-tab="${tabId}"]`);
-            if (tabItem) {
-                tabItem.click();
-            }
-        }
-
-        // Inizializza i modal
-        function initializeModals() {
-            // Staff Modal
-            document.getElementById('addStaffBtn').addEventListener('click', () => {
-                showModal('staffModal');
-            });
-            
-            document.getElementById('closeModal').addEventListener('click', () => {
-                hideModal('staffModal');
-            });
-            
-            document.getElementById('cancelStaffBtn').addEventListener('click', () => {
-                hideModal('staffModal');
-            });
-            
-            // Staff Details Modal
-            document.getElementById('closeDetailsModal').addEventListener('click', () => {
-                hideModal('staffDetailsModal');
-            });
-            
-            document.getElementById('closeDetailsBtn').addEventListener('click', () => {
-                hideModal('staffDetailsModal');
-            });
-            
-            document.getElementById('editStaffBtn').addEventListener('click', () => {
-                // Ottieni l'ID del dipendente visualizzato
-                const name = document.getElementById('detailsName').textContent;
-                const staff = window.staffData.find(s => s.name === name);
-                
-                if (staff) {
-                    // Nascondi il modal dettagli
-                    hideModal('staffDetailsModal');
-                    // Apri il modal di modifica
-                    editStaffMember(staff.id);
-                }
-            });
-            
-            // Schedule Modal
-            document.getElementById('closeScheduleModal').addEventListener('click', () => {
-                hideModal('scheduleModal');
-            });
-            
-            document.getElementById('cancelScheduleBtn').addEventListener('click', () => {
-                hideModal('scheduleModal');
-            });
-            
-            document.getElementById('saveScheduleBtn').addEventListener('click', () => {
-                // Qui salveresti i turni al server
-                showToast('success', 'Turni salvati', 'I turni sono stati salvati con successo!');
-                hideModal('scheduleModal');
-            });
-        }
-
-        // Mostra un modal
-        function showModal(modalId) {
-            const modalOverlay = document.getElementById(modalId);
-            modalOverlay.classList.add('active');
-            
-            // Impedisci lo scroll della pagina
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Nascondi un modal
-        function hideModal(modalId) {
-            const modalOverlay = document.getElementById(modalId);
-            modalOverlay.classList.remove('active');
-            
-            // Ripristina lo scroll
-            document.body.style.overflow = 'auto';
-        }
-
-        // Inizializza il grafico delle performance
-        function initializePerformanceChart() {
-            const ctx = document.getElementById('performanceChart');
-            
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [4.3, 4.5, 4.6, 4.7, 4.8, 4.8],
-                        borderColor: '#5e60ce',
-                        backgroundColor: 'rgba(94, 96, 206, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Valutazione: ${context.raw}/5`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 3,
-                            max: 5
-                        }
-                    }
-                }
-            });
-        }
-
-        // Inizializza il calendario
-        function initializeCalendar() {
-            // Implementazione semplificata per demo
-            updateCalendar();
-            
-            document.getElementById('prevMonth')?.addEventListener('click', () => {
-                // Naviga al mese precedente
-                showToast('info', 'Navigazione calendario', 'Funzionalità da implementare: mese precedente');
-            });
-            
-            document.getElementById('nextMonth')?.addEventListener('click', () => {
-                // Naviga al mese successivo
-                showToast('info', 'Navigazione calendario', 'Funzionalità da implementare: mese successivo');
-            });
-        }
-
-        // Aggiorna il calendario
-        function updateCalendar() {
-            const calendarGrid = document.getElementById('calendarGrid');
-            if (!calendarGrid) return;
-            
-            // Genera giorni del calendario (esempio semplificato)
-            const days = 31; // Esempio per un mese di 31 giorni
-            const firstDay = 3; // Esempio: 1° del mese è mercoledì (0=lunedì, 6=domenica)
-            
-            // Aggiungi giorni del calendario dopo gli header dei giorni della settimana
-            for (let i = 0; i < firstDay; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day other-month';
-                
-                const day = document.createElement('span');
-                day.className = 'day-number';
-                day.textContent = 30 - firstDay + i + 1; // Giorni del mese precedente
-                
-                dayCell.appendChild(day);
-                calendarGrid.appendChild(dayCell);
-            }
-            
-            for (let i = 1; i <= days; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day';
-                
-                // Oggi
-                if (i === 3) dayCell.classList.add('today');
-                
-                const day = document.createElement('span');
-                day.className = 'day-number';
-                day.textContent = i;
-                
-                const staffCount = document.createElement('span');
-                staffCount.className = 'day-staff';
-                
-                // Esempio: giorni di lavoro
-                if (i % 7 !== 0 && i % 7 !== 6) { // Non weekend
-                    staffCount.textContent = `${Math.floor(Math.random() * 4) + 5`*
-                                        <img src="" alt="Staff Avatar" class="staff-details-avatar" id="detailsAvatar">
-                    <div class="staff-details-info">
-                        <h3 id="detailsName"></h3>
-                        <p id="detailsPosition"></p>
-                        <span class="staff-details-badge badge-active" id="detailsStatus"></span>
-                    </div>
-                </div>
-                
-                <div class="tabs-container">
-                    <div class="tabs-nav">
-                        <div class="tab-item active" data-tab="info">Informazioni</div>
-                        <div class="tab-item" data-tab="schedule">Turni</div>
-                        <div class="tab-item" data-tab="performance">Performance</div>
-                    </div>
-                    
-                    <div class="tab-content active" id="infoTab">
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-info-circle"></i> Informazioni personali</h4>
-                            <div class="details-grid">
-                                <div class="details-item">
-                                    <span class="details-label">Email</span>
-                                    <span class="details-value" id="detailsEmail"></span>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Telefono</span>
-                                    <span class="details-value" id="detailsPhone"></span>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Data di nascita</span>
-                                    <span class="details-value" id="detailsBirthdate"></span>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Età</span>
-                                    <span class="details-value" id="detailsAge"></span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-briefcase"></i> Informazioni lavorative</h4>
-                            <div class="details-grid">
-                                <div class="details-item">
-                                    <span class="details-label">Reparto</span>
-                                    <span class="details-value" id="detailsDepartment"></span>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Data assunzione</span>
-                                    <span class="details-value" id="detailsHireDate"></span>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Anzianità</span>
-                                    <span class="details-value" id="detailsExperience"></span>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Ore mensili</span>
-                                    <span class="details-value" id="detailsHours"></span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-cogs"></i> Competenze</h4>
-                            <div class="skills-container" id="detailsSkills">
-                                <!-- Skills badges will be added here -->
-                            </div>
-                        </div>
-                        
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-clipboard"></i> Note</h4>
-                            <p id="detailsNotes"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="scheduleTab">
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-calendar-week"></i> Orario settimanale</h4>
-                            <table class="schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th>Giorno</th>
-                                        <th>Orario</th>
-                                        <th>Mansione</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="scheduleTableBody">
-                                    <!-- Schedule rows will be added here -->
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-calendar-alt"></i> Calendario mensile</h4>
-                            <div class="calendar-container">
-                                <div class="calendar-header">
-                                    <div class="calendar-title" id="calendarMonth">Maggio 2025</div>
-                                    <div class="calendar-nav">
-                                        <button class="calendar-nav-btn" id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
-                                        <button class="calendar-nav-btn" id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
-                                    </div>
-                                </div>
-                                <div class="calendar-grid" id="calendarGrid">
-                                    <div class="calendar-day-header">Lun</div>
-                                    <div class="calendar-day-header">Mar</div>
-                                    <div class="calendar-day-header">Mer</div>
-                                    <div class="calendar-day-header">Gio</div>
-                                    <div class="calendar-day-header">Ven</div>
-                                    <div class="calendar-day-header">Sab</div>
-                                    <div class="calendar-day-header">Dom</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="performanceTab">
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-chart-line"></i> Valutazione complessiva</h4>
-                            <div class="details-grid">
-                                <div class="details-item">
-                                    <span class="details-label">Valutazione generale</span>
-                                    <div class="details-value" id="detailsRating">4.5/5</div>
-                                    <div class="performance-meter">
-                                        <div class="performance-bar" style="width: 90%"></div>
-                                    </div>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Puntualità</span>
-                                    <div class="details-value">4.8/5</div>
-                                    <div class="performance-meter">
-                                        <div class="performance-bar" style="width: 96%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="details-grid">
-                                <div class="details-item">
-                                    <span class="details-label">Efficienza</span>
-                                    <div class="details-value">4.2/5</div>
-                                    <div class="performance-meter">
-                                        <div class="performance-bar" style="width: 84%"></div>
-                                    </div>
-                                </div>
-                                <div class="details-item">
-                                    <span class="details-label">Lavoro di squadra</span>
-                                    <div class="details-value">4.7/5</div>
-                                    <div class="performance-meter">
-                                        <div class="performance-bar" style="width: 94%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-chart-bar"></i> Statistiche mensili</h4>
-                            <div class="chart-container">
-                                <canvas id="performanceChart"></canvas>
-                            </div>
-                        </div>
-                        
-                        <div class="staff-details-section">
-                            <h4><i class="fas fa-clipboard-list"></i> Obiettivi</h4>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Velocità di servizio</span>
-                                    <span class="progress-percentage">75%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 75%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Formazione avanzata</span>
-                                    <span class="progress-percentage">60%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 60%"></div>
-                                </div>
-                            </div>
-                            <div class="progress-container">
-                                <div class="progress-label">
-                                    <span class="progress-title">Customer satisfaction</span>
-                                    <span class="progress-percentage">90%</span>
-                                </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-fill" style="width: 90%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="closeDetailsBtn">Chiudi</button>
-                <button type="button" class="btn btn-primary" id="editStaffBtn">Modifica</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Schedule Management Modal -->
-    <div class="modal-overlay" id="scheduleModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Gestione Turni</h3>
-                <button class="modal-close" id="closeScheduleModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="tabs-container">
-                    <div class="tabs-nav">
-                        <div class="tab-item active" data-tab="weekly">Vista Settimanale</div>
-                        <div class="tab-item" data-tab="monthly">Vista Mensile</div>
-                        <div class="tab-item" data-tab="assignments">Assegnazioni</div>
-                    </div>
-                    
-                    <div class="tab-content active" id="weeklyTab">
-                        <div class="calendar-header">
-                            <div class="calendar-title">Settimana 3-9 Maggio 2025</div>
-                            <div class="calendar-nav">
-                                <button class="calendar-nav-btn" id="prevWeekBtn"><i class="fas fa-chevron-left"></i></button>
-                                <button class="calendar-nav-btn" id="nextWeekBtn"><i class="fas fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                        
-                        <table class="schedule-table" id="weeklyScheduleTable">
-                            <thead>
-                                <tr>
-                                    <th>Dipendente</th>
-                                    <th>Lun</th>
-                                    <th>Mar</th>
-                                    <th>Mer</th>
-                                    <th>Gio</th>
-                                    <th>Ven</th>
-                                    <th>Sab</th>
-                                    <th>Dom</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="tab-content" id="monthlyTab">
-                        <div class="calendar-header">
-                            <div class="calendar-title">Maggio 2025</div>
-                            <div class="calendar-nav">
-                                <button class="calendar-nav-btn" id="prevMonthScheduleBtn"><i class="fas fa-chevron-left"></i></button>
-                                <button class="calendar-nav-btn" id="nextMonthScheduleBtn"><i class="fas fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-                        
-                        <div class="calendar-grid" id="monthlyScheduleGrid">
-                            <div class="calendar-day-header">Lun</div>
-                            <div class="calendar-day-header">Mar</div>
-                            <div class="calendar-day-header">Mer</div>
-                            <div class="calendar-day-header">Gio</div>
-                            <div class="calendar-day-header">Ven</div>
-                            <div class="calendar-day-header">Sab</div>
-                            <div class="calendar-day-header">Dom</div>
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="assignmentsTab">
-                        <div class="section-actions" style="margin-bottom: 15px;">
-                            <button class="action-btn primary" id="addShiftBtn">
-                                <i class="fas fa-plus"></i>
-                                Aggiungi Turno
-                            </button>
-                            <button class="action-btn" id="autoScheduleBtn">
-                                <i class="fas fa-magic"></i>
-                                Genera Automaticamente
-                            </button>
-                        </div>
-                        
-                        <table class="schedule-table" id="assignmentsTable">
-                            <thead>
-                                <tr>
-                                    <th>Dipendente</th>
-                                    <th>Data</th>
-                                    <th>Orario</th>
-                                    <th>Mansione</th>
-                                    <th>Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="closeScheduleBtn">Chiudi</button>
-                <button type="button" class="btn btn-primary" id="saveScheduleBtn">Salva Modifiche</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification Container -->
-    <div class="toast-container" id="toastContainer">
-        <!-- Toasts will be added here dynamically -->
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Database simulato - in un'app reale, questi dati proverrebbero da un database
-        const staffData = [
-            {
-                id: 1,
-                name: "Marco Rossi",
-                surname: "Rossi",
-                position: "Cuoco",
-                department: "cucina",
-                status: "active",
-                shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?chef&1",
-                email: "marco.rossi@yourbite.it",
-                phone: "+39 333 1111222",
-                birthdate: "1987-05-12",
-                hireDate: "2022-03-15",
-                hours: 160,
-                rating: 4.8,
-                skills: ["Cucina Italiana", "Pasticceria", "Menu Planning"],
-                notes: "Esperto in preparazioni veloci per fast food.",
-                availability: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-                schedule: [
-                    { day: "Lunedì", time: "08:00 - 16:00", role: "Cuoco principale" },
-                    { day: "Martedì", time: "08:00 - 16:00", role: "Cuoco principale" },
-                    { day: "Mercoledì", time: "08:00 - 16:00", role: "Preparazione" },
-                    { day: "Giovedì", time: "08:00 - 16:00", role: "Cuoco principale" },
-                    { day: "Venerdì", time: "08:00 - 16:00", role: "Cuoco principale" }
-                ]
-            },
-            {
-                id: 2,
-                name: "Giulia Bianchi",
-                surname: "Bianchi",
-                position: "Cameriera",
-                department: "servizio",
-                status: "break",
-                shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?waitress&1",
-                email: "giulia.bianchi@yourbite.it",
-                phone: "+39 333 2222333",
-                birthdate: "1995-08-23",
-                hireDate: "2023-01-10",
-                hours: 120,
-                rating: 4.6,
-                skills: ["Servizio clienti", "Lingue straniere", "Gestione ordini"],
-                notes: "Parla fluentemente inglese e spagnolo.",
-                availability: ["wednesday", "thursday", "friday", "saturday", "sunday"],
-                schedule: [
-                    { day: "Mercoledì", time: "16:00 - 00:00", role: "Cameriera" },
-                    { day: "Giovedì", time: "16:00 - 00:00", role: "Cameriera" },
-                    { day: "Venerdì", time: "16:00 - 00:00", role: "Cameriera" },
-                    { day: "Sabato", time: "16:00 - 00:00", role: "Cameriera" },
-                    { day: "Domenica", time: "16:00 - 00:00", role: "Cameriera" }
-                ]
-            },
-            {
-                id: 3,
-                name: "Alessandro Verdi",
-                surname: "Verdi",
-                position: "Rider",
-                department: "consegna",
-                status: "active",
-                shift: "afternoon",
-                avatar: "https://source.unsplash.com/random/100x100/?delivery&1",
-                email: "alessandro.verdi@yourbite.it",
-                phone: "+39 333 3333444",
-                birthdate: "1992-11-05",
-                hireDate: "2022-09-20",
-                hours: 100,
-                rating: 4.5,
-                skills: ["Consegna veloce", "Conoscenza zona", "Manutenzione moto"],
-                notes: "Ha un ottimo senso dell'orientamento.",
-                availability: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
-                schedule: [
-                    { day: "Lunedì", time: "12:00 - 20:00", role: "Consegne" },
-                    { day: "Martedì", time: "12:00 - 20:00", role: "Consegne" },
-                    { day: "Mercoledì", time: "12:00 - 20:00", role: "Consegne" },
-                    { day: "Giovedì", time: "12:00 - 20:00", role: "Consegne" },
-                    { day: "Venerdì", time: "12:00 - 20:00", role: "Consegne" },
-                    { day: "Sabato", time: "12:00 - 20:00", role: "Consegne" }
-                ]
-            },
-            {
-                id: 4,
-                name: "Francesca Neri",
-                surname: "Neri",
-                position: "Cassiera",
-                department: "cassa",
-                status: "offline",
-                shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?cashier&1",
-                email: "francesca.neri@yourbite.it",
-                phone: "+39 333 4444555",
-                birthdate: "1990-04-18",
-                hireDate: "2021-11-05",
-                hours: 140,
-                rating: 4.7,
-                skills: ["Gestione cassa", "Contabilità", "Servizio clienti"],
-                notes: "Molto precisa e puntuale.",
-                availability: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-                schedule: [
-                    { day: "Lunedì", time: "08:00 - 16:00", role: "Cassa principale" },
-                    { day: "Martedì", time: "08:00 - 16:00", role: "Cassa principale" },
-                    { day: "Mercoledì", time: "08:00 - 16:00", role: "Cassa principale" },
-                    { day: "Giovedì", time: "08:00 - 16:00", role: "Cassa principale" },
-                    { day: "Venerdì", time: "08:00 - 16:00", role: "Cassa principale" }
-                ]
-            },
-            {
-                id: 5,
-                name: "Roberto Marini",
-                surname: "Marini",
-                position: "Cuoco",
-                department: "cucina",
-                status: "active",
-                shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?chef&2",
-                email: "roberto.marini@yourbite.it",
-                phone: "+39 333 5555666",
-                birthdate: "1985-07-30",
-                hireDate: "2021-06-12",
-                hours: 160,
-                rating: 4.9,
-                skills: ["Cucina Italiana", "Pizza", "Gestione cucina"],
-                notes: "Specializzato nella preparazione di pizze.",
-                availability: ["monday", "tuesday", "wednesday", "friday", "saturday", "sunday"],
-                schedule: [
-                    { day: "Lunedì", time: "16:00 - 00:00", role: "Cuoco pizza" },
-                    { day: "Martedì", time: "16:00 - 00:00", role: "Cuoco pizza" },
-                    { day: "Venerdì", time: "16:00 - 00:00", role: "Cuoco pizza" },
-                    { day: "Sabato", time: "16:00 - 00:00", role: "Cuoco pizza" },
-                    { day: "Domenica", time: "16:00 - 00:00", role: "Cuoco pizza" }
-                ]
-            },
-            {
-                id: 6,
-                name: "Elena Ricci",
-                surname: "Ricci",
-                position: "Addetta pulizie",
-                department: "pulizie",
-                status: "active",
-                shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?cleaner&1",
-                email: "elena.ricci@yourbite.it",
-                phone: "+39 333 6666777",
-                birthdate: "1989-12-10",
-                hireDate: "2022-07-01",
-                hours: 80,
-                rating: 4.7,
-                skills: ["Pulizia", "Organizzazione", "Gestione magazzino"],
-                notes: "Molto scrupolosa e attenta ai dettagli.",
-                availability: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-                schedule: [
-                    { day: "Lunedì", time: "06:00 - 10:00", role: "Pulizie" },
-                    { day: "Martedì", time: "06:00 - 10:00", role: "Pulizie" },
-                    { day: "Mercoledì", time: "06:00 - 10:00", role: "Pulizie" },
-                    { day: "Giovedì", time: "06:00 - 10:00", role: "Pulizie" },
-                    { day: "Venerdì", time: "06:00 - 10:00", role: "Pulizie" }
-                ]
-            },
-            {
-                id: 7,
-                name: "Paolo Esposito",
-                surname: "Esposito",
-                position: "Cameriere",
-                department: "servizio",
-                status: "break",
-                shift: "afternoon",
-                avatar: "https://source.unsplash.com/random/100x100/?waiter&1",
-                email: "paolo.esposito@yourbite.it",
-                phone: "+39 333 7777888",
-                birthdate: "1994-02-25",
-                hireDate: "2023-03-20",
-                hours: 120,
-                rating: 4.3,
-                skills: ["Servizio clienti", "Mise en place", "Conoscenza menu"],
-                notes: "Ottime capacità di comunicazione con i clienti.",
-                availability: ["wednesday", "thursday", "friday", "saturday", "sunday"],
-                schedule: [
-                    { day: "Mercoledì", time: "12:00 - 20:00", role: "Cameriere" },
-                    { day: "Giovedì", time: "12:00 - 20:00", role: "Cameriere" },
-                    { day: "Venerdì", time: "12:00 - 20:00", role: "Cameriere" },
-                    { day: "Sabato", time: "12:00 - 20:00", role: "Cameriere" },
-                    { day: "Domenica", time: "12:00 - 20:00", role: "Cameriere" }
-                ]
-            },
-            {
-                id: 8,
-                name: "Martina Gallo",
-                surname: "Gallo",
-                position: "Rider",
-                department: "consegna",
-                status: "offline",
-                shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?delivery&2",
-                email: "martina.gallo@yourbite.it",
-                phone: "+39 333 8888999",
-                birthdate: "1996-09-14",
-                hireDate: "2023-02-15",
-                hours: 100,
-                rating: 4.4,
-                skills: ["Consegna veloce", "Gestione ordini", "Conoscenza zona"],
-                notes: "Conosce molto bene la zona centrale della città.",
-                availability: ["monday", "tuesday", "friday", "saturday", "sunday"],
-                schedule: [
-                    { day: "Lunedì", time: "18:00 - 22:00", role: "Consegne" },
-                    { day: "Martedì", time: "18:00 - 22:00", role: "Consegne" },
-                    { day: "Venerdì", time: "18:00 - 22:00", role: "Consegne" },
-                    { day: "Sabato", time: "18:00 - 22:00", role: "Consegne" },
-                    { day: "Domenica", time: "18:00 - 22:00", role: "Consegne" }
-                ]
-            },
-            {
-                id: 9,
-                name: "Luca Colombo",
-                surname: "Colombo",
-                position: "Cassiere",
-                department: "cassa",
-                status: "active",
-                shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?cashier&2",
-                email: "luca.colombo@yourbite.it",
-                phone: "+39 333 9999000",
-                birthdate: "1993-06-08",
-                hireDate: "2022-05-10",
-                hours: 140,
-                rating: 4.6,
-                skills: ["Gestione cassa", "Servizio clienti", "Problem solving"],
-                notes: "Ottimo nella gestione delle situazioni di stress.",
-                availability: ["monday", "wednesday", "thursday", "saturday", "sunday"],
-                schedule: [
-                    { day: "Lunedì", time: "16:00 - 00:00", role: "Cassa serale" },
-                    { day: "Mercoledì", time: "16:00 - 00:00", role: "Cassa serale" },
-                    { day: "Giovedì", time: "16:00 - 00:00", role: "Cassa serale" },
-                    { day: "Sabato", time: "16:00 - 00:00", role: "Cassa serale" },
-                    { day: "Domenica", time: "16:00 - 00:00", role: "Cassa serale" }
-                ]
-            },
-            {
-                id: 10,
-                name: "Valentina Ferrari",
-                surname: "Ferrari",
-                position: "Cuoca",
-                department: "cucina",
-                status: "break",
-                shift: "afternoon",
-                avatar: "https://source.unsplash.com/random/100x100/?chef&3",
-                email: "valentina.ferrari@yourbite.it",
-                phone: "+39 333 0001112",
-                birthdate: "1991-03-17",
-                hireDate: "2022-01-05",
-                hours: 160,
-                rating: 4.8,
-                skills: ["Cucina Italiana", "Preparazione veloce", "Gestione menu"],
-                notes: "Specializzata nella preparazione di panini gourmet.",
-                availability: ["tuesday", "wednesday", "thursday", "friday", "saturday"],
-                schedule: [
-                    { day: "Martedì", time: "12:00 - 20:00", role: "Cuoca panini" },
-                    { day: "Mercoledì", time: "12:00 - 20:00", role: "Cuoca panini" },
-                    { day: "Giovedì", time: "12:00 - 20:00", role: "Cuoca panini" },
-                    { day: "Venerdì", time: "12:00 - 20:00", role: "Cuoca panini" },
-                    { day: "Sabato", time: "12:00 - 20:00", role: "Cuoca panini" }
-                ]
-            },
-            {
-                id: 11,
-                name: "Davide Romano",
-                surname: "Romano",
-                position: "Addetto pulizie",
-                department: "pulizie",
-                status: "active",
-                shift: "evening",
-                avatar: "https://source.unsplash.com/random/100x100/?cleaner&2",
-                email: "davide.romano@yourbite.it",
-                phone: "+39 333 1112223",
-                birthdate: "1988-10-20",
-                hireDate: "2021-10-15",
-                hours: 80,
-                rating: 4.5,
-                skills: ["Pulizia", "Manutenzione", "Gestione rifiuti"],
-                notes: "Molto efficiente e veloce.",
-                availability: ["monday", "tuesday", "thursday", "friday", "sunday"],
-                schedule: [
-                    { day: "Lunedì", time: "22:00 - 02:00", role: "Pulizie notturne" },
-                    { day: "Martedì", time: "22:00 - 02:00", role: "Pulizie notturne" },
-                    { day: "Giovedì", time: "22:00 - 02:00", role: "Pulizie notturne" },
-                    { day: "Venerdì", time: "22:00 - 02:00", role: "Pulizie notturne" },
-                    { day: "Domenica", time: "22:00 - 02:00", role: "Pulizie notturne" }
-                ]
-            },
-            {
-                id: 12,
-                name: "Sara Marino",
-                surname: "Marino",
-                position: "Cameriera",
-                department: "servizio",
-                status: "offline",
-                shift: "morning",
-                avatar: "https://source.unsplash.com/random/100x100/?waitress&2",
-                email: "sara.marino@yourbite.it",
-                phone: "+39 333 2223334",
-                birthdate: "1997-01-28",
-                hireDate: "2023-04-01",
-                hours: 120,
-                rating: 4.2,
-                skills: ["Servizio clienti", "Gestione ordinazioni", "Mise en place"],
-                notes: "Molto gentile e sorridente con i clienti.",
-                availability: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-                schedule: [
-                    { day: "Lunedì", time: "08:00 - 16:00", role: "Cameriera" },
-                    { day: "Martedì", time: "08:00 - 16:00", role: "Cameriera" },
-                    { day: "Mercoledì", time: "08:00 - 16:00", role: "Cameriera" },
-                    { day: "Giovedì", time: "08:00 - 16:00", role: "Cameriera" },
-                    { day: "Venerdì", time: "08:00 - 16:00", role: "Cameriera" }
-                ]
-            }
-        ];
-
-        // Funzioni di utilità
-        function calculateAge(birthdate) {
-            const birth = new Date(birthdate);
-            const now = new Date();
-            let age = now.getFullYear() - birth.getFullYear();
-            if (now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())) {
-                age--;
-            }
-            return age;
-        }
-
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            return new Date(dateString).toLocaleDateString('it-IT', options);
-        }
-
-        function calculateExperience(hireDate) {
-            const hire = new Date(hireDate);
-            const now = new Date();
-            const diffTime = Math.abs(now - hire);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 30) {
-                return `${diffDays} giorni`;
-            } else if (diffDays < 365) {
-                const months = Math.floor(diffDays / 30);
-                return `${months} ${months === 1 ? 'mese' : 'mesi'}`;
-            } else {
-                const years = Math.floor(diffDays / 365);
-                const remainingMonths = Math.floor((diffDays % 365) / 30);
-                return `${years} ${years === 1 ? 'anno' : 'anni'}${remainingMonths > 0 ? ` e ${remainingMonths} ${remainingMonths === 1 ? 'mese' : 'mesi'}` : ''}`;
-            }
-        }
-
-        // Inizializza la pagina
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verifica se siamo sulla pagina personale
-            if (document.getElementById('staffGrid')) {
-                // Nascondi la notifica di connessione
-                const connectionStatus = document.getElementById('connectionStatus');
-                if (connectionStatus) {
-                    connectionStatus.style.display = 'none';
-                }
-                
-                // Carica lo staff
-                loadStaff();
-                
-                // Configurazione dei filtri
-                setupFilters();
-                
-                // Configurazione dei modali
-                setupModals();
-                
-                // Event listeners per i pulsanti
-                document.getElementById('addStaffBtn').addEventListener('click', showAddStaffModal);
-                document.getElementById('viewScheduleBtn').addEventListener('click', showScheduleModal);
-                
-                // Setup ricerca
-                document.getElementById('staffSearch').addEventListener('input', filterStaff);
-                
-                // Chart.js per il grafico nella dashboard (esempio)
-                setupPerformanceChart();
-            }
-        });
-
-        // Carica il personale nella grid
-        function loadStaff(filters = {}) {
-            const staffGrid = document.getElementById('staffGrid');
-            if (!staffGrid) return;
-            
-            // Pulisci la griglia
-            staffGrid.innerHTML = '';
-            
-            // Filtra lo staff in base ai filtri attivi
-            let filteredStaff = [...staffData];
-            
-            if (filters.department && filters.department !== 'all') {
-                filteredStaff = filteredStaff.filter(staff => staff.department === filters.department);
-            }
-            
-            if (filters.status && filters.status !== 'all') {
-                filteredStaff = filteredStaff.filter(staff => staff.status === filters.status);
-            }
-            
-            if (filters.shift && filters.shift !== 'all') {
-                filteredStaff = filteredStaff.filter(staff => staff.shift === filters.shift);
-            }
-            
-            if (filters.search) {
-                const searchTerm = filters.search.toLowerCase();
-                filteredStaff = filteredStaff.filter(staff => 
-                    staff.name.toLowerCase().includes(searchTerm) || 
-                    staff.surname.toLowerCase().includes(searchTerm) || 
-                    staff.position.toLowerCase().includes(searchTerm) ||
-                    staff.department.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            // Se non ci sono risultati
-            if (filteredStaff.length === 0) {
-                staffGrid.innerHTML = `
-                    <div style="grid-column: span 3; text-align: center; padding: 3rem;">
-                        <i class="fas fa-search" style="font-size: 2rem; color: var(--text-light); margin-bottom: 1rem;"></i>
-                        <h3>Nessun risultato trovato</h3>
-                        <p>Prova a modificare i filtri o la ricerca.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Crea le card per ogni membro dello staff
-            filteredStaff.forEach(staff => {
-                const card = document.createElement('div');
-                card.className = 'staff-card';
-                card.dataset.staffId = staff.id;
-                
-                const statusClass = staff.status === 'active' ? '' : (staff.status === 'break' ? 'break' : 'offline');
-                
-                card.innerHTML = `
-                    <div class="staff-card-header">
-                        <div class="staff-status ${statusClass}"></div>
-                        <img src="${staff.avatar}" alt="${staff.name}" class="staff-avatar">
-                        <h3 class="staff-name">${staff.name} ${staff.surname}</h3>
-                        <p class="staff-position">${staff.position}</p>
-                    </div>
-                    <div class="staff-card-body">
-                        <div class="staff-stats">
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Reparto</div>
-                                <div class="stat-value-card">${capitalizeFirst(staff.department)}</div>
-                            </div>
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Turno</div>
-                                <div class="stat-value-card">${getShiftName(staff.shift)}</div>
-                            </div>
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Valutazione</div>
-                                <div class="stat-value-card">${staff.rating}/5</div>
-                            </div>
-                            <div class="staff-stat">
-                                <div class="stat-label-card">Anzianità</div>
-                                <div class="stat-value-card">${calculateExperience(staff.hireDate).split(' ')[0]} ${calculateExperience(staff.hireDate).split(' ')[1].substring(0, 1)}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="staff-card-footer">
-                        <button class="staff-card-action view-staff" title="Visualizza dettagli">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="staff-card-action edit-staff" title="Modifica">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="staff-card-action schedule-staff" title="Turni">
-                            <i class="fas fa-calendar-alt"></i>
-                        </button>
-                        <button class="staff-card-action delete-staff" title="Elimina">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                
-                staffGrid.appendChild(card);
-                
-                // Event listeners per i pulsanti delle card
-                card.querySelector('.view-staff').addEventListener('click', () => showStaffDetails(staff.id));
-                card.querySelector('.edit-staff').addEventListener('click', () => showEditStaffModal(staff.id));
-                card.querySelector('.schedule-staff').addEventListener('click', () => showStaffSchedule(staff.id));
-                card.querySelector('.delete-staff').addEventListener('click', () => confirmDeleteStaff(staff.id));
-            });
-        }
-
-        // Helper per capitalizzare la prima lettera
-        function capitalizeFirst(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-        // Helper per ottenere il nome del turno
-        function getShiftName(shift) {
-            const shifts = {
-                'morning': 'Mattina',
-                'afternoon': 'Pomeriggio',
-                'evening': 'Sera',
-                'night': 'Notte'
-            };
-            return shifts[shift] || shift;
-        }
-
-        // Configurazione filtri
-        function setupFilters() {
-            // Gestione dropdown dei filtri
-            document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
-                const button = dropdown.querySelector('.filter-btn');
-                
-                button.addEventListener('click', () => {
-                    dropdown.classList.toggle('active');
-                    // Chiudi altri dropdown aperti
-                    document.querySelectorAll('.filter-dropdown.active').forEach(otherDropdown => {
-                        if (otherDropdown !== dropdown) {
-                            otherDropdown.classList.remove('active');
-                        }
-                    });
-                });
-                
-                // Event listener per i clic fuori dal dropdown
-                document.addEventListener('click', (e) => {
-                    if (!dropdown.contains(e.target)) {
-                        dropdown.classList.remove('active');
-                    }
-                });
-                
-                // Event listener per gli elementi del filtro
-                dropdown.querySelectorAll('.filter-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        // Rimuovi la classe active da tutti gli elementi
-                        dropdown.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
-                        
-                        // Aggiungi la classe active a questo elemento
-                        item.classList.add('active');
-                        
-                        // Aggiorna il testo del pulsante
-                        const filterType = dropdown.id.replace('Filter', '');
-                        const filterValue = item.dataset.filter;
-                        
-                        // Applica il filtro
-                        applyFilters();
-                        
-                        // Chiudi il dropdown
-                        dropdown.classList.remove('active');
-                    });
-                });
-            });
-            
-            // Event listener per la ricerca
-            document.getElementById('staffSearch').addEventListener('input', applyFilters);
-        }
-
-        // Applica i filtri attuali
-        function applyFilters() {
-            const department = document.querySelector('#departmentFilter .filter-item.active').dataset.filter;
-            const status = document.querySelector('#statusFilter .filter-item.active').dataset.filter;
-            const shift = document.querySelector('#shiftFilter .filter-item.active').dataset.filter;
-            const search = document.getElementById('staffSearch').value;
-            
-            loadStaff({
-                department,
-                status,
-                shift,
-                search
-            });
-        }
-
-        // Filtra lo staff in base alla ricerca
-        function filterStaff() {
-            applyFilters();
-        }
-
-        // Configurazione modali
-        function setupModals() {
-            // Chiusura modale con click fuori o pulsante di chiusura
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        closeModal(modal.id);
-                    }
-                });
-                
-                const closeBtn = modal.querySelector('.modal-close');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', () => closeModal(modal.id));
-                }
-            });
-            
-            // Pulsanti di chiusura generici
-            document.getElementById('cancelStaffBtn').addEventListener('click', () => closeModal('staffModal'));
-            document.getElementById('closeDetailsBtn').addEventListener('click', () => closeModal('staffDetailsModal'));
-            document.getElementById('closeScheduleBtn').addEventListener('click', () => closeModal('scheduleModal'));
-            
-            // Configurazione tab nei modali
-            document.querySelectorAll('.tab-item').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.dataset.tab;
-                    const tabsContainer = tab.closest('.tabs-container');
-                    
-                    // Rimuovi classe active da tutti i tab e contenuti
-                    tabsContainer.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                    tabsContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Attiva il tab corrente
-                    tab.classList.add('active');
-                    tabsContainer.querySelector(`#${tabId}Tab`).classList.add('active');
-                });
-            });
-            
-            // Salvataggio modifiche staff
-            document.getElementById('saveStaffBtn').addEventListener('click', saveStaffChanges);
-            
-            // Modifica staff dal modale dettagli
-            document.getElementById('editStaffBtn').addEventListener('click', () => {
-                const staffId = document.getElementById('editStaffBtn').dataset.staffId;
-                closeModal('staffDetailsModal');
-                showEditStaffModal(staffId);
-            });
-        }
-
-        // Mostra il modale per aggiungere un nuovo membro dello staff
-        function showAddStaffModal() {
-            const modal = document.getElementById('staffModal');
-            document.getElementById('modalTitle').textContent = 'Aggiungi nuovo dipendente';
-            
-            // Resetta il form
-            document.getElementById('staffForm').reset();
-            document.getElementById('staffHireDate').valueAsDate = new Date();
-            
-            // Mostra il modale
-            modal.classList.add('active');
-            
-            // Il pulsante salva salverà un nuovo membro dello staff
-            document.getElementById('saveStaffBtn').dataset.mode = 'add';
-        }
-
-        // Mostra il modale per modificare un membro dello staff esistente
-        function showEditStaffModal(staffId) {
-            const staff = staffData.find(s => s.id === parseInt(staffId));
-            if (!staff) return;
-            
-            const modal = document.getElementById('staffModal');
-            document.getElementById('modalTitle').textContent = 'Modifica dipendente';
-            
-            // Popola il form con i dati dello staff
-            document.getElementById('staffName').value = staff.name;
-            document.getElementById('staffSurname').value = staff.surname;
-            document.getElementById('staffEmail').value = staff.email;
-            document.getElementById('staffPhone').value = staff.phone;
-            document.getElementById('staffBirthdate').value = staff.birthdate;
-            document.getElementById('staffPosition').value = staff.position.toLowerCase();
-            document.getElementById('staffDepartment').value = staff.department;
-            document.getElementById('staffHireDate').value = staff.hireDate;
-            document.getElementById('staffNotes').value = staff.notes || '';
-            
-            // Imposta le disponibilità
-            document.querySelectorAll('input[name="availability[]"]').forEach(checkbox => {
-                checkbox.checked = staff.availability.includes(checkbox.value);
-            });
-            
-            // Mostra il modale
-            modal.classList.add('active');
-            
-            // Il pulsante salva modificherà un membro dello staff esistente
-            document.getElementById('saveStaffBtn').dataset.mode = 'edit';
-            document.getElementById('saveStaffBtn').dataset.staffId = staffId;
-        }
-
-        // Mostra i dettagli di un membro dello staff
-        function showStaffDetails(staffId) {
-            const staff = staffData.find(s => s.id === parseInt(staffId));
-            if (!staff) return;
-            
-            const modal = document.getElementById('staffDetailsModal');
-            
-            // Popola i dettagli
-            document.getElementById('detailsAvatar').src = staff.avatar;
-            document.getElementById('detailsName').textContent = `${staff.name} ${staff.surname}`;
-            document.getElementById('detailsPosition').textContent = staff.position;
-            
-            // Stato
-            const statusBadge = document.getElementById('detailsStatus');
-            statusBadge.textContent = staff.status === 'active' ? 'In servizio' : (staff.status === 'break' ? 'In pausa' : 'Fuori servizio');
-            statusBadge.className = `staff-details-badge badge-${staff.status}`;
-            
-            // Informazioni personali
-            document.getElementById('detailsEmail').textContent = staff.email;
-            document.getElementById('detailsPhone').textContent = staff.phone;
-            document.getElementById('detailsBirthdate').textContent = formatDate(staff.birthdate);
-            document.getElementById('detailsAge').textContent = `${calculateAge(staff.birthdate)} anni`;
-            
-            // Informazioni lavorative
-            document.getElementById('detailsDepartment').textContent = capitalizeFirst(staff.department);
-            document.getElementById('detailsHireDate').textContent = formatDate(staff.hireDate);
-            document.getElementById('detailsExperience').textContent = calculateExperience(staff.hireDate);
-            document.getElementById('detailsHours').textContent = `${staff.hours} ore`;
-            
-            // Competenze
-            const skillsContainer = document.getElementById('detailsSkills');
-            skillsContainer.innerHTML = '';
-            staff.skills.forEach(skill => {
-                const badge = document.createElement('span');
-                badge.className = 'skill-badge';
-                badge.textContent = skill;
-                skillsContainer.appendChild(badge);
-            });
-            
-            // Note
-            document.getElementById('detailsNotes').textContent = staff.notes || 'Nessuna nota disponibile';
-            
-            // Turni
-            const scheduleTableBody = document.getElementById('scheduleTableBody');
-            scheduleTableBody.innerHTML = '';
-            
-            staff.schedule.forEach(schedule => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${schedule.day}</td>
-                    <td>${schedule.time}</td>
-                    <td>${schedule.role}</td>
-                `;
-                scheduleTableBody.appendChild(row);
-            });
-            
-            // Performance
-            document.getElementById('detailsRating').textContent = `${staff.rating}/5`;
-            document.querySelector('#performanceTab .performance-bar').style.width = `${staff.rating * 20}%`;
-            
-            // Grafico performance (esempio)
-            setupStaffPerformanceChart(staff);
-            
-            // Calendario
-            updateCalendar();
-            
-            // Aggiungi l'ID dello staff al pulsante modifica
-            document.getElementById('editStaffBtn').dataset.staffId = staffId;
-            
-            // Mostra il modale
-            modal.classList.add('active');
-        }
-
-        // Mostra gli orari di un membro dello staff
-        function showStaffSchedule(staffId) {
-            showScheduleModal();
-            // Qui potresti selezionare il membro dello staff specifico nel calendario
-        }
-
-        // Conferma eliminazione di un membro dello staff
-        function confirmDeleteStaff(staffId) {
-            const staff = staffData.find(s => s.id === parseInt(staffId));
-            if (!staff) return;
-            
-            if (confirm(`Sei sicuro di voler eliminare ${staff.name} ${staff.surname} dal personale?`)) {
-                deleteStaff(staffId);
-            }
-        }
-
-        // Elimina un membro dello staff
-        function deleteStaff(staffId) {
-            const index = staffData.findIndex(s => s.id === parseInt(staffId));
-            if (index === -1) return;
-            
-            const staff = staffData[index];
-            staffData.splice(index, 1);
-            
-            // Aggiorna la lista
-            loadStaff();
-            
-            // Mostra notifica
-            showToast('success', 'Dipendente eliminato', `${staff.name} ${staff.surname} è stato rimosso dal personale.`);
-        }
-
-        // Salva le modifiche al membro dello staff
-        function saveStaffChanges() {
-            const mode = document.getElementById('saveStaffBtn').dataset.mode;
-            
-            // Raccogli i dati dal form
-            const formData = {
-                name: document.getElementById('staffName').value,
-                surname: document.getElementById('staffSurname').value,
-                email: document.getElementById('staffEmail').value,
-                phone: document.getElementById('staffPhone').value,
-                birthdate: document.getElementById('staffBirthdate').value,
-                position: document.getElementById('staffPosition').value,
-                department: document.getElementById('staffDepartment').value,
-                hireDate: document.getElementById('staffHireDate').value,
-                notes: document.getElementById('staffNotes').value,
-                availability: Array.from(document.querySelectorAll('input[name="availability[]"]:checked')).map(cb => cb.value)
-            };
-            
-            // Valida i dati
-            if (!formData.name || !formData.surname || !formData.email || !formData.position || !formData.department) {
-                showToast('error', 'Errore', 'Compila tutti i campi obbligatori.');
-                return;
-            }
-            
-            if (mode === 'add') {
-                // Aggiungi nuovo membro dello staff
-                const newStaff = {
-                    id: staffData.length > 0 ? Math.max(...staffData.map(s => s.id)) + 1 : 1,
-                    ...formData,
-                    status: 'active',
-                    shift: 'morning',
-                    avatar: `https://source.unsplash.com/random/100x100/?person&${Date.now()}`,
-                    hours: 0,
-                    rating: 4.0,
-                    skills: [],
-                    schedule: []
-                };
-                
-                staffData.unshift(newStaff);
-                showToast('success', 'Dipendente aggiunto', `${newStaff.name} ${newStaff.surname} è stato aggiunto al personale.`);
-            } else if (mode === 'edit') {
-                // Modifica membro dello staff esistente
-                const staffId = parseInt(document.getElementById('saveStaffBtn').dataset.staffId);
-                const staffIndex = staffData.findIndex(s => s.id === staffId);
-                
-                if (staffIndex !== -1) {
-                    const updatedStaff = {
-                        ...staffData[staffIndex],
-                        ...formData
-                    };
-                    staffData[staffIndex] = updatedStaff;
-                    showToast('success', 'Dipendente aggiornato', `I dati di ${updatedStaff.name} ${updatedStaff.surname} sono stati aggiornati.`);
-                }
-            }
-            
-            // Aggiorna la lista e chiudi il modale
-            loadStaff();
-            closeModal('staffModal');
-        }
-
-        // Mostra il modale dei turni
-        function showScheduleModal() {
-            const modal = document.getElementById('scheduleModal');
-            modal.classList.add('active');
-            
-            // Popola la tabella dei turni settimanali
-            populateWeeklySchedule();
-            
-            // Aggiorna il calendario mensile
-            updateMonthlySchedule();
-            
-            // Popola la tabella delle assegnazioni
-            populateAssignmentsTable();
-        }
-
-        // Popola la tabella dei turni settimanali
-        function populateWeeklySchedule() {
-            const table = document.getElementById('weeklyScheduleTable');
-            const tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            // Crea una riga per ogni membro dello staff
-            staffData.forEach(staff => {
-                const row = document.createElement('tr');
-                
-                // Cella con il nome del dipendente
-                const nameCell = document.createElement('td');
-                nameCell.innerHTML = `
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <img src="${staff.avatar}" alt="${staff.name}" style="width:30px;height:30px;border-radius:50%;">
-                        <span>${staff.name} ${staff.surname}</span>
-                    </div>
-                `;
-                row.appendChild(nameCell);
-                
-                // Creo un oggetto per mappare i giorni con gli orari
-                const scheduleByDay = {};
-                staff.schedule.forEach(shift => {
-                    const dayIndex = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'].indexOf(shift.day);
-                    if (dayIndex !== -1) {
-                        scheduleByDay[dayIndex] = shift;
-                    }
-                });
-                
-                // Aggiungi celle per ogni giorno della settimana
-                for (let i = 0; i < 7; i++) {
-                    const cell = document.createElement('td');
-                    
-                    if (scheduleByDay[i]) {
-                        cell.innerHTML = `
-                            <div style="font-size:0.85rem;font-weight:500;">${scheduleByDay[i].time}</div>
-                            <div style="font-size:0.75rem;color:var(--text-light);">${scheduleByDay[i].role}</div>
-                        `;
-                        cell.style.backgroundColor = 'rgba(94, 96, 206, 0.1)';
-                    } else {
-                        cell.textContent = '-';
-                        cell.style.color = 'var(--text-light)';
-                    }
-                    
-                    row.appendChild(cell);
-                }
-                
-                tbody.appendChild(row);
-            });
-        }
-
-        // Aggiorna il calendario mensile
-        function updateMonthlySchedule() {
-            const calendarGrid = document.getElementById('monthlyScheduleGrid');
-            if (!calendarGrid) return;
-            
-            // Rimuovi i giorni esistenti, mantieni gli header
-            const headers = Array.from(calendarGrid.querySelectorAll('.calendar-day-header'));
-            calendarGrid.innerHTML = '';
-            headers.forEach(header => calendarGrid.appendChild(header));
-            
-            // Genera giorni del calendario (esempio semplificato)
-            const days = 31; // Esempio per un mese di 31 giorni
-            const firstDay = 2; // Esempio: 1° del mese è mercoledì (0=lunedì, 6=domenica)
-            
-            // Aggiungi giorni del calendario dopo gli header dei giorni della settimana
-            for (let i = 0; i < firstDay; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day other-month';
-                
-                const day = document.createElement('span');
-                day.className = 'day-number';
-                day.textContent = 30 - firstDay + i + 1; // Giorni del mese precedente
-                
-                dayCell.appendChild(day);
-                calendarGrid.appendChild(dayCell);
-            }
-            
-            for (let i = 1; i <= days; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day';
-                
-                // Oggi
-                if (i === 3) dayCell.classList.add('today');
-                
-                const day = document.createElement('span');
-                day.className = 'day-number';
-                day.textContent = i;
-                
-                const staffCount = document.createElement('span');
-                staffCount.className = 'day-staff';
-                
-                // Esempio: calendario di presenze
-                const staffCount = Math.floor(Math.random() * 4) + 5;
-                staffCountEl.textContent = `${staffCount} dipendenti`;
-                
-                dayCell.appendChild(day);
-                dayCell.appendChild(staffCountEl);
-                dayCell.addEventListener('click', () => showDaySchedule(i));
-                
-                calendarGrid.appendChild(dayCell);
-            }
-            
-            // Aggiungi eventuali giorni del mese successivo per completare l'ultima riga
-            const totalCells = calendarGrid.querySelectorAll('.calendar-day').length;
-            const cellsNeeded = 7 - (totalCells % 7);
-            if (cellsNeeded !== 7) {
-                for (let i = 1; i <= cellsNeeded; i++) {
-                    const dayCell = document.createElement('div');
-                    dayCell.className = 'calendar-day other-month';
-                    
-                    const day = document.createElement('span');
-                    day.className = 'day-number';
-                    day.textContent = i;
-                    
-                    dayCell.appendChild(day);
-                    calendarGrid.appendChild(dayCell);
-                                        dayCell.appendChild(day);
-                    calendarGrid.appendChild(dayCell);
-                }
-            }
-            
-            // Aggiungi eventuali giorni del mese successivo per completare l'ultima riga
-            const totalCells = calendarGrid.querySelectorAll('.calendar-day').length;
-            const cellsNeeded = 7 - (totalCells % 7);
-            if (cellsNeeded !== 7) {
-                for (let i = 1; i <= cellsNeeded; i++) {
-                    const dayCell = document.createElement('div');
-                    dayCell.className = 'calendar-day other-month';
-                    
-                    const day = document.createElement('span');
-                    day.className = 'day-number';
-                    day.textContent = i;
-                    
-                    dayCell.appendChild(day);
-                    calendarGrid.appendChild(dayCell);
-                }
-            }
-        }
-
-        // Mostra i dettagli di un giorno specifico del calendario
-        function showDaySchedule(day) {
-            showToast('info', 'Turni del giorno', `Hai selezionato il giorno ${day} maggio 2025. Qui potrai vedere e modificare i turni di questo giorno.`);
-            // In una vera applicazione, qui apriresti un modale con i dettagli dei turni del giorno selezionato
-        }
-
-        // Popola la tabella delle assegnazioni dei turni
-        function populateAssignmentsTable() {
-            const table = document.getElementById('assignmentsTable');
-            const tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
-            
-            // Crea una riga per ogni assegnazione di turno
-            staffData.forEach(staff => {
-                staff.schedule.forEach((shift, index) => {
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td>
-                            <div style="display:flex;align-items:center;gap:10px;">
-                                <img src="${staff.avatar}" alt="${staff.name}" style="width:30px;height:30px;border-radius:50%;">
-                                <span>${staff.name} ${staff.surname}</span>
-                            </div>
-                        </td>
-                        <td>${shift.day}</td>
-                        <td>${shift.time}</td>
-                        <td>${shift.role}</td>
-                        <td>
-                            <button class="action-btn" onclick="editShift(${staff.id}, ${index})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn" onclick="deleteShift(${staff.id}, ${index})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    
-                    tbody.appendChild(row);
-                });
-            });
-        }
-
-        // Modifica un turno
-        function editShift(staffId, shiftIndex) {
-            const staff = staffData.find(s => s.id === staffId);
-            if (!staff || !staff.schedule[shiftIndex]) return;
-            
-            const shift = staff.schedule[shiftIndex];
-            
-            // In una vera applicazione, qui apriresti un modale per modificare il turno
-            showToast('info', 'Modifica turno', `Modifica del turno di ${staff.name} ${staff.surname} - ${shift.day} ${shift.time}`);
-        }
-
-        // Elimina un turno
-        function deleteShift(staffId, shiftIndex) {
-            const staff = staffData.find(s => s.id === staffId);
-            if (!staff || !staff.schedule[shiftIndex]) return;
-            
-            const shift = staff.schedule[shiftIndex];
-            
-            if (confirm(`Sei sicuro di voler eliminare il turno di ${staff.name} ${staff.surname} - ${shift.day} ${shift.time}?`)) {
-                staff.schedule.splice(shiftIndex, 1);
-                populateAssignmentsTable();
-                populateWeeklySchedule();
-                showToast('success', 'Turno eliminato', `Il turno di ${staff.name} ${staff.surname} - ${shift.day} ${shift.time} è stato eliminato.`);
-            }
-        }
-
-        // Chiude un modale
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('active');
-            }
-        }
-
-        // Mostra un toast di notifica
-        function showToast(type, title, message) {
-            const toastContainer = document.getElementById('toastContainer');
-            
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            let icon;
-            switch (type) {
-                case 'success':
-                    icon = 'fa-check-circle';
-                    break;
-                case 'error':
-                    icon = 'fa-exclamation-circle';
-                    break;
-                case 'warning':
-                    icon = 'fa-exclamation-triangle';
-                    break;
-                default:
-                    icon = 'fa-info-circle';
-            }
-            
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas ${icon}"></i>
-                </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
-                </div>
-                <button class="toast-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            
-            // Aggiungi il toast al container
-            toastContainer.appendChild(toast);
-            
-            // Animazione di entrata
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.3s forwards';
-            }, 10);
-            
-            // Aggiungi event listener per il pulsante di chiusura
-            toast.querySelector('.toast-close').addEventListener('click', () => {
-                closeToast(toast);
-            });
-            
-            // Chiudi automaticamente dopo 5 secondi
-            setTimeout(() => {
-                closeToast(toast);
-            }, 5000);
-        }
-
-        // Chiude un toast
-        function closeToast(toast) {
-            toast.style.animation = 'slideOut 0.3s forwards';
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }
-
-        // Configura il grafico delle performance generali
-        function setupPerformanceChart() {
-            const ctx = document.getElementById('performanceChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio'],
-                    datasets: [{
-                        label: 'Performance media',
-                        data: [4.2, 4.3, 4.5, 4.6, 4.7],
-                        fill: false,
-                        borderColor: '#5e60ce',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 3.5,
-                            max: 5
-                        }
-                    }
-                }
-            });
-        }
-
-        // Configura il grafico delle performance di un membro dello staff specifico
-        function setupStaffPerformanceChart(staff) {
-            const ctx = document.getElementById('performanceChart');
-            if (!ctx) return;
-            
-            // Genera dati di esempio basati sul rating dello staff
-            const baseRating = staff.rating - 0.5;
-            const monthlyData = [
-                baseRating + Math.random() * 0.5,
-                baseRating + Math.random() * 0.7,
-                baseRating + Math.random() * 0.3,
-                baseRating + Math.random() * 0.5,
-                staff.rating
-            ].map(val => Math.min(Math.max(val, 1), 5).toFixed(1));
-            
-            // Crea o aggiorna il grafico
-            if (window.staffChart) {
-                window.staffChart.destroy();
-            }
-            
-            window.staffChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio'],
-                    datasets: [{
-                        label: 'Performance mensile',
-                        data: monthlyData,
-                        fill: false,
-                        borderColor: '#5e60ce',
-                        backgroundColor: 'rgba(94, 96, 206, 0.1)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 3,
-                            max: 5,
-                            ticks: {
-                                stepSize: 0.5
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Funzioni per il calendario
-        function updateCalendar() {
-            const calendarGrid = document.getElementById('calendarGrid');
-            if (!calendarGrid) return;
-            
-            // Genera giorni del calendario (esempio semplificato)
-            const days = 31; // Esempio per un mese di 31 giorni
-            const firstDay = 3; // Esempio: 1° del mese è mercoledì (0=lunedì, 6=domenica)
-            
-            // Rimuovi i giorni esistenti, mantieni gli header
-            const headers = Array.from(calendarGrid.querySelectorAll('.calendar-day-header'));
-            calendarGrid.innerHTML = '';
-            headers.forEach(header => calendarGrid.appendChild(header));
-            
-            // Aggiungi giorni del calendario dopo gli header dei giorni della settimana
-            for (let i = 0; i < firstDay; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day other-month';
-                
-                const day = document.createElement('span');
-                day.className = 'day-number';
-                day.textContent = 30 - firstDay + i + 1; // Giorni del mese precedente
-                
-                dayCell.appendChild(day);
-                calendarGrid.appendChild(dayCell);
-            }
-            
-            for (let i = 1; i <= days; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day';
-                
-                // Oggi
-                if (i === 3) dayCell.classList.add('today');
-                
-                const day = document.createElement('span');
-                day.className = 'day-number';
-                day.textContent = i;
-                
-                const staffCount = document.createElement('span');
-                staffCount.className = 'day-staff';
-                
-                // Esempio: giorni di lavoro
-                if (i % 7 !== 0 && i % 7 !== 6) { // Non weekend
-                    staffCount.textContent = `${Math.floor(Math.random() * 4) + 5} ore`;
-                } else {
-                    // Weekend
-                    staffCount.textContent = 'Riposo';
-                    staffCount.style.color = 'var(--accent-green)';
-                }
-                
-                dayCell.appendChild(day);
-                dayCell.appendChild(staffCount);
-                
-                calendarGrid.appendChild(dayCell);
-            }
-            
-            // Aggiungi eventuali giorni del mese successivo
-            const totalCells = calendarGrid.querySelectorAll('.calendar-day').length;
-            const cellsNeeded = 7 - ((totalCells - headers.length) % 7);
-            if (cellsNeeded !== 7) {
-                for (let i = 1; i <= cellsNeeded; i++) {
-                    const dayCell = document.createElement('div');
-                    dayCell.className = 'calendar-day other-month';
-                    
-                    const day = document.createElement('span');
-                    day.className = 'day-number';
-                    day.textContent = i;
-                    
-                    dayCell.appendChild(day);
-                    calendarGrid.appendChild(dayCell);
-                }
-            }
-        }
-
-        // Funzione per generare automaticamente i turni
-        document.getElementById('autoScheduleBtn').addEventListener('click', function() {
-            showToast('info', 'Generazione turni', 'Turni generati automaticamente per il mese corrente.');
-            // In una vera implementazione, qui ci sarebbe un algoritmo che genera turni ottimali
-            // basati su disponibilità, competenze e requisiti
-        });
-
-        // Funzione per aggiungere un nuovo turno
-        document.getElementById('addShiftBtn').addEventListener('click', function() {
-            // In una vera implementazione, qui apriresti un modale per creare un nuovo turno
-            showToast('info', 'Nuovo turno', 'Funzionalità per aggiungere un nuovo turno a un dipendente.');
-        });
-
-        // Event listeners per i pulsanti di navigazione del calendario
-        document.getElementById('prevMonthBtn').addEventListener('click', function() {
-            // In una vera implementazione, cambieresti il mese visualizzato nel calendario
-            document.getElementById('calendarMonth').textContent = 'Aprile 2025';
-            showToast('info', 'Cambio mese', 'Visualizzazione cambiata ad Aprile 2025');
-        });
-
-        document.getElementById('nextMonthBtn').addEventListener('click', function() {
-            // In una vera implementazione, cambieresti il mese visualizzato nel calendario
-            document.getElementById('calendarMonth').textContent = 'Giugno 2025';
-            showToast('info', 'Cambio mese', 'Visualizzazione cambiata a Giugno 2025');
-        });
-
-        // Event listeners per i pulsanti di navigazione della settimana
-        document.getElementById('prevWeekBtn').addEventListener('click', function() {
-            // In una vera implementazione, cambieresti la settimana visualizzata
-            showToast('info', 'Cambio settimana', 'Visualizzazione cambiata alla settimana precedente');
-        });
-
-        document.getElementById('nextWeekBtn').addEventListener('click', function() {
-            // In una vera implementazione, cambieresti la settimana visualizzata
-            showToast('info', 'Cambio settimana', 'Visualizzazione cambiata alla settimana successiva');
-        });
-
-        // Event listeners per i pulsanti della programmazione mensile
-        document.getElementById('prevMonthScheduleBtn').addEventListener('click', function() {
-            // In una vera implementazione, cambieresti il mese visualizzato
-            showToast('info', 'Cambio mese', 'Visualizzazione cambiata al mese precedente');
-        });
-
-        document.getElementById('nextMonthScheduleBtn').addEventListener('click', function() {
-            // In una vera implementazione, cambieresti il mese visualizzato
-            showToast('info', 'Cambio mese', 'Visualizzazione cambiata al mese successivo');
-        });
     </script>
 </body>
+
 </html>

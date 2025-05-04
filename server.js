@@ -441,6 +441,120 @@ app.post('/api/chat/send', (req, res) => {
     res.json({ success: true, message_id: newMessage.id });
 });
 
+// Route per la pagina di gestione del personale
+app.get('/personale', requireLogin, (req, res) => {
+    res.render('personale', { 
+        pageTitle: 'Gestione Personale - YourBite', 
+        user: req.session.user 
+    });
+});
+
+// Aggiungi anche una route che gestisce l'URL con la P maiuscola per retrocompatibilità
+app.get('/Personale', (req, res) => {
+    res.redirect('/personale');  // Reindirizza alla versione minuscola
+});
+
+// API per ottenere i dati del personale
+app.get('/api/personale', requireStaff, (req, res) => {
+    // In un'app reale, questi dati verrebbero dal database
+    db.all('SELECT * FROM dipendenti ORDER BY cognome, nome', [], (err, rows) => {
+        if (err) {
+            console.error('Errore nel recupero dipendenti:', err);
+            return res.status(500).json({ error: 'Errore del server nel recupero dei dipendenti.' });
+        }
+        res.json({ success: true, personale: rows });
+    });
+});
+
+// API per ottenere un singolo dipendente
+app.get('/api/personale/:id', requireStaff, (req, res) => {
+    const id = req.params.id;
+    db.get('SELECT * FROM dipendenti WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            console.error('Errore nel recupero dipendente:', err);
+            return res.status(500).json({ error: 'Errore del server nel recupero del dipendente.' });
+        }
+        if (!row) {
+            return res.status(404).json({ error: 'Dipendente non trovato.' });
+        }
+        res.json({ success: true, dipendente: row });
+    });
+});
+
+// API per aggiungere un dipendente
+app.post('/api/personale', requireStaff, (req, res) => {
+    const { nome, cognome, posizione, reparto, email, telefono, dataNascita, dataAssunzione } = req.body;
+    
+    // Validazione
+    if (!nome || !cognome || !posizione || !reparto) {
+        return res.status(400).json({ error: 'Tutti i campi obbligatori devono essere compilati.' });
+    }
+    
+    const query = `
+        INSERT INTO dipendenti 
+        (nome, cognome, posizione, reparto, email, telefono, data_nascita, data_assunzione, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    `;
+    
+    db.run(query, [nome, cognome, posizione, reparto, email, telefono, dataNascita, dataAssunzione], function(err) {
+        if (err) {
+            console.error('Errore durante inserimento dipendente:', err);
+            return res.status(500).json({ error: 'Errore del server durante l\'inserimento del dipendente.' });
+        }
+        
+        res.status(201).json({ success: true, id: this.lastID, message: 'Dipendente aggiunto con successo.' });
+    });
+});
+
+// API per aggiornare un dipendente
+app.put('/api/personale/:id', requireStaff, (req, res) => {
+    const id = req.params.id;
+    const { nome, cognome, posizione, reparto, email, telefono, dataNascita, dataAssunzione } = req.body;
+    
+    // Validazione
+    if (!nome || !cognome || !posizione || !reparto) {
+        return res.status(400).json({ error: 'Tutti i campi obbligatori devono essere compilati.' });
+    }
+    
+    const query = `
+        UPDATE dipendenti
+        SET nome = ?, cognome = ?, posizione = ?, reparto = ?, email = ?, 
+            telefono = ?, data_nascita = ?, data_assunzione = ?, updated_at = datetime('now')
+        WHERE id = ?
+    `;
+    
+    db.run(query, [nome, cognome, posizione, reparto, email, telefono, dataNascita, dataAssunzione, id], function(err) {
+        if (err) {
+            console.error('Errore durante aggiornamento dipendente:', err);
+            return res.status(500).json({ error: 'Errore del server durante l\'aggiornamento del dipendente.' });
+        }
+        
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Dipendente non trovato.' });
+        }
+        
+        res.json({ success: true, message: 'Dipendente aggiornato con successo.' });
+    });
+});
+
+// API per eliminare un dipendente
+app.delete('/api/personale/:id', requireStaff, (req, res) => {
+    const id = req.params.id;
+    
+    db.run('DELETE FROM dipendenti WHERE id = ?', [id], function(err) {
+        if (err) {
+            console.error('Errore durante eliminazione dipendente:', err);
+            return res.status(500).json({ error: 'Errore del server durante l\'eliminazione del dipendente.' });
+        }
+        
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Dipendente non trovato.' });
+        }
+        
+        res.json({ success: true, message: 'Dipendente eliminato con successo.' });
+    });
+});
+
 // Ottieni la cronologia della chat
 app.get('/api/chat/history', (req, res) => {
     const { client_id } = req.query;

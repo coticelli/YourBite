@@ -1424,11 +1424,6 @@ function checkSessionStatusWithoutRedirect() {
         .then(response => response.json())
         .then(data => {
             console.log("Risposta auth-status completa:", data);
-            
-            // PROBLEMA: Il server restituisce dati in un formato diverso da quello che ci aspettiamo
-            // Può restituire { isAuthenticated: true } o { sessionUser: {...} } 
-            // o entrambi con formati diversi
-            
             // Verifica se l'utente è autenticato nel modo più flessibile possibile
             const isAuthenticated = 
                 (data.isAuthenticated === true) || // Verifica esplicita
