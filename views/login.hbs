@@ -52,67 +52,64 @@
         </div>
     </div>
 
-    {{!-- Lo script JS rimane uguale, si interfaccia con l'API POST /login --}}
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+ <script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Previeni l'invio tradizionale
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const messageDiv = document.getElementById('message');
+        messageDiv.innerText = ''; // Pulisci messaggi precedenti
 
-            fetch('/login', { // Questo endpoint è già gestito in server.js
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errData => {
-                        throw new Error(errData.error || `Network response was not ok: ${response.statusText}`);
-                    }).catch(() => {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Risposta dal server:', data);
-                if (data.error) {
-                    document.getElementById('message').innerText = data.error;
-                    console.error('Errore dal server:', data.error);
-                } else if (data.success && data.redirectUrl) {
-                    // Salva i dati dell'utente nel localStorage (OPZIONALE)
-                    // localStorage.setItem('username', data.username);
-                    // localStorage.setItem('userType', data.tipo);
+        const email = emailInput.value;
+        const password = passwordInput.value;
 
-                    // Redirige alla URL fornita dal server
-                    window.location.href = data.redirectUrl;
-                } else {
-                     document.getElementById('message').innerText = 'Risposta inattesa dal server.';
-                     console.error('Risposta inattesa:', data);
-                }
-            })
-            .catch(error => {
-                console.error('Errore durante il login:', error);
-                document.getElementById('message').innerText = error.message || 'Errore durante il login. Riprova.';
-            });
+        // Validazione base frontend (opzionale ma consigliata)
+        if (!email || !password) {
+            messageDiv.innerText = 'Per favore, inserisci sia email che password.';
+            return;
+        }
+
+        fetch('/login', { // Invia la richiesta all'endpoint POST /login
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => {
+            // Controlla se la risposta è JSON prima di provare a leggerla
+            const contentType = response.headers.get("content-type");
+            if (response.ok && contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json(); // Se OK e JSON, processa JSON
+            } else {
+                // Se non OK o non JSON, leggi come testo per vedere l'errore HTML/testo
+                return response.text().then(text => {
+                     // Lancia un errore specifico per gestirlo nel catch
+                     throw new Error(text || `Errore ${response.status}: ${response.statusText}`);
+                });
+            }
+        })
+        .then(data => {
+            console.log('Risposta JSON dal server:', data);
+            if (data.success && data.redirectUrl) {
+                // Login riuscito, reindirizza
+                window.location.href = data.redirectUrl;
+            } else {
+                // Errore gestito dal server (es. credenziali errate)
+                messageDiv.innerText = data.error || 'Errore sconosciuto dal server.';
+                console.error('Errore logico dal server:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante il fetch del login:', error);
+             // Mostra l'errore nel div #message
+             // Se l'errore contiene HTML (es. pagina 404/500), mostra un messaggio generico
+             if (error.message && error.message.trim().startsWith('<')) {
+                 messageDiv.innerText = 'Errore di comunicazione con il server. Riprova.';
+             } else {
+                 messageDiv.innerText = error.message || 'Errore durante il login. Riprova.';
+             }
         });
-
-        // Aggiungi questo script alla pagina di login prima di inviare il form
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    
-    // Assicurati che lo username sia correttamente codificato
-    const encodedUsername = encodeURIComponent(username);
-    
-    // Imposta manualmente un cookie con username codificato
-    document.cookie = `user_session=${encodedUsername}; path=/`;
-    
-    // Continua con il submit del form
-    this.submit();
-});
-    </script>
+    });
+</script>
 </body>
 </html>

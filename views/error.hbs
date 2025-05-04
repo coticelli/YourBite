@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Errore {{status}} - YourBite</title>
+    {{!-- Link opzionale al tuo CSS principale --}}
+    <link rel="stylesheet" href="/style.css"> 
+    <style>
+        /* Stili base per la pagina di errore */
+        body { font-family: sans-serif; padding: 20px; background-color: #f8f9fa; color: #343a40; line-height: 1.6; }
+        .error-container { max-width: 700px; margin: 40px auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid #dc3545; }
+        h1 { color: #dc3545; margin-top: 0; margin-bottom: 15px; font-size: 2em; }
+        p { margin-bottom: 10px; }
+        strong { color: #555; }
+        pre { background-color: #e9ecef; padding: 15px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; font-size: 0.9em; max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6; margin-top: 20px;}
+        code { font-family: monospace; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .home-link { display: inline-block; margin-top: 20px; background-color: #007bff; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none; }
+        .home-link:hover { background-color: #0056b3; }
+        .user-info { margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; font-size: 0.9em; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1><i class="fas fa-exclamation-triangle"></i> Si è verificato un Errore ({{status}})</h1>
+        
+        <p><strong>Messaggio:</strong> {{message}}</p>
+        
+        {{#if error.stack}} {{!-- Mostra stack solo in development --}}
+            <details>
+                <summary style="cursor: pointer; font-weight: bold; margin-top: 15px;">Dettagli Tecnici (Solo Sviluppo)</summary>
+                <pre><code>{{error.stack}}</code></pre>
+            </details>
+        {{else}}
+            <p>Ci scusiamo per l'inconveniente. Il nostro team è stato notificato.</p>
+        {{/if}}
+
+        <a href="/" class="home-link">Torna all'inizio</a>
+        
+        {{#if user}}
+            <p class="user-info">Utente loggato: {{user.username}} ({{user.tipo}})</p>
+        {{/if}}
+    </div>
+    {{!-- Includi FontAwesome se non è già globale --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</body>
+</html>
