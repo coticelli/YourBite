@@ -1364,14 +1364,17 @@
 
     <!-- Toast Notifications Container -->
     <div class="toast-container" id="toastContainer"></div>
-
     <script>
         // Variabili globali
         let socket;
+        let typingTimeout; // Variabile per il timeout del typing
         const userType = 'capo'; // Assumiamo sia sempre capo in questa pagina
-        // Genera un ID operatore temporaneo o recuperalo dalla sessione/API
-        const operatorId = 'capo_' + (document.cookie.match(/connect\.sid=s%3A([^.]+)/)?.[1] || Math.random().toString(36).substring(2, 9));
-        const operatorName = 'Assistenza YourBite'; // O prendi il nome utente reale
+
+        // Recupera user ID e nome dall'oggetto 'user' passato da Handlebars (MOLTO IMPORTANTE!)
+        const currentUser = {{{ json user }}}; // <<< ASSICURATI CHE QUESTA RIGA SIA PRESENTE E FUNZIONI
+        const operatorId = `capo_${currentUser?.id || Math.random().toString(36).substring(2, 9)}`; // Usa ID reale se disponibile
+        const operatorName = currentUser?.username || 'Assistenza'; // Usa nome reale se disponibile
+
         let activeChatUserId = null; // ID utente della chat attiva (es. 'client_123')
         let clients = []; // Array per memorizzare le informazioni sui client/chat
         let chatHistoryCache = {}; // Cache per la cronologia dei messaggi
@@ -1381,25 +1384,79 @@
         function getAvatarUrl(name, size = 48) { const apiUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || '??')}&background=random&color=fff&size=${size}&bold=true`; return apiUrl; }
         function formatTime(date) { return new Date(date).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }); }
         function formatDay(dateString) { const d = new Date(dateString); const today = new Date(); const y = new Date(today); y.setDate(y.getDate() - 1); const ds = d.toISOString().split('T')[0]; if (ds === today.toISOString().split('T')[0]) return 'Oggi'; if (ds === y.toISOString().split('T')[0]) return 'Ieri'; return d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }); }
-        function scrollToBottom(elementId = 'chatContent') { const el = document.getElementById(elementId); if (el) { setTimeout(() => el.scrollTop = el.scrollHeight, 50); } } // Aggiunto timeout
+        function scrollToBottom(elementId = 'chatContent') { const el = document.getElementById(elementId); if (el) { setTimeout(() => el.scrollTop = el.scrollHeight, 50); } }
         function playNotificationSound() { try { const a = new Audio('/sounds/notification.mp3'); a.volume = 0.3; a.play().catch(e => console.log('Audio play failed:', e)); } catch (e) { console.log('Audio init failed:', e); } }
         function showAuthAlert(title, message, showLoginButton = false) { const a = document.createElement('div'); a.className = 'auth-alert'; a.innerHTML = `<h4 style="margin-top:0;margin-bottom:10px;font-size:18px">${title}</h4><p style="margin-bottom:${showLoginButton ? '15px' : '0'};margin-top:0">${message}</p>${showLoginButton ? '<button id="redirectLoginBtn" style="background:#dc3545;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer">Vai al login</button>' : ''}`; document.body.appendChild(a); if (showLoginButton) { document.getElementById('redirectLoginBtn').onclick = () => window.location.href = '/login'; } else { setTimeout(() => a.remove(), 10000); } }
 
+        // --- FUNZIONE TYPING STATUS (AGGIUNTA E CORRETTA) ---
+        function sendTypingStatus(isTyping) {
+            // Verifica che ci sia una chat attiva e che il socket sia connesso
+            if (socket && socket.connected && activeChatUserId) {
+                clearTimeout(typingTimeout); // Cancella timeout precedente
+
+                const client = clients.find(c => c.id === activeChatUserId);
+                const roomId = client?.roomId || `support_${activeChatUserId}`; // Usa roomId del client se disponibile
+
+                // Non inviare se roomId non è valido (dovrebbe sempre esserlo qui)
+                if (!roomId) {
+                    console.warn("[sendTypingStatus] Room ID non trovato per la chat attiva:", activeChatUserId);
+                    return;
+                }
+
+                //console.log(`[Capo] Invio typing=${isTyping} a ${roomId}`); // Debug opzionale
+                socket.emit('typing', {
+                    userId: operatorId,     // L'ID dell'operatore (capo)
+                    username: operatorName, // Il nome dell'operatore
+                    isTyping: isTyping,
+                    roomId: roomId          // La stanza della chat attiva
+                });
+
+                // Se sta scrivendo, imposta un timeout per inviare 'false' dopo un po'
+                if (isTyping) {
+                    typingTimeout = setTimeout(() => sendTypingStatus(false), 3000); // 3 secondi di inattività
+                }
+            }
+        }
+
         // --- INIZIALIZZAZIONE ---
         document.addEventListener('DOMContentLoaded', function () {
-            checkSessionStatusWithoutRedirect(); // Verifica sessione senza redirect
+            console.log("Dati utente ricevuti dal server (homepage_capo.hbs):", currentUser); // Log per verifica
+            // Verifica *prima* di fare qualsiasi altra cosa
+            if (typeof currentUser === 'undefined' || !currentUser || !currentUser.id || currentUser.tipo !== 'capo') {
+                 console.error("ERRORE CRITICO: Dati utente Capo non disponibili o non validi!");
+                 showAuthAlert("Accesso Negato", "Impossibile verificare l'account Capo. Riprova il login.", true);
+                 disableChatFunctionality(); // Disabilita tutto se l'utente non è valido
+                 return; // Interrompi l'esecuzione
+            }
+
+            // Se l'autenticazione è OK, procedi
+            console.log(`Identità operatore impostata: ID=${operatorId}, Nome=${operatorName}`);
+            checkSessionStatusWithoutRedirect(); // Verifica ulteriore (opzionale ma può rimanere)
             initializeSocketIO();
-            setupUIElements(); // Configura input, bottoni, ecc.
-            // Non chiamare loadSupportRequests qui, aspetta la connessione socket
+            setupUIElements();
+            // Aggiorna UI header con dati utente
+            updateHeaderUserInfo();
         });
+
+        // --- AGGIORNAMENTO INFO HEADER ---
+        function updateHeaderUserInfo() {
+            const userNameEl = document.querySelector('.user-profile .user-name');
+            const userAvatarEl = document.querySelector('.user-profile .user-avatar');
+            if (userNameEl && currentUser?.username) {
+                userNameEl.textContent = currentUser.username;
+            }
+            if (userAvatarEl && currentUser?.username) {
+                userAvatarEl.src = getAvatarUrl(currentUser.username, 32); // Usa dimensione 32 per header
+            }
+        }
 
         // --- SOCKET.IO ---
         function initializeSocketIO() {
             const connectionStatus = document.getElementById('connectionStatus');
             const connectionText = document.getElementById('connectionText');
-            connectionStatus.classList.remove('show', 'connected'); // Start hidden
+            connectionStatus.classList.remove('show', 'connected');
 
-            socket = io({ reconnectionAttempts: 5, reconnectionDelay: 3000 }); // Configura riconnessione
+            socket = io({ reconnectionAttempts: 5, reconnectionDelay: 3000 });
 
             const connectionTimeout = setTimeout(() => {
                 connectionStatus.classList.add('show');
@@ -1407,33 +1464,36 @@
             }, 2000);
 
             socket.on('connect', () => {
-                console.log('Socket.IO Connesso');
+                console.log(`Socket.IO Capo Connesso: ${socket.id}`);
                 clearTimeout(connectionTimeout);
                 connectionText.textContent = 'Connesso';
                 connectionStatus.classList.add('connected', 'show');
                 setTimeout(() => connectionStatus.classList.remove('show'), 3000);
 
-                socket.emit('operatorJoin', { userId: operatorId, username: operatorName });
-                loadSupportRequests(); // Carica le chat DOPO la connessione
-                if (activeChatUserId) { // Riconnettiti alla chat attiva se presente
-                    socket.emit('operatorJoin', { userId: operatorId, username: operatorName, roomId: `support_${activeChatUserId}` });
-                }
+                // Invia identificazione corretta al server
+                console.log(`[Capo] Invio identify: userId=${operatorId}, username=${operatorName}, userType=${userType}`);
+                socket.emit('identify', {
+                    userId: operatorId,
+                    username: operatorName,
+                    userType: userType
+                });
+
+                loadSupportRequests(); // Carica le chat DOPO l'identificazione
             });
 
             socket.on('new_support_request', handleNewSupportRequest);
             socket.on('message', handleIncomingMessage);
             socket.on('typing', handleTypingEvent);
             socket.on('userLeave', handleUserLeave);
-            socket.on('past_messages', handlePastMessages);
+            socket.on('past_messages', handlePastMessages); // Riceve la cronologia dopo operatorJoinRoom
 
             socket.on('disconnect', (reason) => {
                 console.log('Socket.IO Disconnesso:', reason);
                 connectionText.textContent = 'Connessione persa';
                 connectionStatus.classList.remove('connected');
                 connectionStatus.classList.add('show');
-                // La riconnessione è gestita automaticamente da Socket.IO
             });
-
+            // Riconnessione gestita automaticamente, l'evento 'connect' verrà rieseguito
             socket.on('connect_error', (error) => {
                 console.error('Socket.IO Errore Connessione:', error);
                 connectionText.textContent = 'Errore Connessione';
@@ -1450,62 +1510,64 @@
                     id: data.user.userId,
                     name: data.user.username || `Utente ${data.user.userId.substring(data.user.userId.length - 4)}`,
                     roomId: data.roomId,
-                    online: true,
+                    online: true, // Appena connesso è online
                     unreadCount: 1,
                     lastMessage: { text: 'Nuova richiesta...', timestamp: new Date().toISOString() }
                 };
-                clients.unshift(newClient);
+                clients.unshift(newClient); // Aggiungi in cima
                 updateClientListUI();
                 playNotificationSound();
+                showToast('Nuova Chat', `Nuova richiesta da ${newClient.name}`, 'info');
             } else {
+                // Cliente già esistente ma si è ricollegato o riaperto
                 existingClient.online = true;
-                existingClient.roomId = data.roomId; // Aggiorna roomId se necessario
+                existingClient.roomId = data.roomId; // Assicurati che roomId sia corretto
+                existingClient.unreadCount = (existingClient.unreadCount || 0) + 1;
+                // Sposta in cima
+                clients = clients.filter(c => c.id !== data.user.userId);
+                clients.unshift(existingClient);
                 updateClientListUI();
+                playNotificationSound();
             }
         }
 
         function handleIncomingMessage(data) {
-            console.log('Messaggio ricevuto:', data);
-            const senderId = data.sender?.startsWith('client_') ? data.sender : data.userId; // Gestisce entrambi i formati
+            console.log('[Capo] Messaggio ricevuto:', data);
+            const senderId = data.sender?.startsWith('client_') ? data.sender : data.userId;
 
-            if (!senderId || senderId === operatorId) return; // Ignora messaggi da noi stessi
+            if (!senderId || senderId === operatorId) return; // Ignora messaggi dall'operatore stesso
 
             let client = clients.find(c => c.id === senderId);
             const isNew = !client;
 
-            if (isNew) { // Cliente non nella lista, probabilmente vecchia chat riaperta
-                client = {
-                    id: senderId,
-                    name: data.senderName || `Utente ${senderId.substring(senderId.length - 4)}`,
-                    roomId: data.roomId || `support_${senderId}`,
-                    online: true, // Assume online se manda messaggio
-                    unreadCount: 0,
-                    lastMessage: { text: '', timestamp: '' }
-                };
-                clients.unshift(client); // Aggiungi in cima
-            }
+            if (isNew) { // Cliente non nella lista? Potrebbe accadere
+                 console.warn(`[Capo] Messaggio ricevuto da cliente non in lista: ${senderId}. Aggiungo.`);
+                 client = { id: senderId, name: data.senderName || `Utente ${senderId.substring(senderId.length-4)}`, roomId: data.roomId || `support_${senderId}`, online: true, unreadCount: 0, lastMessage: { text: '', timestamp: '' } };
+                 clients.unshift(client);
+             }
 
-            // Aggiorna ultimo messaggio
-            client.lastMessage = { text: data.content, timestamp: data.timestamp };
-            client.online = true; // È online se manda messaggio
+             // Aggiorna ultimo messaggio
+             client.lastMessage = { text: data.content, timestamp: data.timestamp };
+             client.online = true; // Se manda messaggio è online
 
-            // Incrementa non letti se non è la chat attiva
-            if (activeChatUserId !== senderId) {
-                client.unreadCount = (client.unreadCount || 0) + 1;
-            } else {
-                // Se è la chat attiva, aggiungi subito il messaggio
-                addMessageToChat('incoming', data.content, data.timestamp);
-                hideTypingIndicator();
-            }
+             if (activeChatUserId !== senderId) {
+                 client.unreadCount = (client.unreadCount || 0) + 1;
+             } else {
+                 // Se è la chat attiva, aggiungi messaggio e nascondi typing
+                 addMessageToChat('incoming', data.content, data.timestamp);
+                 hideTypingIndicator();
+                 // Potrebbe essere utile inviare uno stato 'read' qui
+             }
 
-            // Sposta in cima e aggiorna UI
-            clients = clients.filter(c => c.id !== senderId);
-            clients.unshift(client);
-            updateClientListUI();
-            playNotificationSound();
+             // Sposta in cima e aggiorna UI
+             clients = clients.filter(c => c.id !== senderId);
+             clients.unshift(client);
+             updateClientListUI();
+             playNotificationSound();
         }
 
         function handleTypingEvent(data) {
+            // Mostra solo se il cliente sta scrivendo nella chat attiva
             if (activeChatUserId === data.userId && data.userId !== operatorId) {
                 if (data.isTyping) showTypingIndicator(); else hideTypingIndicator();
             }
@@ -1517,51 +1579,56 @@
             if (client) {
                 client.online = false;
                 updateClientListUI();
+                 if (activeChatUserId === data.userId) {
+                     addSystemMessage(`${client.name} si è disconnesso.`);
+                 }
             }
         }
 
         function handlePastMessages(data) {
-            console.log('Messaggi passati per', data.roomId, ':', data.messages.length);
+            // Ricevuto dal server dopo 'operatorJoinRoom'
+            console.log(`[Capo] Messaggi passati ricevuti per ${data.roomId}: ${data.messages?.length}`);
             if (data.roomId === `support_${activeChatUserId}`) {
-                chatHistoryCache[activeChatUserId] = data.messages; // Salva nella cache
+                chatHistoryCache[activeChatUserId] = data.messages || []; // Salva nella cache (anche array vuoto)
                 displayChatHistory(data.messages);
+            } else {
+                console.warn(`[Capo] Ricevuti messaggi passati per una stanza non attiva: ${data.roomId} (Attiva: support_${activeChatUserId})`);
             }
         }
 
+
         // --- GESTIONE UI ---
         function setupUIElements() {
-            // Bottone invio messaggio
-            const chatSendButton = document.getElementById('chatSend');
-            if (chatSendButton) {
-                chatSendButton.addEventListener('click', sendChatMessage);
-            } else { console.error("Elemento chatSend non trovato!"); }
+             // Bottone invio messaggio
+             const chatSendButton = document.getElementById('chatSend');
+             if (chatSendButton) {
+                 chatSendButton.addEventListener('click', sendChatMessage);
+             } else { console.error("Elemento chatSend non trovato!"); }
 
-            // Input messaggio (Enter per inviare, resize automatico, stato typing)
-            const chatInput = document.getElementById('chatInput');
-            if (chatInput) {
-                let typingTimeout;
-                chatInput.addEventListener('input', function () {
-                    this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-                    clearTimeout(typingTimeout);
-                    sendTypingStatus(this.value.trim() !== '');
-                    typingTimeout = setTimeout(() => sendTypingStatus(false), 3000);
-                });
-                chatInput.addEventListener('keydown', function (e) {
-                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
-                });
-            } else { console.error("Elemento chatInput non trovato!"); }
+             // Input messaggio (Enter per inviare, resize automatico, stato typing)
+             const chatInput = document.getElementById('chatInput');
+             if (chatInput) {
+                 chatInput.addEventListener('input', function () {
+                     this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+                     // Chiama la funzione sendTypingStatus definita globalmente
+                     sendTypingStatus(this.value.trim() !== '');
+                 });
+                 chatInput.addEventListener('keydown', function (e) {
+                     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+                 });
+             } else { console.error("Elemento chatInput non trovato!"); }
 
-            // Bottone logout
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', handleLogout);
-            } else { console.warn("Elemento logoutBtn non trovato."); }
+             // Bottone logout
+             const logoutBtn = document.getElementById('logoutBtn');
+             if (logoutBtn) {
+                 logoutBtn.addEventListener('click', handleLogout);
+             } else { console.warn("Elemento logoutBtn non trovato."); }
 
-            // Bottone Elimina Tutte le Chat
-            const deleteAllBtn = document.getElementById('deleteAllChatsBtn');
-            if (deleteAllBtn) {
-                deleteAllBtn.addEventListener('click', handleDeleteAllChats);
-            } else { console.warn("Elemento deleteAllChatsBtn non trovato."); }
+             // Bottone Elimina Tutte le Chat
+             const deleteAllBtn = document.getElementById('deleteAllChatsBtn');
+             if (deleteAllBtn) {
+                 deleteAllBtn.addEventListener('click', handleDeleteAllChats);
+             } else { console.warn("Elemento deleteAllChatsBtn non trovato."); }
         }
 
         function updateClientListUI() {
@@ -1587,56 +1654,31 @@
                 }
 
                 const displayName = client.name || `Utente ${client.id.substring(client.id.length - 4)}`;
-                const avatarUrl = getAvatarUrl(displayName, 48); // Dimensione per sidebar
+                const avatarUrl = getAvatarUrl(displayName, 48);
 
                 chatItem.innerHTML = `
                 <img src="${avatarUrl}" alt="${displayName}" class="chat-avatar" onerror="this.onerror=null; this.src=getAvatarUrl('??', 48);">
                 <div class="chat-item-content">
                     <div class="chat-item-header">
                         <div class="chat-name">${displayName}</div>
-                        <!-- Pulsanti Modifica/Elimina -->
                         <div class="chat-item-actions">
-                            <button class="chat-item-action-btn edit-chat-btn" title="Modifica Nome Visualizzato" data-userid="${client.id}" data-currentname="${displayName}">
-                                <i class="fas fa-pencil-alt"></i>
-                            </button>
-                            <button class="chat-item-action-btn delete-chat-btn delete" title="Elimina Chat" data-roomid="${client.roomId}" data-username="${displayName}">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
+                            <button class="chat-item-action-btn edit-chat-btn" title="Modifica Nome Visualizzato" data-userid="${client.id}" data-currentname="${displayName}"> <i class="fas fa-pencil-alt"></i> </button>
+                            <button class="chat-item-action-btn delete-chat-btn delete" title="Elimina Chat" data-roomid="${client.roomId}" data-username="${displayName}"> <i class="fas fa-trash-alt"></i> </button>
                         </div>
                         <div class="chat-time">${timeText}</div>
                     </div>
                     <div class="chat-message">${client.lastMessage?.text || '...'}</div>
                     <div class="chat-item-status">
-                        <div class="chat-status">${client.online ? 'Online' : 'Offline'}</div>
+                        <div class="chat-status">${client.online ? '<span style="color:var(--accent-green);">Online</span>' : '<span style="color:var(--text-light);">Offline</span>'}</div>
                         ${client.unreadCount ? `<div class="message-count">${client.unreadCount}</div>` : ''}
                     </div>
                 </div>`;
 
-                // Aggiungi listener all'ITEM PRINCIPALE per aprire la chat
-                chatItem.addEventListener('click', (e) => {
-                    // Evita di aprire la chat se si clicca sui bottoni azione
-                    if (!e.target.closest('.chat-item-action-btn')) {
-                        openChat(client.id);
-                    }
-                });
-
-                // Aggiungi listener ai BOTTONI AZIONE
+                chatItem.addEventListener('click', (e) => { if (!e.target.closest('.chat-item-action-btn')) openChat(client.id); });
                 const editBtn = chatItem.querySelector('.edit-chat-btn');
                 const deleteBtn = chatItem.querySelector('.delete-chat-btn');
-
-                if (editBtn) {
-                    editBtn.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Ferma la propagazione per non aprire la chat
-                        handleEditChatName(client.id, displayName);
-                    });
-                }
-                if (deleteBtn) {
-                    deleteBtn.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Ferma la propagazione
-                        handleDeleteChat(client.roomId, displayName);
-                    });
-                }
-
+                if (editBtn) editBtn.addEventListener('click', (e) => { e.stopPropagation(); handleEditChatName(client.id, displayName); });
+                if (deleteBtn) deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); handleDeleteChat(client.roomId, displayName); });
                 chatList.appendChild(chatItem);
             });
         }
@@ -1646,77 +1688,55 @@
             if (newName && newName.trim() !== '' && newName !== currentName) {
                 const client = clients.find(c => c.id === userId);
                 if (client) {
-                    client.name = newName.trim(); // Aggiorna nome nell'array locale
-                    updateClientListUI(); // Ridisegna la lista
-                    // Se è la chat attiva, aggiorna anche l'header della chat (se esiste)
-                    if (userId === activeChatUserId) {
-                        // Aggiungere un elemento per il nome nell'header del chat-main se necessario
-                        console.log(`Nome chat attiva aggiornato a: ${newName.trim()}`);
-                    }
-                    showToast('success', 'Nome Aggiornato', `Nome visualizzato cambiato in "${newName.trim()}".`);
+                    client.name = newName.trim();
+                    updateClientListUI();
+                    showToast('success', 'Nome Aggiornato', `Nome cambiato in "${newName.trim()}".`);
                 }
-            } else if (newName !== null) { // Se l'utente non ha cancellato il prompt ma ha inserito un nome vuoto o uguale
-                showToast('info', 'Modifica Annullata', 'Nessuna modifica apportata al nome.');
-            }
+            } else if (newName !== null) { showToast('info', 'Modifica Annullata', 'Nessuna modifica apportata.'); }
         }
 
         async function handleDeleteChat(roomId, userName) {
-            if (!roomId) {
-                showToast('error', 'Errore', 'ID stanza non valido per l\'eliminazione.');
-                return;
-            }
+            if (!roomId) { showToast('error', 'Errore', 'ID stanza non valido.'); return; }
             if (confirm(`Sei sicuro di voler eliminare TUTTI i messaggi della chat con "${userName}" (ID: ${roomId})? L'azione non è reversibile.`)) {
                 try {
                     const response = await fetch(`/api/chat/messages/${roomId}`, { method: 'DELETE' });
                     const result = await response.json();
-
                     if (response.ok && result.success) {
                         showToast('success', 'Chat Eliminata', `Messaggi per ${userName} eliminati. (${result.deleted || 0} messaggi)`);
-                        // Rimuovi dalla lista locale
                         clients = clients.filter(c => c.roomId !== roomId);
-                        // Pulisci la cache della cronologia per questa chat
                         delete chatHistoryCache[roomId.replace('support_', '')];
                         updateClientListUI();
-                        // Se era la chat attiva, torna al placeholder
                         if (`support_${activeChatUserId}` === roomId) {
                             activeChatUserId = null;
                             document.getElementById('chatPlaceholder').style.display = 'flex';
                             document.getElementById('chatContent').style.display = 'none';
                             document.getElementById('chatFooter').style.display = 'none';
                         }
-                    } else {
-                        throw new Error(result.error || `Errore ${response.status}`);
-                    }
+                    } else { throw new Error(result.error || `Errore ${response.status}`); }
                 } catch (error) {
                     console.error('Errore eliminazione chat:', error);
-                    showToast('error', 'Errore Eliminazione', `Impossibile eliminare la chat: ${error.message}`);
+                    showToast('error', 'Errore Eliminazione', `Impossibile eliminare: ${error.message}`);
                 }
             }
         }
 
         async function handleDeleteAllChats() {
-            if (confirm("SEI SICURO di voler eliminare TUTTE le conversazioni dalla cronologia? Questa azione è IRREVERSIBILE e rimuoverà tutti i messaggi di TUTTI gli utenti.")) {
-                if (confirm("CONFERMA DEFINITIVA: Vuoi davvero cancellare tutte le chat?")) {
+            if (confirm("SEI SICURO di voler eliminare TUTTE le conversazioni? Azione IRREVERSIBILE.")) {
+                if (confirm("CONFERMA DEFINITIVA?")) {
                     try {
                         const response = await fetch('/api/chat/all-conversations', { method: 'DELETE' });
                         const result = await response.json();
-
                         if (response.ok && result.success) {
-                            showToast('success', 'Chat Eliminate', `Tutte le ${result.deleted || 0} conversazioni sono state eliminate.`);
-                            clients = []; // Svuota array locale
-                            chatHistoryCache = {}; // Svuota cache cronologia
-                            updateClientListUI(); // Aggiorna UI lista
-                            // Torna al placeholder
+                            showToast('success', 'Chat Eliminate', `Tutte le ${result.deleted || 0} conversazioni eliminate.`);
+                            clients = []; chatHistoryCache = {}; updateClientListUI();
                             activeChatUserId = null;
                             document.getElementById('chatPlaceholder').style.display = 'flex';
                             document.getElementById('chatContent').style.display = 'none';
                             document.getElementById('chatFooter').style.display = 'none';
-                        } else {
-                            throw new Error(result.error || `Errore ${response.status}`);
-                        }
+                        } else { throw new Error(result.error || `Errore ${response.status}`); }
                     } catch (error) {
-                        console.error('Errore eliminazione TUTTE le chat:', error);
-                        showToast('error', 'Errore Critico', `Impossibile eliminare tutte le chat: ${error.message}`);
+                        console.error('Errore eliminazione TUTTE:', error);
+                        showToast('error', 'Errore Critico', `Impossibile eliminare: ${error.message}`);
                     }
                 }
             }
@@ -1724,65 +1744,45 @@
 
 
         function openChat(userId) {
-            if (activeChatUserId === userId) return; // Già aperta
+            if (activeChatUserId === userId) return;
             console.log(`Apertura chat per utente: ${userId}`);
 
             activeChatUserId = userId;
             const client = clients.find(c => c.id === userId);
-            if (!client) {
-                console.error(`Cliente ${userId} non trovato nella lista locale.`);
-                // Potrebbe essere necessario ricaricare la lista o gestire questo caso
-                return;
-            }
+            if (!client) { console.error(`Cliente ${userId} non trovato.`); return; }
 
-            // Aggiorna UI lista
             document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
             const selectedItem = document.querySelector(`.chat-item[data-userId="${userId}"]`);
             if (selectedItem) selectedItem.classList.add('active');
 
-            // Mostra area chat principale
             document.getElementById('chatPlaceholder').style.display = 'none';
             document.getElementById('chatContent').style.display = 'flex';
             document.getElementById('chatFooter').style.display = 'flex';
-            document.getElementById('chatContent').innerHTML = ''; // Pulisci
+            document.getElementById('chatContent').innerHTML = '';
             hideTypingIndicator();
 
-            // Resetta contatore non letti
             client.unreadCount = 0;
-            updateClientListUI(); // Aggiorna UI per rimuovere il badge
+            updateClientListUI();
 
-            // Unisciti alla stanza Socket.IO
-            const roomId = client.roomId || `support_${userId}`; // Usa roomId se presente
-            socket.emit('operatorJoin', { userId: operatorId, username: operatorName, roomId: roomId });
+            const roomId = client.roomId || `support_${userId}`;
+            // Emetti evento al server per dire che l'operatore è entrato in questa stanza
+            if (socket && socket.connected) {
+                 socket.emit('operatorJoinRoom', { roomId: roomId }); // Usa l'evento definito nel server.js
+                 console.log(`[Capo FE] Richiesto join a ${roomId}`);
+             } else {
+                 showToast('error', 'Errore Connessione', 'Socket non connesso, impossibile unirsi alla stanza.');
+             }
 
-            // Carica cronologia (usa cache se disponibile)
-            if (chatHistoryCache[userId]) {
-                console.log("Uso cronologia da cache per", userId);
-                displayChatHistory(chatHistoryCache[userId]);
-            } else {
-                console.log("Carico cronologia da API per", userId);
-                addSystemMessage('Caricamento messaggi...');
-                fetch(`/api/chat/history/${roomId}`)
-                    .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
-                    .then(messages => {
-                        chatHistoryCache[userId] = messages || []; // Salva in cache anche se vuota
-                        displayChatHistory(chatHistoryCache[userId]);
-                    })
-                    .catch(error => {
-                        console.error('Errore fetch cronologia:', error);
-                        document.getElementById('chatContent').innerHTML = ''; // Pulisci caricamento
-                        addSystemMessage(`Errore caricamento messaggi: ${error.message}`);
-                    });
-            }
-
+            // La cronologia verrà ora caricata in risposta all'evento 'past_messages' dal server
+            addSystemMessage('Caricamento messaggi...');
             setTimeout(() => document.getElementById('chatInput')?.focus(), 100);
         }
 
         function displayChatHistory(messages) {
             const chatContent = document.getElementById('chatContent'); if (!chatContent) return;
-            chatContent.innerHTML = ''; // Pulisci
+            chatContent.innerHTML = ''; // Pulisci prima di aggiungere
 
-            if (!messages || messages.length === 0) { addSystemMessage('Nessun messaggio.'); return; }
+            if (!messages || messages.length === 0) { addSystemMessage('Nessun messaggio in questa conversazione.'); return; }
 
             let lastDate = null;
             messages.forEach(msg => {
@@ -1791,9 +1791,9 @@
                     addSystemMessage(formatDay(msgDate));
                     lastDate = msgDate;
                 }
-
-                const messageType = (msg.sender_id === operatorId || msg.sender_name === operatorName) ? 'outgoing' : 'incoming';
-                addMessageToChat(messageType, msg.message || msg.content, msg.timestamp, true); // Usa message o content
+                // Determina tipo messaggio (usa sender_id dal DB)
+                const messageType = (msg.sender_id === operatorId) ? 'outgoing' : 'incoming';
+                addMessageToChat(messageType, msg.message || msg.content, msg.timestamp, true);
             });
             scrollToBottom();
         }
@@ -1807,25 +1807,36 @@
              <div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>
              <div class="message-meta">
                  <span class="message-time">${timeString}</span>
-                 ${type === 'outgoing' ? '<span class="message-status"><i class="fas fa-check"></i></span>' : ''}
+                 ${type === 'outgoing' ? '<span class="message-status status-sent"><i class="fas fa-check"></i></span>' : ''}
              </div>`;
             chatContent.appendChild(message);
-            if (!isHistory) scrollToBottom();
+             if (!isHistory) {
+                 scrollToBottom();
+                 // Simula cambio stato per messaggi inviati (opzionale)
+                 if (type === 'outgoing') {
+                     const statusEl = message.querySelector('.message-status');
+                     if(statusEl) {
+                         setTimeout(() => { statusEl.classList.replace('status-sent','status-delivered'); statusEl.innerHTML = '<i class="fas fa-check-double"></i>';}, 800);
+                         // Potresti implementare conferma lettura reale con un altro evento socket
+                         // setTimeout(() => { statusEl.classList.replace('status-delivered','status-read'); statusEl.style.color = 'var(--accent-blue)';}, 2500);
+                     }
+                 }
+             }
         }
 
         function addSystemMessage(text) {
             const chatContent = document.getElementById('chatContent'); if (!chatContent) return;
-            const message = document.createElement('div'); message.className = 'chat-day';
+            const message = document.createElement('div'); message.className = 'chat-day'; // Usa stile divisore giorno
             message.innerHTML = `<span>${text}</span>`; chatContent.appendChild(message);
-            // Non scrollare per i messaggi di sistema se stiamo caricando la storia
             if (!text.toLowerCase().includes('caricamento messaggi')) {
                 scrollToBottom();
             }
         }
 
-        function showTypingIndicator() { const chatContent = document.getElementById('chatContent'); if (!chatContent || document.getElementById('typingIndicator')) return; const indicator = document.createElement('div'); indicator.className = 'typing-indicator'; indicator.id = 'typingIndicator'; indicator.innerHTML = `<div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`; chatContent.appendChild(indicator); scrollToBottom(); }
+        function showTypingIndicator() { const chatContent = document.getElementById('chatContent'); if (!chatContent || document.getElementById('typingIndicator')) return; const indicator = document.createElement('div'); indicator.className = 'message incoming typing-indicator'; indicator.id = 'typingIndicator'; indicator.innerHTML = `<div class="message-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`; chatContent.appendChild(indicator); scrollToBottom(); }
         function hideTypingIndicator() { const indicator = document.getElementById('typingIndicator'); if (indicator) indicator.remove(); }
 
+        // UNICA DEFINIZIONE DI sendChatMessage
         function sendChatMessage() {
             if (!activeChatUserId || !socket || !socket.connected) {
                 showToast('error', 'Invio Fallito', 'Nessuna chat attiva o connessione persa.');
@@ -1836,96 +1847,66 @@
 
             const timestamp = new Date().toISOString();
             const client = clients.find(c => c.id === activeChatUserId);
-            const roomId = client?.roomId || `support_${activeChatUserId}`; // Usa roomId del client se disponibile
+            const roomId = client?.roomId || `support_${activeChatUserId}`;
 
             addMessageToChat('outgoing', message, timestamp);
+            console.log(`[Capo] Invio messaggio a ${roomId}:`, {sender:operatorId,senderName:operatorName,content:message,timestamp:timestamp,roomId:roomId});
             socket.emit('message', { sender: operatorId, senderName: operatorName, content: message, timestamp: timestamp, roomId: roomId });
             chatInput.value = ''; chatInput.style.height = 'auto'; chatInput.focus();
-            updateChatListItem(activeChatUserId, message); // Aggiorna la preview nella lista
-            sendTypingStatus(false); // Ferma l'indicatore typing
+            updateChatListItem(activeChatUserId, message);
+            // Chiama la funzione sendTypingStatus definita globalmente
+            sendTypingStatus(false); // Ferma l'indicatore typing dopo invio
         }
 
         function updateChatListItem(userId, message) {
             const clientIndex = clients.findIndex(c => c.id === userId);
             if (clientIndex !== -1) {
                 clients[clientIndex].lastMessage = { text: message, timestamp: new Date().toISOString() };
-                // Sposta in cima e ridisegna (gestito da updateClientListUI)
+                // Sposta in cima
                 const client = clients.splice(clientIndex, 1)[0];
                 clients.unshift(client);
-                updateClientListUI();
+                updateClientListUI(); // Ridisegna la lista
             }
         }
 
 
         // --- GESTIONE SESSIONE/LOGIN ---
         function checkSessionStatusWithoutRedirect() {
-            console.log("Verifico sessione...");
-            fetch('/auth-status')
-                .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
-                .then(data => {
-                    console.log("Stato Auth:", data);
-                    const isAuthenticated = (data.isAuthenticated === true) || (data.sessionUser && data.sessionUser.tipo) || (data.passportUser && data.passportUser.tipo);
-                    const userIsCapo = (data.sessionUser?.tipo === 'capo') || (data.passportUser?.tipo === 'capo');
+             console.log("Verifico sessione...");
+             // Fetch /auth-status per ottenere i dati utente REALI dal server
+             fetch('/auth-status')
+                 .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
+                 .then(data => {
+                     console.log("Stato Auth ricevuto:", data);
+                     const isAuthenticated = data.isAuthenticated === true;
+                     const userIsCapo = data.passportUser?.tipo === 'capo';
 
-                    if (!isAuthenticated || !userIsCapo) {
-                        console.error("Utente non autenticato o non è Capo.");
-                        showAuthAlert("Accesso Negato", "Devi effettuare il login come Capo per accedere a questa dashboard.", true);
-                        // Disabilita funzionalità chat
-                        disableChatFunctionality();
-                    } else {
-                        console.log("Autenticazione Capo verificata.");
-                        // Aggiorna nome utente nell'header se necessario
-                        const userNameEl = document.querySelector('.user-profile .user-name');
-                        if (userNameEl && data.sessionUser?.username) {
-                            userNameEl.textContent = data.sessionUser.username;
-                            // Aggiorna anche l'avatar se vuoi usare le iniziali reali
-                            const userAvatarEl = document.querySelector('.user-profile .user-avatar');
-                            if (userAvatarEl) {
-                                userAvatarEl.src = getAvatarUrl(data.sessionUser.username, 32);
-                            }
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error("Errore verifica sessione:", error);
-                    showAuthAlert("Errore Tecnico", `Impossibile verificare la sessione: ${error.message}. Riprova più tardi.`, true);
-                    disableChatFunctionality();
-                });
-        }
+                     if (!isAuthenticated || !userIsCapo) {
+                         console.error("Accesso Negato: Utente non autenticato o non Capo.");
+                         showAuthAlert("Accesso Negato", "Devi effettuare il login come Capo.", true);
+                         disableChatFunctionality();
+                     } else {
+                         console.log("Autenticazione Capo OK (da /auth-status).");
+                         // Non è necessario aggiornare UI qui perché lo fa DOMContentLoaded
+                         // con i dati già presenti in 'currentUser'
+                     }
+                 })
+                 .catch(error => {
+                     console.error("Errore verifica sessione /auth-status:", error);
+                     showAuthAlert("Errore Tecnico", `Impossibile verificare sessione: ${error.message}.`, true);
+                     disableChatFunctionality();
+                 });
+         }
 
         function disableChatFunctionality() {
-            // Disabilita input e bottoni chat
-            const chatInput = document.getElementById('chatInput');
-            const chatSend = document.getElementById('chatSend');
-            const chatTools = document.querySelectorAll('.chat-tool');
-            const chatList = document.getElementById('chatList');
-            const deleteAllBtn = document.getElementById('deleteAllChatsBtn');
-
-            if (chatInput) chatInput.disabled = true;
-            if (chatSend) chatSend.disabled = true;
-            chatTools.forEach(tool => tool.disabled = true);
-            if (deleteAllBtn) deleteAllBtn.disabled = true;
-
-            // Mostra messaggio nella lista chat
-            if (chatList) chatList.innerHTML = '<li class="chat-item"><div class="chat-item-content"><div class="chat-name" style="color: var(--text-light); font-style: italic;">Effettua il login come Capo</div></div></li>';
-
-            // Mostra placeholder di accesso negato
-            const chatPlaceholder = document.getElementById('chatPlaceholder');
-            const chatContent = document.getElementById('chatContent');
-            const chatFooter = document.getElementById('chatFooter');
-            if (chatPlaceholder) {
-                chatPlaceholder.innerHTML = `<div class="placeholder-icon"><i class="fas fa-lock"></i></div><h3 class="placeholder-title">Accesso Negato</h3><p class="placeholder-text">Devi essere loggato come Capo per usare la chat.</p>`;
-                chatPlaceholder.style.display = 'flex';
-            }
-            if (chatContent) chatContent.style.display = 'none';
-            if (chatFooter) chatFooter.style.display = 'none';
-
-            // Disconnetti socket se connesso
-            if (socket && socket.connected) {
-                socket.disconnect();
-            }
+            const chatInput = document.getElementById('chatInput'); const chatSend = document.getElementById('chatSend'); const chatTools = document.querySelectorAll('.chat-tool'); const chatList = document.getElementById('chatList'); const deleteAllBtn = document.getElementById('deleteAllChatsBtn');
+            if (chatInput) chatInput.disabled = true; if (chatSend) chatSend.disabled = true; chatTools.forEach(tool => tool.disabled = true); if (deleteAllBtn) deleteAllBtn.disabled = true;
+            if (chatList) chatList.innerHTML = '<li class="chat-item"><div class="chat-item-content"><div class="chat-name" style="color:var(--text-light);font-style:italic;">Login come Capo richiesto</div></div></li>';
+            const chatPlaceholder = document.getElementById('chatPlaceholder'); const chatContent = document.getElementById('chatContent'); const chatFooter = document.getElementById('chatFooter');
+            if (chatPlaceholder) { chatPlaceholder.innerHTML = `<div class="placeholder-icon"><i class="fas fa-lock"></i></div><h3 class="placeholder-title">Accesso Negato</h3><p class="placeholder-text">Login come Capo richiesto.</p>`; chatPlaceholder.style.display = 'flex'; }
+            if (chatContent) chatContent.style.display = 'none'; if (chatFooter) chatFooter.style.display = 'none';
+            if (socket && socket.connected) socket.disconnect();
         }
-
 
         function handleLogout(e) {
             e.preventDefault();
@@ -1939,22 +1920,21 @@
         // --- Caricamento iniziale richieste ---
         function loadSupportRequests() {
             console.log("Carico richieste supporto...");
-            // Usa l'endpoint API per ottenere le stanze/chat esistenti
             fetch('/api/chat/rooms')
                 .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
                 .then(data => {
                     console.log("Stanze ricevute:", data);
                     if (data.rooms && data.rooms.length > 0) {
                         clients = data.rooms.map(room => ({
-                            id: room.user_id || room.room_id.replace('support_', ''), // Ricava ID utente
+                            id: room.user_id || room.room_id.replace('support_', ''),
                             name: room.sender_name || `Utente ${room.user_id ? room.user_id.substring(room.user_id.length - 4) : 'N/D'}`,
                             roomId: room.room_id,
-                            online: true, // Assumiamo online all'inizio, socket aggiornerà
-                            unreadCount: 0, // Resetta all'avvio
-                            lastMessage: { text: room.last_message || '...', timestamp: new Date().toISOString() } // Usa un timestamp placeholder se manca
-                        }));
+                            online: false, // Assumi offline inizialmente, l'identify del client aggiornerà
+                            unreadCount: 0, // Inizia da 0
+                            lastMessage: { text: room.last_message || '...', timestamp: room.last_timestamp || new Date(0).toISOString() } // Usa timestamp reale se disponibile
+                        })).sort((a, b) => new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)); // Ordina per ultimo messaggio
                     } else {
-                        clients = []; // Nessuna chat esistente
+                        clients = [];
                         console.log("Nessuna chat attiva trovata.");
                     }
                     updateClientListUI();
@@ -1962,7 +1942,6 @@
                 .catch(error => {
                     console.error('Errore caricamento stanze chat:', error);
                     showToast('error', 'Errore Chat', `Impossibile caricare le chat: ${error.message}`);
-                    // Mostra lista vuota o messaggio di errore nella lista
                     const chatList = document.getElementById('chatList');
                     if (chatList) chatList.innerHTML = '<li class="chat-item"><div class="chat-item-content" style="color:var(--accent-red);">Errore caricamento chat</div></li>';
                 });
