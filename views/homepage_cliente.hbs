@@ -2930,40 +2930,68 @@ function buildApiUrl(category, maxPrice, ingredient) {
     return apiUrl;
 }
 
-// Load products con supporto per AJAX e filtri
+
+
 function loadProducts() {
-    showLoading();
+    const productsContainer = document.getElementById('productsContainer');
+    productsContainer.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Caricamento prodotti in corso...</div>
+        </div>
+    `;
     
-    // Richiesta base senza filtri
+    // Richiesta semplificata senza parametri aggiuntivi
     fetch('/api/products')
         .then(response => {
             if (!response.ok) {
-                throw new Error('API error');
+                throw new Error(`Errore API: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
+            console.log(`Caricati ${data.length} prodotti`);
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Formato dati non valido: non è un array');
+            }
+            
             // Aggiunta di proprietà di default se necessario
             allProducts = data.map(product => ({
                 ...product,
                 rating: product.rating || 4.0,
                 badges: product.badges || []
             }));
+            
             filteredProducts = [...allProducts];
+            
+            // Visualizza i prodotti
             displayProducts(filteredProducts);
         })
         .catch(error => {
-            console.error('Error fetching products:', error);
-            showError('Errore durante il caricamento dei prodotti. Riprova più tardi.');
+            console.error('Errore nel caricamento prodotti:', error);
+            productsContainer.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="error-message">Errore nel caricamento dei prodotti.</div>
+                    <div class="error-details">${error.message}</div>
+                    <button class="btn btn-primary" onclick="loadProducts()">Riprova</button>
+                </div>
+            `;
             
-            // Fallback dati di esempio
+            // Fallback ai dati di esempio dopo un breve ritardo
             setTimeout(() => {
-                allProducts = sampleProducts;
-                filteredProducts = [...allProducts];
-                displayProducts(filteredProducts);
-            }, 2000);
+                if (productsContainer.querySelector('.error-container')) {
+                    console.log('Utilizzo dati di esempio come fallback');
+                    allProducts = sampleProducts;
+                    filteredProducts = [...allProducts];
+                    displayProducts(filteredProducts);
+                }
+            }, 3000);
         });
 }
+
+
 
 // Mostra lo stato di caricamento
 function showLoading() {
@@ -2988,18 +3016,26 @@ function showError(message) {
     `;
 }
 
-// Filter products by category
+
+
 function filterProductsByCategory(category) {
-    showLoading();
+    const productsContainer = document.getElementById('productsContainer');
+    productsContainer.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Filtraggio per ${getCategoryName(category)}...</div>
+        </div>
+    `;
     
-    // Ottieni i valori di filtro attuali
-    const maxPrice = document.getElementById('priceFilter').value;
-    const ingredient = document.getElementById('ingredientFilter').value;
+    // Per la categoria "all", carica tutti i prodotti senza filtri
+    let apiUrl = '/api/products';
     
-    // Costruisci l'URL con i parametri di filtro
-    const apiUrl = buildApiUrl(category, maxPrice, ingredient);
+    if (category !== 'all') {
+        apiUrl += `?category=${encodeURIComponent(category)}`;
+    }
     
-    // Esegui la richiesta AJAX
+    console.log(`Filtraggio prodotti con URL: ${apiUrl}`);
+    
     fetch(apiUrl)
         .then(response => {
             if (!response.ok) {
@@ -3009,12 +3045,19 @@ function filterProductsByCategory(category) {
         })
         .then(data => {
             console.log(`Filtrato per categoria "${category}": Ricevuti ${data.length} prodotti`);
-            // Aggiorna i prodotti con quelli filtrati
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Formato dati non valido: non è un array');
+            }
+            
+            // Aggiorna i prodotti
             filteredProducts = data.map(product => ({
                 ...product,
                 rating: product.rating || 4.0,
                 badges: product.badges || []
             }));
+            
+            // Visualizza i prodotti
             displayProducts(filteredProducts);
             
             // Applica ordinamento attuale
@@ -3025,25 +3068,52 @@ function filterProductsByCategory(category) {
         })
         .catch(error => {
             console.error('Error filtering products:', error);
-            showError('Errore durante il filtraggio dei prodotti. Riprova più tardi.');
+            productsContainer.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="error-message">Errore durante il filtraggio dei prodotti.</div>
+                    <button class="btn btn-primary" onclick="loadProducts()">Ricarica tutti i prodotti</button>
+                </div>
+            `;
         });
 }
 
-// Apply all filters
 function applyFilters(showToastNotification = true) {
-    showLoading();
+    const productsContainer = document.getElementById('productsContainer');
+    productsContainer.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Applicazione filtri in corso...</div>
+        </div>
+    `;
     
     // Ottieni i valori di filtro attuali
     const maxPrice = document.getElementById('priceFilter').value;
-    const ingredient = document.getElementById('ingredientFilter').value;
+    const ingredient = document.getElementById('ingredientFilter').value.trim();
     const categoryElement = document.querySelector('.category-item.active');
     const category = categoryElement ? categoryElement.dataset.category : 'all';
     
     // Costruisci l'URL con i parametri di filtro
-    const apiUrl = buildApiUrl(category, maxPrice, ingredient);
+    let apiUrl = '/api/products';
+    const params = [];
     
-    // Log per debug
-    console.log("Esecuzione filtri con URL:", apiUrl);
+    if (category && category !== 'all') {
+        params.push(`category=${encodeURIComponent(category)}`);
+    }
+    
+    if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+        params.push(`maxPrice=${parseFloat(maxPrice)}`);
+    }
+    
+    if (ingredient) {
+        params.push(`ingredients=${encodeURIComponent(ingredient)}`);
+    }
+    
+    if (params.length > 0) {
+        apiUrl += '?' + params.join('&');
+    }
+    
+    console.log(`Filtri applicati: URL=${apiUrl}`);
     
     // Esegui la richiesta AJAX
     fetch(apiUrl)
@@ -3055,12 +3125,18 @@ function applyFilters(showToastNotification = true) {
         })
         .then(data => {
             console.log(`Filtri applicati: Ricevuti ${data.length} prodotti`);
-            // Aggiorna i prodotti con quelli filtrati
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Formato dati non valido: non è un array');
+            }
+            
+            // Aggiorna i prodotti
             filteredProducts = data.map(product => ({
                 ...product,
                 rating: product.rating || 4.0,
                 badges: product.badges || []
             }));
+            
             displayProducts(filteredProducts);
             
             // Applica ordinamento attuale
@@ -3068,12 +3144,25 @@ function applyFilters(showToastNotification = true) {
             if (sortSelect) {
                 sortProducts(sortSelect.value, false);
             }
+            
+            // Mostra notifica
+            if (showToastNotification) {
+                showToast('Filtri applicati', 'I prodotti sono stati filtrati', 'success');
+            }
         })
         .catch(error => {
             console.error('Error applying filters:', error);
-            showError('Errore durante l\'applicazione dei filtri. Riprova più tardi.');
+            productsContainer.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="error-message">Errore durante l'applicazione dei filtri.</div>
+                    <button class="btn btn-primary" onclick="loadProducts()">Ricarica tutti i prodotti</button>
+                </div>
+            `;
         });
 }
+
+
 
 // Set products view (grid or list)
 function setProductsView(view) {
@@ -3121,6 +3210,7 @@ function sortProducts(sortType, showToastNotification = true) {
     displayProducts(filteredProducts);
 }
 
+
 // Display products
 function displayProducts(products) {
     const productsContainer = document.getElementById('productsContainer');
@@ -3150,8 +3240,9 @@ function displayProducts(products) {
             categoryItems.forEach(item => item.classList.remove('active'));
             document.querySelector('.category-item[data-category="all"]').classList.add('active');
             
-            // Load all products
-            loadProducts();
+            // Reset products
+            filteredProducts = [...allProducts];
+            displayProducts(filteredProducts);
             
             // Show toast notification
             showToast('Filtri reimpostati', 'Tutti i filtri sono stati reimpostati', 'success');
@@ -3169,8 +3260,8 @@ function displayProducts(products) {
     }
     
     products.forEach(product => {
-        // Se l'immagine non è disponibile, usa un'immagine placeholder
-        const productImage = product.image || "https://placehold.co/400x300/orange/white?text=Placeholder";
+        // Aggiunti controlli per immagine mancante e fallback
+        let productImage = product.image || "https://via.placeholder.com/300x200?text=Prodotto";
         
         // Verifica che badges esista e sia un array
         const badgesHtml = product.badges && Array.isArray(product.badges) && product.badges.length > 0 
@@ -3183,7 +3274,10 @@ function displayProducts(products) {
             <div class="product-card ${currentView === 'list' ? 'list-view' : ''}" data-product-id="${product.id}">
                 <div class="product-card-inner">
                     <div class="product-image-container">
-                        <img src="${productImage}" alt="${product.name}" class="product-image" onerror="this.src='https://placehold.co/400x300/orange/white?text=Error'">
+                        <img src="${productImage}" 
+                             alt="${product.name}" 
+                             class="product-image"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=${encodeURIComponent(product.name)}';">
                         <button class="product-favourite" data-product-id="${product.id}">
                             <i class="far fa-heart"></i>
                         </button>
@@ -3218,6 +3312,8 @@ function displayProducts(products) {
     // Setup product card interactions
     setupProductCards();
 }
+
+
 
 // Get category icon
 function getCategoryIcon(category) {
@@ -3374,14 +3470,21 @@ function setupProductModal() {
     });
 }
 
+
 // Open product modal
 function openProductModal(productId) {
     const product = allProducts.find(p => p.id == productId);
     
     if (!product) return;
     
-    // Set modal content
-    document.getElementById('modalImage').src = product.image || 'https://placehold.co/400x300/orange/white?text=Placeholder';
+    // Set modal content with fallback for image
+    const modalImage = document.getElementById('modalImage');
+    modalImage.src = product.image || 'https://via.placeholder.com/800x500?text=Prodotto';
+    modalImage.onerror = function() {
+        this.onerror = null;
+        this.src = `https://via.placeholder.com/800x500?text=${encodeURIComponent(product.name)}`;
+    };
+    
     document.getElementById('modalTitle').textContent = product.name;
     document.getElementById('modalCategory').textContent = getCategoryName(product.category);
     document.getElementById('modalRating').textContent = `${(product.rating || 0).toFixed(1)} (${Math.floor((product.rating || 0) * 20)} recensioni)`;
@@ -3405,6 +3508,7 @@ function openProductModal(productId) {
     // Show modal
     document.getElementById('productModal').classList.add('show');
 }
+
 
 // Setup chat button
 function setupChatButton() {

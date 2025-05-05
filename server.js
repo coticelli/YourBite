@@ -182,9 +182,598 @@ app.get('/impostazioni', requireLogin, verificaRuoloCapo, async (req, res) => { 
 async function loadSettingsFromDb() { /* ... codice come prima ... */
     return new Promise((resolve, reject) => { db.all("SELECT key, value FROM impostazioni", [], (err, rows) => { if (err) { console.error("Errore DB lettura impostazioni:", err); return reject(new Error("Errore database")); } const settings = {}; const defaultSettings = getDefaultSettings(); rows.forEach(row => { try { if (row.value === 'true') settings[row.key] = true; else if (row.value === 'false') settings[row.key] = false; else if ((row.value.startsWith('{') && row.value.endsWith('}')) || (row.value.startsWith('[') && row.value.endsWith(']'))) settings[row.key] = JSON.parse(row.value); else if (!isNaN(parseFloat(row.value)) && isFinite(row.value) && row.value.trim() !== '') settings[row.key] = parseFloat(row.value); else settings[row.key] = row.value; } catch (e) { console.warn(`Parse fallito per ${row.key}`); settings[row.key] = row.value; } }); resolve({ ...defaultSettings, ...settings }); }); });
 }
-function getDefaultSettings() { /* ... codice come prima ... */
-     return { profile: { nome: 'Il Tuo Locale', categoria: 'Ristorante', indirizzo: '', telefono: '', email: '', descrizione: '', logo: '/img/logo-placeholder.png', immagini: [], mostraPrezziIVA: true, mostraIngredienti: true, mostraValoriNutrizionali: false, mostraAllergeni: true }, schedule: { lun: { enabled: true, slots: [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '23:00' }] }, mar: { enabled: true, slots: [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '23:00' }] }, mer: { enabled: true, slots: [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '23:00' }] }, gio: { enabled: true, slots: [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '23:00' }] }, ven: { enabled: true, slots: [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '00:00' }] }, sab: { enabled: true, slots: [{ start: '11:30', end: '15:00' }, { start: '18:30', end: '00:30' }] }, dom: { enabled: false, slots: [] } }, payments: { methods: ['contanti', 'carta'], gateway: 'stripe', stripe_pk: '', stripe_sk: '', sandbox: true, pag_consegna: true }, notifications: { email_ordini: true, email_recensioni: true, email_report: false, email_address: '', client_email_conferma: true, client_email_stato: true, client_email_recensione: false, push_gestore: true, push_cliente: true, suoni: true }, appearance: { theme_color: 'primary', font: 'Montserrat', dark_mode: false }, security: { two_fa_enabled: false, log_activity: true }, mobile: { notify_push: true, inapp_orders: true, loyalty: false, link_ios: '', link_android: '' }, advanced: { maintenance_mode: false, maintenance_message: 'Sito in manutenzione, torniamo presto!', api_key: 'yb_api_' + crypto.randomBytes(16).toString('hex') }, integrations: { 'google-analytics': { connected: false, id: '' }, 'facebook-pixel': { connected: false, id: '' }, 'delivery': { connected: false, service: '' }, 'pos': { connected: false, type: '' }, 'mailchimp': { connected: false, apiKey: '', listId: '' }, 'twilio': { connected: false, accountSid: '', authToken: '', fromNumber: '' } }, webhooks: [] };
- }
+
+
+// Funzione di fallback modificata per corrispondere alla struttura della tabella panini
+function getDefaultProducts() {
+    console.warn("API /api/products: Utilizzo dati di esempio statici.");
+    return [
+        // HAMBURGER (10)
+        {
+            id: 1, 
+            name: "Classic Burger", 
+            description: "Hamburger di manzo con cheddar, lattuga, pomodoro e salsa speciale",
+            price: 7.50, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "cheddar", "lattuga", "pomodoro", "salsa speciale"],
+            available: true,
+            rating: 4.8,
+            badges: ["bestseller"]
+        },
+        {
+            id: 2, 
+            name: "Cheeseburger Deluxe", 
+            description: "Doppio hamburger di manzo con doppio formaggio, cipolle caramellate e salsa BBQ",
+            price: 8.50, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "formaggio", "cipolle caramellate", "salsa BBQ"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 3, 
+            name: "Bacon Supreme", 
+            description: "Hamburger di manzo con bacon croccante, formaggio, lattuga e salsa ai funghi",
+            price: 9.00, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1582196016295-f8c8bd4b3a99?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "bacon", "formaggio", "lattuga", "salsa ai funghi"],
+            available: true,
+            rating: 4.9,
+            badges: ["bestseller"]
+        },
+        {
+            id: 4, 
+            name: "Double Cheese", 
+            description: "Doppio hamburger di manzo con triplo formaggio cheddar e salsa special",
+            price: 10.00, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["doppio manzo", "triplo cheddar", "salsa special"],
+            available: true,
+            rating: 4.6
+        },
+        {
+            id: 5, 
+            name: "Mushroom Swiss", 
+            description: "Hamburger con funghi trifolati, formaggio svizzero e salsa tartufata",
+            price: 9.50, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1560614382-d9002da5c7c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "funghi", "formaggio svizzero", "salsa tartufata"],
+            available: true,
+            rating: 4.5
+        },
+        {
+            id: 6, 
+            name: "Avocado Burger", 
+            description: "Hamburger con guacamole fresco, jalapenos, pomodoro e cipolla rossa",
+            price: 10.50, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "guacamole", "jalapenos", "pomodoro", "cipolla rossa"],
+            available: true,
+            rating: 4.7,
+            badges: ["new"]
+        },
+        {
+            id: 7, 
+            name: "BBQ Bacon Burger", 
+            description: "Hamburger con salsa BBQ, bacon croccante, cipolla croccante e cheddar",
+            price: 9.50, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "salsa BBQ", "bacon", "cipolla croccante", "cheddar"],
+            available: true,
+            rating: 4.8
+        },
+        {
+            id: 8, 
+            name: "Italian Burger", 
+            description: "Hamburger con mozzarella, pomodori secchi, rucola e pesto",
+            price: 9.00, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1603064752734-4c48eff53d05?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "mozzarella", "pomodori secchi", "rucola", "pesto"],
+            available: true,
+            rating: 4.6
+        },
+        {
+            id: 9, 
+            name: "Blue Cheese Burger", 
+            description: "Hamburger con formaggio blue, noci e confettura di cipolla rossa",
+            price: 10.00, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "gorgonzola", "noci", "confettura di cipolla"],
+            available: true,
+            rating: 4.3
+        },
+        {
+            id: 10, 
+            name: "Mini Burger Trio", 
+            description: "Tre mini hamburger: classico, BBQ e formaggio piccante",
+            price: 12.00, 
+            category: "hamburger", 
+            image: "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo", "vari formaggi", "salse assortite"],
+            available: true,
+            rating: 4.9,
+            badges: ["promo"]
+        },
+        
+        // POLLO (7)
+        {
+            id: 11, 
+            name: "Crispy Chicken", 
+            description: "Pollo croccante con insalata, pomodoro e maionese al limone",
+            price: 6.50, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pollo", "insalata", "pomodoro", "maionese al limone"],
+            available: true,
+            rating: 4.5
+        },
+        {
+            id: 12, 
+            name: "Spicy Chicken", 
+            description: "Pollo speziato con peperoncino, jalapenos e salsa piccante",
+            price: 7.00, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1593703148583-34370374ea01?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pollo", "peperoncino", "jalapenos", "salsa piccante"],
+            available: true,
+            rating: 4.6,
+            badges: ["promo"]
+        },
+        {
+            id: 13, 
+            name: "Chicken Avocado", 
+            description: "Panino con pollo grigliato, avocado, rucola e salsa allo yogurt",
+            price: 8.50, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1550471448-9e33c6e24a6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pollo grigliato", "avocado", "rucola", "salsa yogurt"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 14, 
+            name: "Buffalo Chicken", 
+            description: "Pollo fritto con salsa buffalo piccante, sedano e salsa blue cheese",
+            price: 8.00, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1626082895534-28ec1a805cf3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pollo fritto", "salsa buffalo", "sedano", "salsa blue cheese"],
+            available: true,
+            rating: 4.4
+        },
+        {
+            id: 15, 
+            name: "Honey Mustard Chicken", 
+            description: "Sandwich di pollo con salsa miele e senape, insalata e pomodoro",
+            price: 7.50, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1520217185029-38036bd1e118?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pollo", "salsa miele e senape", "insalata", "pomodoro"],
+            available: true,
+            rating: 4.3
+        },
+        {
+            id: 16, 
+            name: "BBQ Chicken", 
+            description: "Pollo grigliato con salsa barbecue, cipolla caramellata e cheddar",
+            price: 7.50, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1465406325903-9d93bc677e8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pollo grigliato", "salsa bbq", "cipolla caramellata", "cheddar"],
+            available: true,
+            rating: 4.5
+        },
+        {
+            id: 17, 
+            name: "Chicken Parmigiana", 
+            description: "Sandwich con cotoletta di pollo, pomodoro, mozzarella e basilico",
+            price: 8.00, 
+            category: "pollo", 
+            image: "https://images.unsplash.com/photo-1601276884922-9df47f06cd8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["cotoletta di pollo", "salsa pomodoro", "mozzarella", "basilico"],
+            available: true,
+            rating: 4.8,
+            badges: ["bestseller"]
+        },
+        
+        // PIZZA (7)
+        {
+            id: 18, 
+            name: "Margherita", 
+            description: "Pizza classica con pomodoro, mozzarella e basilico fresco",
+            price: 8.50, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "pomodoro", "mozzarella", "basilico"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 19, 
+            name: "Diavola", 
+            description: "Pizza con pomodoro, mozzarella e salame piccante",
+            price: 9.50, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1589840700256-41c5d84af80d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "pomodoro", "mozzarella", "salame piccante"],
+            available: true,
+            rating: 4.8,
+            badges: ["bestseller"]
+        },
+        {
+            id: 20, 
+            name: "Quattro Formaggi", 
+            description: "Pizza bianca con quattro tipi di formaggio",
+            price: 10.00, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "mozzarella", "gorgonzola", "fontina", "parmigiano"],
+            available: true,
+            rating: 4.6
+        },
+        {
+            id: 21, 
+            name: "Capricciosa", 
+            description: "Pizza con pomodoro, mozzarella, funghi, carciofi, olive e prosciutto cotto",
+            price: 11.00, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "pomodoro", "mozzarella", "funghi", "carciofi", "olive", "prosciutto cotto"],
+            available: true,
+            rating: 4.5
+        },
+        {
+            id: 22, 
+            name: "Ortolana", 
+            description: "Pizza con verdure grigliate, pomodoro e mozzarella",
+            price: 9.50, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "pomodoro", "mozzarella", "zucchine", "melanzane", "peperoni"],
+            available: true,
+            rating: 4.4
+        },
+        {
+            id: 23, 
+            name: "Prosciutto e Funghi", 
+            description: "Pizza con pomodoro, mozzarella, prosciutto cotto e funghi",
+            price: 10.00, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1600628421066-f6bda6a7b976?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "pomodoro", "mozzarella", "prosciutto cotto", "funghi"],
+            available: true,
+            rating: 4.6
+        },
+        {
+            id: 24, 
+            name: "Bufala", 
+            description: "Pizza con pomodoro, mozzarella di bufala e basilico",
+            price: 11.50, 
+            category: "pizza", 
+            image: "https://images.unsplash.com/photo-1595708684082-a173bb3a06c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["impasto", "pomodoro", "mozzarella di bufala", "basilico"],
+            available: true,
+            rating: 4.9,
+            badges: ["new"]
+        },
+        
+        // VEGETARIANO (6)
+        {
+            id: 25, 
+            name: "Veggie Delight", 
+            description: "Burger vegetariano con formaggio, cipolla caramellata e rucola",
+            price: 6.00, 
+            category: "vegetariano", 
+            image: "https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["burger vegetariano", "formaggio", "cipolla caramellata", "rucola"],
+            available: true,
+            rating: 4.3,
+            badges: ["new"]
+        },
+        {
+            id: 26, 
+            name: "Falafel Pita", 
+            description: "Pita con falafel, hummus, insalata e salsa tahini",
+            price: 7.00, 
+            category: "vegetariano", 
+            image: "https://images.unsplash.com/photo-1593001872095-7d5b3868fb1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["falafel", "hummus", "insalata", "salsa tahini", "pita"],
+            available: true,
+            rating: 4.4
+        },
+        {
+            id: 27, 
+            name: "Panino Caprese", 
+            description: "Panino con mozzarella, pomodoro, basilico e olio d'oliva",
+            price: 6.50, 
+            category: "vegetariano", 
+            image: "https://images.unsplash.com/photo-1627308595171-d1b5d67129c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["pane", "mozzarella", "pomodoro", "basilico", "olio d'oliva"],
+            available: true,
+            rating: 4.2
+        },
+        {
+            id: 28, 
+            name: "Beyond Burger", 
+            description: "Hamburger plant-based con formaggio vegano, lattuga e pomodoro",
+            price: 9.00, 
+            category: "vegetariano", 
+            image: "https://images.unsplash.com/photo-1532768799449-931182a3614e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["beyond burger", "formaggio vegano", "lattuga", "pomodoro"],
+            available: true,
+            rating: 4.7,
+            badges: ["promo"]
+        },
+        {
+            id: 29, 
+            name: "Wrap Vegetariano", 
+            description: "Wrap con hummus, verdure grigliate e salsa yogurt",
+            price: 7.50, 
+            category: "vegetariano", 
+            image: "https://images.unsplash.com/photo-1600850056064-a8b380df8395?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["tortilla", "hummus", "verdure grigliate", "yogurt"],
+            available: true,
+            rating: 4.3
+        },
+        {
+            id: 30, 
+            name: "Insalata Buddha Bowl", 
+            description: "Insalata con quinoa, ceci, avocado, verdure e dressing al limone",
+            price: 8.50, 
+            category: "vegetariano", 
+            image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["quinoa", "ceci", "avocado", "verdure miste", "dressing al limone"],
+            available: true,
+            rating: 4.5
+        },
+        
+        // CONTORNI (5)
+        {
+            id: 31, 
+            name: "Patatine Fritte", 
+            description: "Patatine fritte croccanti servite con ketchup e maionese",
+            price: 3.50, 
+            category: "contorni", 
+            image: "https://images.unsplash.com/photo-1585109649139-366815a0d713?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["patate", "sale", "ketchup", "maionese"],
+            available: true,
+            rating: 4.7,
+            badges: ["bestseller"]
+        },
+        {
+            id: 32, 
+            name: "Anelli di Cipolla", 
+            description: "Anelli di cipolla fritti in pastella croccante",
+            price: 4.00, 
+            category: "contorni", 
+            image: "https://images.unsplash.com/photo-1639024471283-03518883512d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["cipolla", "pastella", "spezie"],
+            available: true,
+            rating: 4.5
+        },
+        {
+            id: 33, 
+            name: "Insalata Mista", 
+            description: "Insalata mista con pomodori, carote e dressing alla vinaigrette",
+            price: 4.50, 
+            category: "contorni", 
+            image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["lattuga", "pomodori", "carote", "vinaigrette"],
+            available: true,
+            rating: 4.2
+        },
+        {
+            id: 34, 
+            name: "Patate Dolci Fritte", 
+            description: "Patatine di patate dolci con salsa aioli",
+            price: 4.50, 
+            category: "contorni", 
+            image: "https://images.unsplash.com/photo-1604135307399-86c6ce0aba8e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["patate dolci", "sale", "aioli"],
+            available: true,
+            rating: 4.6,
+            badges: ["new"]
+        },
+        {
+            id: 35, 
+            name: "Mozzarella Sticks", 
+            description: "Bastoncini di mozzarella impanati e fritti, serviti con salsa marinara",
+            price: 5.00, 
+            category: "contorni", 
+            image: "https://images.unsplash.com/photo-1548340748-6d98e4c1bf77?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["mozzarella", "pangrattato", "salsa marinara"],
+            available: true,
+            rating: 4.8
+        },
+        
+        // BEVANDE (7)
+        {
+            id: 36, 
+            name: "Coca Cola", 
+            description: "Coca Cola classica in lattina",
+            price: 2.50, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["bevanda gassata"],
+            available: true,
+            rating: 4.9
+        },
+        {
+            id: 37, 
+            name: "Acqua Naturale", 
+            description: "Acqua minerale naturale in bottiglia",
+            price: 1.50, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1616118132534-381148898bb4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["acqua minerale"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 38, 
+            name: "Birra Artigianale", 
+            description: "Birra artigianale locale in bottiglia",
+            price: 4.50, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["birra artigianale"],
+            available: true,
+            rating: 4.6,
+            badges: ["new"]
+        },
+        {
+            id: 39, 
+            name: "Fanta", 
+            description: "Bibita gassata all'arancia in lattina",
+            price: 2.50, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1624517452488-04869289c4ca?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["bevanda gassata all'arancia"],
+            available: true,
+            rating: 4.5
+        },
+        {
+            id: 40, 
+            name: "Smoothie Frutta", 
+            description: "Smoothie fresco con frutta di stagione e yogurt",
+            price: 4.00, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1505252585461-04db1eb84625?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["frutta mista", "yogurt", "miele"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 41, 
+            name: "Tè Freddo", 
+            description: "Tè freddo alla pesca fatto in casa",
+            price: 3.00, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1556679343-c1306b5ce384?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["tè", "pesca", "limone", "menta"],
+            available: true,
+            rating: 4.4
+        },
+        {
+            id: 42, 
+            name: "Caffè Americano", 
+            description: "Caffè americano caldo",
+            price: 2.00, 
+            category: "bevande", 
+            image: "https://images.unsplash.com/photo-1509042239860-f0ca3bf6d889?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["caffè"],
+            available: true,
+            rating: 4.3
+        },
+        
+        // DESSERT (5)
+        {
+            id: 43, 
+            name: "Tiramisu", 
+            description: "Dolce italiano classico con mascarpone, caffè e cacao",
+            price: 5.00, 
+            category: "dessert", 
+            image: "https://images.unsplash.com/photo-1571877899592-073131018ac5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["savoiardi", "mascarpone", "caffè", "cacao"],
+            available: true,
+            rating: 4.8,
+            badges: ["bestseller"]
+        },
+        {
+            id: 44, 
+            name: "Cheesecake", 
+            description: "Cheesecake con base di biscotto e topping ai frutti di bosco",
+            price: 5.50, 
+            category: "dessert", 
+            image: "https://images.unsplash.com/photo-1524351199678-941a58a3df50?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["formaggio", "biscotti", "frutti di bosco"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 45, 
+            name: "Brownie al Cioccolato", 
+            description: "Brownie al cioccolato servito con gelato alla vaniglia",
+            price: 5.00, 
+            category: "dessert", 
+            image: "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["cioccolato", "uova", "burro", "gelato alla vaniglia"],
+            available: true,
+            rating: 4.9,
+            badges: ["new"]
+        },
+        {
+            id: 46, 
+            name: "Gelato Artigianale", 
+            description: "Gelato artigianale in vari gusti: vaniglia, cioccolato, fragola",
+            price: 4.00, 
+            category: "dessert", 
+            image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["latte", "panna", "zucchero", "aromi naturali"],
+            available: true,
+            rating: 4.6
+        },
+        {
+            id: 47, 
+            name: "Cannolo Siciliano", 
+            description: "Cannolo siciliano tradizionale con ricotta e gocce di cioccolato",
+            price: 4.50, 
+            category: "dessert", 
+            image: "https://images.unsplash.com/photo-1626803775151-61d756612f97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["scorza di cannolo", "ricotta", "zucchero", "gocce di cioccolato"],
+            available: true,
+            rating: 4.5
+        },
+        
+        // SPECIALI (3)
+        {
+            id: 48, 
+            name: "Combo Family", 
+            description: "4 hamburger, 2 porzioni di patatine grandi, 4 bevande a scelta",
+            price: 25.00, 
+            category: "speciali", 
+            image: "https://images.unsplash.com/photo-1457460866886-40ef8d4b42a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["hamburger", "patatine", "bevande"],
+            available: true,
+            rating: 4.9,
+            badges: ["promo"]
+        },
+        {
+            id: 49, 
+            name: "Menu Bambino", 
+            description: "Mini burger, patatine, bibita e sorpresa",
+            price: 8.00, 
+            category: "speciali", 
+            image: "https://images.unsplash.com/photo-1608039790184-c4c1a7f9a871?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["mini burger", "patatine", "bibita"],
+            available: true,
+            rating: 4.7
+        },
+        {
+            id: 50, 
+            name: "Piatto Gourmet", 
+            description: "Hamburger gourmet con formaggio di capra, tartufo e chips di patate viola",
+            price: 15.00, 
+            category: "speciali", 
+            image: "https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ingredients: ["manzo wagyu", "formaggio di capra", "tartufo", "chips di patate viola"],
+            available: true,
+            rating: 4.8,
+            badges: ["new", "promo"]
+        }
+    ];
+}
+
+
 app.get('/api/settings', requireApiCapo, async (req, res) => { /* ... codice come prima ... */
     try { const settings = await loadSettingsFromDb(); res.json({ success: true, settings }); } catch (error) { res.status(500).json({ success: false, error: 'Errore caricamento impostazioni.' }); }
 });
@@ -241,91 +830,114 @@ function parseIngredients(ingredientsStr) {
     // Altrimenti, dividi la stringa per virgole o altro separatore
     return ingredientsStr.split(',').map(item => item.trim());
 }
+
+
+
+// GET /api/products (Utilizza la tabella 'panini' esistente)
+// Supporta filtri: ingredients, maxPrice, category
+
+
 app.get('/api/products', async (req, res) => {
-    let query = "SELECT id, nome, descrizione, prezzo, categoria, immagine_url, ingredienti, disponibile FROM panini";
-    const params = [];
-    const filters = [];
-    
-    // Filtro per categoria
-    if (req.query.category && req.query.category !== 'all') {
-        filters.push("categoria = ?");
-        params.push(req.query.category);
-    }
-    
-    // Filtro per prezzo massimo
-    if (req.query.maxPrice && !isNaN(parseFloat(req.query.maxPrice))) {
-        filters.push("prezzo <= ?");
-        params.push(parseFloat(req.query.maxPrice));
-    }
-    
-    // Costruisci la query con i filtri
-    if (filters.length > 0) {
-        query += " WHERE " + filters.join(" AND ");
-    }
-    
-    // Ordina per nome
-    query += " ORDER BY nome";
-    
-    // Esegui la query
-    db.all(query, params, (err, rows) => {
-        if (err) {
-            console.error("Errore recupero panini:", err);
-            // Fallback a dati statici se DB fallisce
-            return res.json(getDefaultProducts());
+    try {
+        let query = "SELECT id, nome, descrizione, prezzo, categoria, immagine_url, ingredienti, disponibile FROM panini";
+        const params = [];
+        const filters = [];
+        
+        // Filtro per categoria (solo se non è "all")
+        if (req.query.category && req.query.category !== 'all') {
+            filters.push("categoria = ?");
+            params.push(req.query.category);
         }
         
-        if (rows.length > 0) {
-            // Formatta i dati per mantenere compatibilità con il frontend
-            let formattedRows = rows.map(row => ({
-                id: row.id,
-                name: row.nome,
-                description: row.descrizione,
-                price: row.prezzo,
-                category: row.categoria,
-                image: row.immagine_url,
-                ingredients: parseIngredients(row.ingredienti),
-                available: row.disponibile === 1
-            }));
-            
-            // Filtro per ingredienti (applicato dopo la query perché necessita di parsing)
-            if (req.query.ingredients) {
-                const requestedIngredients = req.query.ingredients.split(',').map(i => i.trim().toLowerCase());
-                
-                formattedRows = formattedRows.filter(product => {
-                    // Verifica che il prodotto abbia almeno uno degli ingredienti richiesti
-                    return product.ingredients.some(ingredient => 
-                        requestedIngredients.includes(ingredient.toLowerCase())
-                    );
-                });
-            }
-            
-            res.json(formattedRows);
-        } else {
-            // Se non ci sono panini nel database o nessuno corrisponde ai filtri, usa dati predefiniti
-            let defaultProducts = getDefaultProducts();
-            
-            // Applica gli stessi filtri ai dati predefiniti
-            if (req.query.maxPrice && !isNaN(parseFloat(req.query.maxPrice))) {
-                const maxPrice = parseFloat(req.query.maxPrice);
-                defaultProducts = defaultProducts.filter(p => p.price <= maxPrice);
-            }
-            
-            if (req.query.category && req.query.category !== 'all') {
-                defaultProducts = defaultProducts.filter(p => p.category === req.query.category);
-            }
-            
-            if (req.query.ingredients) {
-                const requestedIngredients = req.query.ingredients.split(',').map(i => i.trim().toLowerCase());
-                defaultProducts = defaultProducts.filter(product => 
-                    product.ingredients.some(ingredient => 
-                        requestedIngredients.includes(ingredient.toLowerCase())
-                    )
-                );
-            }
-            
-            res.json(defaultProducts);
+        // Filtro per prezzo massimo
+        if (req.query.maxPrice && !isNaN(parseFloat(req.query.maxPrice))) {
+            filters.push("prezzo <= ?");
+            params.push(parseFloat(req.query.maxPrice));
         }
-    });
+        
+        // Costruisci la query con i filtri
+        if (filters.length > 0) {
+            query += " WHERE " + filters.join(" AND ");
+        }
+        
+        // Ordina per nome e limita a 100 risultati
+        query += " ORDER BY nome LIMIT 100";
+        
+        console.log("Query prodotti:", query, params);
+        
+        // Esegui la query
+        db.all(query, params, (err, rows) => {
+            if (err) {
+                console.error("Errore recupero panini:", err);
+                // Fallback a dati statici se DB fallisce
+                return res.json(getDefaultProducts());
+            }
+            
+            if (rows.length > 0) {
+                // Formatta i dati per mantenere compatibilità con il frontend
+                let formattedRows = rows.map(row => ({
+                    id: row.id,
+                    name: row.nome,
+                    description: row.descrizione,
+                    price: row.prezzo,
+                    category: row.categoria,
+                    image: row.immagine_url,
+                    ingredients: parseIngredients(row.ingredienti),
+                    available: row.disponibile === 1,
+                    rating: 4.0 + Math.random() * 0.9,  // Rating casuale tra 4.0 e 4.9
+                    badges: Math.random() > 0.7 ? [["bestseller", "new", "promo"][Math.floor(Math.random() * 3)]] : []
+                }));
+                
+                // Filtro per ingredienti (applicato dopo la query perché necessita di parsing)
+                if (req.query.ingredients) {
+                    const requestedIngredients = req.query.ingredients.split(',').map(i => i.trim().toLowerCase());
+                    
+                    formattedRows = formattedRows.filter(product => {
+                        // Verifica che il prodotto abbia almeno uno degli ingredienti richiesti
+                        return product.ingredients && product.ingredients.some(ingredient => 
+                            requestedIngredients.some(reqIng => 
+                                ingredient.toLowerCase().includes(reqIng)
+                            )
+                        );
+                    });
+                }
+                
+                console.log(`Restituendo ${formattedRows.length} prodotti`);
+                res.json(formattedRows);
+            } else {
+                // Se non ci sono panini nel database o nessuno corrisponde ai filtri, usa dati predefiniti
+                console.log("Nessun prodotto trovato, uso dati predefiniti");
+                let defaultProducts = getDefaultProducts();
+                
+                // Applica gli stessi filtri ai dati predefiniti
+                if (req.query.maxPrice && !isNaN(parseFloat(req.query.maxPrice))) {
+                    const maxPrice = parseFloat(req.query.maxPrice);
+                    defaultProducts = defaultProducts.filter(p => p.price <= maxPrice);
+                }
+                
+                if (req.query.category && req.query.category !== 'all') {
+                    defaultProducts = defaultProducts.filter(p => p.category === req.query.category);
+                }
+                
+                if (req.query.ingredients) {
+                    const requestedIngredients = req.query.ingredients.split(',').map(i => i.trim().toLowerCase());
+                    defaultProducts = defaultProducts.filter(product => 
+                        product.ingredients.some(ingredient => 
+                            requestedIngredients.some(reqIng => 
+                                ingredient.toLowerCase().includes(reqIng)
+                            )
+                        )
+                    );
+                }
+                
+                console.log(`Restituendo ${defaultProducts.length} prodotti predefiniti`);
+                res.json(defaultProducts);
+            }
+        });
+    } catch (error) {
+        console.error("Errore critico in API products:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
 });
 
 // GET /api/categories - Ottieni tutte le categorie disponibili
