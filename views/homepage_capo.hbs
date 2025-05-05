@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Capo - YourBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="/socket.io/socket.io.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -32,7 +30,7 @@
             --gray-dark: #e9ecef;
             --text: #212529;
             --text-light: #6c757d;
-
+            
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -58,8 +56,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            /* Prevents horizontal scroll */
         }
 
         /* Particles */
@@ -82,7 +78,6 @@
             0% {
                 transform: translateY(0) rotate(0deg);
             }
-
             100% {
                 transform: translateY(-20px) rotate(360deg);
             }
@@ -92,7 +87,6 @@
             0% {
                 opacity: 0.3;
             }
-
             100% {
                 opacity: 0.6;
             }
@@ -227,7 +221,6 @@
             height: 32px;
             border-radius: var(--radius-sm);
             object-fit: cover;
-            background-color: var(--gray-light);
         }
 
         .user-name {
@@ -355,8 +348,6 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            min-width: 0;
-            /* Fix flexbox overflow */
         }
 
         /* Dashboard Overview */
@@ -454,7 +445,6 @@
             display: flex;
             flex-direction: column;
             height: 650px;
-            /* Fixed height */
             overflow: hidden;
             position: relative;
         }
@@ -496,7 +486,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-light);
+            color: var(--primary);
             cursor: pointer;
             transition: var(--transition);
         }
@@ -506,13 +496,6 @@
             color: var(--primary-dark);
             transform: translateY(-2px);
         }
-
-        .chat-action-btn.danger:hover {
-            background: rgba(231, 76, 60, 0.1);
-            color: var(--accent-red);
-        }
-
-        /* Style for danger button */
 
         .chat-conversations {
             flex: 1;
@@ -591,18 +574,13 @@
 
         .chat-item.active {
             background: var(--light);
-            border-left: 4px solid var(--primary);
-            padding-left: 11px;
         }
 
-        /* Highlight active chat */
         .chat-avatar {
             width: 48px;
             height: 48px;
             border-radius: var(--radius-sm);
             object-fit: cover;
-            flex-shrink: 0;
-            background-color: var(--gray-light);
         }
 
         .chat-item-content {
@@ -617,7 +595,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
         }
 
         .chat-name {
@@ -627,13 +604,11 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            flex-grow: 1;
         }
 
         .chat-time {
             font-size: 0.8rem;
             color: var(--text-light);
-            flex-shrink: 0;
         }
 
         .chat-message {
@@ -670,35 +645,6 @@
             font-weight: 600;
             margin-left: auto;
         }
-
-        /* Styles for Edit/Delete buttons */
-        .chat-item-actions {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .chat-item-action-btn {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: 4px;
-            font-size: 0.85rem;
-            line-height: 1;
-            border-radius: 4px;
-            transition: var(--transition-fast);
-        }
-
-        .chat-item-action-btn:hover {
-            background-color: var(--gray-dark);
-            color: var(--dark);
-        }
-
-        .chat-item-action-btn.delete:hover {
-            color: var(--accent-red);
-        }
-
 
         .chat-main {
             flex: 1;
@@ -910,7 +856,7 @@
         .chat-send {
             background: var(--primary);
             border: none;
-            color: var(--light);
+            color: var (--light);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -944,6 +890,32 @@
             animation: fadeIn 0.3s forwards;
         }
 
+
+            .error-message {
+        padding: 20px;
+        background-color: #ffeeee;
+        color: #d85030;
+        border-radius: 8px;
+        margin: 20px;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .refresh-button {
+        margin-top: 15px;
+        padding: 8px 16px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .refresh-button:hover {
+        background-color: #4850e0;
+    }
+
         .typing-dots {
             display: flex;
             align-items: center;
@@ -967,14 +939,10 @@
         }
 
         @keyframes typingAnimation {
-
-            0%,
-            60%,
-            100% {
+            0%, 60%, 100% {
                 transform: translateY(0);
                 opacity: 0.6;
             }
-
             30% {
                 transform: translateY(-4px);
                 opacity: 1;
@@ -986,7 +954,6 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1002,7 +969,7 @@
             background-color: var(--accent-red);
             color: white;
             padding: 8px 16px;
-            border-radius: 99px;
+            border-radius: var(--radius-full);
             font-size: 14px;
             font-weight: 500;
             box-shadow: var(--shadow);
@@ -1011,7 +978,7 @@
             gap: 8px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease, background-color 0.3s ease;
+            transition: var(--transition);
             z-index: 1000;
         }
 
@@ -1023,10 +990,10 @@
         .connection-status.connected {
             background-color: var(--accent-green);
             opacity: 1;
-            animation: fadeOutStatus 3s forwards 2s;
+            animation: fadeOut 3s forwards 2s;
         }
 
-        @keyframes fadeOutStatus {
+        @keyframes fadeOut {
             to {
                 opacity: 0;
                 pointer-events: none;
@@ -1035,88 +1002,12 @@
 
         .connection-icon {
             font-size: 16px;
-            animation: blinkIcon 1s infinite;
+            animation: blink 1s infinite;
         }
 
-        @keyframes blinkIcon {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        /* Auth Alert */
-        .auth-alert {
-            position: fixed;
-            top: 80px;
-            /* Sotto l'header */
-            right: 20px;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px 20px;
-            border-radius: var(--radius-sm);
-            box-shadow: var(--shadow);
-            z-index: 9999;
-            max-width: 400px;
-        }
-
-        .auth-alert h4 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .auth-alert p {
-            margin-bottom: 15px;
-            margin-top: 0;
-            font-size: 0.9rem;
-        }
-
-        .auth-alert button {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .auth-alert button:hover {
-            background: #c82333;
-        }
-
-        /* Error Message */
-        .error-message {
-            padding: 20px;
-            background-color: #ffeeee;
-            color: #d85030;
-            border-radius: 8px;
-            margin: 20px;
-            text-align: center;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .refresh-button {
-            margin-top: 15px;
-            padding: 8px 16px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .refresh-button:hover {
-            background-color: #4850e0;
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Responsive */
@@ -1178,7 +1069,6 @@
         }
     </style>
 </head>
-
 <body>
     <!-- Connection status indicator -->
     <div class="connection-status" id="connectionStatus">
@@ -1198,12 +1088,11 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="/homepage_capo" class="nav-link active">Homepage</a>
-                <a href="/Dashboard" class="nav-link">Dashboard</a>
-                <a href="/ordini" class="nav-link">Ordini</a>
-                <a href="/menu" class="nav-link">Menu</a>
-                <a href="/statistiche" class="nav-link">Statistiche</a> <!-- Link corretto -->
-                <a href="/personale" class="nav-link">Personale</a> <!-- Link corretto -->
+                <a href="#" class="nav-link active">Dashboard</a>
+                <a href="ordini" class="nav-link">Ordini</a>
+                <a href="Menu" class="nav-link">Menu</a>
+                <a href="Statistiche" class="nav-link">Statistiche</a>
+                <a href="Personale" class="nav-link">Personale</a>
             </nav>
 
             <div class="user-menu">
@@ -1212,10 +1101,8 @@
                     <span class="notification-badge">3</span>
                 </button>
                 <div class="user-profile" id="userProfileBtn">
-                    <!-- Usa UI Avatars anche qui -->
-                    <img src="https://ui-avatars.com/api/?name=Manager&background=random&color=fff&size=32" alt="User"
-                        class="user-avatar">
-                    <span class="user-name">Manager</span> <!-- Nome utente dinamico? -->
+                    <img src="https://source.unsplash.com/random/100x100/?person" alt="User" class="user-avatar">
+                    <span class="user-name">Manager</span>
                 </div>
             </div>
         </div>
@@ -1233,34 +1120,76 @@
             <div class="sidebar-section">
                 <h3 class="section-title">Menu</h3>
                 <ul class="menu-list">
-                    <li> <a href="/homepage_capo" class="menu-item active"><i class="fas fa-home"></i> Homepage</a>
+                    <li>
+                        <a href="Dashboard" class="menu-item active">
+                            <i class="fas fa-home"></i>
+                            Dashboard
+                        </a>
                     </li>
-                    <li> <a href="/dashboard" class="menu-item"><i class="fas fa-home"></i> Dashboard</a> </li>
-                    <li> <a href="/ordini" class="menu-item"><i class="fas fa-shopping-bag"></i> Ordini</a> </li>
-                    <li> <a href="/menu" class="menu-item"><i class="fas fa-utensils"></i> Menu</a> </li>
-                    <li> <a href="/statistiche" class="menu-item"><i class="fas fa-chart-bar"></i> Statistiche</a> </li>
-                    <li> <a href="/personale" class="menu-item"><i class="fas fa-users"></i> Personale</a> </li>
+                    <li>
+                        <a href="Ordini" class="menu-item">
+                            <i class="fas fa-shopping-bag"></i>
+                            Ordini
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Menu" class="menu-item">
+                            <i class="fas fa-utensils"></i>
+                            Menu
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Statistiche" class="menu-item">
+                            <i class="fas fa-chart-bar"></i>
+                            Statistiche
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Personale" class="menu-item">
+                            <i class="fas fa-users"></i>
+                            Personale
+                        </a>
+                    </li>
                 </ul>
             </div>
 
             <div class="sidebar-section">
                 <h3 class="section-title">Strumenti</h3>
                 <ul class="menu-list">
-                    <li> <a href="/impostazioni" class="menu-item"><i class="fas fa-cog"></i> Impostazioni</a> </li>
-                    <li> <a href="/profilo" class="menu-item"><i class="fas fa-user-cog"></i> Profilo</a> </li>
-                    <!-- Link corretto -->
-                    <li> <a href="#" class="menu-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </li> <!-- Modificato href="#" -->
+                    <li>
+                        <a href="Impostazioni" class="menu-item">
+                            <i class="fas fa-cog"></i>
+                            Impostazioni
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Profilo" class="menu-item">
+                            <i class="fas fa-user-cog"></i>
+                            Profilo
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Login" class="menu-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </li>
                 </ul>
             </div>
 
             <div class="sidebar-stats">
-                <div class="stat-item"><span class="stat-label">Ordini oggi</span><span class="stat-value">24</span>
+                <div class="stat-item">
+                    <span class="stat-label">Ordini oggi</span>
+                    <span class="stat-value">24</span>
                 </div>
-                <div class="stat-item"><span class="stat-label">Clienti attivi</span><span class="stat-value">156</span>
+                <div class="stat-item">
+                    <span class="stat-label">Clienti attivi</span>
+                    <span class="stat-value">156</span>
                 </div>
-                <div class="stat-item"><span class="stat-label">Tempo medio consegna</span><span class="stat-value">25
-                        min</span></div>
+                <div class="stat-item">
+                    <span class="stat-label">Tempo medio consegna</span>
+                    <span class="stat-value">25 min</span>
+                </div>
             </div>
         </aside>
 
@@ -1271,90 +1200,119 @@
                 <div class="overview-card">
                     <div class="card-header">
                         <h3 class="card-title">Vendite Oggi</h3>
-                        <div class="card-icon sales"><i class="fas fa-euro-sign"></i></div>
+                        <div class="card-icon sales">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
                     </div>
                     <div class="card-value">€1,250</div>
-                    <div class="card-footer"><i class="fas fa-arrow-up trend-up"></i><span class="trend-up">+12% vs
-                            ieri</span></div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up trend-up"></i>
+                        <span class="trend-up">+12% rispetto a ieri</span>
+                    </div>
                 </div>
+
                 <div class="overview-card">
                     <div class="card-header">
                         <h3 class="card-title">Ordini Completati</h3>
-                        <div class="card-icon orders"><i class="fas fa-shopping-bag"></i></div>
+                        <div class="card-icon orders">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
                     </div>
                     <div class="card-value">24</div>
-                    <div class="card-footer"><i class="fas fa-arrow-up trend-up"></i><span class="trend-up">+8% vs
-                            ieri</span></div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up trend-up"></i>
+                        <span class="trend-up">+8% rispetto a ieri</span>
+                    </div>
                 </div>
+
                 <div class="overview-card">
                     <div class="card-header">
                         <h3 class="card-title">Nuovi Clienti</h3>
-                        <div class="card-icon customers"><i class="fas fa-user-plus"></i></div>
+                        <div class="card-icon customers">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
                     </div>
                     <div class="card-value">8</div>
-                    <div class="card-footer"><i class="fas fa-arrow-down trend-down"></i><span class="trend-down">-3% vs
-                            ieri</span></div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-down trend-down"></i>
+                        <span class="trend-down">-3% rispetto a ieri</span>
+                    </div>
                 </div>
+
                 <div class="overview-card">
                     <div class="card-header">
                         <h3 class="card-title">Tempo Medio Consegna</h3>
-                        <div class="card-icon time"><i class="fas fa-clock"></i></div>
+                        <div class="card-icon time">
+                            <i class="fas fa-clock"></i>
+                        </div>
                     </div>
                     <div class="card-value">25 min</div>
-                    <div class="card-footer"><i class="fas fa-arrow-up trend-up"></i><span class="trend-up">+5%
-                            veloce</span></div>
+                    <div class="card-footer">
+                        <i class="fas fa-arrow-up trend-up"></i>
+                        <span class="trend-up">+5% più veloce di ieri</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Chat Panel -->
             <div class="chat-panel">
                 <div class="chat-header">
-                    <div class="chat-title"> <i class="fas fa-comments"></i> Assistenza Clienti </div>
+                    <div class="chat-title">
+                        <i class="fas fa-comments"></i>
+                        Assistenza Clienti
+                    </div>
                     <div class="chat-actions">
-                        <!-- NUOVO PULSANTE ELIMINA TUTTO -->
-                        <button class="chat-action-btn danger" id="deleteAllChatsBtn" title="Elimina Tutte le Chat">
-                            <i class="fas fa-dumpster-fire"></i>
+                        <button class="chat-action-btn" title="Filtra Chat">
+                            <i class="fas fa-filter"></i>
                         </button>
-                        <button class="chat-action-btn" title="Filtra Chat"> <i class="fas fa-filter"></i> </button>
-                        <button class="chat-action-btn" title="Nuovo Messaggio (non implementato)"> <i
-                                class="fas fa-plus"></i> </button>
+                        <button class="chat-action-btn" title="Nuovo Messaggio">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
                 </div>
 
                 <div class="chat-conversations">
                     <div class="chat-sidebar">
                         <div class="chat-search">
-                            <div class="search-input"> <i class="fas fa-search"></i> <input type="text"
-                                    placeholder="Cerca clienti..."> </div>
+                            <div class="search-input">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Cerca clienti...">
+                            </div>
                         </div>
+
                         <ul class="chat-list" id="chatList">
                             <!-- Le chat saranno aggiunte qui dinamicamente -->
-                            <li class="chat-item">
-                                <div class="chat-item-content">
-                                    <div class="chat-name">Caricamento chat...</div>
-                                </div>
-                            </li>
                         </ul>
                     </div>
 
                     <div class="chat-main" id="chatMain">
                         <div class="chat-placeholder" id="chatPlaceholder">
-                            <div class="placeholder-icon"><i class="far fa-comments"></i></div>
+                            <div class="placeholder-icon">
+                                <i class="far fa-comments"></i>
+                            </div>
                             <h3 class="placeholder-title">Seleziona una chat</h3>
-                            <p class="placeholder-text">Seleziona una chat dalla lista per visualizzare i messaggi.</p>
+                            <p class="placeholder-text">Seleziona una chat dalla lista per visualizzare i messaggi o iniziare una nuova conversazione.</p>
                         </div>
+
                         <div class="chat-content" id="chatContent" style="display: none;">
-                            <!-- I messaggi saranno aggiunti qui --> </div>
+                            <!-- I messaggi saranno aggiunti qui dinamicamente -->
+                        </div>
+
                         <div class="chat-footer" id="chatFooter" style="display: none;">
                             <div class="chat-tools">
-                                <button class="chat-tool" title="Emoji"><i class="far fa-smile"></i></button>
-                                <button class="chat-tool" title="Allega File"><i class="fas fa-paperclip"></i></button>
+                                <button class="chat-tool" title="Emoji">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <button class="chat-tool" title="Allega File">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
                             </div>
                             <div class="chat-input-wrapper">
-                                <textarea class="chat-input" id="chatInput" placeholder="Scrivi un messaggio..."
-                                    rows="1"></textarea>
+                                <textarea class="chat-input" id="chatInput" placeholder="Scrivi un messaggio..." rows="1"></textarea>
                             </div>
-                            <button class="chat-send" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+                            <button class="chat-send" id="chatSend">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1362,592 +1320,1064 @@
         </div>
     </main>
 
-    <!-- Toast Notifications Container -->
-    <div class="toast-container" id="toastContainer"></div>
-    <script>
-        // Variabili globali
-        let socket;
-        let typingTimeout; // Variabile per il timeout del typing
-        const userType = 'capo'; // Assumiamo sia sempre capo in questa pagina
+<script>
+    // Soluzione alternativa per forzare il funzionamento del pulsante
+document.querySelector('#chatSend').onclick = function() {
+  console.log("Click forzato");
+  const chatInput = document.getElementById('chatInput');
+  const message = chatInput.value.trim();
+  if (!message) return;
+  
+  const chatContent = document.getElementById('chatContent');
+  const now = new Date();
+  const timeString = now.toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'});
+  
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message outgoing';
+  messageDiv.innerHTML = `
+    <div class="message-bubble">${message}</div>
+    <div class="message-meta">
+      <span class="message-time">${timeString}</span>
+      <span class="message-status"><i class="fas fa-check"></i></span>
+    </div>
+  `;
+  
+  chatContent.appendChild(messageDiv);
+  chatContent.scrollTop = chatContent.scrollHeight;
+  chatInput.value = '';
+  
+  if (socket) {
+    socket.emit('message', {
+      sender: operatorId,
+      senderName: operatorName,
+      content: message,
+      timestamp: now.toISOString(),
+      roomId: `support_${activeChat}`
+    });
+  }
+};
+document.addEventListener('DOMContentLoaded', function() {
+    // Rimuoviamo il precedente onclick per evitare conflitti
+    const sendButton = document.getElementById('chatSend');
+    if (sendButton) {
+        sendButton.onclick = null;
+    }
 
-        // Recupera user ID e nome dall'oggetto 'user' passato da Handlebars (MOLTO IMPORTANTE!)
-        const currentUser = {{{ json user }}}; // <<< ASSICURATI CHE QUESTA RIGA SIA PRESENTE E FUNZIONI
-        const operatorId = `capo_${currentUser?.id || Math.random().toString(36).substring(2, 9)}`; // Usa ID reale se disponibile
-        const operatorName = currentUser?.username || 'Assistenza'; // Usa nome reale se disponibile
+    // Verifica i cookie prima di tutto
+    checkCookieStatus();
+    
+    // Verifica la sessione ma senza reindirizzamenti automatici
+    checkSessionStatusWithoutRedirect();
+    
+    // Initialize Socket.IO connection
+    initializeSocketIO();
+    
+    // Setup message input e chat send (modificato)
+    setupMessageInput();
+    
+    // Setup logout button
+    setupLogoutButton();
+    
+    // Aggiungi qui il nuovo handler per il pulsante di invio (garantisce che venga applicato per ultimo)
+    setTimeout(fixSendButton, 1000);
+});
 
-        let activeChatUserId = null; // ID utente della chat attiva (es. 'client_123')
-        let clients = []; // Array per memorizzare le informazioni sui client/chat
-        let chatHistoryCache = {}; // Cache per la cronologia dei messaggi
+// Funzione specifica per correggere il pulsante di invio
+function fixSendButton() {
+    console.log("Correzione pulsante invio");
+    const chatSendButton = document.getElementById('chatSend');
+    
+    if (!chatSendButton) {
+        console.error("Elemento chatSend non trovato!");
+        return;
+    }
+    
+    // Rimuovi tutti i listener esistenti
+    const newButton = chatSendButton.cloneNode(true);
+    chatSendButton.parentNode.replaceChild(newButton, chatSendButton);
+    
+    // Aggiungi un nuovo listener
+    newButton.addEventListener('click', function(e) {
+        console.log("Pulsante invio cliccato");
+        e.preventDefault();
+        sendChatMessage();
+    });
+    
+    console.log("Listener aggiunto correttamente al pulsante di invio");
+}
 
-        // --- FUNZIONI HELPER ---
-        function showToast(type = 'info', title = 'Notifica', message = '') { const el = document.getElementById('toastContainer'); if (!el) return; const t = document.createElement('div'); t.className = `toast ${type}`; let i = 'fa-info-circle'; if (type === 'success') i = 'fa-check-circle'; if (type === 'error') i = 'fa-times-circle'; if (type === 'warning') i = 'fa-exclamation-triangle'; t.innerHTML = `<i class="fas ${i} toast-icon"></i><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><button class="toast-close"><i class="fas fa-times"></i></button>`; t.querySelector('.toast-close').onclick = () => { t.style.animation = 'slideOut 0.3s forwards'; t.onanimationend = () => t.remove(); }; el.appendChild(t); setTimeout(() => { if (t.parentElement) { t.style.animation = 'slideOut 0.3s forwards'; t.onanimationend = () => t.remove(); } }, 5000); }
-        function getAvatarUrl(name, size = 48) { const apiUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || '??')}&background=random&color=fff&size=${size}&bold=true`; return apiUrl; }
-        function formatTime(date) { return new Date(date).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }); }
-        function formatDay(dateString) { const d = new Date(dateString); const today = new Date(); const y = new Date(today); y.setDate(y.getDate() - 1); const ds = d.toISOString().split('T')[0]; if (ds === today.toISOString().split('T')[0]) return 'Oggi'; if (ds === y.toISOString().split('T')[0]) return 'Ieri'; return d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }); }
-        function scrollToBottom(elementId = 'chatContent') { const el = document.getElementById(elementId); if (el) { setTimeout(() => el.scrollTop = el.scrollHeight, 50); } }
-        function playNotificationSound() { try { const a = new Audio('/sounds/notification.mp3'); a.volume = 0.3; a.play().catch(e => console.log('Audio play failed:', e)); } catch (e) { console.log('Audio init failed:', e); } }
-        function showAuthAlert(title, message, showLoginButton = false) { const a = document.createElement('div'); a.className = 'auth-alert'; a.innerHTML = `<h4 style="margin-top:0;margin-bottom:10px;font-size:18px">${title}</h4><p style="margin-bottom:${showLoginButton ? '15px' : '0'};margin-top:0">${message}</p>${showLoginButton ? '<button id="redirectLoginBtn" style="background:#dc3545;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer">Vai al login</button>' : ''}`; document.body.appendChild(a); if (showLoginButton) { document.getElementById('redirectLoginBtn').onclick = () => window.location.href = '/login'; } else { setTimeout(() => a.remove(), 10000); } }
+// Controlla se ci sono problemi con i cookie
+function checkCookieStatus() {
+    const cookies = document.cookie;
+    console.log("Cookie attuali:", cookies);
+    
+    // Verifica se il cookie di sessione esiste
+    if (!cookies.includes('connect.sid')) {
+        console.warn("Il cookie di sessione connect.sid non è presente!");
+    }
+}
 
-        // --- FUNZIONE TYPING STATUS (AGGIUNTA E CORRETTA) ---
-        function sendTypingStatus(isTyping) {
-            // Verifica che ci sia una chat attiva e che il socket sia connesso
-            if (socket && socket.connected && activeChatUserId) {
-                clearTimeout(typingTimeout); // Cancella timeout precedente
-
-                const client = clients.find(c => c.id === activeChatUserId);
-                const roomId = client?.roomId || `support_${activeChatUserId}`; // Usa roomId del client se disponibile
-
-                // Non inviare se roomId non è valido (dovrebbe sempre esserlo qui)
-                if (!roomId) {
-                    console.warn("[sendTypingStatus] Room ID non trovato per la chat attiva:", activeChatUserId);
-                    return;
-                }
-
-                //console.log(`[Capo] Invio typing=${isTyping} a ${roomId}`); // Debug opzionale
-                socket.emit('typing', {
-                    userId: operatorId,     // L'ID dell'operatore (capo)
-                    username: operatorName, // Il nome dell'operatore
-                    isTyping: isTyping,
-                    roomId: roomId          // La stanza della chat attiva
-                });
-
-                // Se sta scrivendo, imposta un timeout per inviare 'false' dopo un po'
-                if (isTyping) {
-                    typingTimeout = setTimeout(() => sendTypingStatus(false), 3000); // 3 secondi di inattività
-                }
+function checkSessionStatusWithoutRedirect() {
+    console.log("Verifico lo stato della sessione...");
+    
+    fetch('/auth-status')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Risposta auth-status completa:", data);
+            
+            // PROBLEMA: Il server restituisce dati in un formato diverso da quello che ci aspettiamo
+            // Può restituire { isAuthenticated: true } o { sessionUser: {...} } 
+            // o entrambi con formati diversi
+            
+            // Verifica se l'utente è autenticato nel modo più flessibile possibile
+            const isAuthenticated = 
+                (data.isAuthenticated === true) || // Verifica esplicita
+                (data.sessionUser && data.sessionUser.tipo) || // Verifica implicita basata sulla presenza dell'oggetto sessione
+                (data.user && data.user.tipo); // Formato alternativo
+            
+            if (!isAuthenticated) {
+                console.error("Utente non autenticato");
+                showAuthAlert("Sessione non valida", "La tua sessione non è attiva. Per favore rieffettua il login.", true);
+            } else {
+                console.log("Autenticazione verificata con successo");
+                
+                // Nascondi eventuali messaggi di debug già mostrati
+                const debugDivs = document.querySelectorAll('[style*="position:fixed;bottom:10px;right:10px"]');
+                debugDivs.forEach(div => div.remove());
+                
+                // Aggiorna la UI per mostrare che sei autenticato
+                document.body.innerHTML += '<div style="position:fixed;bottom:10px;right:10px;background:#d4edda;border:1px solid green;padding:10px;z-index:10000">Autenticato come: ' + 
+                    (data.sessionUser ? data.sessionUser.tipo : 'capo') + '</div>';
+                
+                // Dopo 3 secondi nascondi il messaggio
+                setTimeout(() => {
+                    const authMsgs = document.querySelectorAll('[style*="position:fixed;bottom:10px;right:10px"]');
+                    authMsgs.forEach(div => div.remove());
+                }, 3000);
             }
-        }
-
-        // --- INIZIALIZZAZIONE ---
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log("Dati utente ricevuti dal server (homepage_capo.hbs):", currentUser); // Log per verifica
-            // Verifica *prima* di fare qualsiasi altra cosa
-            if (typeof currentUser === 'undefined' || !currentUser || !currentUser.id || currentUser.tipo !== 'capo') {
-                 console.error("ERRORE CRITICO: Dati utente Capo non disponibili o non validi!");
-                 showAuthAlert("Accesso Negato", "Impossibile verificare l'account Capo. Riprova il login.", true);
-                 disableChatFunctionality(); // Disabilita tutto se l'utente non è valido
-                 return; // Interrompi l'esecuzione
-            }
-
-            // Se l'autenticazione è OK, procedi
-            console.log(`Identità operatore impostata: ID=${operatorId}, Nome=${operatorName}`);
-            checkSessionStatusWithoutRedirect(); // Verifica ulteriore (opzionale ma può rimanere)
-            initializeSocketIO();
-            setupUIElements();
-            // Aggiorna UI header con dati utente
-            updateHeaderUserInfo();
+        })
+        .catch(error => {
+            console.error("Errore nella verifica della sessione:", error);
+            document.body.innerHTML += '<div style="position:fixed;bottom:10px;right:10px;background:#f8d7da;border:1px solid red;padding:10px;z-index:10000">Errore tecnico: ' + error.message + '</div>';
         });
+}
 
-        // --- AGGIORNAMENTO INFO HEADER ---
-        function updateHeaderUserInfo() {
-            const userNameEl = document.querySelector('.user-profile .user-name');
-            const userAvatarEl = document.querySelector('.user-profile .user-avatar');
-            if (userNameEl && currentUser?.username) {
-                userNameEl.textContent = currentUser.username;
+
+
+// Mostra avviso di autenticazione
+function showAuthAlert(title, message, showLoginButton = false) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'auth-alert';
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.backgroundColor = '#f8d7da';
+    alertDiv.style.borderColor = '#f5c6cb';
+    alertDiv.style.color = '#721c24';
+    alertDiv.style.padding = '12px 20px';
+    alertDiv.style.borderRadius = '5px';
+    alertDiv.style.boxShadow = '0 3px 6px rgba(0,0,0,0.1)';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.style.maxWidth = '400px';
+    
+    alertDiv.innerHTML = `
+        <h4 style="margin-top:0;margin-bottom:10px;font-size:18px">${title}</h4>
+        <p style="margin-bottom: ${showLoginButton ? '15px' : '0'};margin-top:0">${message}</p>
+        ${showLoginButton ? '<button id="redirectLoginBtn" style="background:#dc3545;color:white;border:none;padding:8px 15px;border-radius:5px;cursor:pointer">Vai al login</button>' : ''}
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    if (showLoginButton) {
+        document.getElementById('redirectLoginBtn').addEventListener('click', function() {
+            window.location.href = '/login';
+        });
+    }
+    
+    // Auto-nascondi dopo 10 secondi se non c'è il pulsante login
+    if (!showLoginButton) {
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.parentNode.removeChild(alertDiv);
             }
-            if (userAvatarEl && currentUser?.username) {
-                userAvatarEl.src = getAvatarUrl(currentUser.username, 32); // Usa dimensione 32 per header
-            }
+        }, 10000);
+    }
+}
+
+// Create particles background (se necessario)
+function createParticles() {
+    const particles = document.getElementById('particles');
+    if (!particles) return;
+    
+    // Implementazione delle particelle, se presente nel tuo progetto
+    console.log("Particles background would be created here");
+}
+
+// Variabili globali
+let socket;
+const userType = 'capo';
+const operatorId = 'operator_' + Math.random().toString(36).substring(2, 9);
+const operatorName = 'Assistenza YourBite';
+let activeChat = null;
+let clients = [];
+
+// Inizializza Socket.IO
+function initializeSocketIO() {
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionText = document.getElementById('connectionText');
+    
+    // Nascondi l'indicatore all'avvio - MODIFICATO
+    connectionStatus.classList.remove('show');
+    
+    // Connetti a Socket.IO
+    socket = io();
+    
+    // Aggiungi un timeout per mostrare l'indicatore solo se la connessione è lenta
+    const connectionTimeout = setTimeout(() => {
+        connectionStatus.classList.add('show');
+        connectionText.textContent = 'Connessione in corso...';
+    }, 2000); // Mostra solo dopo 2 secondi se ancora non connesso
+    
+    // Evento di connessione stabilita
+    socket.on('connect', function() {
+        console.log('Socket.IO connection established');
+        clearTimeout(connectionTimeout); // Annulla il timeout
+        connectionStatus.classList.remove('show'); // Mantieni nascosto
+        
+        // Il resto del codice rimane invariato
+        // Invia informazioni operatore
+        socket.emit('operatorJoin', {
+            userId: operatorId,
+            username: operatorName
+        });
+        
+        // Carica le richieste di assistenza
+        loadSupportRequests();
+    });
+    
+    // Gestione nuove richieste di supporto
+    socket.on('new_support_request', function(data) {
+        console.log('Nuova richiesta di supporto:', data);
+        
+        // Aggiungi il client alla lista se non esiste già
+        const existingClientIndex = clients.findIndex(c => c.id === data.user.userId);
+        if (existingClientIndex === -1) {
+            const newClient = {
+                id: data.user.userId,
+                name: data.user.username || 'Cliente',
+                roomId: data.roomId,
+                online: true,
+                unreadCount: 1,
+                avatar: `https://source.unsplash.com/random/100x100/?face&${data.user.userId}`,
+                lastMessage: {
+                    text: 'Nuova richiesta di assistenza',
+                    timestamp: new Date().toISOString()
+                }
+            };
+            
+            clients.unshift(newClient); // Aggiungi in cima alla lista
+            updateClientList(clients);
+            
+            // Notifica audio
+            playNotificationSound();
+        } else {
+            // Aggiorna lo stato del client esistente
+            clients[existingClientIndex].online = true;
+            updateClientList(clients);
         }
-
-        // --- SOCKET.IO ---
-        function initializeSocketIO() {
-            const connectionStatus = document.getElementById('connectionStatus');
-            const connectionText = document.getElementById('connectionText');
-            connectionStatus.classList.remove('show', 'connected');
-
-            socket = io({ reconnectionAttempts: 5, reconnectionDelay: 3000 });
-
-            const connectionTimeout = setTimeout(() => {
-                connectionStatus.classList.add('show');
-                connectionText.textContent = 'Connessione...';
-            }, 2000);
-
-            socket.on('connect', () => {
-                console.log(`Socket.IO Capo Connesso: ${socket.id}`);
-                clearTimeout(connectionTimeout);
-                connectionText.textContent = 'Connesso';
-                connectionStatus.classList.add('connected', 'show');
-                setTimeout(() => connectionStatus.classList.remove('show'), 3000);
-
-                // Invia identificazione corretta al server
-                console.log(`[Capo] Invio identify: userId=${operatorId}, username=${operatorName}, userType=${userType}`);
-                socket.emit('identify', {
-                    userId: operatorId,
-                    username: operatorName,
-                    userType: userType
-                });
-
-                loadSupportRequests(); // Carica le chat DOPO l'identificazione
-            });
-
-            socket.on('new_support_request', handleNewSupportRequest);
-            socket.on('message', handleIncomingMessage);
-            socket.on('typing', handleTypingEvent);
-            socket.on('userLeave', handleUserLeave);
-            socket.on('past_messages', handlePastMessages); // Riceve la cronologia dopo operatorJoinRoom
-
-            socket.on('disconnect', (reason) => {
-                console.log('Socket.IO Disconnesso:', reason);
-                connectionText.textContent = 'Connessione persa';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
-            });
-            // Riconnessione gestita automaticamente, l'evento 'connect' verrà rieseguito
-            socket.on('connect_error', (error) => {
-                console.error('Socket.IO Errore Connessione:', error);
-                connectionText.textContent = 'Errore Connessione';
-                connectionStatus.classList.remove('connected');
-                connectionStatus.classList.add('show');
+    });
+    
+    // Gestione messaggi in arrivo
+    socket.on('message', function(data) {
+        console.log('Messaggio ricevuto:', data);
+        
+        // Se il messaggio è da un cliente
+        if (data.sender !== operatorId && data.sender.startsWith('client_')) {
+            handleIncomingMessage({
+                userId: data.sender,
+                senderName: data.senderName || 'Cliente',
+                message: data.content,
+                timestamp: data.timestamp
             });
         }
-
-        function handleNewSupportRequest(data) {
-            console.log('Nuova richiesta supporto:', data);
-            const existingClient = clients.find(c => c.id === data.user.userId);
-            if (!existingClient) {
-                const newClient = {
-                    id: data.user.userId,
-                    name: data.user.username || `Utente ${data.user.userId.substring(data.user.userId.length - 4)}`,
-                    roomId: data.roomId,
-                    online: true, // Appena connesso è online
-                    unreadCount: 1,
-                    lastMessage: { text: 'Nuova richiesta...', timestamp: new Date().toISOString() }
-                };
-                clients.unshift(newClient); // Aggiungi in cima
-                updateClientListUI();
-                playNotificationSound();
-                showToast('Nuova Chat', `Nuova richiesta da ${newClient.name}`, 'info');
+    });
+    
+    // Gestione dell'evento typing
+    socket.on('typing', function(data) {
+        console.log('Typing event:', data);
+        if (activeChat === data.userId) {
+            if (data.isTyping) {
+                showTypingIndicator();
             } else {
-                // Cliente già esistente ma si è ricollegato o riaperto
-                existingClient.online = true;
-                existingClient.roomId = data.roomId; // Assicurati che roomId sia corretto
-                existingClient.unreadCount = (existingClient.unreadCount || 0) + 1;
-                // Sposta in cima
-                clients = clients.filter(c => c.id !== data.user.userId);
-                clients.unshift(existingClient);
-                updateClientListUI();
-                playNotificationSound();
+                hideTypingIndicator();
             }
         }
-
-        function handleIncomingMessage(data) {
-            console.log('[Capo] Messaggio ricevuto:', data);
-            const senderId = data.sender?.startsWith('client_') ? data.sender : data.userId;
-
-            if (!senderId || senderId === operatorId) return; // Ignora messaggi dall'operatore stesso
-
-            let client = clients.find(c => c.id === senderId);
-            const isNew = !client;
-
-            if (isNew) { // Cliente non nella lista? Potrebbe accadere
-                 console.warn(`[Capo] Messaggio ricevuto da cliente non in lista: ${senderId}. Aggiungo.`);
-                 client = { id: senderId, name: data.senderName || `Utente ${senderId.substring(senderId.length-4)}`, roomId: data.roomId || `support_${senderId}`, online: true, unreadCount: 0, lastMessage: { text: '', timestamp: '' } };
-                 clients.unshift(client);
-             }
-
-             // Aggiorna ultimo messaggio
-             client.lastMessage = { text: data.content, timestamp: data.timestamp };
-             client.online = true; // Se manda messaggio è online
-
-             if (activeChatUserId !== senderId) {
-                 client.unreadCount = (client.unreadCount || 0) + 1;
-             } else {
-                 // Se è la chat attiva, aggiungi messaggio e nascondi typing
-                 addMessageToChat('incoming', data.content, data.timestamp);
-                 hideTypingIndicator();
-                 // Potrebbe essere utile inviare uno stato 'read' qui
-             }
-
-             // Sposta in cima e aggiorna UI
-             clients = clients.filter(c => c.id !== senderId);
-             clients.unshift(client);
-             updateClientListUI();
-             playNotificationSound();
+    });
+    
+    // Gestione utente che lascia la chat
+    socket.on('userLeave', function(data) {
+        console.log('Utente ha lasciato la chat:', data);
+        
+        // Trova il client e imposta offline
+        const clientIndex = clients.findIndex(c => c.id === data.userId);
+        if (clientIndex !== -1) {
+            clients[clientIndex].online = false;
+            updateClientList(clients);
         }
-
-        function handleTypingEvent(data) {
-            // Mostra solo se il cliente sta scrivendo nella chat attiva
-            if (activeChatUserId === data.userId && data.userId !== operatorId) {
-                if (data.isTyping) showTypingIndicator(); else hideTypingIndicator();
-            }
-        }
-
-        function handleUserLeave(data) {
-            console.log('Utente ha lasciato:', data);
-            const client = clients.find(c => c.id === data.userId);
-            if (client) {
-                client.online = false;
-                updateClientListUI();
-                 if (activeChatUserId === data.userId) {
-                     addSystemMessage(`${client.name} si è disconnesso.`);
-                 }
-            }
-        }
-
-        function handlePastMessages(data) {
-            // Ricevuto dal server dopo 'operatorJoinRoom'
-            console.log(`[Capo] Messaggi passati ricevuti per ${data.roomId}: ${data.messages?.length}`);
-            if (data.roomId === `support_${activeChatUserId}`) {
-                chatHistoryCache[activeChatUserId] = data.messages || []; // Salva nella cache (anche array vuoto)
-                displayChatHistory(data.messages);
-            } else {
-                console.warn(`[Capo] Ricevuti messaggi passati per una stanza non attiva: ${data.roomId} (Attiva: support_${activeChatUserId})`);
-            }
-        }
-
-
-        // --- GESTIONE UI ---
-        function setupUIElements() {
-             // Bottone invio messaggio
-             const chatSendButton = document.getElementById('chatSend');
-             if (chatSendButton) {
-                 chatSendButton.addEventListener('click', sendChatMessage);
-             } else { console.error("Elemento chatSend non trovato!"); }
-
-             // Input messaggio (Enter per inviare, resize automatico, stato typing)
-             const chatInput = document.getElementById('chatInput');
-             if (chatInput) {
-                 chatInput.addEventListener('input', function () {
-                     this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-                     // Chiama la funzione sendTypingStatus definita globalmente
-                     sendTypingStatus(this.value.trim() !== '');
-                 });
-                 chatInput.addEventListener('keydown', function (e) {
-                     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
-                 });
-             } else { console.error("Elemento chatInput non trovato!"); }
-
-             // Bottone logout
-             const logoutBtn = document.getElementById('logoutBtn');
-             if (logoutBtn) {
-                 logoutBtn.addEventListener('click', handleLogout);
-             } else { console.warn("Elemento logoutBtn non trovato."); }
-
-             // Bottone Elimina Tutte le Chat
-             const deleteAllBtn = document.getElementById('deleteAllChatsBtn');
-             if (deleteAllBtn) {
-                 deleteAllBtn.addEventListener('click', handleDeleteAllChats);
-             } else { console.warn("Elemento deleteAllChatsBtn non trovato."); }
-        }
-
-        function updateClientListUI() {
-            const chatList = document.getElementById('chatList'); if (!chatList) return;
-            chatList.innerHTML = ''; // Pulisci lista
-
-            if (!clients || clients.length === 0) {
-                chatList.innerHTML = '<li class="chat-item"><div class="chat-item-content"><div class="chat-name" style="color: var(--text-light); font-style: italic;">Nessuna chat attiva</div></div></li>';
-                return;
-            }
-
-            clients.forEach(client => {
-                const chatItem = document.createElement('li');
-                chatItem.className = 'chat-item';
-                chatItem.dataset.userId = client.id;
-                if (client.id === activeChatUserId) chatItem.classList.add('active');
-
-                let timeText = '';
-                if (client.lastMessage?.timestamp) {
-                    const msgDate = new Date(client.lastMessage.timestamp); const now = new Date();
-                    if (msgDate.toDateString() === now.toDateString()) timeText = formatTime(msgDate);
-                    else timeText = msgDate.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' });
-                }
-
-                const displayName = client.name || `Utente ${client.id.substring(client.id.length - 4)}`;
-                const avatarUrl = getAvatarUrl(displayName, 48);
-
-                chatItem.innerHTML = `
-                <img src="${avatarUrl}" alt="${displayName}" class="chat-avatar" onerror="this.onerror=null; this.src=getAvatarUrl('??', 48);">
-                <div class="chat-item-content">
-                    <div class="chat-item-header">
-                        <div class="chat-name">${displayName}</div>
-                        <div class="chat-item-actions">
-                            <button class="chat-item-action-btn edit-chat-btn" title="Modifica Nome Visualizzato" data-userid="${client.id}" data-currentname="${displayName}"> <i class="fas fa-pencil-alt"></i> </button>
-                            <button class="chat-item-action-btn delete-chat-btn delete" title="Elimina Chat" data-roomid="${client.roomId}" data-username="${displayName}"> <i class="fas fa-trash-alt"></i> </button>
-                        </div>
-                        <div class="chat-time">${timeText}</div>
-                    </div>
-                    <div class="chat-message">${client.lastMessage?.text || '...'}</div>
-                    <div class="chat-item-status">
-                        <div class="chat-status">${client.online ? '<span style="color:var(--accent-green);">Online</span>' : '<span style="color:var(--text-light);">Offline</span>'}</div>
-                        ${client.unreadCount ? `<div class="message-count">${client.unreadCount}</div>` : ''}
-                    </div>
-                </div>`;
-
-                chatItem.addEventListener('click', (e) => { if (!e.target.closest('.chat-item-action-btn')) openChat(client.id); });
-                const editBtn = chatItem.querySelector('.edit-chat-btn');
-                const deleteBtn = chatItem.querySelector('.delete-chat-btn');
-                if (editBtn) editBtn.addEventListener('click', (e) => { e.stopPropagation(); handleEditChatName(client.id, displayName); });
-                if (deleteBtn) deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); handleDeleteChat(client.roomId, displayName); });
-                chatList.appendChild(chatItem);
+    });
+    
+    // Gestione disconnessione
+    socket.on('disconnect', function() {
+        console.log('Socket.IO disconnected');
+        connectionText.textContent = 'Connessione interrotta';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
+    });
+    
+    // Gestione riconnessione
+    socket.on('reconnect', function() {
+        console.log('Socket.IO reconnected');
+        connectionText.textContent = 'Connesso';
+        connectionStatus.classList.add('connected');
+        
+        // Dopo un po', nascondi lo stato della connessione
+        setTimeout(() => {
+            connectionStatus.classList.remove('show');
+        }, 3000);
+        
+        // Ricongiungiti come operatore
+        socket.emit('operatorJoin', {
+            userId: operatorId,
+            username: operatorName
+        });
+        
+        // Se c'è una chat attiva, ricongiungersi
+        if (activeChat) {
+            socket.emit('operatorJoin', {
+                userId: operatorId,
+                username: operatorName,
+                roomId: `support_${activeChat}`
             });
         }
-
-        function handleEditChatName(userId, currentName) {
-            const newName = prompt(`Inserisci il nuovo nome visualizzato per "${currentName}":`, currentName);
-            if (newName && newName.trim() !== '' && newName !== currentName) {
-                const client = clients.find(c => c.id === userId);
-                if (client) {
-                    client.name = newName.trim();
-                    updateClientListUI();
-                    showToast('success', 'Nome Aggiornato', `Nome cambiato in "${newName.trim()}".`);
-                }
-            } else if (newName !== null) { showToast('info', 'Modifica Annullata', 'Nessuna modifica apportata.'); }
+        
+        // Ricarica le richieste di supporto
+        loadSupportRequests();
+    });
+    
+    // Gestione errore di connessione
+    socket.on('connect_error', function(error) {
+        console.error('Socket.IO connection error:', error);
+        connectionText.textContent = 'Errore di connessione';
+        connectionStatus.classList.remove('connected');
+        connectionStatus.classList.add('show');
+    });
+    
+    // Gestione dei messaggi passati
+    socket.on('past_messages', function(data) {
+        console.log('Messaggi passati ricevuti:', data);
+        
+        if (data.roomId === `support_${activeChat}`) {
+            displayChatHistory(data.messages);
         }
+    });
+}
 
-        async function handleDeleteChat(roomId, userName) {
-            if (!roomId) { showToast('error', 'Errore', 'ID stanza non valido.'); return; }
-            if (confirm(`Sei sicuro di voler eliminare TUTTI i messaggi della chat con "${userName}" (ID: ${roomId})? L'azione non è reversibile.`)) {
-                try {
-                    const response = await fetch(`/api/chat/messages/${roomId}`, { method: 'DELETE' });
-                    const result = await response.json();
-                    if (response.ok && result.success) {
-                        showToast('success', 'Chat Eliminata', `Messaggi per ${userName} eliminati. (${result.deleted || 0} messaggi)`);
-                        clients = clients.filter(c => c.roomId !== roomId);
-                        delete chatHistoryCache[roomId.replace('support_', '')];
-                        updateClientListUI();
-                        if (`support_${activeChatUserId}` === roomId) {
-                            activeChatUserId = null;
-                            document.getElementById('chatPlaceholder').style.display = 'flex';
-                            document.getElementById('chatContent').style.display = 'none';
-                            document.getElementById('chatFooter').style.display = 'none';
-                        }
-                    } else { throw new Error(result.error || `Errore ${response.status}`); }
-                } catch (error) {
-                    console.error('Errore eliminazione chat:', error);
-                    showToast('error', 'Errore Eliminazione', `Impossibile eliminare: ${error.message}`);
-                }
-            }
-        }
-
-        async function handleDeleteAllChats() {
-            if (confirm("SEI SICURO di voler eliminare TUTTE le conversazioni? Azione IRREVERSIBILE.")) {
-                if (confirm("CONFERMA DEFINITIVA?")) {
-                    try {
-                        const response = await fetch('/api/chat/all-conversations', { method: 'DELETE' });
-                        const result = await response.json();
-                        if (response.ok && result.success) {
-                            showToast('success', 'Chat Eliminate', `Tutte le ${result.deleted || 0} conversazioni eliminate.`);
-                            clients = []; chatHistoryCache = {}; updateClientListUI();
-                            activeChatUserId = null;
-                            document.getElementById('chatPlaceholder').style.display = 'flex';
-                            document.getElementById('chatContent').style.display = 'none';
-                            document.getElementById('chatFooter').style.display = 'none';
-                        } else { throw new Error(result.error || `Errore ${response.status}`); }
-                    } catch (error) {
-                        console.error('Errore eliminazione TUTTE:', error);
-                        showToast('error', 'Errore Critico', `Impossibile eliminare: ${error.message}`);
-                    }
-                }
-            }
-        }
-
-
-        function openChat(userId) {
-            if (activeChatUserId === userId) return;
-            console.log(`Apertura chat per utente: ${userId}`);
-
-            activeChatUserId = userId;
-            const client = clients.find(c => c.id === userId);
-            if (!client) { console.error(`Cliente ${userId} non trovato.`); return; }
-
-            document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
-            const selectedItem = document.querySelector(`.chat-item[data-userId="${userId}"]`);
-            if (selectedItem) selectedItem.classList.add('active');
-
-            document.getElementById('chatPlaceholder').style.display = 'none';
-            document.getElementById('chatContent').style.display = 'flex';
-            document.getElementById('chatFooter').style.display = 'flex';
-            document.getElementById('chatContent').innerHTML = '';
-            hideTypingIndicator();
-
-            client.unreadCount = 0;
-            updateClientListUI();
-
-            const roomId = client.roomId || `support_${userId}`;
-            // Emetti evento al server per dire che l'operatore è entrato in questa stanza
-            if (socket && socket.connected) {
-                 socket.emit('operatorJoinRoom', { roomId: roomId }); // Usa l'evento definito nel server.js
-                 console.log(`[Capo FE] Richiesto join a ${roomId}`);
-             } else {
-                 showToast('error', 'Errore Connessione', 'Socket non connesso, impossibile unirsi alla stanza.');
-             }
-
-            // La cronologia verrà ora caricata in risposta all'evento 'past_messages' dal server
-            addSystemMessage('Caricamento messaggi...');
-            setTimeout(() => document.getElementById('chatInput')?.focus(), 100);
-        }
-
-        function displayChatHistory(messages) {
-            const chatContent = document.getElementById('chatContent'); if (!chatContent) return;
-            chatContent.innerHTML = ''; // Pulisci prima di aggiungere
-
-            if (!messages || messages.length === 0) { addSystemMessage('Nessun messaggio in questa conversazione.'); return; }
-
-            let lastDate = null;
-            messages.forEach(msg => {
-                const msgDate = new Date(msg.timestamp).toISOString().split('T')[0];
-                if (msgDate !== lastDate) {
-                    addSystemMessage(formatDay(msgDate));
-                    lastDate = msgDate;
-                }
-                // Determina tipo messaggio (usa sender_id dal DB)
-                const messageType = (msg.sender_id === operatorId) ? 'outgoing' : 'incoming';
-                addMessageToChat(messageType, msg.message || msg.content, msg.timestamp, true);
-            });
-            scrollToBottom();
-        }
-
-        function addMessageToChat(type, text, timestamp = null, isHistory = false) {
-            const chatContent = document.getElementById('chatContent'); if (!chatContent) return;
-            const now = timestamp ? new Date(timestamp) : new Date();
-            const timeString = formatTime(now);
-            const message = document.createElement('div'); message.className = `message ${type}`;
-            message.innerHTML = `
-             <div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>
-             <div class="message-meta">
-                 <span class="message-time">${timeString}</span>
-                 ${type === 'outgoing' ? '<span class="message-status status-sent"><i class="fas fa-check"></i></span>' : ''}
-             </div>`;
-            chatContent.appendChild(message);
-             if (!isHistory) {
-                 scrollToBottom();
-                 // Simula cambio stato per messaggi inviati (opzionale)
-                 if (type === 'outgoing') {
-                     const statusEl = message.querySelector('.message-status');
-                     if(statusEl) {
-                         setTimeout(() => { statusEl.classList.replace('status-sent','status-delivered'); statusEl.innerHTML = '<i class="fas fa-check-double"></i>';}, 800);
-                         // Potresti implementare conferma lettura reale con un altro evento socket
-                         // setTimeout(() => { statusEl.classList.replace('status-delivered','status-read'); statusEl.style.color = 'var(--accent-blue)';}, 2500);
-                     }
-                 }
-             }
-        }
-
-        function addSystemMessage(text) {
-            const chatContent = document.getElementById('chatContent'); if (!chatContent) return;
-            const message = document.createElement('div'); message.className = 'chat-day'; // Usa stile divisore giorno
-            message.innerHTML = `<span>${text}</span>`; chatContent.appendChild(message);
-            if (!text.toLowerCase().includes('caricamento messaggi')) {
-                scrollToBottom();
-            }
-        }
-
-        function showTypingIndicator() { const chatContent = document.getElementById('chatContent'); if (!chatContent || document.getElementById('typingIndicator')) return; const indicator = document.createElement('div'); indicator.className = 'message incoming typing-indicator'; indicator.id = 'typingIndicator'; indicator.innerHTML = `<div class="message-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`; chatContent.appendChild(indicator); scrollToBottom(); }
-        function hideTypingIndicator() { const indicator = document.getElementById('typingIndicator'); if (indicator) indicator.remove(); }
-
-        // UNICA DEFINIZIONE DI sendChatMessage
-        function sendChatMessage() {
-            if (!activeChatUserId || !socket || !socket.connected) {
-                showToast('error', 'Invio Fallito', 'Nessuna chat attiva o connessione persa.');
-                return;
-            }
-            const chatInput = document.getElementById('chatInput'); const message = chatInput.value.trim();
-            if (!message) return;
-
-            const timestamp = new Date().toISOString();
-            const client = clients.find(c => c.id === activeChatUserId);
-            const roomId = client?.roomId || `support_${activeChatUserId}`;
-
-            addMessageToChat('outgoing', message, timestamp);
-            console.log(`[Capo] Invio messaggio a ${roomId}:`, {sender:operatorId,senderName:operatorName,content:message,timestamp:timestamp,roomId:roomId});
-            socket.emit('message', { sender: operatorId, senderName: operatorName, content: message, timestamp: timestamp, roomId: roomId });
-            chatInput.value = ''; chatInput.style.height = 'auto'; chatInput.focus();
-            updateChatListItem(activeChatUserId, message);
-            // Chiama la funzione sendTypingStatus definita globalmente
-            sendTypingStatus(false); // Ferma l'indicatore typing dopo invio
-        }
-
-        function updateChatListItem(userId, message) {
-            const clientIndex = clients.findIndex(c => c.id === userId);
-            if (clientIndex !== -1) {
-                clients[clientIndex].lastMessage = { text: message, timestamp: new Date().toISOString() };
-                // Sposta in cima
-                const client = clients.splice(clientIndex, 1)[0];
-                clients.unshift(client);
-                updateClientListUI(); // Ridisegna la lista
-            }
-        }
-
-
-        // --- GESTIONE SESSIONE/LOGIN ---
-        function checkSessionStatusWithoutRedirect() {
-             console.log("Verifico sessione...");
-             // Fetch /auth-status per ottenere i dati utente REALI dal server
-             fetch('/auth-status')
-                 .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
-                 .then(data => {
-                     console.log("Stato Auth ricevuto:", data);
-                     const isAuthenticated = data.isAuthenticated === true;
-                     const userIsCapo = data.passportUser?.tipo === 'capo';
-
-                     if (!isAuthenticated || !userIsCapo) {
-                         console.error("Accesso Negato: Utente non autenticato o non Capo.");
-                         showAuthAlert("Accesso Negato", "Devi effettuare il login come Capo.", true);
-                         disableChatFunctionality();
-                     } else {
-                         console.log("Autenticazione Capo OK (da /auth-status).");
-                         // Non è necessario aggiornare UI qui perché lo fa DOMContentLoaded
-                         // con i dati già presenti in 'currentUser'
-                     }
-                 })
-                 .catch(error => {
-                     console.error("Errore verifica sessione /auth-status:", error);
-                     showAuthAlert("Errore Tecnico", `Impossibile verificare sessione: ${error.message}.`, true);
-                     disableChatFunctionality();
-                 });
-         }
-
-        function disableChatFunctionality() {
-            const chatInput = document.getElementById('chatInput'); const chatSend = document.getElementById('chatSend'); const chatTools = document.querySelectorAll('.chat-tool'); const chatList = document.getElementById('chatList'); const deleteAllBtn = document.getElementById('deleteAllChatsBtn');
-            if (chatInput) chatInput.disabled = true; if (chatSend) chatSend.disabled = true; chatTools.forEach(tool => tool.disabled = true); if (deleteAllBtn) deleteAllBtn.disabled = true;
-            if (chatList) chatList.innerHTML = '<li class="chat-item"><div class="chat-item-content"><div class="chat-name" style="color:var(--text-light);font-style:italic;">Login come Capo richiesto</div></div></li>';
-            const chatPlaceholder = document.getElementById('chatPlaceholder'); const chatContent = document.getElementById('chatContent'); const chatFooter = document.getElementById('chatFooter');
-            if (chatPlaceholder) { chatPlaceholder.innerHTML = `<div class="placeholder-icon"><i class="fas fa-lock"></i></div><h3 class="placeholder-title">Accesso Negato</h3><p class="placeholder-text">Login come Capo richiesto.</p>`; chatPlaceholder.style.display = 'flex'; }
-            if (chatContent) chatContent.style.display = 'none'; if (chatFooter) chatFooter.style.display = 'none';
-            if (socket && socket.connected) socket.disconnect();
-        }
-
-        function handleLogout(e) {
-            e.preventDefault();
-            const loadingOverlay = document.createElement('div'); loadingOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2000;backdrop-filter:blur(5px);'; const spinnerContainer = document.createElement('div'); spinnerContainer.style.cssText = 'width:60px;height:60px;position:relative;'; const spinner = document.createElement('div'); spinner.style.cssText = 'border:4px solid rgba(0,0,0,0.1);border-top-color:var(--primary);border-radius:50%;width:100%;height:100%;animation:spin 1s linear infinite;'; const style = document.createElement('style'); style.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`; document.head.appendChild(style); spinnerContainer.appendChild(spinner); const loadingText = document.createElement('p'); loadingText.textContent = 'Logout in corso...'; loadingText.style.cssText = 'margin-top:20px;color:var(--primary);font-weight:500;'; loadingOverlay.appendChild(spinnerContainer); loadingOverlay.appendChild(loadingText); document.body.appendChild(loadingOverlay);
-            fetch('/logout', { method: 'POST' })
-                .then(response => response.ok ? response.json() : Promise.reject(new Error('Logout failed')))
-                .then(() => { loadingText.textContent = 'Reindirizzamento...'; setTimeout(() => window.location.href = '/login', 800); })
-                .catch(error => { console.error('Logout error:', error); loadingText.textContent = 'Errore Logout.'; setTimeout(() => loadingOverlay.remove(), 2000); });
-        }
-
-        // --- Caricamento iniziale richieste ---
-        function loadSupportRequests() {
-            console.log("Carico richieste supporto...");
-            fetch('/api/chat/rooms')
-                .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
-                .then(data => {
-                    console.log("Stanze ricevute:", data);
-                    if (data.rooms && data.rooms.length > 0) {
-                        clients = data.rooms.map(room => ({
-                            id: room.user_id || room.room_id.replace('support_', ''),
-                            name: room.sender_name || `Utente ${room.user_id ? room.user_id.substring(room.user_id.length - 4) : 'N/D'}`,
-                            roomId: room.room_id,
-                            online: false, // Assumi offline inizialmente, l'identify del client aggiornerà
-                            unreadCount: 0, // Inizia da 0
-                            lastMessage: { text: room.last_message || '...', timestamp: room.last_timestamp || new Date(0).toISOString() } // Usa timestamp reale se disponibile
-                        })).sort((a, b) => new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)); // Ordina per ultimo messaggio
-                    } else {
-                        clients = [];
-                        console.log("Nessuna chat attiva trovata.");
-                    }
-                    updateClientListUI();
-                })
-                .catch(error => {
-                    console.error('Errore caricamento stanze chat:', error);
-                    showToast('error', 'Errore Chat', `Impossibile caricare le chat: ${error.message}`);
+// Carica le richieste di assistenza esistenti
+function loadSupportRequests() {
+    console.log("Carico le richieste di assistenza...");
+    
+    // Aggiungi un breve ritardo per assicurarti che l'autenticazione sia completata
+    setTimeout(() => {
+        // Recupera le stanze di chat esistenti tramite API
+        fetch('/api/chat/rooms')
+            .then(response => {
+                if (response.status === 403) {
+                    console.error("Errore di autorizzazione: accesso negato alle chat rooms");
+                    
+                    // Mostra il messaggio di errore ma aggiungi un pulsante per riprovare dopo qualche secondo
                     const chatList = document.getElementById('chatList');
-                    if (chatList) chatList.innerHTML = '<li class="chat-item"><div class="chat-item-content" style="color:var(--accent-red);">Errore caricamento chat</div></li>';
-                });
+                    if (chatList) {
+                        chatList.innerHTML = '<div class="error-message">Non hai i permessi necessari per visualizzare le chat.<br>Il server potrebbe non aver ancora riconosciuto la tua autenticazione.<br><button id="retryBtn" class="refresh-button">Riprova dopo 3 secondi</button></div>';
+                        
+                        // Aggiungi un listener per riprovare automaticamente dopo 3 secondi
+                        const retryBtn = document.getElementById('retryBtn');
+                        retryBtn.addEventListener('click', () => {
+                            retryBtn.disabled = true;
+                            retryBtn.textContent = 'Riprovo in 3 secondi...';
+                            
+                            setTimeout(() => {
+                                loadSupportRequests();
+                            }, 3000);
+                        });
+                        
+                        // Clicca automaticamente il pulsante dopo 3 secondi
+                        setTimeout(() => {
+                            retryBtn.click();
+                        }, 3000);
+                    }
+                    throw new Error("Errore 403: Accesso negato");
+                }
+                if (!response.ok) {
+                    throw new Error(`Errore ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Dati stanze ricevuti:", data);
+                
+                if (data.rooms && data.rooms.length > 0) {
+                    // Converti il formato delle stanze nel formato dei client
+                    const loadedClients = data.rooms.map(room => {
+                        // Estrai l'ID utente dal room_id (rimuovi il prefisso "support_")
+                        const userId = room.room_id.replace('support_', '');
+                        
+                        return {
+                            id: userId,
+                            name: room.sender_name || 'Cliente',
+                            roomId: room.room_id,
+                            online: true,
+                            unreadCount: 0,
+                            avatar: `https://source.unsplash.com/random/100x100/?face&${userId}`,
+                            lastMessage: {
+                                text: room.last_message || 'Conversazione iniziata',
+                                timestamp: new Date().toISOString()
+                            }
+                        };
+                    });
+                    
+                    console.log("Client caricati:", loadedClients);
+                    clients = loadedClients;
+                    updateClientList(clients);
+                } else {
+                    console.log("Nessuna stanza trovata, utilizzo mock data");
+                    // Fallback ai dati mock se non ci sono clienti
+                    createMockClients();
+                }
+            })
+            .catch(error => {
+                console.error('Errore nel caricamento delle chat:', error);
+                createMockClients();
+            });
+    }, 1000); // Ritardo di 1 secondo per assicurarsi che l'autenticazione sia completata
+}
+
+
+// Crea clienti di esempio per testing
+function createMockClients() {
+    clients = [
+        {
+            id: 'client_123',
+            name: 'Mario Rossi',
+            roomId: 'support_client_123',
+            online: true,
+            unreadCount: 2,
+            avatar: 'https://source.unsplash.com/random/100x100/?face&1',
+            lastMessage: {
+                text: 'Ho un problema con il mio ordine',
+                timestamp: new Date().toISOString()
+            }
+        },
+        {
+            id: 'client_456',
+            name: 'Giulia Bianchi',
+            roomId: 'support_client_456',
+            online: true,
+            unreadCount: 0,
+            avatar: 'https://source.unsplash.com/random/100x100/?face&2',
+            lastMessage: {
+                text: 'Grazie per l\'assistenza',
+                timestamp: new Date(Date.now() - 3600000).toISOString()
+            }
         }
+    ];
+    updateClientList(clients);
+}
 
-    </script>
+// Gestisci messaggio in arrivo
+function handleIncomingMessage(data) {
+    const message = data.message;
+    const senderId = data.userId;
+    
+    console.log("Messaggio ricevuto da:", senderId, "Contenuto:", message);
+    
+    // Verifica se questo cliente esiste già nella lista
+    let clientIndex = clients.findIndex(c => c.id === senderId);
+    
+    // Se il cliente non esiste, aggiungilo alla lista
+    if (clientIndex === -1) {
+        const newClient = {
+            id: senderId,
+            name: data.senderName || 'Cliente',
+            roomId: `support_${senderId}`,
+            online: true,
+            unreadCount: 1,
+            avatar: `https://source.unsplash.com/random/100x100/?face&${senderId}`,
+            lastMessage: {
+                text: message,
+                timestamp: data.timestamp || new Date().toISOString()
+            }
+        };
+        
+        clients.unshift(newClient);
+        clientIndex = 0;
+        
+        console.log("Aggiunto nuovo cliente:", newClient);
+    } else {
+        // Aggiorna l'ultimo messaggio e incrementa il contatore non letti
+        clients[clientIndex].lastMessage = {
+            text: message,
+            timestamp: data.timestamp || new Date().toISOString()
+        };
+        
+        // Incrementa il contatore non letti solo se non è la chat attiva
+        if (activeChat !== senderId) {
+            clients[clientIndex].unreadCount = (clients[clientIndex].unreadCount || 0) + 1;
+        }
+        
+        // Sposta questo cliente in cima alla lista
+        const client = clients.splice(clientIndex, 1)[0];
+        clients.unshift(client);
+    }
+    
+    // Aggiorna la UI della lista clienti
+    updateClientList(clients);
+    
+    // Se questa è la chat attiva, aggiungi il messaggio alla chat
+    if (activeChat === senderId) {
+        addMessageToChat('incoming', message, data.timestamp);
+        hideTypingIndicator();
+    }
+    
+    // Riproduci suono di notifica
+    playNotificationSound();
+}
+
+// Funzione per riprodurre suono di notifica
+function playNotificationSound() {
+    try {
+        const audio = new Audio('/sounds/notification.mp3');
+        audio.volume = 0.5;
+        audio.play();
+    } catch (e) {
+        console.log('Audio play failed:', e);
+    }
+}
+
+// Apri la chat di un cliente
+function openChat(userId) {
+    if (activeChat === userId) return;
+    
+    // Salva l'id del cliente attivo
+    activeChat = userId;
+    
+    // Aggiorna UI
+    const chatItems = document.querySelectorAll('.chat-item');
+    chatItems.forEach(item => item.classList.remove('active'));
+    
+    const selectedChat = document.querySelector(`.chat-item[data-userId="${userId}"]`);
+    if (selectedChat) selectedChat.classList.add('active');
+    
+    // Mostra il contenuto della chat e il footer
+    document.getElementById('chatPlaceholder').style.display = 'none';
+    document.getElementById('chatContent').style.display = 'flex';
+    document.getElementById('chatFooter').style.display = 'flex';
+    
+    // Pulisci il contenuto della chat
+    document.getElementById('chatContent').innerHTML = '';
+    
+    // Rimuovi eventuali indicatori di digitazione
+    hideTypingIndicator();
+    
+    // Resetta il contatore non letti
+    const clientIndex = clients.findIndex(c => c.id === userId);
+    if (clientIndex !== -1) {
+        clients[clientIndex].unreadCount = 0;
+        updateClientList(clients);
+    }
+    
+    // Unisciti alla stanza del cliente con Socket.IO
+    const roomId = `support_${userId}`;
+    socket.emit('operatorJoin', {
+        userId: operatorId,
+        username: operatorName,
+        roomId: roomId
+    });
+    
+    // Aggiungi messaggio di caricamento
+    addSystemMessage('Caricamento messaggi in corso...');
+    
+    // Carica la cronologia messaggi con gestione degli errori migliorata
+    fetch(`/api/chat/history/${roomId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Errore ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(messages => {
+            console.log("Messaggi ricevuti:", messages); // Log per debug
+            document.getElementById('chatContent').innerHTML = ''; // Pulisci il messaggio di caricamento
+            
+            if (messages && messages.length > 0) {
+                displayChatHistory(messages);
+            } else {
+                addSystemMessage('Nessun messaggio. Inizia a chattare con questo cliente!');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching chat history:', error);
+            document.getElementById('chatContent').innerHTML = ''; // Pulisci il messaggio di caricamento
+            addSystemMessage(`Errore nel caricamento dei messaggi: ${error.message}`);
+        });
+    
+    // Focus sull'input
+    setTimeout(() => {
+        document.getElementById('chatInput').focus();
+    }, 100);
+}
+
+// Visualizza cronologia chat
+function displayChatHistory(messages) {
+    const chatContent = document.getElementById('chatContent');
+    
+    if (!chatContent) return;
+    
+    // Pulisci messaggi esistenti
+    chatContent.innerHTML = '';
+    
+    if (!messages || messages.length === 0) {
+        addSystemMessage('Nessun messaggio. Inizia a chattare con questo cliente!');
+        return;
+    }
+    
+    console.log("Mostrando messaggi:", messages.length);
+    
+    // Aggiungi tutti i messaggi in ordine cronologico
+    messages.forEach(msg => {
+        console.log("Elaborazione messaggio:", msg);
+        
+        if (msg.sender_id === 'system') {
+            // Messaggio di sistema
+            addSystemMessage(msg.message, msg.timestamp);
+        } else if (msg.sender_id.startsWith('operator_') || msg.sender_name === 'Assistenza YourBite' || msg.sender_name === 'Capo') {
+            // Messaggio inviato da operatore o capo
+            addMessageToChat('outgoing', msg.message, msg.timestamp, true);
+        } else {
+            // Messaggio ricevuto dal cliente
+            addMessageToChat('incoming', msg.message, msg.timestamp, true);
+        }
+    });
+    
+    // Scorri in fondo
+    scrollToBottom();
+}
+
+// Raggruppa messaggi per giorno
+function groupMessagesByDay(messages) {
+    const messagesByDay = {};
+    
+    messages.forEach(msg => {
+        // Converti timestamp in data YYYY-MM-DD
+        const date = new Date(msg.timestamp);
+        const day = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        if (!messagesByDay[day]) {
+            messagesByDay[day] = [];
+        }
+        
+        messagesByDay[day].push(msg);
+    });
+    
+    return messagesByDay;
+}
+
+// Format day for display
+function formatDay(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toISOString().split('T')[0] === today.toISOString().split('T')[0]) {
+        return 'Oggi';
+    } else if (date.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0]) {
+        return 'Ieri';
+    } else {
+        return date.toLocaleDateString('it-IT', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+}
+
+// Invia messaggio al cliente
+function sendChatMessage() {
+    if (!activeChat) return;
+    
+    const chatInput = document.getElementById('chatInput');
+    const message = chatInput.value.trim();
+    
+    if (!message) return;
+    
+    if (socket && socket.connected) {
+        const timestamp = new Date().toISOString();
+        const roomId = `support_${activeChat}`;
+        
+        // Aggiungi messaggio alla chat locale
+        addMessageToChat('outgoing', message);
+        
+        // Invia messaggio tramite Socket.IO
+        socket.emit('message', {
+            sender: operatorId,
+            senderName: operatorName,
+            content: message,
+            timestamp: timestamp,
+            roomId: roomId
+        });
+        
+        // Pulisci l'input
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        chatInput.focus();
+        
+        // Aggiorna elemento nella lista chat
+        updateChatListItem(activeChat, message);
+        
+        // Annulla l'indicatore di digitazione
+        sendTypingStatus(false);
+    } else {
+        addSystemMessage('Errore: Impossibile inviare il messaggio. Riconnessione in corso...');
+    }
+}
+
+// Send typing status
+let typingTimeout;
+function sendTypingStatus(isTyping) {
+    if (!activeChat || !socket || !socket.connected) return;
+    
+    clearTimeout(typingTimeout);
+    
+    socket.emit('typing', {
+        userId: operatorId,
+        username: operatorName,
+        isTyping: isTyping,
+        roomId: `support_${activeChat}`
+    });
+    
+    if (isTyping) {
+        typingTimeout = setTimeout(() => {
+            sendTypingStatus(false);
+        }, 3000);
+    }
+}
+
+// Update client list
+function updateClientList(newClients) {
+    clients = newClients;
+    const chatList = document.getElementById('chatList');
+    if (!chatList) return;
+    
+    chatList.innerHTML = '';
+    
+    if (!clients || !clients.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'chat-item';
+        emptyItem.innerHTML = '<div class="chat-item-content"><div class="chat-name">Nessun cliente disponibile</div></div>';
+        chatList.appendChild(emptyItem);
+        return;
+    }
+    
+    clients.forEach((client, index) => {
+        const chatItem = document.createElement('li');
+        chatItem.className = 'chat-item';
+        chatItem.dataset.userId = client.id;
+        
+        if (client.id === activeChat) {
+            chatItem.classList.add('active');
+        }
+        
+        // Format last message time
+        let timeText = '';
+        if (client.lastMessage && client.lastMessage.timestamp) {
+            const msgDate = new Date(client.lastMessage.timestamp);
+            const now = new Date();
+            const isToday = msgDate.toDateString() === now.toDateString();
+            
+            if (isToday) {
+                timeText = msgDate.toLocaleTimeString('it-IT', {hour: '2-digit', minute:'2-digit'});
+            } else {
+                timeText = msgDate.toLocaleDateString('it-IT', {day: '2-digit', month: '2-digit'});
+            }
+        }
+        
+        // Make sure client name is unique and not empty
+        const displayName = client.name || `Cliente ${index + 1}`;
+        
+        chatItem.innerHTML = `
+            <img src="${client.avatar || 'https://source.unsplash.com/random/100x100/?person'}" alt="${displayName}" class="chat-avatar">
+            <div class="chat-item-content">
+                <div class="chat-item-header">
+                    <div class="chat-name">${displayName} (ID: ${client.id.substring(0, 5)}...)</div>
+                    <div class="chat-time">${timeText}</div>
+                </div>
+                <div class="chat-message">${client.lastMessage ? client.lastMessage.text : 'Nessun messaggio'}</div>
+                <div class="chat-item-status">
+                    <div class="chat-status">${client.online ? 'Online' : 'Offline'}</div>
+                    ${client.unreadCount ? `<div class="message-count">${client.unreadCount}</div>` : ''}
+                </div>
+            </div>
+        `;
+        
+        chatItem.addEventListener('click', () => {
+            openChat(client.id);
+        });
+        
+        chatList.appendChild(chatItem);
+    });
+}
+
+// Update chat list item
+function updateChatListItem(userId, message, isIncoming = false) {
+    const chatList = document.getElementById('chatList');
+    if (!chatList) return;
+    
+    // Find client
+    const clientIndex = clients.findIndex(c => c.id === userId);
+    if (clientIndex === -1) return;
+    
+    const client = clients[clientIndex];
+    
+    // Update client data
+    client.lastMessage = {
+        text: message,
+        timestamp: new Date().toISOString()
+    };
+    
+    if (isIncoming && activeChat !== userId) {
+        client.unreadCount = (client.unreadCount || 0) + 1;
+    }
+    
+    // Move this client to the top of the list
+    clients.splice(clientIndex, 1);
+    clients.unshift(client);
+    
+    // Redraw the chat list
+    updateClientList(clients);
+}
+
+// Setup message input
+function setupMessageInput() {
+    const chatInput = document.getElementById('chatInput');
+    if (!chatInput) return;
+    
+    chatInput.addEventListener('input', function() {
+        // Auto-resize textarea
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        
+        // Send typing indicator
+        sendTypingStatus(this.value.trim() !== '');
+    });
+    
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+    
+    const chatSend = document.getElementById('chatSend');
+    if (chatSend) {
+        chatSend.addEventListener('click', sendChatMessage);
+    }
+}
+
+// Add message to chat
+function addMessageToChat(type, text, timestamp = null, isHistory = false) {
+    const chatContent = document.getElementById('chatContent');
+    if (!chatContent) return;
+    
+    const now = timestamp ? new Date(timestamp) : new Date();
+    const timeString = formatTime(now);
+    
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+    
+    message.innerHTML = `
+        <div class="message-bubble">${text}</div>
+        <div class="message-meta">
+            <span class="message-time">${timeString}</span>
+            ${type === 'outgoing' ? '<span class="message-status"><i class="fas fa-check"></i></span>' : ''}
+        </div>
+    `;
+    
+    chatContent.appendChild(message);
+    
+    // If not loading history, scroll to bottom
+    if (!isHistory) {
+        scrollToBottom();
+    }
+}
+
+// Add system message
+function addSystemMessage(text, timestamp = null) {
+    const chatContent = document.getElementById('chatContent');
+    if (!chatContent) return;
+    
+    const message = document.createElement('div');
+    message.className = 'chat-day';
+    message.innerHTML = `<span>${text}</span>`;
+    
+    chatContent.appendChild(message);
+    scrollToBottom();
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const chatContent = document.getElementById('chatContent');
+    if (!chatContent) return;
+    
+    // Remove existing indicator if any
+    hideTypingIndicator();
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    
+    indicator.innerHTML = `
+        <div class="typing-dots">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    
+    chatContent.appendChild(indicator);
+    scrollToBottom();
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) indicator.remove();
+}
+
+// Format time for messages
+function formatTime(date) {
+    return date.toLocaleTimeString('it-IT', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Scroll chat to bottom
+function scrollToBottom() {
+    const chatContent = document.getElementById('chatContent');
+    if (chatContent) {
+        chatContent.scrollTop = chatContent.scrollHeight;
+    }
+}
+
+// Setup logout button
+function setupLogoutButton() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (!logoutBtn) return;
+    
+    logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Show loading overlay
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.style.position = 'fixed';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.flexDirection = 'column';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.zIndex = '2000';
+        loadingOverlay.style.backdropFilter = 'blur(5px)';
+        
+        const spinnerContainer = document.createElement('div');
+        spinnerContainer.style.width = '60px';
+        spinnerContainer.style.height = '60px';
+        spinnerContainer.style.position = 'relative';
+        
+        const spinner = document.createElement('div');
+        spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+        spinner.style.borderTopColor = 'var(--primary)';
+        spinner.style.borderRadius = '50%';
+        spinner.style.width = '100%';
+        spinner.style.height = '100%';
+        spinner.style.animation = 'spin 1s linear infinite';
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        
+        document.head.appendChild(style);
+        spinnerContainer.appendChild(spinner);
+        
+        const loadingText = document.createElement('p');
+        loadingText.textContent = 'Logout in corso...';
+        loadingText.style.marginTop = '20px';
+        loadingText.style.color = 'var(--primary)';
+        loadingText.style.fontWeight = '500';
+        
+        loadingOverlay.appendChild(spinnerContainer);
+        loadingOverlay.appendChild(loadingText);
+        document.body.appendChild(loadingOverlay);
+        
+        // In una vera implementazione:
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                loadingText.textContent = 'Reindirizzamento...';
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 800);
+            } else {
+                throw new Error('Errore durante il logout');
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante il logout:', error);
+            loadingText.textContent = 'Si è verificato un errore. Riprova.';
+            
+            // Add retry button
+            const retryButton = document.createElement('button');
+            retryButton.textContent = 'Riprova';
+            retryButton.style.marginTop = '15px';
+            retryButton.style.padding = '8px 20px';
+            retryButton.style.background = 'var(--primary)';
+            retryButton.style.color = 'white';
+            retryButton.style.border = 'none';
+            retryButton.style.borderRadius = 'var(--radius-sm)';
+            retryButton.style.cursor = 'pointer';
+            
+            retryButton.onclick = function() {
+                document.body.removeChild(loadingOverlay);
+                setupLogoutButton();
+            };
+            
+            loadingOverlay.appendChild(retryButton);
+        });
+    });
+}
+</script>
 </body>
-
 </html>

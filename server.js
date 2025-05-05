@@ -31,6 +31,23 @@ const io = new Server(server, {
         methods: ['GET', 'POST']
     }
 });
+// --- Configurazione View Engine Handlebars ---
+const hbs = exphbs.create({
+    extname: '.hbs',
+    defaultLayout: false,
+    helpers: {
+        json: function(context) {
+            return JSON.stringify(context);
+        }
+    }
+});
+
+// IMPORTANTE: usa hbs.engine invece di exphbs.engine
+app.engine('.hbs', hbs.engine);
+app.set('view engine', '.hbs');
+app.set('views', path.join(__dirname, 'views'));
+
+
 
 // --- Configurazione View Engine Handlebars ---
 app.engine('.hbs', exphbs.engine({
@@ -1051,12 +1068,28 @@ app.use((req, res, next) => {
 });
 // Aggiungi questa rotta per debugging
 app.get('/auth-status', (req, res) => {
+    console.log("Auth status check - Session user:", req.session?.user);
+    console.log("Auth status check - Passport user:", req.user);
+    
+    // Sincronizza i dati utente tra passport e session se necessario
+    if (req.user && (!req.session.user || req.session.user.tipo !== req.user.tipo)) {
+        console.log("Sincronizzazione utente da passport a session");
+        req.session.user = {
+            id: req.user.id,
+            username: req.user.username,
+            email: req.user.email,
+            tipo: req.user.tipo
+        };
+    }
+    
     res.json({
-        isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+        isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : (req.session && req.session.user ? true : false),
         sessionUser: req.session.user || null,
         passportUser: req.user || null
     });
 });
+
+
 // Route per la homepage
 app.get('/', (req, res) => {
     // 5. Usa res.render per processare il template 'index.hbs'
@@ -1064,9 +1097,28 @@ app.get('/', (req, res) => {
     res.render('index', { pageTitle: 'Benvenuto - La Mia App' }); // 'index' si riferisce a views/index.hbs
 });
 
+// Middleware per sincronizzare user tra passport e session
+app.use((req, res, next) => {
+    // Sincronizza passport.user con session.user
+    if (req.isAuthenticated() && req.user && (!req.session.user || req.user.id !== req.session.user.id)) {
+        console.log("Sincronizzazione automatica utente:", req.user.username);
+        req.session.user = {
+            id: req.user.id,
+            username: req.user.username,
+            email: req.user.email,
+            tipo: req.user.tipo
+        };
+    }
+    next();
+});
+
 // Route per la pagina di chat assistenza
 app.get('/chat', requireLogin, (req, res) => {
-    res.render('chat', { pageTitle: 'Chat Assistenza', user: req.session.user });
+    res.render('chat', { 
+        pageTitle: 'Chat Assistenza', 
+        user: req.session.user,
+        userJson: JSON.stringify(req.session.user || {}) // Aggiungi questo!
+    });
 });
 
 
@@ -1111,17 +1163,16 @@ app.get('/api/chat/history/:roomId', requireLogin, (req, res) => {
     });
 
 });
+
+
 // Reindirizza da homepage_capo alla dashboard
-app.get('/homepage_capo', requireLogin, (req, res) => {
-    // Renderizza la pagina homepage_capo o reindirizza alla dashboard
-    // Opzione 1: Renderizza homepage_capo
+app.get('/homepage_capo', verificaRuoloCapo, (req, res) => {
+    console.log("Rendering homepage_capo per:", req.session.user);
     res.render('homepage_capo', {
         pageTitle: 'Homepage Capo',
-        user: req.session.user
+        user: req.session.user,
+        userJson: JSON.stringify(req.session.user || {})
     });
-
-    // Opzione 2: Reindirizza alla dashboard (scegli una delle due opzioni)
-    // res.redirect('/dashboard');
 });
 
 // Middleware per upload file (aggiungi multer)
@@ -1375,9 +1426,6 @@ app.get('/homepage_cliente', requireLogin, (req, res) => {
 app.get('/homepage_admin', requireLogin, (req, res) => {
     res.render('homepage_admin', { pageTitle: 'Homepage Admin', user: req.session.user });
 
-});
-app.get('/homepage_capo', requireLogin, (req, res) => {
-    res.render('homepage_capo', { pageTitle: 'Homepage Capo', user: req.session.user });
 });
 
 // Route per il login
