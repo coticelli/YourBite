@@ -225,25 +225,148 @@ app.post('/api/settings/advanced/factory-reset', requireApiCapo, (req, res) => {
 
 
 // --- Altre API (Panini, Personale, Chat - Placeholder) ---
-// GET /api/products (Sostituisce /api/panini)
+// --- API Prodotti con utilizzo tabella panini ---
+function parseIngredients(ingredientsStr) {
+    if (!ingredientsStr) return [];
+    
+    // Se ingredienti è già in formato JSON (stringa array), parsalo
+    if (ingredientsStr.startsWith('[') && ingredientsStr.endsWith(']')) {
+        try {
+            return JSON.parse(ingredientsStr);
+        } catch (e) {
+            console.warn("Errore nel parsing JSON ingredienti:", e);
+        }
+    }
+    
+    // Altrimenti, dividi la stringa per virgole o altro separatore
+    return ingredientsStr.split(',').map(item => item.trim());
+}
 app.get('/api/products', async (req, res) => {
-    // Qui dovresti implementare la logica per recuperare TUTTI i prodotti
-    // Esempio: recupera dalla tabella 'prodotti' se esiste
-    db.all("SELECT * FROM prodotti ORDER BY nome", [], (err, rows) => {
+    let query = "SELECT id, nome, descrizione, prezzo, categoria, immagine_url, ingredienti, disponibile FROM panini";
+    const params = [];
+    const filters = [];
+    
+    // Filtro per categoria
+    if (req.query.category && req.query.category !== 'all') {
+        filters.push("categoria = ?");
+        params.push(req.query.category);
+    }
+    
+    // Filtro per prezzo massimo
+    if (req.query.maxPrice && !isNaN(parseFloat(req.query.maxPrice))) {
+        filters.push("prezzo <= ?");
+        params.push(parseFloat(req.query.maxPrice));
+    }
+    
+    // Costruisci la query con i filtri
+    if (filters.length > 0) {
+        query += " WHERE " + filters.join(" AND ");
+    }
+    
+    // Ordina per nome
+    query += " ORDER BY nome";
+    
+    // Esegui la query
+    db.all(query, params, (err, rows) => {
         if (err) {
-             console.error("Errore recupero prodotti:", err);
-             // Fallback a dati statici se DB fallisce o è vuoto
-             res.json(getDefaultProducts()); // Usa una funzione di fallback
-         } else {
-             res.json(rows.length > 0 ? rows : getDefaultProducts()); // Usa fallback se DB vuoto
-         }
+            console.error("Errore recupero panini:", err);
+            // Fallback a dati statici se DB fallisce
+            return res.json(getDefaultProducts());
+        }
+        
+        if (rows.length > 0) {
+            // Formatta i dati per mantenere compatibilità con il frontend
+            let formattedRows = rows.map(row => ({
+                id: row.id,
+                name: row.nome,
+                description: row.descrizione,
+                price: row.prezzo,
+                category: row.categoria,
+                image: row.immagine_url,
+                ingredients: parseIngredients(row.ingredienti),
+                available: row.disponibile === 1
+            }));
+            
+            // Filtro per ingredienti (applicato dopo la query perché necessita di parsing)
+            if (req.query.ingredients) {
+                const requestedIngredients = req.query.ingredients.split(',').map(i => i.trim().toLowerCase());
+                
+                formattedRows = formattedRows.filter(product => {
+                    // Verifica che il prodotto abbia almeno uno degli ingredienti richiesti
+                    return product.ingredients.some(ingredient => 
+                        requestedIngredients.includes(ingredient.toLowerCase())
+                    );
+                });
+            }
+            
+            res.json(formattedRows);
+        } else {
+            // Se non ci sono panini nel database o nessuno corrisponde ai filtri, usa dati predefiniti
+            let defaultProducts = getDefaultProducts();
+            
+            // Applica gli stessi filtri ai dati predefiniti
+            if (req.query.maxPrice && !isNaN(parseFloat(req.query.maxPrice))) {
+                const maxPrice = parseFloat(req.query.maxPrice);
+                defaultProducts = defaultProducts.filter(p => p.price <= maxPrice);
+            }
+            
+            if (req.query.category && req.query.category !== 'all') {
+                defaultProducts = defaultProducts.filter(p => p.category === req.query.category);
+            }
+            
+            if (req.query.ingredients) {
+                const requestedIngredients = req.query.ingredients.split(',').map(i => i.trim().toLowerCase());
+                defaultProducts = defaultProducts.filter(product => 
+                    product.ingredients.some(ingredient => 
+                        requestedIngredients.includes(ingredient.toLowerCase())
+                    )
+                );
+            }
+            
+            res.json(defaultProducts);
+        }
     });
 });
-// Funzione di fallback per prodotti
-function getDefaultProducts() {
-    console.warn("API /api/products: Utilizzo dati di esempio statici.");
-    return [ { id: 1, name: "Classic Burger", price: 7.50, description: "Manzo, cheddar, lattuga...", category: "hamburger", image: "https://via.placeholder.com/300x200?text=Burger", ingredients: ["manzo", "cheddar"], rating: 4.8, badges: ["bestseller"] }, { id: 2, name: "Crispy Chicken", price: 6.50, description: "Pollo croccante, insalata...", category: "pollo", image: "https://via.placeholder.com/300x200?text=Chicken", ingredients: ["pollo"], rating: 4.5 }, /* ... altri prodotti esempio */ ];
-}
+
+// GET /api/categories - Ottieni tutte le categorie disponibili
+app.get('/api/categories', (req, res) => {
+    db.all("SELECT DISTINCT categoria FROM panini WHERE disponibile = 1 ORDER BY categoria", [], (err, rows) => {
+        if (err) {
+            console.error("Errore recupero categorie:", err);
+            return res.json(["hamburger", "pollo", "vegetariano", "pesce"]); // Categorie predefinite
+        }
+        
+        if (rows.length > 0) {
+            const categories = rows.map(row => row.categoria);
+            res.json(categories);
+        } else {
+            res.json(["hamburger", "pollo", "vegetariano", "pesce"]); // Categorie predefinite
+        }
+    });
+});
+
+// GET /api/ingredients - Ottieni tutti gli ingredienti disponibili
+app.get('/api/ingredients', (req, res) => {
+    db.all("SELECT ingredienti FROM panini WHERE disponibile = 1", [], (err, rows) => {
+        if (err) {
+            console.error("Errore recupero ingredienti:", err);
+            return res.json(["manzo", "pollo", "insalata", "pomodoro", "formaggio", "bacon"]); // Ingredienti predefiniti
+        }
+        
+        if (rows.length > 0) {
+            // Estrai tutti gli ingredienti dai prodotti
+            const allIngredients = new Set();
+            rows.forEach(row => {
+                const ingredients = parseIngredients(row.ingredienti);
+                ingredients.forEach(ingredient => allIngredients.add(ingredient.trim().toLowerCase()));
+            });
+            
+            res.json(Array.from(allIngredients));
+        } else {
+            res.json(["manzo", "pollo", "insalata", "pomodoro", "formaggio", "bacon"]); // Ingredienti predefiniti
+        }
+    });
+});
 
 // GET /api/user/info (Spostata qui per essere sicuri sia definita)
 app.get('/api/user/info', requireLogin, (req, res) => {

@@ -81,6 +81,37 @@
 
         }
 
+        .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(94, 96, 206, 0.2);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 50px auto;
+}
+
+@keyframes spin {
+    to {transform: rotate(360deg);}
+}
+
+
+.error-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #e74c3c;
+}
+
+.error-message i {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.error-message p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
         /* === EFFETTI DI BASE === */
         .glass {
             background: rgba(255, 255, 255, 0.7);
@@ -393,7 +424,7 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
+            transition: var (--transition);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -1301,7 +1332,7 @@
 
         .no-results-subtext {
             font-size: 14px;
-            color: var(--text-light);
+            color: var (--text-light);
             margin-bottom: 25px;
         }
 
@@ -1543,7 +1574,7 @@
             border-radius: 50%;
             border: 2px solid var(--primary);
             background: white;
-            color: var(--primary);
+            color: var (--primary);
             font-size: 18px;
             cursor: pointer;
             transition: var(--transition);
@@ -2076,14 +2107,10 @@
     </style>
 </head>
 <body>
-    <!-- Particle Background -->
-    
-
-    <!-- Header -->
     <header>
         <div class="header-container">
             <div class="logo-container">
-                <img src="/public/img/logo.png" alt="YourBite Logo" class="logo">
+                <img src="/img/logo.png" alt="YourBite Logo" class="logo">
                 <h1 class="header-title">YourBite</h1>
             </div>
             
@@ -2478,888 +2505,1029 @@
     </button>
 
     <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Create particles background
-            createParticles();
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Create particles background
+    createParticles();
+    
+    // Setup user menu
+    setupUserMenu();
+    
+    // Setup categories
+    setupCategories();
+    
+    // Setup filters
+    setupFilters();
+    
+    // Load products
+    loadProducts();
+    
+    // Setup product modal
+    setupProductModal();
+    
+    // Setup chat button
+    setupChatButton();
+    
+    // Setup debug button
+    setupDebugButton();
+});
+
+// Create background particles
+function createParticles() {
+    const particles = document.getElementById('particles');
+    if (!particles) return;
+    
+    // Clear any existing particles
+    particles.innerHTML = '';
+    
+    // Settings
+    const particleCount = 50; // Number of particles
+    
+    // Create particles
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random position
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        
+        // Random size
+        const size = Math.random() * 10 + 2;
+        
+        // Random opacity
+        const opacity = Math.random() * 0.5 + 0.1;
+        
+        // Random animation duration
+        const duration = Math.random() * 60 + 30;
+        
+        // Apply styles
+        particle.style.left = `${posX}%`;
+        particle.style.top = `${posY}%`;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.opacity = opacity;
+        
+        // Alternate between primary and secondary colors
+        if (i % 2 === 0) {
+            particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
+        } else {
+            particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+        }
+        
+        // Add floating animation
+        particle.style.animation = `
+            particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
+            particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
+        `;
+        
+        // Append to container
+        particles.appendChild(particle);
+    }
+}
+
+// Setup user menu
+function setupUserMenu() {
+    const profileBtn = document.getElementById('profileBtn');
+    const userMenu = document.getElementById('userMenu');
+    const logoutButton = document.getElementById('logoutButton');
+    
+    // Toggle user menu
+    profileBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userMenu.classList.toggle('show');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!profileBtn.contains(e.target) && !userMenu.contains(e.target)) {
+            userMenu.classList.remove('show');
+        }
+    });
+    
+    // Logout functionality
+    logoutButton.addEventListener('click', function() {
+        // Show loading overlay
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.style.position = 'fixed';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.flexDirection = 'column';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.zIndex = '2000';
+        loadingOverlay.style.backdropFilter = 'blur(5px)';
+        
+        const spinnerContainer = document.createElement('div');
+        spinnerContainer.style.width = '60px';
+        spinnerContainer.style.height = '60px';
+        spinnerContainer.style.position = 'relative';
+        
+        const spinner = document.createElement('div');
+        spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+        spinner.style.borderTopColor = '#5e60ce';
+        spinner.style.borderRadius = '50%';
+        spinner.style.width = '100%';
+        spinner.style.height = '100%';
+        spinner.style.animation = 'spin 1s linear infinite';
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        
+        document.head.appendChild(style);
+        spinnerContainer.appendChild(spinner);
+        
+        const loadingText = document.createElement('p');
+        loadingText.textContent = 'Logout in corso...';
+        loadingText.style.marginTop = '20px';
+        loadingText.style.color = 'var(--primary)';
+        loadingText.style.fontWeight = '500';
+        
+        loadingOverlay.appendChild(spinnerContainer);
+        loadingOverlay.appendChild(loadingText);
+        document.body.appendChild(loadingOverlay);
+        
+        // Perform logout
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                loadingText.textContent = 'Reindirizzamento...';
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 800);
+            } else {
+                throw new Error('Errore durante il logout');
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante il logout:', error);
+            loadingText.textContent = 'Si è verificato un errore. Riprova.';
             
-            // Setup user menu
-            setupUserMenu();
+            // Add retry button
+            const retryButton = document.createElement('button');
+            retryButton.textContent = 'Riprova';
+            retryButton.style.marginTop = '15px';
+            retryButton.style.padding = '8px 20px';
+            retryButton.style.background = 'var(--primary)';
+            retryButton.style.color = 'white';
+            retryButton.style.border = 'none';
+            retryButton.style.borderRadius = 'var(--radius-sm)';
+            retryButton.style.cursor = 'pointer';
+            retryButton.onclick = function() {
+                document.body.removeChild(loadingOverlay);
+                logout();
+            };
             
-            // Setup categories
-            setupCategories();
-            
-            // Setup filters
-            setupFilters();
-            
-            // Load products
-            loadProducts();
-            
-            // Setup product modal
-            setupProductModal();
-            
-            // Setup chat button
-            setupChatButton();
+            loadingOverlay.appendChild(retryButton);
         });
-        
-        // Create background particles
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            if (!particles) return;
-            
-            // Clear any existing particles
-            particles.innerHTML = '';
-            
-            // Settings
-            const particleCount = 50; // Number of particles
-            
-            // Create particles
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // Random position
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                
-                // Random size
-                const size = Math.random() * 10 + 2;
-                
-                // Random opacity
-                const opacity = Math.random() * 0.5 + 0.1;
-                
-                // Random animation duration
-                const duration = Math.random() * 60 + 30;
-                
-                // Apply styles
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.opacity = opacity;
-                
-                // Alternate between primary and secondary colors
-                if (i % 2 === 0) {
-                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
-                } else {
-                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
-                }
-                
-                // Add floating animation
-                particle.style.animation = `
-                    particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
-                    particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
-                `;
-                
-                // Append to container
-                particles.appendChild(particle);
-            }
-        }
-        
-        // Setup user menu
-        function setupUserMenu() {
-            const profileBtn = document.getElementById('profileBtn');
-            const userMenu = document.getElementById('userMenu');
-            const logoutButton = document.getElementById('logoutButton');
-            
-            // Toggle user menu
-            profileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userMenu.classList.toggle('show');
-            });
-            
-            // Close menu when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!profileBtn.contains(e.target) && !userMenu.contains(e.target)) {
-                    userMenu.classList.remove('show');
-                }
-            });
-            
-            // Logout functionality
-            logoutButton.addEventListener('click', function() {
-                // Show loading overlay
-                const loadingOverlay = document.createElement('div');
-                loadingOverlay.style.position = 'fixed';
-                loadingOverlay.style.top = '0';
-                loadingOverlay.style.left = '0';
-                loadingOverlay.style.width = '100%';
-                loadingOverlay.style.height = '100%';
-                loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                loadingOverlay.style.display = 'flex';
-                loadingOverlay.style.flexDirection = 'column';
-                loadingOverlay.style.justifyContent = 'center';
-                loadingOverlay.style.alignItems = 'center';
-                loadingOverlay.style.zIndex = '2000';
-                loadingOverlay.style.backdropFilter = 'blur(5px)';
-                
-                const spinnerContainer = document.createElement('div');
-                spinnerContainer.style.width = '60px';
-                spinnerContainer.style.height = '60px';
-                spinnerContainer.style.position = 'relative';
-                
-                const spinner = document.createElement('div');
-                spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
-                spinner.style.borderTopColor = '#5e60ce';
-                spinner.style.borderRadius = '50%';
-                spinner.style.width = '100%';
-                spinner.style.height = '100%';
-                spinner.style.animation = 'spin 1s linear infinite';
-                
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                `;
-                
-                document.head.appendChild(style);
-                spinnerContainer.appendChild(spinner);
-                
-                const loadingText = document.createElement('p');
-                loadingText.textContent = 'Logout in corso...';
-                loadingText.style.marginTop = '20px';
-                loadingText.style.color = 'var(--primary)';
-                loadingText.style.fontWeight = '500';
-                
-                loadingOverlay.appendChild(spinnerContainer);
-                loadingOverlay.appendChild(loadingText);
-                document.body.appendChild(loadingOverlay);
-                
-                // Perform logout
-                fetch('/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        loadingText.textContent = 'Reindirizzamento...';
-                        setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 800);
-                    } else {
-                        throw new Error('Errore durante il logout');
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore durante il logout:', error);
-                    loadingText.textContent = 'Si è verificato un errore. Riprova.';
-                    
-                    // Add retry button
-                    const retryButton = document.createElement('button');
-                    retryButton.textContent = 'Riprova';
-                    retryButton.style.marginTop = '15px';
-                    retryButton.style.padding = '8px 20px';
-                    retryButton.style.background = 'var(--primary)';
-                    retryButton.style.color = 'white';
-                    retryButton.style.border = 'none';
-                    retryButton.style.borderRadius = 'var(--radius-sm)';
-                    retryButton.style.cursor = 'pointer';
-                    retryButton.onclick = function() {
-                        document.body.removeChild(loadingOverlay);
-                        logout();
-                    };
-                    
-                    loadingOverlay.appendChild(retryButton);
-                });
-            });
-            
-            // Update username
-            function updateUsername() {
-                const username = document.getElementById('username');
-                if (username && username.textContent === '{{ username }}') {
-                    fetch('/api/user/info')
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.username) {
-                                username.textContent = data.username;
-                            } else {
-                                username.textContent = 'Cliente';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching username:', error);
-                            username.textContent = 'Cliente';
-                        });
-                }
-            }
-            
-            // Call username update
-            updateUsername();
-        }
-        
-        // Setup categories
-        function setupCategories() {
-            const categoriesScroll = document.getElementById('categoriesScroll');
-            const scrollLeftBtn = document.getElementById('scrollLeft');
-            const scrollRightBtn = document.getElementById('scrollRight');
-            const categoryItems = document.querySelectorAll('.category-item');
-            
-            // Scroll left
-            scrollLeftBtn.addEventListener('click', function() {
-                categoriesScroll.scrollBy({
-                    left: -200,
-                    behavior: 'smooth'
-                });
-            });
-            
-            // Scroll right
-            scrollRightBtn.addEventListener('click', function() {
-                categoriesScroll.scrollBy({
-                    left: 200,
-                    behavior: 'smooth'
-                });
-            });
-            
-            // Category selection
-            categoryItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Remove active class from all items
-                    categoryItems.forEach(cat => cat.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Filter products by category
-                    const category = this.dataset.category;
-                    filterProductsByCategory(category);
-                    
-                    // Show toast notification
-                    showToast('Categoria selezionata', `Categoria: ${getCategoryName(category)}`, 'success');
-                });
-            });
-        }
-        
-        // Get category name
-        function getCategoryName(category) {
-            switch(category) {
-                case 'all': return 'Tutti';
-                case 'hamburger': return 'Hamburger';
-                case 'pollo': return 'Pollo';
-                case 'pizza': return 'Pizza';
-                case 'vegetariano': return 'Vegetariano';
-                case 'contorni': return 'Contorni';
-                case 'bevande': return 'Bevande';
-                case 'dessert': return 'Dessert';
-                case 'speciali': return 'Speciali';
-                default: return category;
-            }
-        }
-        
-        // Setup filters
-        function setupFilters() {
-            const priceFilter = document.getElementById('priceFilter');
-            const priceDisplay = document.getElementById('priceDisplay');
-            const ingredientFilter = document.getElementById('ingredientFilter');
-            const applyFiltersBtn = document.getElementById('applyFilters');
-            const resetFiltersBtn = document.getElementById('resetFilters');
-            const gridViewBtn = document.getElementById('gridViewBtn');
-            const listViewBtn = document.getElementById('listViewBtn');
-            const sortSelect = document.getElementById('sortSelect');
-            
-            // Update price display
-            priceFilter.addEventListener('input', function() {
-                priceDisplay.textContent = `€${parseFloat(this.value).toFixed(2)}`;
-            });
-            
-            // Apply filters
-            applyFiltersBtn.addEventListener('click', function() {
-                applyFilters();
-                
-                // Show toast notification
-                showToast('Filtri applicati', 'I prodotti sono stati filtrati', 'success');
-            });
-            
-            // Reset filters
-            resetFiltersBtn.addEventListener('click', function() {
-                priceFilter.value = 10;
-                priceDisplay.textContent = '€10.00';
-                ingredientFilter.value = '';
-                
-                applyFilters();
-                
-                // Show toast notification
-                showToast('Filtri reimpostati', 'I filtri sono stati reimpostati', 'info');
-            });
-            
-            // View toggle
-            gridViewBtn.addEventListener('click', function() {
-                gridViewBtn.classList.add('active');
-                listViewBtn.classList.remove('active');
-                setProductsView('grid');
-            });
-            
-            listViewBtn.addEventListener('click', function() {
-                listViewBtn.classList.add('active');
-                gridViewBtn.classList.remove('active');
-                setProductsView('list');
-            });
-            
-            // Sort change
-            sortSelect.addEventListener('change', function() {
-                sortProducts(this.value);
-                
-                // Show toast notification
-                showToast('Prodotti ordinati', `Ordinamento: ${getSortName(this.value)}`, 'success');
-            });
-        }
-        
-        // Get sort name
-        function getSortName(sort) {
-            switch(sort) {
-                case 'recommended': return 'Consigliati';
-                case 'price-asc': return 'Prezzo: crescente';
-                case 'price-desc': return 'Prezzo: decrescente';
-                case 'name-asc': return 'Nome: A-Z';
-                case 'name-desc': return 'Nome: Z-A';
-                case 'rating': return 'Valutazione';
-                default: return sort;
-            }
-        }
-        
-        // SAMPLE DATA
-        const sampleProducts = [
-            {
-                id: 1,
-                name: "Classic Burger",
-                price: 7.50,
-                description: "Hamburger di manzo con cheddar, lattuga, pomodoro e salsa speciale",
-                category: "hamburger",
-                image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-                ingredients: ["manzo", "cheddar", "lattuga", "pomodoro", "salsa speciale"],
-                rating: 4.8,
-                badges: ["bestseller"]
-            },
-            {
-                id: 2,
-                name: "Crispy Chicken",
-                price: 6.50,
-                description: "Pollo croccante con insalata, pomodoro e maionese al limone",
-                category: "pollo",
-                image: "https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                ingredients: ["pollo", "insalata", "pomodoro", "maionese al limone"],
-                rating: 4.5
-            },
-            {
-                id: 3,
-                name: "Veggie Delight",
-                price: 6.00,
-                description: "Burger vegetariano con formaggio, cipolla caramellata e rucola",
-                category: "vegetariano",
-                image: "https://images.unsplash.com/photo-1550547660-d9450f859349?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                ingredients: ["burger vegetariano", "formaggio", "cipolla caramellata", "rucola"],
-                rating: 4.3,
-                badges: ["new"]
-            },
-            {
-                id: 4,
-                name: "Double Cheeseburger",
-                price: 9.00,
-                description: "Doppio hamburger di manzo con doppio formaggio, bacon e salsa BBQ",
-                category: "hamburger",
-                image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                ingredients: ["manzo", "formaggio", "bacon", "salsa BBQ"],
-                rating: 4.9,
-                badges: ["bestseller"]
-            },
-            {
-                id: 5,
-                name: "Spicy Chicken",
-                price: 7.00,
-                description: "Pollo speziato con peperoncino, jalapenos e salsa piccante",
-                category: "pollo",
-                image: "https://images.unsplash.com/photo-1593703148583-34370374ea01?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                ingredients: ["pollo", "peperoncino", "jalapenos", "salsa piccante"],
-                rating: 4.6,
-                badges: ["promo"]
-            },
-            {
-                id: 6,
-                name: "Margherita Pizza",
-                price: 8.50,
-                description: "Pizza classica con pomodoro, mozzarella e basilico fresco",
-                category: "pizza",
-                image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-                ingredients: ["impasto", "pomodoro", "mozzarella", "basilico"],
-                rating: 4.7
-            }
-        ];
-        
-        // Global variables for products
-        let allProducts = [];
-        let filteredProducts = [];
-        let currentView = 'grid';
-        
-        // Load products
-        function loadProducts() {
-            const productsContainer = document.getElementById('productsContainer');
-            
-            // Try to fetch products from API
-            fetch('/api/products')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('API error');
-                    }
-                    return response.json();
-                })
+    });
+    
+    // Update username
+    function updateUsername() {
+        const username = document.getElementById('username');
+        if (username && username.textContent === '{{ username }}') {
+            fetch('/api/user/info')
+                .then(response => response.json())
                 .then(data => {
-                    allProducts = data;
-                    filteredProducts = [...allProducts];
-                    displayProducts(filteredProducts);
+                    if (data.username) {
+                        username.textContent = data.username;
+                    } else {
+                        username.textContent = 'Cliente';
+                    }
                 })
                 .catch(error => {
-                    console.error('Error fetching products:', error);
-                    
-                    // Use sample data instead
-                    setTimeout(() => {
-                        allProducts = sampleProducts;
-                        filteredProducts = [...allProducts];
-                        displayProducts(filteredProducts);
-                    }, 1000);
+                    console.error('Error fetching username:', error);
+                    username.textContent = 'Cliente';
                 });
         }
-        
-        // Display products
-        function displayProducts(products) {
-            const productsContainer = document.getElementById('productsContainer');
+    }
+    
+    // Call username update
+    updateUsername();
+}
+
+// Setup categories
+function setupCategories() {
+    const categoriesScroll = document.getElementById('categoriesScroll');
+    const scrollLeftBtn = document.getElementById('scrollLeft');
+    const scrollRightBtn = document.getElementById('scrollRight');
+    const categoryItems = document.querySelectorAll('.category-item');
+    
+    // Scroll left
+    scrollLeftBtn.addEventListener('click', function() {
+        categoriesScroll.scrollBy({
+            left: -200,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Scroll right
+    scrollRightBtn.addEventListener('click', function() {
+        categoriesScroll.scrollBy({
+            left: 200,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Category selection
+    categoryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove active class from all items
+            categoryItems.forEach(cat => cat.classList.remove('active'));
             
-            if (products.length === 0) {
-                productsContainer.innerHTML = `
-                    <div class="no-results">
-                        <div class="no-results-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="no-results-text">Nessun prodotto trovato</div>
-                        <div class="no-results-subtext">Prova a modificare i filtri di ricerca</div>
-                        <button class="btn btn-primary" id="resetAllFilters">
-                            <i class="fas fa-undo"></i> Reimposta tutti i filtri
-                        </button>
-                    </div>
-                `;
-                
-                document.getElementById('resetAllFilters').addEventListener('click', function() {
-                    // Reset all filters
-                    document.getElementById('priceFilter').value = 10;
-                    document.getElementById('priceDisplay').textContent = '€10.00';
-                    document.getElementById('ingredientFilter').value = '';
-                    document.getElementById('sortSelect').value = 'recommended';
-                    
-                    const categoryItems = document.querySelectorAll('.category-item');
-                    categoryItems.forEach(item => item.classList.remove('active'));
-                    document.querySelector('.category-item[data-category="all"]').classList.add('active');
-                    
-                    // Reset products
-                    filteredProducts = [...allProducts];
-                    displayProducts(filteredProducts);
-                    
-                    // Show toast notification
-                    showToast('Filtri reimpostati', 'Tutti i filtri sono stati reimpostati', 'success');
-                });
-                
-                return;
-            }
+            // Add active class to clicked item
+            this.classList.add('active');
             
-            let html = '';
-            
-            if (currentView === 'grid') {
-                html = '<div class="products-grid">';
-            } else {
-                html = '<div class="products-list">';
-            }
-            
-            products.forEach(product => {
-                const badgesHtml = product.badges ? product.badges.map(badge => {
-                    return `<div class="product-badge badge-${badge}">${getBadgeName(badge)}</div>`;
-                }).join('') : '';
-                
-                html += `
-                    <div class="product-card ${currentView === 'list' ? 'list-view' : ''}" data-product-id="${product.id}">
-                        <div class="product-card-inner">
-                            <div class="product-image-container">
-                                <img src="${product.image}" alt="${product.name}" class="product-image">
-                                <button class="product-favourite" data-product-id="${product.id}">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                                <div class="product-badges">
-                                    ${badgesHtml}
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <div class="product-price">€${product.price.toFixed(2)}</div>
-                                <h3 class="product-title">${product.name}</h3>
-                                <p class="product-description">${product.description}</p>
-                                <div class="product-meta">
-                                    <div class="product-category">
-                                        <i class="${getCategoryIcon(product.category)}"></i> ${getCategoryName(product.category)}
-                                    </div>
-                                    <div class="product-rating">
-                                        <i class="fas fa-star"></i> ${product.rating.toFixed(1)}
-                                    </div>
-                                </div>
-                                <button class="product-btn" data-product-id="${product.id}">
-                                    <i class="fas fa-shopping-cart"></i> Aggiungi al carrello
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += '</div>';
-            productsContainer.innerHTML = html;
-            
-            // Setup product card interactions
-            setupProductCards();
-        }
-        
-        // Get category icon
-        function getCategoryIcon(category) {
-            switch(category) {
-                case 'hamburger': return 'fas fa-hamburger';
-                case 'pollo': return 'fas fa-drumstick-bite';
-                case 'pizza': return 'fas fa-pizza-slice';
-                case 'vegetariano': return 'fas fa-leaf';
-                case 'contorni': return 'fas fa-bacon';
-                case 'bevande': return 'fas fa-cocktail';
-                case 'dessert': return 'fas fa-ice-cream';
-                case 'speciali': return 'fas fa-star';
-                default: return 'fas fa-utensils';
-            }
-        }
-        
-        // Get badge name
-        function getBadgeName(badge) {
-            switch(badge) {
-                case 'new': return 'NUOVO';
-                case 'promo': return 'PROMO';
-                case 'bestseller': return 'TOP';
-                default: return badge.toUpperCase();
-            }
-        }
-        
-        // Setup product cards
-        function setupProductCards() {
-            const productCards = document.querySelectorAll('.product-card');
-            const favouriteButtons = document.querySelectorAll('.product-favourite');
-            const addToCartButtons = document.querySelectorAll('.product-btn');
-            
-            // Product card click
-            productCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    if (!e.target.closest('.product-favourite') && !e.target.closest('.product-btn')) {
-                        const productId = this.dataset.productId;
-                        openProductModal(productId);
-                    }
-                });
-            });
-            
-            // Favourite button click
-            favouriteButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const icon = this.querySelector('i');
-                    this.classList.toggle('active');
-                    
-                    if (this.classList.contains('active')) {
-                        icon.classList.remove('far');
-                        icon.classList.add('fas');
-                        showToast('Aggiunto ai preferiti', 'Prodotto aggiunto ai preferiti', 'success');
-                    } else {
-                        icon.classList.remove('fas');
-                        icon.classList.add('far');
-                        showToast('Rimosso dai preferiti', 'Prodotto rimosso dai preferiti', 'info');
-                    }
-                });
-            });
-            
-            // Add to cart button click
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const productId = this.dataset.productId;
-                    addToCart(productId);
-                });
-            });
-        }
-        
-        // Filter products by category
-        function filterProductsByCategory(category) {
-            if (category === 'all') {
-                filteredProducts = [...allProducts];
-            } else {
-                filteredProducts = allProducts.filter(product => product.category === category);
-            }
-            
-            applyFilters(false);
-        }
-        
-        // Apply all filters
-        function applyFilters(showToastNotification = true) {
-            const maxPrice = parseFloat(document.getElementById('priceFilter').value);
-            const ingredient = document.getElementById('ingredientFilter').value.toLowerCase().trim();
-            
-            // Start with current category filtering
-            let result = [...filteredProducts];
-            
-            // Apply price filter
-            result = result.filter(product => product.price <= maxPrice);
-            
-            // Apply ingredient filter
-            if (ingredient) {
-                result = result.filter(product => {
-                    return product.ingredients && product.ingredients.some(ing => 
-                        ing.toLowerCase().includes(ingredient)
-                    );
-                });
-            }
-            
-            // Display filtered products
-            displayProducts(result);
-            
-            // Apply current sort
-            const sortValue = document.getElementById('sortSelect').value;
-            sortProducts(sortValue, false);
-        }
-        
-        // Set products view
-        function setProductsView(view) {
-            currentView = view;
-            displayProducts(filteredProducts);
-        }
-        
-        // Sort products
-        function sortProducts(sortType, showToastNotification = true) {
-            let sortedProducts = [...filteredProducts];
-            
-            switch(sortType) {
-                case 'price-asc':
-                    sortedProducts.sort((a, b) => a.price - b.price);
-                    break;
-                case 'price-desc':
-                    sortedProducts.sort((a, b) => b.price - a.price);
-                    break;
-                case 'name-asc':
-                    sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-                case 'name-desc':
-                    sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
-                    break;
-                case 'rating':
-                    sortedProducts.sort((a, b) => b.rating - a.rating);
-                    break;
-                case 'recommended':
-                default:
-                    // For recommended, we'll use a combination of rating and bestseller status
-                    sortedProducts.sort((a, b) => {
-                        const aIsBestseller = a.badges && a.badges.includes('bestseller') ? 1 : 0;
-                        const bIsBestseller = b.badges && b.badges.includes('bestseller') ? 1 : 0;
-                        
-                        if (aIsBestseller !== bIsBestseller) {
-                            return bIsBestseller - aIsBestseller;
-                        }
-                        
-                        return b.rating - a.rating;
-                    });
-            }
-            
-            // Update filtered products and display
-            filteredProducts = sortedProducts;
-            displayProducts(filteredProducts);
-        }
-        
-        // Add to cart
-        function addToCart(productId) {
-            const product = allProducts.find(p => p.id == productId);
-            
-            if (!product) return;
-            
-            // In a real app, would send to server
-            console.log('Adding to cart:', product);
-            
-            // Update cart count
-            const cartCount = document.querySelector('.cart-count');
-            let count = parseInt(cartCount.textContent);
-            cartCount.textContent = count + 1;
-            
-            // Animate cart button
-            const cartBtn = document.querySelector('.cart-btn');
-            cartBtn.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                cartBtn.style.transform = '';
-            }, 300);
+            // Filter products by category
+            const category = this.dataset.category;
+            filterProductsByCategory(category);
             
             // Show toast notification
-            showToast('Aggiunto al carrello', `${product.name} aggiunto al carrello`, 'success');
-        }
-        
-        // Setup product modal
-        function setupProductModal() {
-            const modal = document.getElementById('productModal');
-            const modalClose = document.getElementById('modalClose');
-            const decreaseQtyBtn = document.getElementById('decreaseQty');
-            const increaseQtyBtn = document.getElementById('increaseQty');
-            const quantityValue = document.getElementById('quantityValue');
-            const addToCartBtn = document.getElementById('addToCartBtn');
-            
-            // Close modal
-            modalClose.addEventListener('click', function() {
-                modal.classList.remove('show');
-                
-                // Reset quantity
-                quantityValue.textContent = '1';
-            });
-            
-            // Close on outside click
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                    
-                    // Reset quantity
-                    quantityValue.textContent = '1';
-                }
-            });
-            
-            // Quantity controls
-            decreaseQtyBtn.addEventListener('click', function() {
-                let qty = parseInt(quantityValue.textContent);
-                if (qty > 1) {
-                    qty--;
-                    quantityValue.textContent = qty;
-                }
-            });
-            
-            increaseQtyBtn.addEventListener('click', function() {
-                let qty = parseInt(quantityValue.textContent);
-                qty++;
-                quantityValue.textContent = qty;
-            });
-            
-            // Add to cart from modal
-            addToCartBtn.addEventListener('click', function() {
-                const productId = this.dataset.productId;
-                const quantity = parseInt(quantityValue.textContent);
-                
-                // In a real app, would add quantity to cart
-                for (let i = 0; i < quantity; i++) {
-                    addToCart(productId);
-                }
-                
-                // Close modal
-                modal.classList.remove('show');
-                
-                // Reset quantity
-                quantityValue.textContent = '1';
-            });
-        }
-        
-        // Open product modal
-        function openProductModal(productId) {
-            const product = allProducts.find(p => p.id == productId);
-            
-            if (!product) return;
-            
-            // Set modal content
-            document.getElementById('modalImage').src = product.image;
-            document.getElementById('modalTitle').textContent = product.name;
-            document.getElementById('modalCategory').textContent = getCategoryName(product.category);
-            document.getElementById('modalRating').textContent = `${product.rating.toFixed(1)} (${Math.floor(product.rating * 20)} recensioni)`;
-            document.getElementById('modalDescription').textContent = product.description;
-            document.getElementById('modalPrice').textContent = `€${product.price.toFixed(2)}`;
-            document.getElementById('addToCartBtn').dataset.productId = product.id;
-            
-            // Set ingredients
-            let ingredientsHtml = '';
-            if (product.ingredients && product.ingredients.length > 0) {
-                product.ingredients.forEach(ingredient => {
-                    ingredientsHtml += `
-                        <div class="ingredient-item">
-                            <i class="fas fa-check-circle"></i> ${ingredient}
-                        </div>
-                    `;
-                });
-            }
-            document.getElementById('modalIngredients').innerHTML = ingredientsHtml;
-            
-            // Show modal
-            document.getElementById('productModal').classList.add('show');
-        }
-        
-        // Setup chat button
-        function setupChatButton() {
-            const chatButton = document.getElementById('chatButton');
-            
-            chatButton.addEventListener('click', function() {
-                // In a real app, would open chat interface
-                showToast('Chat assistenza', 'La chat di assistenza è in arrivo presto!', 'info');
-            });
+            showToast('Categoria selezionata', `Categoria: ${getCategoryName(category)}`, 'success');
+        });
+    });
+}
 
-            document.getElementById('chatButton').addEventListener('click', function() {
-    // Reindirizza alla pagina della chat
-    window.location.href = '/chat';
-});
-        }
+// Get category name
+function getCategoryName(category) {
+    switch(category) {
+        case 'all': return 'Tutti';
+        case 'hamburger': return 'Hamburger';
+        case 'pollo': return 'Pollo';
+        case 'pizza': return 'Pizza';
+        case 'vegetariano': return 'Vegetariano';
+        case 'contorni': return 'Contorni';
+        case 'bevande': return 'Bevande';
+        case 'dessert': return 'Dessert';
+        case 'speciali': return 'Speciali';
+        default: return category;
+    }
+}
+
+// Setup filters
+function setupFilters() {
+    const priceFilter = document.getElementById('priceFilter');
+    const priceDisplay = document.getElementById('priceDisplay');
+    const ingredientFilter = document.getElementById('ingredientFilter');
+    const applyFiltersBtn = document.getElementById('applyFilters');
+    const resetFiltersBtn = document.getElementById('resetFilters');
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    const sortSelect = document.getElementById('sortSelect');
+    
+    // Update price display
+    priceFilter.addEventListener('input', function() {
+        priceDisplay.textContent = `€${parseFloat(this.value).toFixed(2)}`;
+    });
+    
+    // Apply filters
+    applyFiltersBtn.addEventListener('click', function() {
+        applyFilters();
         
         // Show toast notification
-        function showToast(title, message, type = 'success') {
-            // Remove existing toasts
-            const existingToasts = document.querySelectorAll('.toast-notification');
-            existingToasts.forEach(toast => {
-                toast.remove();
+        showToast('Filtri applicati', 'I prodotti sono stati filtrati', 'success');
+    });
+    
+    // Reset filters
+    resetFiltersBtn.addEventListener('click', function() {
+        priceFilter.value = 10;
+        priceDisplay.textContent = '€10.00';
+        ingredientFilter.value = '';
+        
+        applyFilters();
+        
+        // Show toast notification
+        showToast('Filtri reimpostati', 'I filtri sono stati reimpostati', 'info');
+    });
+    
+    // View toggle
+    gridViewBtn.addEventListener('click', function() {
+        gridViewBtn.classList.add('active');
+        listViewBtn.classList.remove('active');
+        setProductsView('grid');
+    });
+    
+    listViewBtn.addEventListener('click', function() {
+        listViewBtn.classList.add('active');
+        gridViewBtn.classList.remove('active');
+        setProductsView('list');
+    });
+    
+    // Sort change
+    sortSelect.addEventListener('change', function() {
+        sortProducts(this.value);
+        
+        // Show toast notification
+        showToast('Prodotti ordinati', `Ordinamento: ${getSortName(this.value)}`, 'success');
+    });
+}
+
+// Setup debug button 
+function setupDebugButton() {
+    const debugBtn = document.getElementById('debugBtn');
+    if (!debugBtn) return;
+    
+    debugBtn.addEventListener('click', function() {
+        // Stampa i parametri dei filtri attuali
+        const maxPrice = document.getElementById('priceFilter').value;
+        const ingredient = document.getElementById('ingredientFilter').value;
+        const categoryElement = document.querySelector('.category-item.active');
+        const category = categoryElement ? categoryElement.dataset.category : 'all';
+        
+        // Crea l'URL con i parametri
+        const apiUrl = buildApiUrl(category, maxPrice, ingredient);
+        
+        console.log("=== DEBUG FILTRI ===");
+        console.log("Categoria attiva:", category);
+        console.log("Prezzo massimo:", maxPrice);
+        console.log("Ingrediente:", ingredient);
+        console.log("URL API costruito:", apiUrl);
+        
+        // Esegue la richiesta di test
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Risultati ottenuti:", data.length, "prodotti");
+                console.log("Primo prodotto:", data[0]);
+            })
+            .catch(error => {
+                console.error("Errore API:", error);
             });
+        
+        showToast('Debug', 'Informazioni visualizzate nella console', 'info');
+    });
+}
+
+// Get sort name
+function getSortName(sort) {
+    switch(sort) {
+        case 'recommended': return 'Consigliati';
+        case 'price-asc': return 'Prezzo: crescente';
+        case 'price-desc': return 'Prezzo: decrescente';
+        case 'name-asc': return 'Nome: A-Z';
+        case 'name-desc': return 'Nome: Z-A';
+        case 'rating': return 'Valutazione';
+        default: return sort;
+    }
+}
+
+// SAMPLE DATA
+const sampleProducts = [
+    {
+        id: 1,
+        name: "Classic Burger",
+        price: 7.50,
+        description: "Hamburger di manzo con cheddar, lattuga, pomodoro e salsa speciale",
+        category: "hamburger",
+        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
+        ingredients: ["manzo", "cheddar", "lattuga", "pomodoro", "salsa speciale"],
+        rating: 4.8,
+        badges: ["bestseller"]
+    },
+    // Altri prodotti di esempio...
+];
+
+// Global variables for products
+let allProducts = [];
+let filteredProducts = [];
+let currentView = 'grid';
+
+// Funzione per costruire l'URL dell'API con parametri di filtro
+function buildApiUrl(category, maxPrice, ingredient) {
+    let apiUrl = '/api/products';
+    const params = [];
+    
+    if (category && category !== 'all') {
+        params.push(`category=${encodeURIComponent(category)}`);
+    }
+    
+    if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+        params.push(`maxPrice=${parseFloat(maxPrice)}`);
+    }
+    
+    if (ingredient && ingredient.trim() !== '') {
+        params.push(`ingredients=${encodeURIComponent(ingredient.trim())}`);
+    }
+    
+    if (params.length > 0) {
+        apiUrl += '?' + params.join('&');
+    }
+    
+    return apiUrl;
+}
+
+// Load products con supporto per AJAX e filtri
+function loadProducts() {
+    showLoading();
+    
+    // Richiesta base senza filtri
+    fetch('/api/products')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('API error');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Aggiunta di proprietà di default se necessario
+            allProducts = data.map(product => ({
+                ...product,
+                rating: product.rating || 4.0,
+                badges: product.badges || []
+            }));
+            filteredProducts = [...allProducts];
+            displayProducts(filteredProducts);
+        })
+        .catch(error => {
+            console.error('Error fetching products:', error);
+            showError('Errore durante il caricamento dei prodotti. Riprova più tardi.');
             
-            // Create new toast
-            const toast = document.createElement('div');
-            toast.className = `toast-notification toast-${type}`;
+            // Fallback dati di esempio
+            setTimeout(() => {
+                allProducts = sampleProducts;
+                filteredProducts = [...allProducts];
+                displayProducts(filteredProducts);
+            }, 2000);
+        });
+}
+
+// Mostra lo stato di caricamento
+function showLoading() {
+    const productsContainer = document.getElementById('productsContainer');
+    productsContainer.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Caricamento prodotti in corso...</div>
+        </div>
+    `;
+}
+
+// Mostra un messaggio di errore
+function showError(message) {
+    const productsContainer = document.getElementById('productsContainer');
+    productsContainer.innerHTML = `
+        <div class="error-container">
+            <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="error-message">${message}</div>
+            <button class="btn btn-primary" onclick="loadProducts()">Riprova</button>
+        </div>
+    `;
+}
+
+// Filter products by category
+function filterProductsByCategory(category) {
+    showLoading();
+    
+    // Ottieni i valori di filtro attuali
+    const maxPrice = document.getElementById('priceFilter').value;
+    const ingredient = document.getElementById('ingredientFilter').value;
+    
+    // Costruisci l'URL con i parametri di filtro
+    const apiUrl = buildApiUrl(category, maxPrice, ingredient);
+    
+    // Esegui la richiesta AJAX
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('API error');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(`Filtrato per categoria "${category}": Ricevuti ${data.length} prodotti`);
+            // Aggiorna i prodotti con quelli filtrati
+            filteredProducts = data.map(product => ({
+                ...product,
+                rating: product.rating || 4.0,
+                badges: product.badges || []
+            }));
+            displayProducts(filteredProducts);
             
-            // Icon based on type
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            if (type === 'error') icon = 'exclamation-circle';
-            if (type === 'warning') icon = 'exclamation-triangle';
+            // Applica ordinamento attuale
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) {
+                sortProducts(sortSelect.value, false);
+            }
+        })
+        .catch(error => {
+            console.error('Error filtering products:', error);
+            showError('Errore durante il filtraggio dei prodotti. Riprova più tardi.');
+        });
+}
+
+// Apply all filters
+function applyFilters(showToastNotification = true) {
+    showLoading();
+    
+    // Ottieni i valori di filtro attuali
+    const maxPrice = document.getElementById('priceFilter').value;
+    const ingredient = document.getElementById('ingredientFilter').value;
+    const categoryElement = document.querySelector('.category-item.active');
+    const category = categoryElement ? categoryElement.dataset.category : 'all';
+    
+    // Costruisci l'URL con i parametri di filtro
+    const apiUrl = buildApiUrl(category, maxPrice, ingredient);
+    
+    // Log per debug
+    console.log("Esecuzione filtri con URL:", apiUrl);
+    
+    // Esegui la richiesta AJAX
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('API error');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(`Filtri applicati: Ricevuti ${data.length} prodotti`);
+            // Aggiorna i prodotti con quelli filtrati
+            filteredProducts = data.map(product => ({
+                ...product,
+                rating: product.rating || 4.0,
+                badges: product.badges || []
+            }));
+            displayProducts(filteredProducts);
             
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${icon}"></i>
+            // Applica ordinamento attuale
+            const sortSelect = document.getElementById('sortSelect');
+            if (sortSelect) {
+                sortProducts(sortSelect.value, false);
+            }
+        })
+        .catch(error => {
+            console.error('Error applying filters:', error);
+            showError('Errore durante l\'applicazione dei filtri. Riprova più tardi.');
+        });
+}
+
+// Set products view (grid or list)
+function setProductsView(view) {
+    currentView = view;
+    displayProducts(filteredProducts);
+}
+
+// Sort products
+function sortProducts(sortType, showToastNotification = true) {
+    let sortedProducts = [...filteredProducts];
+    
+    switch(sortType) {
+        case 'price-asc':
+            sortedProducts.sort((a, b) => a.price - b.price);
+            break;
+        case 'price-desc':
+            sortedProducts.sort((a, b) => b.price - a.price);
+            break;
+        case 'name-asc':
+            sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case 'name-desc':
+            sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+            break;
+        case 'rating':
+            sortedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            break;
+        case 'recommended':
+        default:
+            // Per recommended, combinazione di rating e bestseller
+            sortedProducts.sort((a, b) => {
+                const aIsBestseller = a.badges && a.badges.includes('bestseller') ? 1 : 0;
+                const bIsBestseller = b.badges && b.badges.includes('bestseller') ? 1 : 0;
+                
+                if (aIsBestseller !== bIsBestseller) {
+                    return bIsBestseller - aIsBestseller;
+                }
+                
+                return (b.rating || 0) - (a.rating || 0);
+            });
+    }
+    
+    // Aggiorna i prodotti filtrati
+    filteredProducts = sortedProducts;
+    displayProducts(filteredProducts);
+}
+
+// Display products
+function displayProducts(products) {
+    const productsContainer = document.getElementById('productsContainer');
+    
+    if (!products || products.length === 0) {
+        productsContainer.innerHTML = `
+            <div class="no-results">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
                 </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
+                <div class="no-results-text">Nessun prodotto trovato</div>
+                <div class="no-results-subtext">Prova a modificare i filtri di ricerca</div>
+                <button class="btn btn-primary" id="resetAllFilters">
+                    <i class="fas fa-undo"></i> Reimposta tutti i filtri
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('resetAllFilters').addEventListener('click', function() {
+            // Reset all filters
+            document.getElementById('priceFilter').value = 10;
+            document.getElementById('priceDisplay').textContent = '€10.00';
+            document.getElementById('ingredientFilter').value = '';
+            document.getElementById('sortSelect').value = 'recommended';
+            
+            const categoryItems = document.querySelectorAll('.category-item');
+            categoryItems.forEach(item => item.classList.remove('active'));
+            document.querySelector('.category-item[data-category="all"]').classList.add('active');
+            
+            // Load all products
+            loadProducts();
+            
+            // Show toast notification
+            showToast('Filtri reimpostati', 'Tutti i filtri sono stati reimpostati', 'success');
+        });
+        
+        return;
+    }
+    
+    let html = '';
+    
+    if (currentView === 'grid') {
+        html = '<div class="products-grid">';
+    } else {
+        html = '<div class="products-list">';
+    }
+    
+    products.forEach(product => {
+        // Se l'immagine non è disponibile, usa un'immagine placeholder
+        const productImage = product.image || "https://placehold.co/400x300/orange/white?text=Placeholder";
+        
+        // Verifica che badges esista e sia un array
+        const badgesHtml = product.badges && Array.isArray(product.badges) && product.badges.length > 0 
+            ? product.badges.map(badge => {
+                return `<div class="product-badge badge-${badge}">${getBadgeName(badge)}</div>`;
+            }).join('') 
+            : '';
+        
+        html += `
+            <div class="product-card ${currentView === 'list' ? 'list-view' : ''}" data-product-id="${product.id}">
+                <div class="product-card-inner">
+                    <div class="product-image-container">
+                        <img src="${productImage}" alt="${product.name}" class="product-image" onerror="this.src='https://placehold.co/400x300/orange/white?text=Error'">
+                        <button class="product-favourite" data-product-id="${product.id}">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="product-badges">
+                            ${badgesHtml}
+                        </div>
+                    </div>
+                    <div class="product-content">
+                        <div class="product-price">€${parseFloat(product.price).toFixed(2)}</div>
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-meta">
+                            <div class="product-category">
+                                <i class="${getCategoryIcon(product.category)}"></i> ${getCategoryName(product.category)}
+                            </div>
+                            <div class="product-rating">
+                                <i class="fas fa-star"></i> ${(product.rating || 0).toFixed(1)}
+                            </div>
+                        </div>
+                        <button class="product-btn" data-product-id="${product.id}">
+                            <i class="fas fa-shopping-cart"></i> Aggiungi al carrello
+                        </button>
+                    </div>
                 </div>
-                <div class="toast-close">
-                    <i class="fas fa-times"></i>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    productsContainer.innerHTML = html;
+    
+    // Setup product card interactions
+    setupProductCards();
+}
+
+// Get category icon
+function getCategoryIcon(category) {
+    switch(category) {
+        case 'hamburger': return 'fas fa-hamburger';
+        case 'pollo': return 'fas fa-drumstick-bite';
+        case 'pizza': return 'fas fa-pizza-slice';
+        case 'vegetariano': return 'fas fa-leaf';
+        case 'contorni': return 'fas fa-bacon';
+        case 'bevande': return 'fas fa-cocktail';
+        case 'dessert': return 'fas fa-ice-cream';
+        case 'speciali': return 'fas fa-star';
+        default: return 'fas fa-utensils';
+    }
+}
+
+// Get badge name
+function getBadgeName(badge) {
+    switch(badge) {
+        case 'new': return 'NUOVO';
+        case 'promo': return 'PROMO';
+        case 'bestseller': return 'TOP';
+        default: return badge.toUpperCase();
+    }
+}
+
+// Setup product cards
+function setupProductCards() {
+    const productCards = document.querySelectorAll('.product-card');
+    const favouriteButtons = document.querySelectorAll('.product-favourite');
+    const addToCartButtons = document.querySelectorAll('.product-btn');
+    
+    // Product card click
+    productCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('.product-favourite') && !e.target.closest('.product-btn')) {
+                const productId = this.dataset.productId;
+                openProductModal(productId);
+            }
+        });
+    });
+    
+    // Favourite button click
+    favouriteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const icon = this.querySelector('i');
+            this.classList.toggle('active');
+            
+            if (this.classList.contains('active')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                showToast('Aggiunto ai preferiti', 'Prodotto aggiunto ai preferiti', 'success');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                showToast('Rimosso dai preferiti', 'Prodotto rimosso dai preferiti', 'info');
+            }
+        });
+    });
+    
+    // Add to cart button click
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const productId = this.dataset.productId;
+            addToCart(productId);
+        });
+    });
+}
+
+// Add to cart
+function addToCart(productId) {
+    const product = allProducts.find(p => p.id == productId);
+    
+    if (!product) return;
+    
+    // In a real app, would send to server
+    console.log('Adding to cart:', product);
+    
+    // Update cart count
+    const cartCount = document.querySelector('.cart-count');
+    let count = parseInt(cartCount.textContent);
+    cartCount.textContent = count + 1;
+    
+    // Animate cart button
+    const cartBtn = document.querySelector('.cart-btn');
+    cartBtn.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+        cartBtn.style.transform = '';
+    }, 300);
+    
+    // Show toast notification
+    showToast('Aggiunto al carrello', `${product.name} aggiunto al carrello`, 'success');
+}
+
+// Setup product modal
+function setupProductModal() {
+    const modal = document.getElementById('productModal');
+    const modalClose = document.getElementById('modalClose');
+    const decreaseQtyBtn = document.getElementById('decreaseQty');
+    const increaseQtyBtn = document.getElementById('increaseQty');
+    const quantityValue = document.getElementById('quantityValue');
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    
+    // Close modal
+    modalClose.addEventListener('click', function() {
+        modal.classList.remove('show');
+        
+        // Reset quantity
+        quantityValue.textContent = '1';
+    });
+    
+    // Close on outside click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+            
+            // Reset quantity
+            quantityValue.textContent = '1';
+        }
+    });
+    
+    // Quantity controls
+    decreaseQtyBtn.addEventListener('click', function() {
+        let qty = parseInt(quantityValue.textContent);
+        if (qty > 1) {
+            qty--;
+            quantityValue.textContent = qty;
+        }
+    });
+    
+    increaseQtyBtn.addEventListener('click', function() {
+        let qty = parseInt(quantityValue.textContent);
+        qty++;
+        quantityValue.textContent = qty;
+    });
+    
+    // Add to cart from modal
+    addToCartBtn.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        const quantity = parseInt(quantityValue.textContent);
+        
+        // In a real app, would add quantity to cart
+        for (let i = 0; i < quantity; i++) {
+            addToCart(productId);
+        }
+        
+        // Close modal
+        modal.classList.remove('show');
+        
+        // Reset quantity
+        quantityValue.textContent = '1';
+    });
+}
+
+// Open product modal
+function openProductModal(productId) {
+    const product = allProducts.find(p => p.id == productId);
+    
+    if (!product) return;
+    
+    // Set modal content
+    document.getElementById('modalImage').src = product.image || 'https://placehold.co/400x300/orange/white?text=Placeholder';
+    document.getElementById('modalTitle').textContent = product.name;
+    document.getElementById('modalCategory').textContent = getCategoryName(product.category);
+    document.getElementById('modalRating').textContent = `${(product.rating || 0).toFixed(1)} (${Math.floor((product.rating || 0) * 20)} recensioni)`;
+    document.getElementById('modalDescription').textContent = product.description;
+    document.getElementById('modalPrice').textContent = `€${parseFloat(product.price).toFixed(2)}`;
+    document.getElementById('addToCartBtn').dataset.productId = product.id;
+    
+    // Set ingredients
+    let ingredientsHtml = '';
+    if (product.ingredients && product.ingredients.length > 0) {
+        product.ingredients.forEach(ingredient => {
+            ingredientsHtml += `
+                <div class="ingredient-item">
+                    <i class="fas fa-check-circle"></i> ${ingredient}
                 </div>
             `;
-            
-            document.body.appendChild(toast);
-            
-            // Add show class after a small delay to trigger animation
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-            
-            // Add event listener to close button
-            const closeButton = toast.querySelector('.toast-close');
-            closeButton.addEventListener('click', () => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            });
-            
-            // Auto close after 5 seconds
+        });
+    }
+    document.getElementById('modalIngredients').innerHTML = ingredientsHtml;
+    
+    // Show modal
+    document.getElementById('productModal').classList.add('show');
+}
+
+// Setup chat button
+function setupChatButton() {
+    const chatButton = document.getElementById('chatButton');
+    
+    chatButton.addEventListener('click', function() {
+        // Reindirizza alla pagina della chat
+        window.location.href = '/chat';
+    });
+}
+
+// Show toast notification
+function showToast(title, message, type = 'success') {
+    // Remove existing toasts
+    const existingToasts = document.querySelectorAll('.toast-notification');
+    existingToasts.forEach(toast => {
+        toast.remove();
+    });
+    
+    // Create new toast
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    
+    // Icon based on type
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+    if (type === 'warning') icon = 'exclamation-triangle';
+    
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i class="fas fa-${icon}"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <div class="toast-close">
+            <i class="fas fa-times"></i>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Add show class after a small delay to trigger animation
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // Add event listener to close button
+    const closeButton = toast.querySelector('.toast-close');
+    closeButton.addEventListener('click', () => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    });
+    
+    // Auto close after 5 seconds
+    setTimeout(() => {
+        if (document.body.contains(toast)) {
+            toast.classList.remove('show');
             setTimeout(() => {
                 if (document.body.contains(toast)) {
-                    toast.classList.remove('show');
-                    setTimeout(() => {
-                        if (document.body.contains(toast)) {
-                            toast.remove();
-                        }
-                    }, 300);
+                    toast.remove();
                 }
-            }, 5000);
+            }, 300);
         }
-    </script>
+    }, 5000);
+}
+
+// Aggiungi CSS per lo stato di caricamento e gli errori
+document.head.insertAdjacentHTML('beforeend', `
+    <style>
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(94, 96, 206, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 48px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+`);
+</script>
 </body>
 </html>
