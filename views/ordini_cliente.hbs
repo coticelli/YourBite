@@ -924,6 +924,120 @@
             color: var(--text-light);
         }
 
+
+        /* Stili footer */
+.footer {
+    background-color: #f8f9fa;
+    padding: 3rem 0 1.5rem;
+    color: #495057;
+    margin-top: 4rem;
+}
+
+.footer-title {
+    color: #6366F1;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    position: relative;
+}
+
+.footer-title:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: #6366F1;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #6366F1;
+    text-decoration: none;
+    padding-left: 5px;
+}
+
+.contact-info {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact-info li {
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.contact-info i {
+    color: #6366F1;
+    margin-right: 10px;
+    margin-top: 4px;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #6366F1;
+    color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background-color: #4F46E5;
+    color: white;
+    transform: translateY(-3px);
+}
+
+.footer-divider {
+    border-color: #dee2e6;
+    margin: 2rem 0;
+}
+
+.copyright, .developer {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.developer i {
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@media (max-width: 768px) {
+    .text-md-right {
+        text-align: left !important;
+        margin-top: 1rem;
+    }
+}
         .payment-method {
             display: flex;
             align-items: center;
@@ -1778,7 +1892,7 @@
         </div>
 
         <nav class="nav-links">
-            <a href="/menu" class="nav-link">
+            <a href="/Homepage_cliente" class="nav-link">
                 <i class="fas fa-utensils"></i> Menu
             </a>
             <a href="/ordini" class="nav-link active">
@@ -3200,93 +3314,6 @@
         });
     </script>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-about">
-                <div class="footer-logo">
-                    <div class="logo">
-                        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=YourBite" alt="YourBite Logo">
-                    </div>
-                    <h2>YourBite</h2>
-                </div>
-                <p>YourBite è la piattaforma di food delivery che ti permette di gustare i tuoi piatti preferiti comodamente a casa tua. Ordina dai migliori ristoranti della tua città con un click!</p>
-                <div class="social-links">
-                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-links">
-                <h3 class="footer-heading">Link Rapidi</h3>
-                <ul class="footer-links">
-                    <li class="footer-link"><a href="/menu"><i class="fas fa-chevron-right"></i> Menu</a></li>
-                    <li class="footer-link"><a href="/ordini"><i class="fas fa-chevron-right"></i> I miei Ordini</a></li>
-                    <li class="footer-link"><a href="/preferiti"><i class="fas fa-chevron-right"></i> Preferiti</a></li>
-                    <li class="footer-link"><a href="/premi"><i class="fas fa-chevron-right"></i> Premi</a></li>
-                    <li class="footer-link"><a href="/profilo"><i class="fas fa-chevron-right"></i> Il mio Profilo</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-links">
-                <h3 class="footer-heading">Info utili</h3>
-                <ul class="footer-links">
-                    <li class="footer-link"><a href="/aiuto"><i class="fas fa-chevron-right"></i> Centro Assistenza</a></li>
-                    <li class="footer-link"><a href="/faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
-                    <li class="footer-link"><a href="/termini"><i class="fas fa-chevron-right"></i> Termini e Condizioni</a></li>
-                    <li class="footer-link"><a href="/privacy"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
-                    <li class="footer-link"><a href="/contatti"><i class="fas fa-chevron-right"></i> Contattaci</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-contact">
-                <h3 class="footer-heading">Contatti</h3>
-                <div class="contact-info">
-                    <div class="contact-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="contact-details">
-                        Via Garibaldi 123, Milano<br>
-                        20123, Italia
-                    </div>
-                </div>
-                
-                <div class="contact-info">
-                    <div class="contact-icon">
-                        <i class="fas fa-phone-alt"></i>
-                    </div>
-                    <div class="contact-details">
-                        +39 02 1234567<br>
-                        +39 333 7654321
-                    </div>
-                </div>
-                
-                <div class="contact-info">
-                    <div class="contact-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="contact-details">
-                        info@yourbite.it<br>
-                        support@yourbite.it
-                    </div>
-                </div>
-                
-                <h3 class="footer-heading">Newsletter</h3>
-                <p>Iscriviti per ricevere offerte esclusive</p>
-                <form class="newsletter-form">
-                    <input type="email" class="newsletter-input" placeholder="La tua email">
-                    <button type="button" class="newsletter-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2023 YourBite - Tutti i diritti riservati.</p>
-        </div>
-    </footer>
+
 </body>
 </html>
