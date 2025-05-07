@@ -1,0 +1,3292 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Tuoi Ordini - YourBite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --primary-light: #818CF8;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --background: #F9FAFB;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --border: #E5E7EB;
+            --border-light: #F3F4F6;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-sm: 0.25rem;
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #F9FAFB;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Header e Navigazione */
+        .header {
+            background: linear-gradient(135deg, #6366F1, #818CF8);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            background: white;
+            border-radius: var(--radius);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .brand {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cart-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: var(--radius-full);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(129, 140, 248, 0.1));
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title span {
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-title span::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            border-radius: var(--radius-full);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .circle-decoration {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+            z-index: 1;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .circle-decoration-1 {
+            top: -100px;
+            right: 10%;
+        }
+
+        .circle-decoration-2 {
+            bottom: -100px;
+            left: 5%;
+            width: 200px;
+            height: 200px;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+        }
+
+        /* Tabs */
+        .tabs {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .tab-header {
+            display: flex;
+            background: var(--border-light);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-light);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ordini attivi */
+        .active-orders {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .order-header {
+            background: var(--primary-light);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-number {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .order-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .order-status.preparing {
+            background: var(--warning);
+            color: white;
+        }
+
+        .order-status.delivering {
+            background: var(--info);
+            color: white;
+        }
+
+        .order-status.ready {
+            background: var(--success);
+            color: white;
+        }
+
+        .order-body {
+            padding: 1.5rem;
+        }
+
+        .order-restaurant {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 0.8rem;
+        }
+
+        .restaurant-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            object-fit: cover;
+        }
+
+        .restaurant-info h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .restaurant-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .order-progress {
+            margin: 1.5rem 0;
+        }
+
+        .progress-container {
+            position: relative;
+            height: 5px;
+            background: var(--border-light);
+            border-radius: var(--radius-full);
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: var(--radius-full);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: width 1s ease;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            position: relative;
+            flex: 1;
+        }
+
+        .step-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--border-light);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--border);
+            margin-bottom: 0.5rem;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.completed .step-dot {
+            background: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .progress-step.current .step-dot {
+            background: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+
+        .step-label {
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
+        .progress-step.completed {
+            color: var(--primary);
+        }
+
+        .progress-step.current {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        .order-details {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .item-quantity {
+            background: var(--primary-light);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-right: 0.8rem;
+        }
+
+        .item-name {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .item-price {
+            font-weight: 600;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
+
+        .total-label {
+            font-weight: 600;
+        }
+
+        .total-price {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        .order-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .order-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .track-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .track-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .cancel-btn {
+            background: var(--border-light);
+            color: var(--text);
+        }
+
+        .cancel-btn:hover {
+            background: var(--border);
+        }
+
+        .estimated-time {
+            background: var(--border-light);
+            padding: 0.8rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .delivery-time {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        /* Ordini passati */
+        .order-history {
+            margin-top: 1rem;
+        }
+
+        .history-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--border-light);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            color: var(--text-light);
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .history-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .history-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .history-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-header {
+            background: var(--border-light);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .history-order-number {
+            font-weight: 600;
+        }
+
+        .history-body {
+            padding: 1rem;
+        }
+
+        .restaurant-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .history-items {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .history-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+            font-weight: 600;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .history-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: var(--radius);
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reorder-btn {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .reorder-btn:hover {
+            background: var(--primary);
+        }
+
+        .review-btn {
+            background: var(--border-light);
+            color: var(--text);
+        }
+
+        .review-btn:hover {
+            background: var(--border);
+        }
+
+        /* Statistiche */
+        .stats-section {
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-primary .stat-icon {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-success .stat-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-warning .stat-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-info .stat-icon {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .stat-trend {
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-up {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: 320px;
+            margin-bottom: 2rem;
+        }
+
+        /* Preferenze Ordine */
+        .preferences-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .preference-card {
+            flex: 1 0 300px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .preference-title {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preference-edit {
+            font-size: 0.9rem;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.2s ease;
+        }
+
+        .preference-edit:hover {
+            color: var(--primary-dark);
+        }
+
+        .preference-section {
+            margin-bottom: 1rem;
+        }
+
+        .preference-section h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .address-card {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .address-card.default {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .address-card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .address-type {
+            font-weight: 600;
+        }
+
+        .default-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .address-details {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-method.default {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .payment-method:hover {
+            background: var(--border-light);
+        }
+
+        .payment-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-weight: 600;
+        }
+
+        .payment-details {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .delivery-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .delivery-option:hover {
+            background: var(--border-light);
+        }
+
+        .delivery-radio {
+            margin-right: 1rem;
+        }
+
+        .delivery-details {
+            flex: 1;
+        }
+
+        .delivery-title {
+            font-weight: 600;
+        }
+
+        .delivery-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .delivery-price {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.2s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .modal-form input,
+        .modal-form select,
+        .modal-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+        }
+
+        .modal-form input:focus,
+        .modal-form select:focus,
+        .modal-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-align: center;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .secondary-btn {
+            background: var(--border-light);
+            color: var(--text);
+        }
+
+        .secondary-btn:hover {
+            background: var(--border);
+        }
+
+        /* Tracking map modal */
+        .map-container {
+            height: 300px;
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tracking-details {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .tracking-info {
+            flex: 1;
+        }
+
+        .courier-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--border-light);
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .courier-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .courier-name {
+            font-weight: 600;
+        }
+
+        .courier-vehicle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .tracking-timeline {
+            margin-top: 1.5rem;
+        }
+
+        .tracking-step {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .tracking-icon {
+            width: 30px;
+            margin-right: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tracking-icon-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tracking-step.completed .tracking-icon-circle {
+            background: var(--success);
+        }
+
+        .tracking-step.current .tracking-icon-circle {
+            background: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        .tracking-line {
+            width: 2px;
+            flex: 1;
+            background: var(--border);
+            margin: 0 auto;
+        }
+
+        .tracking-content {
+            flex: 1;
+        }
+
+        .tracking-time {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.2rem;
+        }
+
+        .tracking-text {
+            font-weight: 500;
+        }
+
+        .tracking-subtext {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Toasts */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+            border-left: 5px solid;
+        }
+
+        .toast-success {
+            border-left-color: var(--success);
+        }
+
+        .toast-error {
+            border-left-color: var(--danger);
+        }
+
+        .toast-warning {
+            border-left-color: var(--warning);
+        }
+
+        .toast-info {
+            border-left-color: var(--info);
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .toast-success .toast-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .toast-error .toast-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .toast-warning .toast-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .toast-info .toast-icon {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .toast-close:hover {
+            color: var(--text);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Loader animation */
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid var(--primary-light);
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-about p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-heading {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-link {
+            margin-bottom: 1rem;
+        }
+
+        .footer-link a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-link a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-light);
+        }
+
+        .contact-details {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .newsletter-form {
+            display: flex;
+            margin-top: 1rem;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: var(--radius) 0 0 var(--radius);
+            outline: none;
+        }
+
+        .newsletter-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 1.2rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .newsletter-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 0.5rem;
+            }
+
+            .nav-link {
+                padding: 0.6rem 1rem;
+            }
+
+            .brand {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .brand {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 1rem;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.5rem;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+            }
+
+            .nav-link {
+                flex-direction: column;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+                gap: 0.3rem;
+                border-radius: var(--radius-sm);
+            }
+
+            .nav-link.active {
+                background: var(--primary);
+                color: white;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                margin: 1rem;
+            }
+
+            .tab-header {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                white-space: nowrap;
+                padding: 1rem;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-actions {
+                gap: 0.5rem;
+            }
+
+            .user-badge {
+                display: none;
+            }
+
+            .nav-links {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animazioni e interattività extra */
+        .animated {
+            animation-duration: 0.5s;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 20px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .fadeInUp {
+            animation-name: fadeInUp;
+        }
+
+        .avatar-animation {
+            transition: all 0.5s ease;
+        }
+
+        .avatar-animation:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag-primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .tag-secondary {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .tag-accent {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Effetti hover */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+
+        .hover-glow {
+            transition: box-shadow 0.3s ease;
+        }
+
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .hover-rotate-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-rotate-icon:hover i {
+            transform: rotate(15deg);
+        }
+
+        /* Confetti animation */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-area">
+            <div class="logo">
+                <img src="https://api.dicebear.com/7.x/shapes/svg?seed=YourBite" alt="YourBite Logo">
+            </div>
+            <h1 class="brand">YourBite</h1>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/menu" class="nav-link">
+                <i class="fas fa-utensils"></i> Menu
+            </a>
+            <a href="/ordini" class="nav-link active">
+                <i class="fas fa-shopping-bag"></i> Ordini
+            </a>
+            <a href="/preferiti" class="nav-link">
+                <i class="fas fa-heart"></i> Preferiti
+            </a>
+            <a href="/premi" class="nav-link">
+                <i class="fas fa-gift"></i> Premi
+            </a>
+            <a href="/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+
+        <div class="user-actions">
+            <button class="cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">3</span>
+            </button>
+            <div class="user-badge">
+                <i class="fas fa-user"></i> Cliente
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="circle-decoration circle-decoration-1"></div>
+        <div class="circle-decoration circle-decoration-2"></div>
+        <h1 class="hero-title">I Tuoi <span>Ordini</span></h1>
+        <p class="hero-subtitle">Controlla lo stato dei tuoi ordini, visualizza la cronologia e gestisci le tue preferenze per un'esperienza d'ordine perfetta</p>
+    </section>
+
+    <!-- Main Tabs -->
+    <div class="tabs">
+        <div class="tab-header">
+            <button class="tab-btn active" data-tab="attivi">
+                <i class="fas fa-spinner"></i> Ordini Attivi
+            </button>
+            <button class="tab-btn" data-tab="passati">
+                <i class="fas fa-history"></i> Ordini Passati
+            </button>
+            <button class="tab-btn" data-tab="stats">
+                <i class="fas fa-chart-pie"></i> Statistiche
+            </button>
+            <button class="tab-btn" data-tab="preferences">
+                <i class="fas fa-cog"></i> Preferenze
+            </button>
+        </div>
+
+        <!-- Tab Content: Ordini Attivi -->
+        <div class="tab-content active" id="attivi">
+            <div class="active-orders">
+                <!-- Ordine 1 -->
+                <div class="order-card animated fadeInUp">
+                    <div class="order-header">
+                        <span class="order-number">#ORD-87562</span>
+                        <span class="order-status preparing">In preparazione</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-restaurant">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=PizzaDelight&backgroundColor=ffad08" alt="Pizza Delight" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Pizza Delight</h4>
+                                <p>Via Roma, 123</p>
+                            </div>
+                        </div>
+                        <div class="order-progress">
+                            <div class="progress-steps">
+                                <div class="progress-step completed">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Confermato</div>
+                                </div>
+                                <div class="progress-step current">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">In preparazione</div>
+                                </div>
+                                <div class="progress-step">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">In consegna</div>
+                                </div>
+                                <div class="progress-step">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Consegnato</div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 35%"></div>
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Pizza Margherita Grande</div>
+                                <div class="item-price">€9.90</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">2</div>
+                                <div class="item-name">Coca Cola 33cl</div>
+                                <div class="item-price">€5.00</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Tiramisu</div>
+                                <div class="item-price">€4.50</div>
+                            </div>
+                            <div class="order-total">
+                                <div class="total-label">Totale</div>
+                                <div class="total-price">€19.40</div>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="order-btn track-btn" onclick="openTrackingModal('ORD-87562')">
+                                <i class="fas fa-map-marker-alt"></i> Traccia
+                            </button>
+                            <button class="order-btn cancel-btn" onclick="showCancelConfirm('ORD-87562')">
+                                <i class="fas fa-times"></i> Annulla
+                            </button>
+                        </div>
+                        <div class="estimated-time">
+                            <i class="far fa-clock"></i>
+                            Consegna prevista: <span class="delivery-time">19:35</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordine 2 -->
+                <div class="order-card animated fadeInUp" style="animation-delay: 0.2s">
+                    <div class="order-header">
+                        <span class="order-number">#ORD-87553</span>
+                        <span class="order-status delivering">In consegna</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-restaurant">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=BurgerHouse&backgroundColor=ff5630" alt="Burger House" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Burger House</h4>
+                                <p>Piazza Garibaldi, 42</p>
+                            </div>
+                        </div>
+                        <div class="order-progress">
+                            <div class="progress-steps">
+                                <div class="progress-step completed">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Confermato</div>
+                                </div>
+                                <div class="progress-step completed">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">In preparazione</div>
+                                </div>
+                                <div class="progress-step current">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">In consegna</div>
+                                </div>
+                                <div class="progress-step">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Consegnato</div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-item">
+                                <div class="item-quantity">2</div>
+                                <div class="item-name">Cheeseburger Speciale</div>
+                                <div class="item-price">€19.80</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Patatine Grandi</div>
+                                <div class="item-price">€4.50</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">2</div>
+                                <div class="item-name">Sprite 45cl</div>
+                                <div class="item-price">€6.00</div>
+                            </div>
+                            <div class="order-total">
+                                <div class="total-label">Totale</div>
+                                <div class="total-price">€30.30</div>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="order-btn track-btn" onclick="openTrackingModal('ORD-87553')">
+                                <i class="fas fa-map-marker-alt"></i> Traccia
+                            </button>
+                            <button class="order-btn cancel-btn" disabled>
+                                <i class="fas fa-times"></i> Annulla
+                            </button>
+                        </div>
+                        <div class="estimated-time">
+                            <i class="far fa-clock"></i>
+                            Consegna prevista: <span class="delivery-time">19:15</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordine 3 -->
+                <div class="order-card animated fadeInUp" style="animation-delay: 0.4s">
+                    <div class="order-header">
+                        <span class="order-number">#ORD-87544</span>
+                        <span class="order-status ready">Pronto per il ritiro</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-restaurant">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=SushiKing&backgroundColor=36b37e" alt="Sushi King" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Sushi King</h4>
+                                <p>Corso Italia, 85</p>
+                            </div>
+                        </div>
+                        <div class="order-progress">
+                            <div class="progress-steps">
+                                <div class="progress-step completed">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Confermato</div>
+                                </div>
+                                <div class="progress-step completed">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">In preparazione</div>
+                                </div>
+                                <div class="progress-step completed">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Pronto</div>
+                                </div>
+                                <div class="progress-step current">
+                                    <div class="step-dot"></div>
+                                    <div class="step-label">Ritirato</div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Box Sushi Mix (24pz)</div>
+                                <div class="item-price">€25.90</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">2</div>
+                                <div class="item-name">Gyoza di Verdure</div>
+                                <div class="item-price">€9.00</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Acqua Naturale 50cl</div>
+                                <div class="item-price">€1.50</div>
+                            </div>
+                            <div class="order-total">
+                                <div class="total-label">Totale</div>
+                                <div class="total-price">€36.40</div>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                                                       <button class="order-btn track-btn" onclick="openMapDirections('Corso Italia, 85')">
+                                <i class="fas fa-map-marked-alt"></i> Indicazioni
+                            </button>
+                            <button class="order-btn cancel-btn" disabled>
+                                <i class="fas fa-times"></i> Annulla
+                            </button>
+                        </div>
+                        <div class="estimated-time">
+                            <i class="fas fa-check-circle" style="color: var(--success)"></i>
+                            Pronto per il ritiro: <span class="delivery-time">Ora</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Ordini Passati -->
+        <div class="tab-content" id="passati">
+            <div class="history-filters">
+                <button class="filter-btn active">Tutti (24)</button>
+                <button class="filter-btn">Ultimo mese (8)</button>
+                <button class="filter-btn">Ultima settimana (3)</button>
+                <button class="filter-btn">Pizza (10)</button>
+                <button class="filter-btn">Hamburger (7)</button>
+                <button class="filter-btn">Sushi (5)</button>
+                <button class="filter-btn">Altro (2)</button>
+            </div>
+            
+            <div class="history-list">
+                <!-- Ordine passato 1 -->
+                <div class="history-card hover-lift">
+                    <div class="history-header">
+                        <span class="history-date">5 Maggio 2025</span>
+                        <span class="history-order-number">#ORD-87521</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="restaurant-row">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=PizzaDelight&backgroundColor=ffad08" alt="Pizza Delight" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Pizza Delight</h4>
+                                <div style="display: flex; gap: 5px; margin-top: 3px;">
+                                    <span class="tag tag-primary">Pizza</span>
+                                    <div style="color: var(--warning); display: flex; align-items: center;">
+                                        <i class="fas fa-star"></i> 4.8
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-items">
+                            <div class="order-item">
+                                <div class="item-quantity">2</div>
+                                <div class="item-name">Pizza Diavola</div>
+                                <div class="item-price">€21.80</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Calzone Classico</div>
+                                <div class="item-price">€8.50</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">3</div>
+                                <div class="item-name">Birra Artigianale</div>
+                                <div class="item-price">€15.00</div>
+                            </div>
+                        </div>
+                        <div class="history-total">
+                            <span>Totale</span>
+                            <span>€45.30</span>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87521')">
+                                <i class="fas fa-redo-alt"></i> Riordina
+                            </button>
+                            <button class="history-btn review-btn" onclick="openReviewModal('Pizza Delight')">
+                                <i class="fas fa-star"></i> Recensisci
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordine passato 2 -->
+                <div class="history-card hover-lift">
+                    <div class="history-header">
+                        <span class="history-date">3 Maggio 2025</span>
+                        <span class="history-order-number">#ORD-87498</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="restaurant-row">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=BurgerHouse&backgroundColor=ff5630" alt="Burger House" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Burger House</h4>
+                                <div style="display: flex; gap: 5px; margin-top: 3px;">
+                                    <span class="tag tag-accent">Hamburger</span>
+                                    <div style="color: var(--warning); display: flex; align-items: center;">
+                                        <i class="fas fa-star"></i> 4.6
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-items">
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Burger Gourmet</div>
+                                <div class="item-price">€12.90</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Anelli di Cipolla</div>
+                                <div class="item-price">€5.50</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Milkshake Fragola</div>
+                                <div class="item-price">€4.00</div>
+                            </div>
+                        </div>
+                        <div class="history-total">
+                            <span>Totale</span>
+                            <span>€22.40</span>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87498')">
+                                <i class="fas fa-redo-alt"></i> Riordina
+                            </button>
+                            <button class="history-btn review-btn" onclick="openReviewModal('Burger House')">
+                                <i class="fas fa-star"></i> Recensisci
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordine passato 3 -->
+                <div class="history-card hover-lift">
+                    <div class="history-header">
+                        <span class="history-date">1 Maggio 2025</span>
+                        <span class="history-order-number">#ORD-87476</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="restaurant-row">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=SushiKing&backgroundColor=36b37e" alt="Sushi King" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Sushi King</h4>
+                                <div style="display: flex; gap: 5px; margin-top: 3px;">
+                                    <span class="tag tag-secondary">Sushi</span>
+                                    <div style="color: var(--warning); display: flex; align-items: center;">
+                                        <i class="fas fa-star"></i> 4.9
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-items">
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Sushi Box Deluxe</div>
+                                <div class="item-price">€32.00</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Edamame</div>
+                                <div class="item-price">€4.50</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">2</div>
+                                <div class="item-name">Tè Verde</div>
+                                <div class="item-price">€6.00</div>
+                            </div>
+                        </div>
+                        <div class="history-total">
+                            <span>Totale</span>
+                            <span>€42.50</span>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87476')">
+                                <i class="fas fa-redo-alt"></i> Riordina
+                            </button>
+                            <button class="history-btn review-btn" onclick="openReviewModal('Sushi King')">
+                                <i class="fas fa-star"></i> Recensisci
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordine passato 4 -->
+                <div class="history-card hover-lift">
+                    <div class="history-header">
+                        <span class="history-date">28 Aprile 2025</span>
+                        <span class="history-order-number">#ORD-87445</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="restaurant-row">
+                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=MammaMia&backgroundColor=6554c0" alt="Mamma Mia" class="restaurant-logo">
+                            <div class="restaurant-info">
+                                <h4>Mamma Mia</h4>
+                                <div style="display: flex; gap: 5px; margin-top: 3px;">
+                                    <span class="tag tag-primary">Italiano</span>
+                                    <div style="color: var(--warning); display: flex; align-items: center;">
+                                        <i class="fas fa-star"></i> 4.7
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="history-items">
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Lasagna al Forno</div>
+                                <div class="item-price">€12.90</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Insalata Caprese</div>
+                                <div class="item-price">€8.50</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="item-quantity">1</div>
+                                <div class="item-name">Panna Cotta</div>
+                                <div class="item-price">€5.00</div>
+                            </div>
+                        </div>
+                        <div class="history-total">
+                            <span>Totale</span>
+                            <span>€26.40</span>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87445')">
+                                <i class="fas fa-redo-alt"></i> Riordina
+                            </button>
+                            <button class="history-btn review-btn" onclick="openReviewModal('Mamma Mia')">
+                                <i class="fas fa-star"></i> Recensisci
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Statistiche -->
+        <div class="tab-content" id="stats">
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <!-- Stat Card: Ordini Totali -->
+                    <div class="stat-card stat-primary hover-lift">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-trend stat-up">
+                                <i class="fas fa-arrow-up"></i> 15%
+                            </div>
+                        </div>
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Ordini Totali</div>
+                    </div>
+
+                    <!-- Stat Card: Spesa Totale -->
+                    <div class="stat-card stat-success hover-lift">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-euro-sign"></i>
+                            </div>
+                            <div class="stat-trend stat-up">
+                                <i class="fas fa-arrow-up"></i> 8%
+                            </div>
+                        </div>
+                        <div class="stat-value">€345</div>
+                        <div class="stat-label">Spesa Totale</div>
+                    </div>
+
+                    <!-- Stat Card: Media per Ordine -->
+                    <div class="stat-card stat-info hover-lift">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div class="stat-trend stat-down">
+                                <i class="fas fa-arrow-down"></i> 3%
+                            </div>
+                        </div>
+                        <div class="stat-value">€14.40</div>
+                        <div class="stat-label">Media per Ordine</div>
+                    </div>
+
+                    <!-- Stat Card: Punti Fedeltà -->
+                    <div class="stat-card stat-warning hover-lift">
+                        <div class="stat-header">
+                            <div class="stat-icon">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <div class="stat-trend stat-up">
+                                <i class="fas fa-arrow-up"></i> 20%
+                            </div>
+                        </div>
+                        <div class="stat-value">380</div>
+                        <div class="stat-label">Punti Fedeltà</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="spendingChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Preferenze -->
+        <div class="tab-content" id="preferences">
+            <div class="preferences-container">
+                <!-- Indirizzi di Consegna -->
+                <div class="preference-card">
+                    <div class="preference-title">
+                        <h3>Indirizzi di Consegna</h3>
+                        <span class="preference-edit" onclick="openAddressModal()">
+                            <i class="fas fa-plus-circle"></i> Aggiungi
+                        </span>
+                    </div>
+                    <div class="preference-section">
+                        <div class="address-card default">
+                            <div class="address-card-header">
+                                <span class="address-type">Casa</span>
+                                <span class="default-badge">Predefinito</span>
+                            </div>
+                            <div class="address-details">
+                                Via Roma 123, Interno 4<br>
+                                Milano, MI 20121<br>
+                                Citofono: Rossi
+                            </div>
+                        </div>
+                        
+                        <div class="address-card">
+                            <div class="address-card-header">
+                                <span class="address-type">Ufficio</span>
+                            </div>
+                            <div class="address-details">
+                                Viale Monza 45<br>
+                                Milano, MI 20125<br>
+                                Piano 3, Ufficio 302
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Metodi di Pagamento -->
+                <div class="preference-card">
+                    <div class="preference-title">
+                        <h3>Metodi di Pagamento</h3>
+                        <span class="preference-edit" onclick="openPaymentModal()">
+                            <i class="fas fa-plus-circle"></i> Aggiungi
+                        </span>
+                    </div>
+                    <div class="preference-section">
+                        <div class="payment-method default">
+                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/mastercard.svg" alt="Mastercard" class="payment-logo">
+                            <div class="payment-info">
+                                <div class="payment-name">Mastercard •••• 4587</div>
+                                <div class="payment-details">Scade 09/27</div>
+                            </div>
+                            <span class="default-badge">Predefinito</span>
+                        </div>
+                        
+                        <div class="payment-method">
+                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visa.svg" alt="Visa" class="payment-logo">
+                            <div class="payment-info">
+                                <div class="payment-name">Visa •••• 2356</div>
+                                <div class="payment-details">Scade 04/26</div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method">
+                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/paypal.svg" alt="PayPal" class="payment-logo">
+                            <div class="payment-info">
+                                <div class="payment-name">PayPal</div>
+                                <div class="payment-details">mario.rossi@email.com</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Opzioni di Consegna -->
+                <div class="preference-card">
+                    <div class="preference-title">
+                        <h3>Opzioni di Consegna</h3>
+                    </div>
+                    <div class="preference-section">
+                        <h4>Opzione predefinita</h4>
+                        
+                        <div class="delivery-option selected">
+                            <input type="radio" name="delivery" checked class="delivery-radio">
+                            <div class="delivery-details">
+                                <div class="delivery-title">Consegna Standard</div>
+                                <div class="delivery-description">Consegna in 30-45 minuti</div>
+                            </div>
+                            <div class="delivery-price">Gratis</div>
+                        </div>
+                        
+                        <div class="delivery-option">
+                            <input type="radio" name="delivery" class="delivery-radio">
+                            <div class="delivery-details">
+                                <div class="delivery-title">Consegna Express</div>
+                                <div class="delivery-description">Consegna in 15-30 minuti</div>
+                            </div>
+                            <div class="delivery-price">€2.99</div>
+                        </div>
+                        
+                        <div class="delivery-option">
+                            <input type="radio" name="delivery" class="delivery-radio">
+                            <div class="delivery-details">
+                                <div class="delivery-title">Ritiro in Loco</div>
+                                <div class="delivery-description">Ritiro presso il ristorante</div>
+                            </div>
+                            <div class="delivery-price">Gratis</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-section">
+                        <h4>Istruzioni di Consegna Predefinite</h4>
+                        <textarea style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); margin-top: 10px; min-height: 80px;" placeholder="Aggiungi istruzioni di consegna predefinite, es: Lasciare davanti alla porta, chiamare prima di consegnare, ecc.">Suonare al citofono e lasciare la consegna davanti alla porta. Grazie!</textarea>
+                    </div>
+                </div>
+                
+                <!-- Allergie e Preferenze Alimentari -->
+                <div class="preference-card">
+                    <div class="preference-title">
+                        <h3>Allergie e Preferenze</h3>
+                    </div>
+                    <div class="preference-section">
+                        <h4>Allergie</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                            <span class="tag tag-accent">Frutta secca</span>
+                            <span class="tag tag-accent">Latte</span>
+                            <span class="tag tag-primary">+ Aggiungi</span>
+                        </div>
+                    </div>
+                    
+                    <div class="preference-section">
+                        <h4>Preferenze Dietetiche</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                            <span class="tag tag-secondary">Poca piccantezza</span>
+                            <span class="tag tag-primary">+ Aggiungi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Tracking Modal -->
+    <div class="modal" id="trackingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Traccia Ordine <span id="trackingOrderId"></span></h3>
+                <button class="close-modal" onclick="closeModal('trackingModal')">&times;</button>
+            </div>
+            <div class="map-container" id="deliveryMap">
+                <!-- Mappa interattiva -->
+                <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_UJNc2t.json"  background="transparent" speed="1" style="width: 100%; height: 100%;" loop autoplay></lottie-player>
+            </div>
+            <div class="tracking-details">
+                <div class="tracking-info">
+                    <div class="courier-info">
+                        <img src="https://api.dicebear.com/7.x/micah/svg?seed=Luigi&hair=fonze,full&baseColor=f9c9b6&earrings=none" alt="Courier" class="courier-photo">
+                        <div>
+                            <div class="courier-name">Luigi M.</div>
+                            <div class="courier-vehicle">Scooter 🛵</div>
+                        </div>
+                    </div>
+                    <div class="estimated-time">
+                        <i class="far fa-clock"></i>
+                        Arrivo stimato: <span class="delivery-time">19:35</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tracking-timeline">
+                <div class="tracking-step completed">
+                    <div class="tracking-icon">
+                        <div class="tracking-icon-circle"></div>
+                        <div class="tracking-line"></div>
+                    </div>
+                    <div class="tracking-content">
+                        <div class="tracking-time">18:50</div>
+                        <div class="tracking-text">Ordine confermato</div>
+                        <div class="tracking-subtext">Pizza Delight ha ricevuto il tuo ordine</div>
+                    </div>
+                </div>
+                
+                <div class="tracking-step completed">
+                    <div class="tracking-icon">
+                        <div class="tracking-icon-circle"></div>
+                        <div class="tracking-line"></div>
+                    </div>
+                    <div class="tracking-content">
+                        <div class="tracking-time">19:05</div>
+                        <div class="tracking-text">Preparazione in corso</div>
+                        <div class="tracking-subtext">Il tuo ordine è in preparazione</div>
+                    </div>
+                </div>
+                
+                <div class="tracking-step current">
+                    <div class="tracking-icon">
+                        <div class="tracking-icon-circle"></div>
+                        <div class="tracking-line"></div>
+                    </div>
+                    <div class="tracking-content">
+                        <div class="tracking-time">19:20</div>
+                        <div class="tracking-text">In consegna</div>
+                        <div class="tracking-subtext">Luigi sta arrivando con il tuo ordine</div>
+                    </div>
+                </div>
+                
+                <div class="tracking-step">
+                    <div class="tracking-icon">
+                        <div class="tracking-icon-circle"></div>
+                    </div>
+                    <div class="tracking-content">
+                        <div class="tracking-time">19:35 (stimato)</div>
+                        <div class="tracking-text">Consegnato</div>
+                        <div class="tracking-subtext">Il tuo ordine sarà consegnato</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn secondary-btn" onclick="callCourier()">
+                    <i class="fas fa-phone"></i> Chiama Corriere
+                </button>
+                <button class="modal-btn primary-btn" onclick="closeModal('trackingModal')">
+                    Chiudi
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cancel Order Modal -->
+    <div class="modal" id="cancelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Annulla Ordine</h3>
+                <button class="close-modal" onclick="closeModal('cancelModal')">&times;</button>
+            </div>
+            <p>Sei sicuro di voler annullare l'ordine <span id="cancelOrderId"></span>?</p>
+            <p style="margin-top: 10px; color: var(--text-light);">Nota: Puoi annullare un ordine solo se è ancora in fase di preparazione. L'importo sarà riaccreditato entro 5-7 giorni lavorativi.</p>
+            
+            <div style="margin-top: 20px;">
+                <h4>Motivo dell'annullamento:</h4>
+                <select style="width: 100%; padding: 10px; margin-top: 10px; border: 1px solid var(--border); border-radius: var(--radius);">
+                    <option>Ho cambiato idea</option>
+                    <option>Ho inserito un indirizzo sbagliato</option>
+                    <option>Ho inserito un ordine sbagliato</option>
+                    <option>Tempo di consegna troppo lungo</option>
+                    <option>Altro (specificare)</option>
+                </select>
+                <textarea style="width: 100%; padding: 10px; margin-top: 10px; border: 1px solid var(--border); border-radius: var(--radius); min-height: 80px;" placeholder="Specificare se 'Altro'"></textarea>
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="modal-btn secondary-btn" onclick="closeModal('cancelModal')">
+                    Torna Indietro
+                </button>
+                <button class="modal-btn primary-btn" style="background-color: var(--danger);" onclick="confirmCancelOrder()">
+                    <i class="fas fa-times"></i> Conferma Annullamento
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Review Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Recensisci <span id="reviewRestaurantName"></span></h3>
+                <button class="close-modal" onclick="closeModal('reviewModal')">&times;</button>
+            </div>
+            
+            <div style="margin: 20px 0; text-align: center;">
+                <div style="font-size: 1.2rem; margin-bottom: 10px;">Il tuo voto</div>
+                <div class="rating-stars">
+                    <i class="fas fa-star fa-2x" data-rating="1" style="color: var(--warning); cursor: pointer; margin: 0 5px;"></i>
+                    <i class="fas fa-star fa-2x" data-rating="2" style="color: var(--warning); cursor: pointer; margin: 0 5px;"></i>
+                    <i class="fas fa-star fa-2x" data-rating="3" style="color: var(--warning); cursor: pointer; margin: 0 5px;"></i>
+                    <i class="fas fa-star fa-2x" data-rating="4" style="color: var(--warning); cursor: pointer; margin: 0 5px;"></i>
+                    <i class="far fa-star fa-2x" data-rating="5" style="color: var(--warning); cursor: pointer; margin: 0 5px;"></i>
+                </div>
+            </div>
+            
+            <div class="modal-form">
+                <div class="form-group">
+                    <label>La tua esperienza</label>
+                    <textarea rows="4" placeholder="Racconta la tua esperienza con questo ristorante..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Cosa ti è piaciuto di più?</label>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div class="tag tag-primary" onclick="toggleTag(this)"><i class="fas fa-utensils"></i> Qualità del cibo</div>
+                        <div class="tag tag-primary" onclick="toggleTag(this)"><i class="fas fa-shipping-fast"></i> Velocità</div>
+                        <div class="tag tag-primary" onclick="toggleTag(this)"><i class="fas fa-coins"></i> Rapporto qualità/prezzo</div>
+                        <div class="tag tag-primary" onclick="toggleTag(this)"><i class="fas fa-box"></i> Packaging</div>
+                        <div class="tag tag-primary" onclick="toggleTag(this)"><i class="fas fa-smile"></i> Servizio clienti</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Valutazione complessiva</label>
+                    <div class="rating-selector">
+                        <i class="fas fa-star rating-star" data-value="1"></i>
+                        <i class="fas fa-star rating-star" data-value="2"></i>
+                        <i class="fas fa-star rating-star" data-value="3"></i>
+                        <i class="fas fa-star rating-star" data-value="4"></i>
+                        <i class="fas fa-star rating-star" data-value="5"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Aggiungi foto (opzionale)</label>
+                    <div class="file-upload">
+                        <input type="file" id="photoUpload" accept="image/*" multiple hidden>
+                        <button type="button" class="secondary-btn" onclick="document.getElementById('photoUpload').click()">
+                            <i class="fas fa-camera"></i> Seleziona foto
+                        </button>
+                        <div class="upload-preview" id="uploadPreview"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn secondary-btn" onclick="closeModal('reviewModal')">Annulla</button>
+                <button class="modal-btn primary-btn" onclick="submitReview()">Invia recensione</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tracking Order Modal -->
+    <div class="modal" id="trackingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Tracciamento Ordine #<span id="trackingOrderId">ORD-87562</span></h3>
+                <button class="close-modal" onclick="closeModal('trackingModal')">&times;</button>
+            </div>
+            
+            <div class="map-container" id="mapContainer">
+                <!-- Map will be loaded here dynamically -->
+                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_WDRGWk.json" background="transparent" speed="1" style="width: 100%; height: 100%;" autoplay loop></lottie-player>
+            </div>
+            
+            <div class="tracking-details">
+                <div class="tracking-info">
+                    <h4>Dettagli Consegna</h4>
+                    <div class="courier-info">
+                        <img src="https://api.dicebear.com/7.x/micah/svg?seed=Marco" alt="Courier" class="courier-photo">
+                        <div>
+                            <div class="courier-name">Marco L.</div>
+                            <div class="courier-vehicle">🛵 Scooter - SY 123 AB</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tracking-timeline">
+                        <div class="tracking-step completed">
+                            <div class="tracking-icon">
+                                <div class="tracking-icon-circle"></div>
+                                <div class="tracking-line"></div>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-time">18:42</div>
+                                <div class="tracking-text">Ordine confermato</div>
+                                <div class="tracking-subtext">Il tuo ordine è stato ricevuto dal ristorante</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tracking-step completed">
+                            <div class="tracking-icon">
+                                <div class="tracking-icon-circle"></div>
+                                <div class="tracking-line"></div>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-time">18:50</div>
+                                <div class="tracking-text">Preparazione iniziata</div>
+                                <div class="tracking-subtext">Il ristorante sta preparando il tuo ordine</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tracking-step current">
+                            <div class="tracking-icon">
+                                <div class="tracking-icon-circle"></div>
+                                <div class="tracking-line"></div>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-time">19:05</div>
+                                <div class="tracking-text">In consegna</div>
+                                <div class="tracking-subtext">Il tuo ordine è stato affidato al corriere</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tracking-step">
+                            <div class="tracking-icon">
+                                <div class="tracking-icon-circle"></div>
+                            </div>
+                            <div class="tracking-content">
+                                <div class="tracking-time">Previsto: 19:35</div>
+                                <div class="tracking-text">Consegna</div>
+                                <div class="tracking-subtext">Il tuo ordine arriverà presto</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn secondary-btn" onclick="window.open('tel:+393501234567')">
+                    <i class="fas fa-phone"></i> Chiama corriere
+                </button>
+                <button class="modal-btn primary-btn" onclick="closeModal('trackingModal')">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div class="modal" id="cancelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Conferma annullamento</h3>
+                <button class="close-modal" onclick="closeModal('cancelModal')">&times;</button>
+            </div>
+            
+            <p>Sei sicuro di voler annullare l'ordine #<span id="cancelOrderId">ORD-87562</span>?</p>
+            <p>Una volta annullato, l'ordine non potrà essere ripristinato.</p>
+            
+            <div class="form-group">
+                <label>Motivo dell'annullamento (opzionale)</label>
+                <select>
+                    <option value="">Seleziona un motivo...</option>
+                    <option value="tempo">Tempo di attesa troppo lungo</option>
+                    <option value="errore">Ordine effettuato per errore</option>
+                    <option value="cambiato">Ho cambiato idea</option>
+                    <option value="altro">Altro motivo</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn secondary-btn" onclick="closeModal('cancelModal')">No, mantieni ordine</button>
+                <button class="modal-btn primary-btn" style="background-color: var(--danger)" onclick="cancelOrder()">Sì, annulla ordine</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+                
+                // Update active tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+                
+                // Add animation to elements in the tab
+                document.querySelectorAll(`#${tabId} .animated`).forEach(el => {
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.classList.add('fadeInUp');
+                        el.style.opacity = '1';
+                    }, 100);
+                });
+            });
+        });
+
+        // Initialize charts when stats tab is selected
+        document.querySelector('[data-tab="stats"]').addEventListener('click', initCharts);
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Open tracking modal
+        function openTrackingModal(orderId) {
+            document.getElementById('trackingOrderId').textContent = orderId;
+            openModal('trackingModal');
+            initMap();
+        }
+        
+        // Open cancel confirmation modal
+        function showCancelConfirm(orderId) {
+            document.getElementById('cancelOrderId').textContent = orderId;
+            openModal('cancelModal');
+        }
+        
+        // Open review modal
+        function openReviewModal(orderId, restaurantName) {
+            document.getElementById('reviewOrderId').textContent = orderId;
+            document.getElementById('reviewRestaurantName').textContent = restaurantName;
+            openModal('reviewModal');
+        }
+        
+        // Cancel order
+        function cancelOrder() {
+            const orderId = document.getElementById('cancelOrderId').textContent;
+            closeModal('cancelModal');
+            
+            // Remove the order card with animation
+            const orderCard = document.querySelector(`.order-card:has(.order-number:contains('${orderId}'))`);
+            if (orderCard) {
+                orderCard.style.animation = 'slideOut 0.5s forwards';
+                orderCard.addEventListener('animationend', () => {
+                    orderCard.remove();
+                    // Show empty state if no more orders
+                    if (document.querySelectorAll('.order-card').length === 0) {
+                        const emptyState = document.createElement('div');
+                        emptyState.className = 'empty-state animated fadeInUp';
+                        emptyState.innerHTML = `
+                            <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_ydo1amjm.json" 
+                                background="transparent" speed="1" style="width: 250px; height: 250px;" autoplay loop>
+                            </lottie-player>
+                            <h3>Nessun ordine attivo</h3>
+                            <p>Non hai ordini attivi al momento. Esplora il nostro menu per iniziare!</p>
+                            <a href="/menu" class="primary-btn">Esplora il Menu</a>
+                        `;
+                        document.querySelector('.active-orders').appendChild(emptyState);
+                    }
+                });
+            }
+            
+            showToast('success', 'Ordine annullato', `L'ordine ${orderId} è stato annullato con successo.`);
+        }
+        
+        // Submit review
+        function submitReview() {
+            closeModal('reviewModal');
+            showToast('success', 'Recensione inviata', 'Grazie per aver condiviso la tua esperienza!');
+            triggerConfetti();
+        }
+        
+        // Initialize map
+        function initMap() {
+            // This would normally initialize a real map
+            // For this demo, we're just using a Lottie animation
+            setTimeout(() => {
+                document.getElementById('mapContainer').innerHTML = `
+                    <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_LKXG6QRgtB.json" 
+                        background="transparent" speed="1" style="width: 100%; height: 100%;" autoplay loop>
+                    </lottie-player>
+                `;
+            }, 1500);
+        }
+        
+        // Toggle tag selection in review form
+        function toggleTag(tagElement) {
+            tagElement.classList.toggle('active');
+            if (tagElement.classList.contains('active')) {
+                tagElement.style.background = 'var(--primary)';
+                tagElement.style.color = 'white';
+            } else {
+                tagElement.style.background = 'rgba(99, 102, 241, 0.1)';
+                tagElement.style.color = 'var(--primary)';
+            }
+        }
+        
+        // Show toast notification
+        function showToast(type, title, message) {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close">&times;</button>
+            `;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s forwards';
+                toast.addEventListener('animationend', () => toast.remove());
+            }, 5000);
+            
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.style.animation = 'slideOut 0.3s forwards';
+                toast.addEventListener('animationend', () => toast.remove());
+            });
+        }
+        
+        // Celebration confetti effect
+        function triggerConfetti() {
+            const confettiContainer = document.getElementById('confettiContainer');
+            const colors = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#3B82F6'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const shape = Math.random() > 0.5 ? 'circle' : 'rect';
+                let size = Math.random() * 10 + 5;
+                
+                if (shape === 'circle') {
+                    confetti.style.borderRadius = '50%';
+                }
+                
+                confetti.style.backgroundColor = color;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = '0';
+                confetti.style.opacity = '1';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 0.5;
+                
+                confetti.style.animation = `
+                    confettiDrop ${duration}s ease-in ${delay}s forwards,
+                    confettiRotate ${duration / 2}s linear ${delay}s infinite
+                `;
+                
+                confettiContainer.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+        
+        // Define confetti animations
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes confettiDrop {
+                0% { transform: translateY(0) rotate(0); opacity: 1; }
+                90% { opacity: 1; }
+                100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+            @keyframes confettiRotate {
+                0% { transform: rotate(0); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize charts
+        function initCharts() {
+            // Order History Chart
+            const orderCtx = document.getElementById('orderHistoryChart').getContext('2d');
+            const orderChart = new Chart(orderCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
+                    datasets: [{
+                        label: 'Numero di Ordini',
+                        data: [5, 7, 4, 6, 8, 3],
+                        backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Spending Chart
+            const spendingCtx = document.getElementById('spendingChart').getContext('2d');
+            const spendingChart = new Chart(spendingCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
+                    datasets: [{
+                        label: 'Spesa Totale (€)',
+                        data: [120, 190, 85, 150, 210, 95],
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                        pointBorderColor: 'white',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // GSAP animations
+        function initAnimations() {
+            // Hero title animation
+            gsap.from('.hero-title', {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                ease: 'back.out(1.7)'
+            });
+            
+            gsap.from('.hero-subtitle', {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                delay: 0.3,
+                ease: 'back.out(1.7)'
+            });
+            
+            // Tab buttons animation
+            gsap.from('.tab-btn', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: 'power1.out'
+            });
+            
+            // Order cards animation
+            gsap.from('.order-card', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: 'back.out(1.2)',
+                delay: 0.5
+            });
+            
+            // Stats cards animation with ScrollTrigger
+            gsap.registerPlugin(ScrollTrigger);
+            
+            gsap.from('.stat-card', {
+                scrollTrigger: {
+                    trigger: '.stats-section',
+                    start: 'top 80%',
+                    toggleActions: 'play none none none'
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: 'back.out(1.2)'
+            });
+        }
+        
+        // Initialize animations when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initAnimations);
+        
+        // Create animated particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const colors = ['rgba(99, 102, 241, 0.1)', 'rgba(16, 185, 129, 0.1)', 'rgba(245, 158, 11, 0.1)'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random properties
+                const size = Math.random() * 80 + 40;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                
+                // Apply styles
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.backgroundColor = color;
+                particle.style.left = `${left}%`;
+                particle.style.top = `${top}%`;
+                particle.style.animation = `particleFloat ${duration}s infinite alternate ease-in-out ${delay}s, particleFade ${duration/2}s infinite alternate ease-in-out ${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Create particles
+        createParticles();
+        
+        // Rating star functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    
+                    // Reset all stars
+                    stars.forEach(s => {
+                        s.style.color = '#ddd';
+                    });
+                    
+                    // Color selected stars
+                    for (let i = 0; i < value; i++) {
+                        stars[i].style.color = '#FFD700';
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-about">
+                <div class="footer-logo">
+                    <div class="logo">
+                        <img src="https://api.dicebear.com/7.x/shapes/svg?seed=YourBite" alt="YourBite Logo">
+                    </div>
+                    <h2>YourBite</h2>
+                </div>
+                <p>YourBite è la piattaforma di food delivery che ti permette di gustare i tuoi piatti preferiti comodamente a casa tua. Ordina dai migliori ristoranti della tua città con un click!</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <h3 class="footer-heading">Link Rapidi</h3>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="/menu"><i class="fas fa-chevron-right"></i> Menu</a></li>
+                    <li class="footer-link"><a href="/ordini"><i class="fas fa-chevron-right"></i> I miei Ordini</a></li>
+                    <li class="footer-link"><a href="/preferiti"><i class="fas fa-chevron-right"></i> Preferiti</a></li>
+                    <li class="footer-link"><a href="/premi"><i class="fas fa-chevron-right"></i> Premi</a></li>
+                    <li class="footer-link"><a href="/profilo"><i class="fas fa-chevron-right"></i> Il mio Profilo</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h3 class="footer-heading">Info utili</h3>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="/aiuto"><i class="fas fa-chevron-right"></i> Centro Assistenza</a></li>
+                    <li class="footer-link"><a href="/faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                    <li class="footer-link"><a href="/termini"><i class="fas fa-chevron-right"></i> Termini e Condizioni</a></li>
+                    <li class="footer-link"><a href="/privacy"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                    <li class="footer-link"><a href="/contatti"><i class="fas fa-chevron-right"></i> Contattaci</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-contact">
+                <h3 class="footer-heading">Contatti</h3>
+                <div class="contact-info">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-details">
+                        Via Garibaldi 123, Milano<br>
+                        20123, Italia
+                    </div>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="contact-details">
+                        +39 02 1234567<br>
+                        +39 333 7654321
+                    </div>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        info@yourbite.it<br>
+                        support@yourbite.it
+                    </div>
+                </div>
+                
+                <h3 class="footer-heading">Newsletter</h3>
+                <p>Iscriviti per ricevere offerte esclusive</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="La tua email">
+                    <button type="button" class="newsletter-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 YourBite - Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+</body>
+</html>
