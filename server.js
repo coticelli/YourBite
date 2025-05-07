@@ -17,6 +17,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const exphbs = require('express-handlebars');
 const https = require('https');
+const mongoose = require('mongoose');
 
 // Crea un'istanza di Express
 const app = express();
@@ -899,6 +900,61 @@ db.serialize(() => {
         }
     });
 
+    // Creazione della tabella per i dipendenti
+     db.run(`CREATE TABLE IF NOT EXISTS ordini (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        numero_ordine TEXT NOT NULL UNIQUE,
+        cliente_id INTEGER NOT NULL,
+        totale REAL NOT NULL,
+        stato TEXT NOT NULL DEFAULT 'in_attesa',
+        indirizzo_consegna TEXT,
+        metodo_pagamento TEXT NOT NULL,
+        note TEXT,
+        data_creazione TEXT NOT NULL,
+        data_consegna_prevista TEXT,
+        data_consegna_effettiva TEXT,
+        data_aggiornamento TEXT NOT NULL,
+        FOREIGN KEY (cliente_id) REFERENCES utenti(id)
+    )`);
+
+    // Tabella dettagli ordini
+    db.run(`CREATE TABLE IF NOT EXISTS ordine_dettagli (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ordine_id INTEGER NOT NULL,
+        prodotto_id INTEGER NOT NULL,
+        nome_prodotto TEXT NOT NULL,
+        quantita INTEGER NOT NULL,
+        prezzo_unitario REAL NOT NULL,
+        note TEXT,
+        FOREIGN KEY (ordine_id) REFERENCES ordini(id),
+        FOREIGN KEY (prodotto_id) REFERENCES panini(id)
+    )`);
+
+    // Tabella tracking ordini
+    db.run(`CREATE TABLE IF NOT EXISTS ordine_tracking (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ordine_id INTEGER NOT NULL,
+        stato TEXT NOT NULL,
+        messaggio TEXT,
+        timestamp TEXT NOT NULL,
+        location TEXT,
+        FOREIGN KEY (ordine_id) REFERENCES ordini(id)
+    )`);
+
+    // Tabella recensioni
+    db.run(`CREATE TABLE IF NOT EXISTS recensioni (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ordine_id INTEGER NOT NULL UNIQUE,
+        cliente_id INTEGER NOT NULL,
+        valutazione INTEGER NOT NULL,
+        commento TEXT,
+        data_creazione TEXT NOT NULL,
+        tags TEXT,
+        foto TEXT,
+        FOREIGN KEY (ordine_id) REFERENCES ordini(id),
+        FOREIGN KEY (cliente_id) REFERENCES utenti(id)
+    )`);
+
     // Creazione della tabella per i messaggi di chat
     db.run(`CREATE TABLE IF NOT EXISTS chat_messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1325,6 +1381,1104 @@ app.delete('/api/chat/all-conversations', requireStaff, (req, res) => {
     });
 });
 
+// Configurazione per upload immagini recensioni
+const reviewStorage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const dir = './public/images/reviews';
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir);
+    },
+    filename: function(req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, `review-${uniqueSuffix}${ext}`);
+    }
+});
+
+const reviewUpload = multer({ 
+    storage: reviewStorage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+    fileFilter: function(req, file, cb) {
+        const filetypes = /jpeg|jpg|png|webp|gif/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error("Solo file immagine supportati"));
+    }
+});
+
+app.get('/ordini_cliente', requireLogin, (req, res) => {
+    res.render('ordini_cliente', {
+        pageTitle: 'I Tuoi Ordini - YourBite',
+        user: req.session.user
+    });
+});
+
+
+// Recupera ordini attivi dell'utente
+app.get('/api/orders/active', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    
+    // Recupera ordini attivi (non consegnati/completati/cancellati)
+    db.all(`
+        SELECT o.*, 
+               (SELECT GROUP_CONCAT(nome_prodotto || ' (' || quantita || ')') 
+                FROM ordine_dettagli 
+                WHERE ordine_id = o.id) as prodotti_descrizione
+        FROM ordini o
+        WHERE o.cliente_id = ? 
+        AND o.stato NOT IN ('consegnato', 'completato', 'annullato')
+        ORDER BY o.data_creazione DESC
+    `, [userId], (err, activeOrders) => {
+        if (err) {
+            console.error('Errore recupero ordini attivi:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel recupero degli ordini attivi'
+            });
+        }
+        
+        // Funzione per recuperare dettagli per ogni ordine
+        const getOrderDetails = (order, callback) => {
+            // Dettagli prodotti
+            db.all(`
+                SELECT * FROM ordine_dettagli WHERE ordine_id = ?
+            `, [order.id], (err, items) => {
+                if (err) return callback(err);
+                
+                order.items = items;
+                
+                // Storico tracking
+                db.all(`
+                    SELECT * FROM ordine_tracking 
+                    WHERE ordine_id = ? 
+                    ORDER BY timestamp DESC
+                `, [order.id], (err, tracking) => {
+                    if (err) return callback(err);
+                    
+                    order.tracking = tracking;
+                    callback(null);
+                });
+            });
+        };
+        
+        // Processo tutti gli ordini
+        let completed = 0;
+        const processNextOrder = () => {
+            if (completed >= activeOrders.length) {
+                return res.json({ success: true, orders: activeOrders });
+            }
+            
+            getOrderDetails(activeOrders[completed], (err) => {
+                if (err) {
+                    console.error('Errore recupero dettagli ordine:', err);
+                }
+                
+                completed++;
+                processNextOrder();
+            });
+        };
+        
+        if (activeOrders.length === 0) {
+            return res.json({ success: true, orders: [] });
+        }
+        
+        processNextOrder();
+    });
+});
+
+
+// Recupera cronologia ordini
+app.get('/api/orders/history', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    const { status, period, page = 1, limit = 10 } = req.query;
+    
+    // Costruzione query base
+    let query = `
+        SELECT o.*, 
+              (SELECT GROUP_CONCAT(nome_prodotto || ' (' || quantita || ')') 
+               FROM ordine_dettagli 
+               WHERE ordine_id = o.id) as prodotti_descrizione
+        FROM ordini o
+        WHERE o.cliente_id = ?
+    `;
+    
+    const params = [userId];
+    
+    // Filtro per stato
+    if (status) {
+        query += ` AND o.stato = ?`;
+        params.push(status);
+    } else {
+        query += ` AND o.stato IN ('consegnato', 'completato', 'annullato')`;
+    }
+    
+    // Filtro per periodo
+    if (period) {
+        const now = new Date();
+        let startDate;
+        
+        switch(period) {
+            case 'week':
+                startDate = new Date(now.setDate(now.getDate() - 7));
+                break;
+            case 'month':
+                startDate = new Date(now.setMonth(now.getMonth() - 1));
+                break;
+            case '3months':
+                startDate = new Date(now.setMonth(now.getMonth() - 3));
+                break;
+            case '6months':
+                startDate = new Date(now.setMonth(now.getMonth() - 6));
+                break;
+            case 'year':
+                startDate = new Date(now.setFullYear(now.getFullYear() - 1));
+                break;
+        }
+        
+        if (startDate) {
+            query += ` AND o.data_creazione >= datetime(?)`;
+            params.push(startDate.toISOString());
+        }
+    }
+    
+    // Conteggio totale ordini (per paginazione)
+    db.get(`
+        SELECT COUNT(*) as total
+        FROM (${query})
+    `, params, (err, countResult) => {
+        if (err) {
+            console.error('Errore conteggio ordini:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel conteggio degli ordini'
+            });
+        }
+        
+        const total = countResult.total;
+        
+        // Aggiunge ordinamento e paginazione alla query
+        query += ` ORDER BY o.data_creazione DESC LIMIT ? OFFSET ?`;
+        const offset = (page - 1) * limit;
+        params.push(parseInt(limit), offset);
+        
+        // Esecuzione query per gli ordini
+        db.all(query, params, (err, orders) => {
+            if (err) {
+                console.error('Errore recupero ordini:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nel recupero degli ordini'
+                });
+            }
+            
+            // Funzione per recuperare dettagli per ogni ordine
+            const getOrderDetails = (order, callback) => {
+                // Dettagli prodotti
+                db.all(`
+                    SELECT * FROM ordine_dettagli WHERE ordine_id = ?
+                `, [order.id], (err, items) => {
+                    if (err) return callback(err);
+                    
+                    order.items = items;
+                    
+                    // Verifica se l'ordine è stato recensito
+                    db.get(`
+                        SELECT id FROM recensioni WHERE ordine_id = ?
+                    `, [order.id], (err, review) => {
+                        if (err) return callback(err);
+                        
+                        order.hasReview = review ? true : false;
+                        callback(null);
+                    });
+                });
+            };
+            
+            // Processo tutti gli ordini
+            let completed = 0;
+            const processNextOrder = () => {
+                if (completed >= orders.length) {
+                    return res.json({
+                        success: true,
+                        orders,
+                        pagination: {
+                            total,
+                            page: parseInt(page),
+                            pages: Math.ceil(total / limit)
+                        }
+                    });
+                }
+                
+                getOrderDetails(orders[completed], (err) => {
+                    if (err) {
+                        console.error('Errore recupero dettagli ordine:', err);
+                    }
+                    
+                    completed++;
+                    processNextOrder();
+                });
+            };
+            
+            if (orders.length === 0) {
+                return res.json({
+                    success: true,
+                    orders: [],
+                    pagination: {
+                        total,
+                        page: parseInt(page),
+                        pages: Math.ceil(total / limit)
+                    }
+                });
+            }
+            
+            processNextOrder();
+        });
+    });
+});
+
+// Recupera dettagli di un ordine specifico
+app.get('/api/orders/:orderId', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    const orderId = req.params.orderId;
+    
+    // Verifica che l'ordine appartenga all'utente
+    db.get(`
+        SELECT * FROM ordini WHERE id = ? AND cliente_id = ?
+    `, [orderId, userId], (err, order) => {
+        if (err) {
+            console.error('Errore recupero ordine:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel recupero dell\'ordine'
+            });
+        }
+        
+        if (!order) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Ordine non trovato' 
+            });
+        }
+        
+        // Recupera dettagli prodotti
+        db.all(`
+            SELECT * FROM ordine_dettagli WHERE ordine_id = ?
+        `, [orderId], (err, items) => {
+            if (err) {
+                console.error('Errore recupero dettagli prodotti:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nel recupero dei dettagli dell\'ordine'
+                });
+            }
+            
+            order.items = items;
+            
+            // Recupera tracking dell'ordine
+            db.all(`
+                SELECT * FROM ordine_tracking 
+                WHERE ordine_id = ? 
+                ORDER BY timestamp DESC
+            `, [orderId], (err, tracking) => {
+                if (err) {
+                    console.error('Errore recupero tracking:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        error: 'Errore nel recupero del tracking dell\'ordine'
+                    });
+                }
+                
+                order.tracking = tracking;
+                
+                // Verifica se l'ordine è stato recensito
+                db.get(`
+                    SELECT * FROM recensioni WHERE ordine_id = ?
+                `, [orderId], (err, review) => {
+                    if (err) {
+                        console.error('Errore recupero recensione:', err);
+                        return res.status(500).json({ 
+                            success: false, 
+                            error: 'Errore nel recupero della recensione'
+                        });
+                    }
+                    
+                    order.review = review || null;
+                    
+                    res.json({ success: true, order });
+                });
+            });
+        });
+    });
+});
+
+// Tracciamento in tempo reale di un ordine
+app.get('/api/orders/:orderId/tracking', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    const orderId = req.params.orderId;
+    
+    // Verifica che l'ordine esista e appartenga all'utente
+    db.get(`
+        SELECT id, numero_ordine, stato, data_creazione, data_consegna_prevista 
+        FROM ordini 
+        WHERE id = ? AND cliente_id = ?
+    `, [orderId, userId], (err, order) => {
+        if (err) {
+            console.error('Errore recupero ordine:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel recupero dell\'ordine'
+            });
+        }
+        
+        if (!order) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Ordine non trovato' 
+            });
+        }
+        
+        // Recupera la cronologia di tracking
+        db.all(`
+            SELECT * FROM ordine_tracking 
+            WHERE ordine_id = ? 
+            ORDER BY timestamp DESC
+        `, [orderId], (err, trackingHistory) => {
+            if (err) {
+                console.error('Errore recupero tracking:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nel recupero del tracking'
+                });
+            }
+            
+            // Simula coordinate correnti per ordini in consegna
+            let currentLocation = null;
+            if (['in_preparazione', 'pronto', 'in_consegna'].includes(order.stato)) {
+                // Genera coordinate casuali vicino al centro di una città italiana
+                currentLocation = {
+                    lat: 45.4642 + (Math.random() - 0.5) * 0.02, // Milano come esempio
+                    lng: 9.1900 + (Math.random() - 0.5) * 0.02,
+                    updated: new Date().toISOString()
+                };
+            }
+            
+            res.json({ 
+                success: true, 
+                tracking: {
+                    orderId: order.id,
+                    orderNumber: order.numero_ordine,
+                    status: order.stato,
+                    estimatedDelivery: order.data_consegna_prevista,
+                    trackingHistory: trackingHistory,
+                    currentLocation: currentLocation
+                }
+            });
+        });
+    });
+});
+
+// Cancella un ordine
+app.post('/api/orders/:orderId/cancel', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    const orderId = req.params.orderId;
+    const { reason } = req.body;
+    
+    // Verifica che l'ordine esista e appartenga all'utente
+    db.get(`
+        SELECT * FROM ordini WHERE id = ? AND cliente_id = ?
+    `, [orderId, userId], (err, order) => {
+        if (err) {
+            console.error('Errore recupero ordine:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel recupero dell\'ordine'
+            });
+        }
+        
+        if (!order) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Ordine non trovato' 
+            });
+        }
+        
+        // Verifica che l'ordine possa essere annullato
+        const nonCancellableStatuses = ['in_consegna', 'consegnato', 'completato', 'annullato'];
+        if (nonCancellableStatuses.includes(order.stato)) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Questo ordine non può più essere annullato' 
+            });
+        }
+        
+        // Aggiorna lo stato dell'ordine
+        db.run(`
+            UPDATE ordini 
+            SET stato = 'annullato', 
+                data_aggiornamento = datetime('now')
+            WHERE id = ?
+        `, [orderId], function(err) {
+            if (err) {
+                console.error('Errore aggiornamento stato ordine:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nell\'aggiornamento dello stato dell\'ordine'
+                });
+            }
+            
+            // Aggiungi evento nel tracking
+            db.run(`
+                INSERT INTO ordine_tracking (ordine_id, stato, messaggio, timestamp)
+                VALUES (?, 'annullato', ?, datetime('now'))
+            `, [orderId, reason || 'Ordine annullato dal cliente'], function(err) {
+                if (err) {
+                    console.error('Errore inserimento tracking:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        error: 'Errore nell\'inserimento del tracking'
+                    });
+                }
+                
+                res.json({ 
+                    success: true, 
+                    message: 'Ordine annullato con successo'
+                });
+            });
+        });
+    });
+});
+
+
+// Invia una recensione
+app.post('/api/orders/:orderId/review', requireLogin, reviewUpload.array('photos', 5), (req, res) => {
+    const userId = req.session.user.id;
+    const orderId = req.params.orderId;
+    const { rating, comment, tags } = req.body;
+    
+    // Verifica che l'ordine esista, appartenga all'utente e sia completato
+    db.get(`
+        SELECT * FROM ordini
+        WHERE id = ? AND cliente_id = ? AND stato IN ('consegnato', 'completato')
+    `, [orderId, userId], (err, order) => {
+        if (err) {
+            console.error('Errore recupero ordine:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel recupero dell\'ordine'
+            });
+        }
+        
+        if (!order) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Ordine non trovato o non completato' 
+            });
+        }
+        
+        // Verifica se esiste già una recensione
+        db.get(`
+            SELECT id FROM recensioni WHERE ordine_id = ?
+        `, [orderId], (err, existingReview) => {
+            if (err) {
+                console.error('Errore verifica recensione esistente:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nella verifica della recensione'
+                });
+            }
+            
+            if (existingReview) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Hai già recensito questo ordine'
+                });
+            }
+            
+            // Elabora le immagini caricate
+            const photoUrls = req.files ? req.files.map(file => `/images/reviews/${file.filename}`) : [];
+            
+            // Converti i tag in formato JSON se necessario
+            const parsedTags = tags ? (typeof tags === 'string' ? JSON.parse(tags) : tags) : [];
+            
+            // Inserisci la recensione
+            db.run(`
+                INSERT INTO recensioni 
+                (ordine_id, cliente_id, valutazione, commento, data_creazione, tags, foto)
+                VALUES (?, ?, ?, ?, datetime('now'), ?, ?)
+            `, [
+                orderId, 
+                userId, 
+                parseInt(rating), 
+                comment, 
+                JSON.stringify(parsedTags),
+                JSON.stringify(photoUrls)
+            ], function(err) {
+                if (err) {
+                    console.error('Errore inserimento recensione:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        error: 'Errore nell\'inserimento della recensione'
+                    });
+                }
+                
+                res.json({
+                    success: true,
+                    message: 'Recensione inviata con successo'
+                });
+            });
+        });
+    });
+});
+
+// Riordina un ordine precedente
+app.post('/api/orders/:orderId/reorder', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    const orderId = req.params.orderId;
+    
+    // Recupera l'ordine precedente
+    db.get(`
+        SELECT * FROM ordini WHERE id = ? AND cliente_id = ?
+    `, [orderId, userId], (err, prevOrder) => {
+        if (err) {
+            console.error('Errore recupero ordine precedente:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel recupero dell\'ordine precedente'
+            });
+        }
+        
+        if (!prevOrder) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Ordine non trovato' 
+            });
+        }
+        
+        // Recupera i dettagli dell'ordine precedente
+        db.all(`
+            SELECT * FROM ordine_dettagli WHERE ordine_id = ?
+        `, [orderId], (err, orderItems) => {
+            if (err) {
+                console.error('Errore recupero dettagli ordine:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nel recupero dei dettagli dell\'ordine'
+                });
+            }
+            
+            // Verifica la disponibilità dei prodotti
+            let checkCount = 0;
+            let allAvailable = true;
+            let unavailableProducts = [];
+            
+            const checkNextProduct = () => {
+                if (checkCount >= orderItems.length) {
+                    proceedWithOrder();
+                    return;
+                }
+                
+                const item = orderItems[checkCount];
+                db.get(`
+                    SELECT disponibile FROM panini WHERE id = ?
+                `, [item.prodotto_id], (err, product) => {
+                    if (err || !product || product.disponibile !== 1) {
+                        allAvailable = false;
+                        unavailableProducts.push(item.nome_prodotto);
+                    }
+                    
+                    checkCount++;
+                    checkNextProduct();
+                });
+            };
+            
+            const proceedWithOrder = () => {
+                if (!allAvailable) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        error: `I seguenti prodotti non sono più disponibili: ${unavailableProducts.join(', ')}` 
+                    });
+                }
+                
+                // Genera un nuovo numero ordine
+                const orderNumber = `ORD-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 1000)}`;
+                
+                // Crea il nuovo ordine - usa una transazione
+                db.run('BEGIN TRANSACTION', (err) => {
+                    if (err) {
+                        console.error('Errore inizio transazione:', err);
+                        return res.status(500).json({ 
+                            success: false, 
+                            error: 'Errore nell\'inizio della transazione'
+                        });
+                    }
+                    
+                    db.run(`
+                        INSERT INTO ordini (
+                            numero_ordine, cliente_id, totale, stato, 
+                            indirizzo_consegna, metodo_pagamento, note,
+                            data_creazione, data_aggiornamento
+                        ) VALUES (?, ?, ?, 'in_attesa', ?, ?, ?, datetime('now'), datetime('now'))
+                    `, [
+                        orderNumber,
+                        userId,
+                        prevOrder.totale,
+                        prevOrder.indirizzo_consegna,
+                        prevOrder.metodo_pagamento,
+                        `Riordino dell'ordine #${prevOrder.numero_ordine}`
+                    ], function(err) {
+                        if (err) {
+                            console.error('Errore inserimento nuovo ordine:', err);
+                            db.run('ROLLBACK');
+                            return res.status(500).json({ 
+                                success: false, 
+                                error: 'Errore nell\'inserimento del nuovo ordine'
+                            });
+                        }
+                        
+                        const newOrderId = this.lastID;
+                        let itemsInserted = 0;
+                        
+                        // Inserisci i dettagli del nuovo ordine
+                        const insertNextItem = () => {
+                            if (itemsInserted >= orderItems.length) {
+                                // Tutti gli elementi inseriti, aggiungi il tracking
+                                db.run(`
+                                    INSERT INTO ordine_tracking (ordine_id, stato, messaggio, timestamp)
+                                    VALUES (?, 'in_attesa', 'Ordine ricevuto', datetime('now'))
+                                `, [newOrderId], (err) => {
+                                    if (err) {
+                                        console.error('Errore inserimento tracking:', err);
+                                        db.run('ROLLBACK');
+                                        return res.status(500).json({ 
+                                            success: false, 
+                                            error: 'Errore nell\'inserimento del tracking'
+                                        });
+                                    }
+                                    
+                                    // Commit della transazione
+                                    db.run('COMMIT', (err) => {
+                                        if (err) {
+                                            console.error('Errore commit transazione:', err);
+                                            db.run('ROLLBACK');
+                                            return res.status(500).json({ 
+                                                success: false, 
+                                                error: 'Errore nel commit della transazione'
+                                            });
+                                        }
+                                        
+                                        // Recupera l'ordine completo
+                                        db.get(`
+                                            SELECT * FROM ordini WHERE id = ?
+                                        `, [newOrderId], (err, newOrder) => {
+                                            if (err) {
+                                                console.error('Errore recupero nuovo ordine:', err);
+                                                return res.status(500).json({ 
+                                                    success: false, 
+                                                    error: 'Errore nel recupero del nuovo ordine'
+                                                });
+                                            }
+                                            
+                                            db.all(`
+                                                SELECT * FROM ordine_dettagli WHERE ordine_id = ?
+                                            `, [newOrderId], (err, items) => {
+                                                if (err) {
+                                                    console.error('Errore recupero dettagli nuovo ordine:', err);
+                                                    return res.status(500).json({ 
+                                                        success: false, 
+                                                        error: 'Errore nel recupero dei dettagli del nuovo ordine'
+                                                    });
+                                                }
+                                                
+                                                newOrder.items = items;
+                                                
+                                                res.json({
+                                                    success: true,
+                                                    message: 'Riordino effettuato con successo',
+                                                    order: newOrder
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                                return;
+                            }
+                            
+                            const item = orderItems[itemsInserted];
+                            db.run(`
+                                INSERT INTO ordine_dettagli (
+                                    ordine_id, prodotto_id, nome_prodotto, 
+                                    quantita, prezzo_unitario, note
+                                ) VALUES (?, ?, ?, ?, ?, ?)
+                            `, [
+                                newOrderId,
+                                item.prodotto_id,
+                                item.nome_prodotto,
+                                item.quantita,
+                                item.prezzo_unitario,
+                                item.note
+                            ], (err) => {
+                                if (err) {
+                                    console.error('Errore inserimento dettaglio ordine:', err);
+                                    db.run('ROLLBACK');
+                                    return res.status(500).json({ 
+                                        success: false, 
+                                        error: 'Errore nell\'inserimento dei dettagli dell\'ordine'
+                                    });
+                                }
+                                
+                                itemsInserted++;
+                                insertNextItem();
+                            });
+                        };
+                        
+                        insertNextItem();
+                    });
+                });
+            };
+            
+            if (orderItems.length === 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'L\'ordine precedente non contiene prodotti' 
+                });
+            }
+            
+            checkNextProduct();
+        });
+    });
+});
+
+// Ottieni statistiche degli ordini
+app.get('/api/user/order-stats', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    
+    // Statistiche generali - numero totale ordini
+    db.get(`
+        SELECT COUNT(*) as count FROM ordini WHERE cliente_id = ?
+    `, [userId], (err, totalOrders) => {
+        if (err) {
+            console.error('Errore conteggio ordini:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nel conteggio degli ordini'
+            });
+        }
+        
+        // Numero ordini completati
+        db.get(`
+            SELECT COUNT(*) as count FROM ordini 
+            WHERE cliente_id = ? AND stato IN ('consegnato', 'completato')
+        `, [userId], (err, completedOrders) => {
+            if (err) {
+                console.error('Errore conteggio ordini completati:', err);
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nel conteggio degli ordini completati'
+                });
+            }
+            
+            // Calcolo spesa totale
+            db.get(`
+                SELECT SUM(totale) as total FROM ordini 
+                WHERE cliente_id = ? AND stato IN ('consegnato', 'completato')
+            `, [userId], (err, totalSpent) => {
+                if (err) {
+                    console.error('Errore calcolo spesa totale:', err);
+                    return res.status(500).json({ 
+                        success: false, 
+                        error: 'Errore nel calcolo della spesa totale'
+                    });
+                }
+                
+                // Dati per grafico mensile - ultimi 6 mesi
+                const months = [];
+                const orderCounts = [];
+                const spending = [];
+                
+                // Ottieni i dati mensili
+                let monthsProcessed = 0;
+                
+                const processMonth = (monthsAgo) => {
+                    if (monthsAgo > 5) {
+                        // Tutti i mesi elaborati, restituisci le statistiche
+                        return returnStats();
+                    }
+                    
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - monthsAgo);
+                    const year = date.getFullYear();
+                    const month = date.getMonth() + 1;
+                    
+                    const monthName = new Date(year, month - 1, 1).toLocaleString('it-IT', { month: 'short' });
+                    months.unshift(monthName);
+                    
+                    db.get(`
+                        SELECT COUNT(*) as count, SUM(totale) as total 
+                        FROM ordini 
+                        WHERE cliente_id = ? 
+                        AND stato IN ('consegnato', 'completato')
+                        AND strftime('%Y', data_creazione) = ?
+                        AND strftime('%m', data_creazione) = ?
+                    `, [
+                        userId, 
+                        year.toString(), 
+                        month.toString().padStart(2, '0')
+                    ], (err, monthData) => {
+                        if (err) {
+                            console.error('Errore calcolo dati mensili:', err);
+                            // Continua comunque con valori di default
+                            orderCounts.unshift(0);
+                            spending.unshift(0);
+                        } else {
+                            orderCounts.unshift(monthData.count || 0);
+                            spending.unshift(monthData.total || 0);
+                        }
+                        
+                        processMonth(monthsAgo + 1);
+                    });
+                };
+                
+                // Prodotti più ordinati
+                db.all(`
+                    SELECT 
+                        nome_prodotto, 
+                        SUM(quantita) as total_ordered,
+                        COUNT(DISTINCT ordine_id) as order_count
+                    FROM ordine_dettagli od
+                    JOIN ordini o ON od.ordine_id = o.id
+                    WHERE o.cliente_id = ?
+                    GROUP BY nome_prodotto
+                    ORDER BY total_ordered DESC
+                    LIMIT 5
+                `, [userId], (err, topProducts) => {
+                    if (err) {
+                        console.error('Errore calcolo prodotti più ordinati:', err);
+                        topProducts = [];
+                    }
+                    
+                    // Funzione per restituire tutte le statistiche
+                    const returnStats = () => {
+                        res.json({
+                            success: true,
+                            stats: {
+                                totalOrders: totalOrders.count || 0,
+                                completedOrders: completedOrders.count || 0,
+                                totalSpent: totalSpent.total || 0,
+                                averageOrderValue: completedOrders.count > 0 ? 
+                                    (totalSpent.total / completedOrders.count) : 0,
+                                chartData: {
+                                    labels: months,
+                                    orderCounts,
+                                    spending
+                                },
+                                topProducts: topProducts || []
+                            }
+                        });
+                    };
+                    
+                    // Inizia l'elaborazione dei mesi
+                    processMonth(0);
+                });
+            });
+        });
+    });
+});
+
+// Creazione di un nuovo ordine
+app.post('/api/orders', requireLogin, (req, res) => {
+    const userId = req.session.user.id;
+    const {
+        items,
+        paymentMethod,
+        deliveryAddress,
+        notes,
+        totalAmount
+    } = req.body;
+    
+    // Validazione
+    if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'I prodotti sono obbligatori'
+        });
+    }
+    
+    if (!paymentMethod) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'Il metodo di pagamento è obbligatorio'
+        });
+    }
+    
+    if (!deliveryAddress) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'L\'indirizzo di consegna è obbligatorio'
+        });
+    }
+    
+    // Genera numero ordine univoco
+    const orderNumber = `ORD-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 1000)}`;
+    
+    // Calcola il tempo di consegna previsto (30-60 minuti da ora)
+    const estimatedDelivery = new Date();
+    estimatedDelivery.setMinutes(estimatedDelivery.getMinutes() + 30 + Math.floor(Math.random() * 30));
+    
+    // Inizia transazione
+    db.run('BEGIN TRANSACTION', (err) => {
+        if (err) {
+            console.error('Errore inizio transazione:', err);
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Errore nell\'inizio della transazione'
+            });
+        }
+        
+        // Crea l'ordine
+        db.run(`
+            INSERT INTO ordini (
+                numero_ordine, cliente_id, totale, stato, 
+                indirizzo_consegna, metodo_pagamento, note,
+                data_creazione, data_consegna_prevista, data_aggiornamento
+            ) VALUES (?, ?, ?, 'in_attesa', ?, ?, ?, datetime('now'), ?, datetime('now'))
+        `, [
+            orderNumber,
+            userId,
+            totalAmount,
+            JSON.stringify(deliveryAddress),
+            JSON.stringify(paymentMethod),
+            notes || '',
+            estimatedDelivery.toISOString()
+        ], function(err) {
+            if (err) {
+                console.error('Errore inserimento ordine:', err);
+                db.run('ROLLBACK');
+                return res.status(500).json({ 
+                    success: false, 
+                    error: 'Errore nell\'inserimento dell\'ordine'
+                });
+            }
+            
+            const orderId = this.lastID;
+            let itemsProcessed = 0;
+            
+            // Inserisci i dettagli dell'ordine
+            const processNextItem = () => {
+                if (itemsProcessed >= items.length) {
+                    // Tutti gli elementi processati, aggiungi tracking e completa
+                    db.run(`
+                        INSERT INTO ordine_tracking (ordine_id, stato, messaggio, timestamp)
+                        VALUES (?, 'in_attesa', 'Ordine ricevuto', datetime('now'))
+                    `, [orderId], (err) => {
+                        if (err) {
+                            console.error('Errore inserimento tracking:', err);
+                            db.run('ROLLBACK');
+                            return res.status(500).json({ 
+                                success: false, 
+                                error: 'Errore nell\'inserimento del tracking'
+                            });
+                        }
+                        
+                        // Commit della transazione
+                        db.run('COMMIT', (err) => {
+                            if (err) {
+                                console.error('Errore commit transazione:', err);
+                                db.run('ROLLBACK');
+                                return res.status(500).json({ 
+                                    success: false, 
+                                    error: 'Errore nel commit della transazione'
+                                });
+                            }
+                            
+                            // Recupera l'ordine appena creato
+                            db.get(`
+                                SELECT * FROM ordini WHERE id = ?
+                            `, [orderId], (err, newOrder) => {
+                                if (err) {
+                                    console.error('Errore recupero nuovo ordine:', err);
+                                    return res.status(500).json({ 
+                                        success: false, 
+                                        error: 'Errore nel recupero del nuovo ordine'
+                                    });
+                                }
+                                
+                                db.all(`
+                                    SELECT * FROM ordine_dettagli WHERE ordine_id = ?
+                                `, [orderId], (err, orderItems) => {
+                                    if (err) {
+                                        console.error('Errore recupero dettagli nuovo ordine:', err);
+                                        return res.status(500).json({ 
+                                            success: false, 
+                                            error: 'Errore nel recupero dei dettagli del nuovo ordine'
+                                        });
+                                    }
+                                    
+                                    newOrder.items = orderItems;
+                                    
+                                    res.status(201).json({
+                                        success: true,
+                                        message: 'Ordine creato con successo',
+                                        order: newOrder
+                                    });
+                                });
+                            });
+                        });
+                    });
+                    return;
+                }
+                
+                const item = items[itemsProcessed];
+                
+                // Verifica che il prodotto esista
+                db.get(`
+                    SELECT * FROM panini WHERE id = ?
+                `, [item.productId], (err, product) => {
+                    if (err || !product) {
+                        console.error('Errore recupero prodotto:', err);
+                        db.run('ROLLBACK');
+                        return res.status(400).json({ 
+                            success: false, 
+                            error: `Prodotto ID ${item.productId} non trovato` 
+                        });
+                    }
+                    
+                    // Aggiungi il dettaglio all'ordine
+                    db.run(`
+                        INSERT INTO ordine_dettagli (
+                            ordine_id, prodotto_id, nome_prodotto, 
+                            quantita, prezzo_unitario, note
+                        ) VALUES (?, ?, ?, ?, ?, ?)
+                    `, [
+                        orderId,
+                        item.productId,
+                        product.nome,
+                        item.quantity,
+                        product.prezzo,
+                        item.notes || ''
+                    ], (err) => {
+                        if (err) {
+                            console.error('Errore inserimento dettaglio:', err);
+                            db.run('ROLLBACK');
+                            return res.status(500).json({ 
+                                success: false, 
+                                error: 'Errore nell\'inserimento del dettaglio dell\'ordine'
+                            });
+                        }
+                        
+                        itemsProcessed++;
+                        processNextItem();
+                    });
+                });
+            };
+            
+            processNextItem();
+        });
+    });
+});
 // Add this near your other API endpoints
 app.get('/api/chat/rooms', requireStaff, (req, res) => {
     // Get list of unique chat rooms from the database
