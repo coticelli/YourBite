@@ -37,13 +37,17 @@
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25);
+            /* --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25); -- Vecchia ombra blu/viola, non più usata per header */
             --radius-sm: 12px;
             --radius: 16px;
             --radius-lg: 24px;
             --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            
+            /* NUOVI COLORI PER LA NAVBAR */
+            --navbar-red-main: #EE1B1B;
+            --navbar-red-gradient-dark: #D41010;
         }
 
         * {
@@ -213,12 +217,13 @@
             }
         }
 
+        /* PRIMO BLOCCO HEADER MODIFICATO */
         /* Header */
         header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark)); /* MODIFICATO */
             color: var(--light);
-            padding: 1rem 0;
-            box-shadow: var(--shadow);
+            padding: 1rem 0; /* Questo padding verrà sovrascritto dal secondo blocco header se attivo */
+            box-shadow: 0 8px 25px rgba(238, 27, 27, 0.25); /* MODIFICATO - ombra rossa */
             position: sticky;
             top: 0;
             z-index: 100;
@@ -266,7 +271,7 @@
             position: absolute;
             top: -5px;
             right: -5px;
-            background-color: var(--accent-red);
+            background-color: var(--accent-red); /* Questo usa già un rosso, potrebbe andare bene */
             color: var(--light);
             border-radius: 50%;
             padding: 2px;
@@ -278,7 +283,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: 2px solid var(--primary);
+            border: 2px solid var(--navbar-red-main); /* MODIFICATO - Bordo rosso per coerenza */
         }
 
         
@@ -289,23 +294,23 @@
        
 
 
-
+/* SECONDO BLOCCO HEADER MODIFICATO */
 header {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    padding: 0; /* Rimosso padding: 1rem 0; per allinearsi al primo file */
-    box-shadow: var(--shadow-colored); /* Usata variabile del primo file */
+    background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark)); /* MODIFICATO */
+    padding: 0; 
+    box-shadow: 0 8px 25px rgba(238, 27, 27, 0.25); /* MODIFICATO - ombra rossa */
     position: sticky;
     top: 0;
     z-index: 100;
     transition: var(--transition);
-    height: 70px; /* Altezza fissa come nel primo file */
+    height: 70px; 
     display: flex;
     align-items: center;
-    font-family: 'Montserrat', 'Arial', sans-serif; /* Aggiunto per coerenza font */
+    font-family: 'Montserrat', 'Arial', sans-serif; 
 }
 
 header:hover {
-    box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35);
+    box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35); /* MODIFICATO - ombra rossa più intensa */
 }
 
 header::before {
@@ -334,26 +339,26 @@ header::before {
     }
 }
 
-.header-container {
+.header-container { /* Questa è una ridefinizione di .header-container, verificare se voluta */
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1600px; /* Max-width del primo file */
+    max-width: 1600px; 
     margin: 0 auto;
-    padding: 0 25px; /* Padding del primo file */
+    padding: 0 25px; 
 }
 
-.logo-container { /* Sostituisce .logo-wrapper */
+.logo-container { 
     display: flex;
     align-items: center;
-    gap: 16px; /* Gap del primo file */
+    gap: 16px; 
 }
 
-.logo {
-    width: 42px; /* Dimensioni del primo file */
+.logo { /* Questa è una ridefinizione di .logo, verificare se voluta */
+    width: 42px; 
     height: 42px;
-    border-radius: 12px; /* Border-radius del primo file */
+    border-radius: 12px; 
     object-fit: cover;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     transition: var(--transition-spring);
@@ -400,16 +405,16 @@ header::before {
     }
 }
 
-.header-title { /* Sostituisce .site-title */
+.header-title { 
     color: white;
-    font-size: 1.5rem; /* Dimensione del primo file (era 1.8rem) */
+    font-size: 1.5rem; 
     font-weight: 700;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     position: relative;
     letter-spacing: 0.5px;
-    text-decoration: none; /* Aggiunto per rimuovere sottolineatura se fosse un link */
-    font-family: 'Montserrat', 'Arial', sans-serif; /* Coerenza font */
+    text-decoration: none; 
+    font-family: 'Montserrat', 'Arial', sans-serif; 
 }
 
 .header-title::after {
@@ -428,18 +433,18 @@ header::before {
     width: 100%;
 }
 
-.header-nav { /* Sostituisce .nav-menu */
+.header-nav { 
     display: flex;
-    gap: 8px; /* Gap del primo file (era 1rem) */
+    gap: 8px; 
     align-items: center;
 }
 
-.header-nav a { /* Sostituisce .nav-link */
-    color: white; /* Colore del primo file (era rgba(255,255,255,0.85)) */
+.header-nav a { 
+    color: white; 
     text-decoration: none;
     font-weight: 500;
-    padding: 10px 16px; /* Padding del primo file */
-    border-radius: 12px; /* --radius-sm del primo file (era --radius-sm che valeva 12px, il primo ha --radius:16px, --radius-sm:10px, --radius-lg:24px. Userò 12px per coerenza con il design dei bottoni) */
+    padding: 10px 16px; 
+    border-radius: 12px; 
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     font-size: 14px;
     letter-spacing: 0.5px;
@@ -451,16 +456,15 @@ header::before {
     align-items: center;
     gap: 6px;
     backdrop-filter: blur(5px);
-    font-family: 'Montserrat', 'Arial', sans-serif; /* Coerenza font */
+    font-family: 'Montserrat', 'Arial', sans-serif; 
 }
 
 .header-nav a i {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     font-size: 16px;
-    /* margin-right: 6px; Rimosso perché ora c'è gap sul parent 'a' */
 }
 
-.header-nav a span { /* Per nascondere il testo su schermi piccoli, come nel primo file */
+.header-nav a span { 
     /* Lo span è visibile di default, le media query lo nasconderanno */
 }
 
@@ -480,11 +484,11 @@ header::before {
 }
 
 .header-nav a:hover {
-    background-color: rgba(255, 255, 255, 0.15); /* Stile hover del primo file */
+    background-color: rgba(255, 255, 255, 0.15); 
     transform: translateY(-5px);
     border-color: rgba(255, 255, 255, 0.3);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    color: white; /* Assicura che il testo rimanga bianco */
+    color: white; 
 }
 
 .header-nav a:hover i {
@@ -496,8 +500,8 @@ header::before {
     transition: all 0.7s ease;
 }
 
-.header-nav a.active {
-    background-color: rgba(255, 255, 255, 0.2); /* Stile active del primo file */
+.header-nav a.active { /* Questa è una ridefinizione di .header-nav a.active, verificare */
+    background-color: rgba(255, 255, 255, 0.2); 
     font-weight: 600;
     border-color: rgba(255, 255, 255, 0.4);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -540,7 +544,7 @@ header::before {
     background-color: rgba(255, 255, 255, 0.15);
     color: white;
     padding: 8px 16px;
-    border-radius: 12px; /* Uso 12px per coerenza con i bottoni nav */
+    border-radius: 12px; 
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 0.5px;
@@ -551,8 +555,8 @@ header::before {
     backdrop-filter: blur(5px);
     animation: badgePulse 3s infinite alternate;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    margin-left: 10px; /* Come nel primo file */
-    font-family: 'Montserrat', 'Arial', sans-serif; /* Coerenza font */
+    margin-left: 10px; 
+    font-family: 'Montserrat', 'Arial', sans-serif; 
 }
 
 @keyframes badgePulse {
@@ -592,7 +596,7 @@ header::before {
     }
 }
 
-#notification-badge { /* Sostituisce .notification-badge del secondo file */
+#notification-badge { /* Questa è una ridefinizione di #notification-badge, verificare */
     position: absolute;
     top: -5px;
     right: -5px;
@@ -601,13 +605,13 @@ header::before {
     border-radius: 50%;
     width: 22px;
     height: 22px;
-    display: flex; /* Già 'flex' nel primo file */
+    display: flex; 
     align-items: center;
     justify-content: center;
     font-size: 12px;
-    font-weight: bold; /* 'bold' nel primo file, era 700 */
-    box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3); /* Box shadow del primo file */
-    border: 2px solid white; /* Border del primo file */
+    font-weight: bold; 
+    box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3); 
+    border: 2px solid white; /* Il bordo qui è bianco, coerente con il badge rosso */
     animation: notificationPulse 1.5s infinite alternate;
 }
 
@@ -621,19 +625,19 @@ header::before {
     }
 }
 
-.user-controls { /* Sostituisce .user-menu */
+.user-controls { 
     display: flex;
     align-items: center;
-    margin-left: 20px; /* Aggiunge margine come nel primo file */
+    margin-left: 20px; 
 }
 
-.username { /* Sostituisce .user-name */
+.username { 
     color: white;
     font-weight: 500;
     margin-right: 15px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     letter-spacing: 0.3px;
-    font-family: 'Montserrat', 'Arial', sans-serif; /* Coerenza font */
+    font-family: 'Montserrat', 'Arial', sans-serif; 
 }
 
 .logout-btn {
@@ -641,7 +645,7 @@ header::before {
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     padding: 8px 15px;
-    border-radius: var(--radius-sm); /* Usa --radius-sm del primo file (10px) */
+    border-radius: var(--radius-sm); 
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -652,9 +656,9 @@ header::before {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
-    font-family: 'Montserrat', 'Arial', sans-serif; /* Coerenza font */
+    font-family: 'Montserrat', 'Arial', sans-serif; 
 }
-.logout-btn.btn-glow { /* Stile per l'effetto glow del primo file */
+.logout-btn.btn-glow { 
     position: relative;
     overflow: hidden;
 }
@@ -673,7 +677,7 @@ header::before {
 
 .logout-btn.btn-glow:hover::after {
     opacity: 0.2;
-    animation: glowPulse 1.5s ease infinite; /* Usa la stessa animazione del badge */
+    animation: glowPulse 1.5s ease infinite; 
 }
 
 /* Keyframes glowPulse se non già definito globalmente per altri bottoni */
@@ -712,17 +716,17 @@ header::before {
 /* === Stili responsivi per la navbar (dal primo file) === */
 @media (max-width: 1200px) {
     .header-nav a span {
-        display: none; /* Nasconde il testo dei link, lascia solo icone */
+        display: none; 
     }
 
     .header-nav a {
-        padding: 10px; /* Padding ridotto per solo icone */
+        padding: 10px; 
         font-size: 16px;
         justify-content: center;
     }
 
     .header-nav a i {
-        margin: 0; /* Rimuove margine se c'era */
+        margin: 0; 
     }
 
     .user-role-badge {
@@ -731,34 +735,34 @@ header::before {
 }
 
 @media (max-width: 992px) {
-    .header-container {
+    .header-container { /* Ridefinizione di .header-container in media query */
         flex-wrap: wrap;
         justify-content: center;
         gap: 10px;
     }
 
     .logo-container {
-        margin-right: auto; /* Spinge logo a sinistra */
+        margin-right: auto; 
     }
 
     .user-controls {
-        margin-left: auto; /* Spinge controlli utente a destra */
+        margin-left: auto; 
     }
 
-    header {
-        height: auto; /* Altezza automatica per wrap */
+    header { /* Ridefinizione di header in media query */
+        height: auto; 
         padding: 10px 0;
     }
 }
 
 @media (max-width: 768px) {
-    .header-container {
+    .header-container { /* Ridefinizione di .header-container in media query */
         padding: 0 15px;
-        flex-direction: column; /* Elementi impilati verticalmente */
+        flex-direction: column; 
         gap: 15px;
     }
 
-    .header-nav {
+    .header-nav { /* Ridefinizione di .header-nav in media query */
         flex-wrap: wrap;
         justify-content: center;
         margin: 10px 0;
@@ -766,7 +770,7 @@ header::before {
 
     .logo-container,
     .user-controls {
-        margin: 0; /* Centra logo e controlli utente */
+        margin: 0; 
         justify-content: center;
         width: 100%;
     }
@@ -1400,7 +1404,7 @@ header::before {
         .chat-send {
             background: var(--primary);
             border: none;
-            color: var (--light);
+            color: var (--light); /* Attenzione: qui c'è uno spazio var (--light) -> var(--light) */
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -1411,6 +1415,11 @@ header::before {
             transition: var(--transition-spring);
             box-shadow: 0 3px 8px rgba(94, 96, 206, 0.3);
         }
+        /* Ho corretto lo spazio extra in var (--light) per .chat-send color */
+        .chat-send {
+             color: var(--light);
+        }
+
 
         .chat-send:hover {
             transform: scale(1.1);
@@ -1513,7 +1522,7 @@ header::before {
             background-color: var(--accent-red);
             color: white;
             padding: 8px 16px;
-            border-radius: var(--radius-full);
+            border-radius: var(--radius-full); /* Assicurarsi che --radius-full sia definito o usare un valore come 999px */
             font-size: 14px;
             font-weight: 500;
             box-shadow: var(--shadow);
@@ -1525,6 +1534,12 @@ header::before {
             transition: var(--transition);
             z-index: 1000;
         }
+        /* Se --radius-full non è definito, aggiungilo in :root o usa un valore esplicito */
+        :root {
+             /* ... altre variabili ... */
+            --radius-full: 999px; /* Aggiunto per .connection-status se non esiste */
+        }
+
 
         .connection-status.show {
             opacity: 1;
@@ -1570,13 +1585,15 @@ header::before {
         }
 
         @media (max-width: 768px) {
-            .header-container {
+            /* La ridefinizione di .header-container, .nav-menu, .nav-link qui è intenzionale per responsività */
+            .header-container { /* Già definito sopra, ma questo è specifico per <768px */
                 flex-direction: column;
                 gap: 10px;
-                padding: 1rem;
+                padding: 1rem; /* Sovrascrive il padding: 0 15px; del @media (max-width: 768px) più in alto */
+                               /* Questo è confuso, bisognerebbe unificare le media query per header */
             }
 
-            .nav-menu {
+            .nav-menu { /* Dovrebbe essere .header-nav se si segue la nomenclatura del CSS più dettagliato */
                 width: 100%;
                 overflow-x: auto;
                 padding-bottom: 10px;
@@ -1588,11 +1605,11 @@ header::before {
                 display: none;
             }
 
-            .nav-link {
+            .nav-link { /* Dovrebbe essere .header-nav a se si segue la nomenclatura */
                 white-space: nowrap;
             }
 
-            .main-container {
+            .main-container { /* Ridefinizione di .main-container in media query */
                 padding: 1rem;
             }
 
@@ -2981,29 +2998,78 @@ function scrollToBottom() {
 
 function setupLogoutButton() {
     const logoutBtn = document.getElementById('logoutBtn');
-    if (!logoutBtn) return;
-    logoutBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const loadingOverlay = createLoadingOverlay('Logout in corso...');
-        document.body.appendChild(loadingOverlay);
-        fetch('/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
-        .then(response => {
-            if (response.ok) {
-                loadingOverlay.querySelector('p').textContent = 'Reindirizzamento...';
-                setTimeout(() => window.location.href = '/login', 800);
-            } else throw new Error('Errore durante il logout');
-        })
-        .catch(error => {
-            console.error('Errore durante il logout:', error);
+    if (!logoutBtn) { // L'ID nel file HTML è logoutBtn (nella sidebar)
+        // Potrebbe esserci anche un altro bottone logout nell'header, con classe .logout-btn
+        const headerLogoutBtn = document.querySelector('.logout-btn');
+        if (headerLogoutBtn && headerLogoutBtn.getAttribute('onclick') === 'logout()') {
+            // Se esiste una funzione globale logout(), si potrebbe non dover fare nulla qui
+            // o ridefinire logout() per includere il loading overlay.
+            // Per ora, ci concentriamo su quello con ID, se esiste.
+            console.warn("Elemento #logoutBtn non trovato nella sidebar. Verificare se il logout dell'header è gestito altrove.");
+            return;
+        } else if (!headerLogoutBtn) {
+             console.error("Nessun pulsante di logout trovato (#logoutBtn o .logout-btn nell'header).");
+            return;
+        }
+    }
+    
+    // Gestione per #logoutBtn nella sidebar
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            performLogout();
+        });
+    }
+
+    // Se c'è un .logout-btn nell'header, potremmo voler sovrascrivere il suo onclick o aggiungere un listener
+    // Tuttavia, l'HTML ha onclick="logout()". Assumiamo che `logout()` esista globalmente.
+    // Se `logout()` non esiste o vogliamo standardizzare, potremmo fare:
+    const headerLogoutBtn = document.querySelector('header .logout-btn');
+    if (headerLogoutBtn) {
+        headerLogoutBtn.onclick = function(e) { // Sovrascrive l'onclick inline
+            e.preventDefault();
+            performLogout();
+        };
+    }
+}
+
+function performLogout() {
+    const loadingOverlay = createLoadingOverlay('Logout in corso...');
+    document.body.appendChild(loadingOverlay);
+    fetch('/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+    .then(response => {
+        if (response.ok) {
+            loadingOverlay.querySelector('p').textContent = 'Reindirizzamento...';
+            setTimeout(() => window.location.href = '/login', 800);
+        } else throw new Error('Errore durante il logout');
+    })
+    .catch(error => {
+        console.error('Errore durante il logout:', error);
+        if (loadingOverlay && loadingOverlay.parentNode) { // Controlla se l'overlay esiste ancora
             loadingOverlay.querySelector('p').textContent = 'Si è verificato un errore. Riprova.';
             const retryButton = document.createElement('button');
             retryButton.textContent = 'Riprova';
             retryButton.style.cssText = "margin-top:15px;padding:8px 20px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;";
-            retryButton.onclick = function() { document.body.removeChild(loadingOverlay); /* setupLogoutButton(); Non ricorsivo */ };
+            retryButton.onclick = function() { 
+                if (loadingOverlay.parentNode) {
+                    document.body.removeChild(loadingOverlay); 
+                }
+                // Non chiamare setupLogoutButton() ricorsivamente per evitare loop se fallisce sempre
+            };
+            // Rimuovi vecchi bottoni di riprova se esistono
+            const oldRetryButton = loadingOverlay.querySelector('button');
+            if (oldRetryButton) oldRetryButton.remove();
             loadingOverlay.appendChild(retryButton);
-        });
+        }
     });
 }
+
+// Definisci la funzione logout globale se usata da onclick="logout()"
+// e non è definita altrove.
+function logout() {
+    performLogout();
+}
+
 </script>
 </body>
 </html>

@@ -40,7 +40,7 @@
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25);
+            /* --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25); -- VECCHIA OMRA BLU, NON USATA PER HEADER */
             --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25);
             --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25);
             --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25);
@@ -50,6 +50,10 @@
             --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+            /* NUOVI COLORI PER LA NAVBAR (MODIFICATO) */
+            --navbar-red-main: #EE1B1B;
+            --navbar-red-gradient-dark: #D41010;
         }
 
         * {
@@ -134,11 +138,13 @@
             }
         }
 
-        /* === HEADER E NAVIGAZIONE === */
+        /* === HEADER E NAVIGAZIONE (MODIFICATO) === */
         header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            /* background: linear-gradient(135deg, var(--primary), var(--primary-dark)); -- VECCHIO BLU */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark)); /* MODIFICATO - NUOVO ROSSO */
             padding: 0;
-            box-shadow: var(--shadow-colored);
+            /* box-shadow: var(--shadow-colored); -- VECCHIA OMBRA BLU */
+            box-shadow: 0 8px 25px rgba(238, 27, 27, 0.25); /* MODIFICATO - NUOVA OMBRA ROSSA */
             position: sticky;
             top: 0;
             z-index: 100;
@@ -149,7 +155,8 @@
         }
 
         header:hover {
-            box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35);
+            /* box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35); -- VECCHIA OMBRA BLU */
+            box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35); /* MODIFICATO - NUOVA OMBRA ROSSA */
         }
 
         header::before {
@@ -259,7 +266,7 @@
             display: block;
             width: 0;
             height: 2px;
-            background: var(--accent);
+            background: var(--accent); /* Potresti voler cambiare questo colore se stona con il rosso */
             transition: var(--transition);
             position: absolute;
             bottom: -5px;
@@ -397,7 +404,7 @@
             position: absolute;
             top: -5px;
             right: -5px;
-            background: linear-gradient(135deg, #ff6b6b, #e63946);
+            background: linear-gradient(135deg, #ff6b6b, #e63946); /* Questo è già un rosso, va bene */
             color: white;
             border-radius: 50%;
             width: 22px;
@@ -408,7 +415,7 @@
             font-size: 12px;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
-            border: 2px solid white;
+            border: 2px solid white; /* MODIFICATO - Bordo per coerenza, anche se qui è bianco, ok con bg rosso */
             animation: notificationPulse 1.5s infinite alternate;
         }
 
@@ -1038,56 +1045,36 @@
             box-shadow: var(--shadow-warning);
         }
 
-        .summary-card.info .summary-icon {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            box-shadow: var(--shadow);
+        .header-nav a.home-button { /* Questo stile è specifico per un home-button, potrebbe non servire qui o va generalizzato */
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
         }
 
-        .summary-card.success .summary-icon {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            box-shadow: var(--shadow-success);
+        .header-nav a.home-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(45deg);
+            animation: homeButtonShimmer 3s infinite;
+            opacity: 0.5;
         }
 
-        .summary-card.error .summary-icon {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            box-shadow: var(--shadow-danger);
+        @keyframes homeButtonShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) rotate(45deg); }
         }
-
-        .summary-card.warning .summary-icon {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            box-shadow: var(--shadow-warning);
-        }
-
-        .header-nav a.home-button {
-    background-color: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.25);
-    position: relative;
-    overflow: hidden;
-}
-
-.header-nav a.home-button::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        to bottom right,
-        rgba(255, 255, 255, 0),
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 255, 255, 0)
-    );
-    transform: rotate(45deg);
-    animation: homeButtonShimmer 3s infinite;
-    opacity: 0.5;
-}
-
-@keyframes homeButtonShimmer {
-    0% { transform: translateX(-100%) rotate(45deg); }
-    50% { transform: translateX(100%) rotate(45deg); }
-    100% { transform: translateX(-100%) rotate(45deg); }
-}
         /* === RESPONSIVE DESIGN === */
         @media (max-width: 1200px) {
             .header-nav a span {
@@ -1311,7 +1298,7 @@
                 <a href="/homepage_capo">
                     <i class="fas fa-home"></i> <span>Homepage</span>
                 </a>
-                <a href="/dashboard" class="active">
+                <a href="/dashboard" class="active"> <!-- Link Dashboard già marcato come active -->
                     <i class="fas fa-chart-line"></i> <span>Dashboard</span>
                 </a>
                 <a href="/ordini">
@@ -2036,7 +2023,7 @@
 
             const spinner = document.createElement('div');
             spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
-            spinner.style.borderTopColor = '#5e60ce';
+            spinner.style.borderTopColor = '#5e60ce'; // Usa --primary per lo spinner
             spinner.style.borderRadius = '50%';
             spinner.style.width = '100%';
             spinner.style.height = '100%';
