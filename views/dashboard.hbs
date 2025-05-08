@@ -17,18 +17,29 @@
     <style>
         /* === VARIABILI E IMPOSTAZIONI BASE === */
         :root {
-            /* Palette colori moderna e vibrante */
-            --primary: #5e60ce;
-            --primary-light: #6930c3;
-            --primary-dark: #5390d9;
-            --secondary: #48bfe3;
-            --secondary-light: #64dfdf;
-            --accent: #80ffdb;
-            --accent-green: #2ecc71;
-            --accent-red: #e74c3c;
-            --accent-orange: #f39c12;
+            /* NUOVI COLORI PER LA NAVBAR E ELEMENTI PRINCIPALI (MODIFICATO) */
+            --navbar-red-main: #EE1B1B;
+            --navbar-red-gradient-dark: #D41010;
+
+            /* Palette colori - MODIFICATO per usare i nuovi rossi/arancioni */
+            --primary: var(--navbar-red-main); /* Era #5e60ce */
+            --primary-light: var(--navbar-red-main); /* Era #6930c3 - usiamo main red, potrebbe essere un rosso più chiaro se necessario */
+            --primary-dark: var(--navbar-red-gradient-dark); /* Era #5390d9 */
+            
+            /* --secondary e --secondary-light cambieranno in tonalità rosse/arancio o complementari */
+            /* Per ora, per coerenza con la richiesta "arancione/rosso" uso le stesse variabili rosse, 
+               ma potremmo differenziarle se serve più varietà (es. usando --accent-orange) */
+            --secondary: var(--navbar-red-main); /* Era #48bfe3 */
+            --secondary-light: var(--navbar-red-main); /* Era #64dfdf */
+            
+            --accent: var(--accent-orange); /* Era #80ffdb (verde acqua), ora arancione per coerenza */
+            
+            --accent-green: #2ecc71; /* Mantenuto */
+            --accent-red: #e74c3c;   /* Mantenuto, è già un rosso */
+            --accent-orange: #f39c12; /* Mantenuto, è già arancione */
+
             --dark: #1a1a2e;
-            --dark-blue: #16213e;
+            --dark-blue: #16213e; /* Potrebbe diventare un rosso molto scuro o grigio scuro se usato in UI */
             --medium-dark: #252941;
             --light: #ffffff;
             --gray: #f8f9fa;
@@ -40,20 +51,16 @@
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-            /* --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25); -- VECCHIA OMRA BLU, NON USATA PER HEADER */
-            --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25);
-            --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25);
-            --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25);
+            /* --shadow-colored era basata su --primary, ora l'header usa ombra rossa diretta */
+            --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25); /* Mantenuto */
+            --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25); /* Mantenuto */
+            --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25); /* Mantenuto */
             --radius: 16px;
             --radius-sm: 10px;
             --radius-lg: 24px;
             --transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-            /* NUOVI COLORI PER LA NAVBAR (MODIFICATO) */
-            --navbar-red-main: #EE1B1B;
-            --navbar-red-gradient-dark: #D41010;
         }
 
         * {
@@ -66,9 +73,10 @@
 
         body {
             background-color: var(--gray);
+            /* MODIFICATO: background-image con tonalità rosse */
             background-image:
-                radial-gradient(circle at 25% 10%, rgba(94, 96, 206, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 75% 75%, rgba(72, 191, 227, 0.05) 0%, transparent 40%);
+                radial-gradient(circle at 25% 10%, rgba(238, 27, 27, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(212, 16, 16, 0.05) 0%, transparent 40%);
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -92,11 +100,13 @@
 
         .card-hover-effect:hover {
             transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
-            box-shadow: 0 20px 40px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 20px 40px rgba(238, 27, 27, 0.2);
         }
 
         .text-gradient {
-            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(120deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
@@ -138,13 +148,11 @@
             }
         }
 
-        /* === HEADER E NAVIGAZIONE (MODIFICATO) === */
+        /* === HEADER E NAVIGAZIONE (GIÀ MODIFICATO NEL PASSAGGIO PRECEDENTE) === */
         header {
-            /* background: linear-gradient(135deg, var(--primary), var(--primary-dark)); -- VECCHIO BLU */
-            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark)); /* MODIFICATO - NUOVO ROSSO */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             padding: 0;
-            /* box-shadow: var(--shadow-colored); -- VECCHIA OMBRA BLU */
-            box-shadow: 0 8px 25px rgba(238, 27, 27, 0.25); /* MODIFICATO - NUOVA OMBRA ROSSA */
+            box-shadow: 0 8px 25px rgba(238, 27, 27, 0.25); 
             position: sticky;
             top: 0;
             z-index: 100;
@@ -155,8 +163,7 @@
         }
 
         header:hover {
-            /* box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35); -- VECCHIA OMBRA BLU */
-            box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35); /* MODIFICATO - NUOVA OMBRA ROSSA */
+            box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35);
         }
 
         header::before {
@@ -266,7 +273,7 @@
             display: block;
             width: 0;
             height: 2px;
-            background: var(--accent); /* Potresti voler cambiare questo colore se stona con il rosso */
+            background: var(--accent); /* Ora usa --accent-orange */
             transition: var(--transition);
             position: absolute;
             bottom: -5px;
@@ -404,7 +411,7 @@
             position: absolute;
             top: -5px;
             right: -5px;
-            background: linear-gradient(135deg, #ff6b6b, #e63946); /* Questo è già un rosso, va bene */
+            background: linear-gradient(135deg, #ff6b6b, #e63946);
             color: white;
             border-radius: 50%;
             width: 22px;
@@ -415,7 +422,7 @@
             font-size: 12px;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
-            border: 2px solid white; /* MODIFICATO - Bordo per coerenza, anche se qui è bianco, ok con bg rosso */
+            border: 2px solid white; 
             animation: notificationPulse 1.5s infinite alternate;
         }
 
@@ -526,7 +533,8 @@
             position: absolute;
             width: 50%;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(90deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             bottom: -8px;
             left: 0;
             border-radius: 2px;
@@ -569,7 +577,8 @@
             left: 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(90deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             transition: var(--transition);
             z-index: 2;
         }
@@ -602,9 +611,10 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            /* MODIFICATO: gradiente e ombra rossa */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
-            box-shadow: 0 8px 20px rgba(94, 96, 206, 0.3);
+            box-shadow: 0 8px 20px rgba(238, 27, 27, 0.3);
             position: relative;
             z-index: 2;
             transition: var(--transition-spring);
@@ -621,7 +631,8 @@
             margin: 5px 0;
             position: relative;
             z-index: 2;
-            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(120deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -689,7 +700,8 @@
             position: absolute;
             width: 40%;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(90deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             bottom: -8px;
             left: 0;
             border-radius: 2px;
@@ -725,10 +737,11 @@
         }
 
         .chart-filter-btn.active {
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            /* MODIFICATO: gradiente e ombra rossa */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
             border-color: transparent;
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
         }
 
         .chart-wrapper {
@@ -760,7 +773,8 @@
             position: absolute;
             width: 40%;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(90deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             bottom: -8px;
             left: 0;
             border-radius: 2px;
@@ -803,21 +817,22 @@
 
         .order-id {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--navbar-red-main); /* MODIFICATO */
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .order-id i {
-            color: var(--primary-light);
+            color: var(--navbar-red-main); /* MODIFICATO (era --primary-light) */
             font-size: 18px;
         }
 
         .order-price {
             font-weight: 700;
             color: var(--text);
-            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(120deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -843,12 +858,12 @@
         }
 
         .order-status.processing {
-            background-color: rgba(243, 156, 18, 0.15);
+            background-color: rgba(243, 156, 18, 0.15); /* Arancione, va bene */
             color: var(--accent-orange);
         }
 
         .order-status.cancelled {
-            background-color: rgba(231, 76, 60, 0.15);
+            background-color: rgba(231, 76, 60, 0.15); /* Rosso, va bene */
             color: var(--accent-red);
         }
 
@@ -868,9 +883,15 @@
             position: absolute;
             width: 5px;
             height: 5px;
-            background-color: rgba(94, 96, 206, 0.1);
+            /* MODIFICATO: colore rosso per le particelle */
+            background-color: rgba(238, 27, 27, 0.1); 
             border-radius: 50%;
         }
+        /* Se si desidera alternare il colore anche per le particelle */
+        .particle:nth-child(odd) {
+             background-color: rgba(212, 16, 16, 0.15); /* Altra tonalità di rosso/arancio */
+        }
+
 
         @keyframes particleFloat {
             0% {
@@ -908,13 +929,15 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--primary-light), var(--primary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(var(--navbar-red-main), var(--navbar-red-gradient-dark));
             border-radius: 10px;
             transition: var(--transition);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(var(--primary), var(--primary-dark));
+            /* MODIFICATO: gradiente rosso (potrebbe essere scurito leggermente di più) */
+            background: linear-gradient(var(--navbar-red-gradient-dark), var(--navbar-red-gradient-dark));
         }
 
         /* === QUICK STATS SUMMARY === */
@@ -965,11 +988,11 @@
         }
 
         .summary-card.positive .summary-value {
-            color: var(--accent-green);
+            color: var(--accent-green); /* Mantenuto verde per positivo */
         }
 
         .summary-card.negative .summary-value {
-            color: var(--accent-red);
+            color: var(--accent-red); /* Mantenuto rosso per negativo */
         }
 
         .summary-icon {
@@ -980,9 +1003,10 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            /* MODIFICATO: gradiente e ombra rossa per l'icona di default */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
-            box-shadow: 0 8px 20px rgba(94, 96, 206, 0.3);
+            box-shadow: 0 8px 20px rgba(238, 27, 27, 0.3);
             transition: var(--transition-spring);
         }
 
@@ -991,61 +1015,24 @@
         }
 
         .summary-card.positive .summary-icon {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: linear-gradient(135deg, #2ecc71, #27ae60); /* Mantenuto verde per positivo */
             box-shadow: var(--shadow-success);
         }
 
         .summary-card.negative .summary-icon {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(135deg, #e74c3c, #c0392b); /* Mantenuto rosso per negativo */
             box-shadow: var(--shadow-danger);
         }
-
-        .summary-card.warning .summary-icon {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            box-shadow: var(--shadow-warning);
-        }
-
+        
+        /* MODIFICATO: .summary-card.info .summary-icon ora usa arancione/rosso */
         .summary-card.info .summary-icon {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, var(--accent-orange), var(--navbar-red-main)); /* Esempio con arancio e rosso */
+            box-shadow: var(--shadow-warning); /* Riusiamo ombra warning per arancione */
         }
+        /* Le classi .success, .error, .warning sono già definite e usano i rispettivi colori di accento, il che va bene */
 
-        .summary-card.success .summary-icon {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            box-shadow: var(--shadow-success);
-        }
 
-        .summary-card.error .summary-icon {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            box-shadow: var(--shadow-danger);
-        }
-
-        .summary-card.warning .summary-icon {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            box-shadow: var(--shadow-warning);
-        }
-
-        .summary-card.info .summary-icon {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            box-shadow: var(--shadow);
-        }
-
-        .summary-card.success .summary-icon {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            box-shadow: var(--shadow-success);
-        }
-
-        .summary-card.error .summary-icon {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            box-shadow: var(--shadow-danger);
-        }
-
-        .summary-card.warning .summary-icon {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            box-shadow: var(--shadow-warning);
-        }
-
-        .header-nav a.home-button { /* Questo stile è specifico per un home-button, potrebbe non servire qui o va generalizzato */
+        .header-nav a.home-button { 
             background-color: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.25);
             position: relative;
@@ -1120,7 +1107,7 @@
                 margin-left: auto;
             }
 
-            header {
+            header { /* Ridefinizione header in media query già gestita per colore */
                 height: auto;
                 padding: 10px 0;
             }
@@ -1222,17 +1209,17 @@
         }
 
         .toast-success .toast-icon {
-            background-color: rgba(46, 204, 113, 0.15);
+            background-color: rgba(46, 204, 113, 0.15); /* Verde, ok */
             color: var(--accent-green);
         }
 
         .toast-error .toast-icon {
-            background-color: rgba(231, 76, 60, 0.15);
+            background-color: rgba(231, 76, 60, 0.15); /* Rosso, ok */
             color: var(--accent-red);
         }
 
         .toast-warning .toast-icon {
-            background-color: rgba(243, 156, 18, 0.15);
+            background-color: rgba(243, 156, 18, 0.15); /* Arancione, ok */
             color: var(--accent-orange);
         }
 
@@ -1333,7 +1320,7 @@
 
     <div class="dashboard-container">
         <div class="dashboard-header animate-in">
-            <h1 class="text-gradient">Dashboard</h1>
+            <h1 class="text-gradient">Dashboard</h1> <!-- Ora usa gradiente rosso -->
             <p>Panoramica delle prestazioni del tuo fast food</p>
         </div>
 
@@ -1344,17 +1331,17 @@
                     <div class="summary-title">Vendite di oggi</div>
                     <div class="summary-value" id="total-sales-today">€1,895</div>
                 </div>
-                <div class="summary-icon">
+                <div class="summary-icon"> <!-- Icona verde per 'positive' -->
                     <i class="fas fa-coins"></i>
                 </div>
             </div>
 
-            <div class="summary-card animate-in animate-delay-2">
+            <div class="summary-card info animate-in animate-delay-2"> <!-- Modificato da default a info -->
                 <div class="summary-info">
                     <div class="summary-title">Clienti attivi</div>
                     <div class="summary-value" id="active-customers">78</div>
                 </div>
-                <div class="summary-icon">
+                <div class="summary-icon"> <!-- Icona arancio/rossa per 'info' -->
                     <i class="fas fa-users"></i>
                 </div>
             </div>
@@ -1364,7 +1351,7 @@
                     <div class="summary-title">Ordini in corso</div>
                     <div class="summary-value" id="pending-orders">12</div>
                 </div>
-                <div class="summary-icon">
+                <div class="summary-icon"> <!-- Icona arancione per 'warning' -->
                     <i class="fas fa-hourglass-half"></i>
                 </div>
             </div>
@@ -1373,38 +1360,38 @@
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card card-hover-effect animate-in">
-                <div class="icon">
+                <div class="icon"> <!-- Icona rossa -->
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <h3>Ordini Totali</h3>
-                <div class="number" id="ordini-oggi">247</div>
+                <div class="number" id="ordini-oggi">247</div> <!-- Numero con gradiente rosso -->
                 <div class="trend up">+12% rispetto a ieri</div>
             </div>
 
             <div class="stat-card card-hover-effect animate-in animate-delay-1">
-                <div class="icon">
+                <div class="icon"> <!-- Icona rossa -->
                     <i class="fas fa-euro-sign"></i>
                 </div>
                 <h3>Vendite Giornaliere</h3>
-                <div class="number" id="vendite-oggi">€1,895</div>
+                <div class="number" id="vendite-oggi">€1,895</div> <!-- Numero con gradiente rosso -->
                 <div class="trend up">+8% rispetto a ieri</div>
             </div>
 
             <div class="stat-card card-hover-effect animate-in animate-delay-2">
-                <div class="icon">
+                <div class="icon"> <!-- Icona rossa -->
                     <i class="fas fa-user-plus"></i>
                 </div>
                 <h3>Clienti Nuovi</h3>
-                <div class="number" id="nuovi-clienti">18</div>
+                <div class="number" id="nuovi-clienti">18</div> <!-- Numero con gradiente rosso -->
                 <div class="trend up">+5% rispetto a ieri</div>
             </div>
 
             <div class="stat-card card-hover-effect animate-in animate-delay-3">
-                <div class="icon">
+                <div class="icon"> <!-- Icona rossa -->
                     <i class="fas fa-clock"></i>
                 </div>
                 <h3>Tempo Medio Preparazione</h3>
-                <div class="number">12 min</div>
+                <div class="number">12 min</div> <!-- Numero con gradiente rosso -->
                 <div class="trend down">+2 min rispetto a ieri</div>
             </div>
         </div>
@@ -1414,13 +1401,13 @@
             <div class="chart-actions">
                 <h2>Andamento Vendite</h2>
                 <div class="chart-filter">
-                    <button class="chart-filter-btn active" data-period="day">Oggi</button>
+                    <button class="chart-filter-btn active" data-period="day">Oggi</button> <!-- Bottone attivo rosso -->
                     <button class="chart-filter-btn" data-period="week">Settimana</button>
                     <button class="chart-filter-btn" data-period="month">Mese</button>
                 </div>
             </div>
             <div class="chart-wrapper">
-                <canvas id="sales-chart"></canvas>
+                <canvas id="sales-chart"></canvas> <!-- Grafico userà colori rossi via JS -->
             </div>
         </div>
 
@@ -1429,8 +1416,8 @@
             <h2>Ordini Recenti</h2>
             <div class="order-list">
                 <div class="order-item">
-                    <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1038</div>
-                    <div class="order-price">€25.90</div>
+                    <div class="order-id"><i class="fas fa-receipt"></i> Ordine #1038</div> <!-- ID ordine rosso -->
+                    <div class="order-price">€25.90</div> <!-- Prezzo con gradiente rosso -->
                     <div class="order-time">10 minuti fa</div>
                     <div class="order-status completed"><i class="fas fa-check-circle"></i> Completato</div>
                 </div>
@@ -1464,8 +1451,6 @@
             // Verifica che Chart.js sia caricato
             if (typeof Chart === 'undefined') {
                 console.error('Chart.js non è stato caricato correttamente. Carico dinamicamente...');
-
-                // Carica Chart.js dinamicamente
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js';
                 script.onload = function () {
@@ -1483,25 +1468,12 @@
             }
 
             function initializeAll() {
-                // Create particles background
                 createParticles();
-
-                // Initialize the sales chart
                 initSalesChart();
-
-                // Set active navigation link
                 setActiveNavLink();
-
-                // Load dashboard data
                 loadDashboardData();
-
-                // Add interactivity to chart filter buttons
                 setupChartFilters();
-
-                // Simulate dashboard activity
                 simulateActivity();
-
-                // Show welcome toast
                 setTimeout(() => {
                     showToast('Dashboard pronta', 'Benvenuto nel pannello di controllo YourBite', 'success');
                 }, 1000);
@@ -1511,8 +1483,8 @@
                 const chartWrapper = document.querySelector('.chart-wrapper');
                 if (chartWrapper) {
                     chartWrapper.innerHTML = `
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 350px; background: rgba(94, 96, 206, 0.05); border-radius: 12px; padding: 20px;">
-                            <i class="fas fa-chart-line" style="font-size: 48px; color: var(--primary); margin-bottom: 15px;"></i>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 350px; background: rgba(238, 27, 27, 0.05); border-radius: 12px; padding: 20px;">
+                            <i class="fas fa-chart-line" style="font-size: 48px; color: var(--navbar-red-main); margin-bottom: 15px;"></i>
                             <p style="font-weight: 500; color: var(--text); margin-bottom: 10px;">Impossibile caricare il grafico</p>
                             <button onclick="location.reload()" class="chart-filter-btn" style="cursor: pointer;">
                                 <i class="fas fa-redo"></i> Ricarica pagina
@@ -1523,216 +1495,90 @@
             }
         });
 
-        // Create background particles
         function createParticles() {
             const particles = document.getElementById('particles');
             if (!particles) return;
-
-            // Clear any existing particles
             particles.innerHTML = '';
-
-            // Settings
-            const particleCount = 50; // Number of particles
-
-            // Create particles
+            const particleCount = 50;
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-
-                // Random position
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
-
-                // Random size
                 const size = Math.random() * 10 + 2;
-
-                // Random opacity
                 const opacity = Math.random() * 0.5 + 0.1;
-
-                // Random animation duration
                 const duration = Math.random() * 60 + 30;
-
-                // Apply styles
                 particle.style.left = `${posX}%`;
                 particle.style.top = `${posY}%`;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.opacity = opacity;
-
-                // Alternate between primary and secondary colors
+                // MODIFICATO: particelle rosse
                 if (i % 2 === 0) {
-                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
+                    particle.style.backgroundColor = 'rgba(238, 27, 27, 0.15)';
                 } else {
-                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+                    particle.style.backgroundColor = 'rgba(212, 16, 16, 0.15)';
                 }
-
-                // Add floating animation
                 particle.style.animation = `
                     particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
                     particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
                 `;
-
-                // Append to container
                 particles.appendChild(particle);
             }
         }
 
-        // Initialize the sales chart
         function initSalesChart() {
             try {
                 const chartWrapper = document.querySelector('.chart-wrapper');
-                if (!chartWrapper) {
-                    console.error('Chart wrapper not found');
-                    return;
-                }
-
+                if (!chartWrapper) { console.error('Chart wrapper not found'); return; }
                 const canvas = document.getElementById('sales-chart');
-                if (!canvas) {
-                    console.error('Canvas element not found');
-                    return;
-                }
-
-                // Make sure the canvas has a proper size
+                if (!canvas) { console.error('Canvas element not found'); return; }
                 canvas.style.width = '100%';
                 canvas.style.height = '100%';
-
                 const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    console.error('Failed to get 2D context');
-                    return;
-                }
+                if (!ctx) { console.error('Failed to get 2D context'); return; }
+                if (window.salesChart instanceof Chart) { window.salesChart.destroy(); }
 
-                // Clear any existing chart instance
-                if (window.salesChart instanceof Chart) {
-                    window.salesChart.destroy();
-                }
-
-                console.log('Creating gradient for chart...');
-                // Gradient background
+                // MODIFICATO: Gradiente rosso per il grafico
                 const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(94, 96, 206, 0.2)');
-                gradient.addColorStop(1, 'rgba(94, 96, 206, 0)');
+                gradient.addColorStop(0, 'rgba(238, 27, 27, 0.2)'); 
+                gradient.addColorStop(1, 'rgba(238, 27, 27, 0)');
 
-                console.log('Setting up chart data...');
-                // Chart data
                 const data = {
                     labels: ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
                     datasets: [{
                         label: 'Vendite (€)',
                         data: [120, 210, 380, 290, 320, 490, 380, 290],
-                        borderColor: '#5e60ce',
+                        borderColor: 'var(--navbar-red-main)', // MODIFICATO
                         borderWidth: 3,
-                        pointBackgroundColor: '#5e60ce',
+                        pointBackgroundColor: 'var(--navbar-red-main)', // MODIFICATO
                         pointRadius: 5,
                         pointHoverRadius: 8,
                         tension: 0.4,
                         fill: true,
-                        backgroundColor: gradient
+                        backgroundColor: gradient // Usa il nuovo gradiente rosso
                     }]
                 };
-
-                console.log('Setting up chart options...');
-                // Chart options
                 const options = {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(26, 26, 46, 0.8)',
-                            titleFont: {
-                                size: 14,
-                                family: 'Montserrat'
-                            },
-                            bodyFont: {
-                                size: 14,
-                                family: 'Montserrat'
-                            },
-                            padding: 12,
-                            cornerRadius: 8,
-                            displayColors: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: {
-                                    family: 'Montserrat'
-                                }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                font: {
-                                    family: 'Montserrat'
-                                },
-                                callback: function (value) {
-                                    return '€' + value;
-                                }
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    animations: {
-                        tension: {
-                            duration: 1000,
-                            easing: 'easeInOutCubic',
-                            from: 0.4,
-                            to: 0.4,
-                            loop: true
-                        }
-                    }
+                    plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(26, 26, 46, 0.8)', titleFont: { size: 14, family: 'Montserrat' }, bodyFont: { size: 14, family: 'Montserrat' }, padding: 12, cornerRadius: 8, displayColors: false } },
+                    scales: { x: { grid: { display: false }, ticks: { font: { family: 'Montserrat' } } }, y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { font: { family: 'Montserrat' }, callback: function (value) { return '€' + value; } } } },
+                    interaction: { mode: 'index', intersect: false },
+                    animations: { tension: { duration: 1000, easing: 'easeInOutCubic', from: 0.4, to: 0.4, loop: true } }
                 };
-
-                console.log('Creating chart instance...');
-                // Create chart
-                window.salesChart = new Chart(ctx, {
-                    type: 'line',
-                    data: data,
-                    options: options
-                });
-
-                console.log('Chart successfully created!');
+                window.salesChart = new Chart(ctx, { type: 'line', data: data, options: options });
+                console.log('Chart successfully created with red theme!');
             } catch (error) {
                 console.error('Error initializing chart:', error);
-                showFallbackChart();
+                showFallbackChart(); // Usa il fallback già modificato per colore rosso
             }
         }
+        // showFallbackChart è già stato aggiornato per usare var(--navbar-red-main)
 
-        function showFallbackChart() {
-            const chartWrapper = document.querySelector('.chart-wrapper');
-            if (chartWrapper) {
-                chartWrapper.innerHTML = `
-                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 350px; background: rgba(94, 96, 206, 0.05); border-radius: 12px; padding: 20px;">
-                        <i class="fas fa-chart-line" style="font-size: 48px; color: var(--primary); margin-bottom: 15px;"></i>
-                        <p style="font-weight: 500; color: var(--text); margin-bottom: 10px;">Impossibile caricare il grafico</p>
-                        <button onclick="location.reload()" class="chart-filter-btn" style="cursor: pointer;">
-                            <i class="fas fa-redo"></i> Ricarica pagina
-                        </button>
-                    </div>
-                `;
-
-                showToast('Errore grafico', 'Non è stato possibile inizializzare il grafico delle vendite', 'error');
-            }
-        }
-
-        // Set the active navigation link
         function setActiveNavLink() {
             const currentPath = window.location.pathname;
             const navLinks = document.querySelectorAll('.header-nav a');
-
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (currentPath === link.getAttribute('href')) {
@@ -1741,7 +1587,6 @@
             });
         }
 
-        // Load dashboard data
         function loadDashboardData() {
             try {
                 fetch('/statistiche')
@@ -1750,26 +1595,16 @@
                         updateElementText('vendite-oggi', `€${data.venditeOggi || 0}`);
                         updateElementText('ordini-oggi', data.ordiniOggi || 0);
                         updateElementText('nuovi-clienti', data.clientiNuovi || 0);
-
-                        // Update summary cards
                         updateElementText('total-sales-today', `€${data.venditeOggi || 0}`);
                         updateElementText('active-customers', data.clientiAttivi || 78);
                         updateElementText('pending-orders', data.ordiniInCorso || 12);
-
-                        // Show success toast
                         showToast('Dati aggiornati', 'Le statistiche della dashboard sono state aggiornate', 'success');
                     })
                     .catch(error => {
                         console.error('Errore caricamento statistiche:', error);
-
-                        // Show error toast
                         showToast('Errore di caricamento', 'Impossibile caricare le statistiche più recenti', 'error');
-
-                        // Use placeholder data
                         usePlaceholderData();
                     });
-
-                // Load notifications
                 loadNotifications();
             } catch (e) {
                 console.log('Caricamento statistiche non disponibile in questa pagina');
@@ -1777,7 +1612,6 @@
             }
         }
 
-        // Load notifications
         function loadNotifications() {
             try {
                 fetch('/notifiche')
@@ -1785,11 +1619,9 @@
                     .then(notifications => {
                         const badge = document.getElementById('notification-badge');
                         if (!badge) return;
-
                         const unreadCount = notifications.filter(n => !n.letto).length;
                         badge.textContent = unreadCount;
                         badge.style.display = unreadCount > 0 ? 'flex' : 'none';
-
                         if (unreadCount > 0) {
                             showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
                         }
@@ -1800,58 +1632,30 @@
             }
         }
 
-        // Setup chart filters
         function setupChartFilters() {
             const filterButtons = document.querySelectorAll('.chart-filter-btn');
-
             filterButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    // Remove active class from all buttons
                     filterButtons.forEach(btn => btn.classList.remove('active'));
-
-                    // Add active class to clicked button
                     this.classList.add('active');
-
-                    // Update chart data based on selected period
                     updateChartData(this.dataset.period);
                 });
             });
         }
 
-        // Update chart data based on period
         function updateChartData(period) {
             try {
-                if (!window.salesChart) {
-                    console.error('Chart not initialized');
-                    initSalesChart();
-                    return;
-                }
-
+                if (!window.salesChart) { console.error('Chart not initialized'); initSalesChart(); return; }
                 let labels, data;
-
                 switch (period) {
-                    case 'day':
-                        labels = ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-                        data = [120, 210, 380, 290, 320, 490, 380, 290];
-                        break;
-                    case 'week':
-                        labels = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
-                        data = [1480, 1290, 1350, 1690, 2100, 2400, 1950];
-                        break;
-                    case 'month':
-                        labels = ['Sett 1', 'Sett 2', 'Sett 3', 'Sett 4'];
-                        data = [8500, 9200, 8900, 9600];
-                        break;
-                    default:
-                        return;
+                    case 'day': labels = ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00']; data = [120, 210, 380, 290, 320, 490, 380, 290]; break;
+                    case 'week': labels = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom']; data = [1480, 1290, 1350, 1690, 2100, 2400, 1950]; break;
+                    case 'month': labels = ['Sett 1', 'Sett 2', 'Sett 3', 'Sett 4']; data = [8500, 9200, 8900, 9600]; break;
+                    default: return;
                 }
-
-                // Update chart data
                 window.salesChart.data.labels = labels;
                 window.salesChart.data.datasets[0].data = data;
                 window.salesChart.update();
-
-                // Show toast notification
                 showToast('Grafico aggiornato', `Visualizzazione dati per ${getPeriodName(period)}`, 'success');
             } catch (error) {
                 console.error('Error updating chart data:', error);
@@ -1859,7 +1663,6 @@
             }
         }
 
-        // Get period name in Italian
         function getPeriodName(period) {
             switch (period) {
                 case 'day': return 'oggi';
@@ -1869,7 +1672,6 @@
             }
         }
 
-        // Use placeholder data when fetch fails
         function usePlaceholderData() {
             updateElementText('vendite-oggi', '€1,895');
             updateElementText('ordini-oggi', '247');
@@ -1879,210 +1681,74 @@
             updateElementText('pending-orders', '12');
         }
 
-        // Helper function to update element text if element exists
         function updateElementText(id, text) {
             const element = document.getElementById(id);
-            if (element) {
-                element.textContent = text;
-            }
+            if (element) { element.textContent = text; }
         }
 
-        // Show toast notification
         function showToast(title, message, type = 'success') {
-            // Remove existing toasts
             const existingToasts = document.querySelectorAll('.toast-notification');
-            existingToasts.forEach(toast => {
-                toast.remove();
-            });
-
-            // Create new toast
+            existingToasts.forEach(toast => { toast.remove(); });
             const toast = document.createElement('div');
             toast.className = `toast-notification toast-${type}`;
-
-            // Icon based on type
             let icon = 'info-circle';
             if (type === 'success') icon = 'check-circle';
             if (type === 'error') icon = 'exclamation-circle';
             if (type === 'warning') icon = 'exclamation-triangle';
-
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${icon}"></i>
-                </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
-                </div>
-                <div class="toast-close">
-                    <i class="fas fa-times"></i>
-                </div>
-            `;
-
+            toast.innerHTML = `<div class="toast-icon"><i class="fas fa-${icon}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><div class="toast-close"><i class="fas fa-times"></i></div>`;
             document.body.appendChild(toast);
-
-            // Add show class after a small delay to trigger animation
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-
-            // Add event listener to close button
+            setTimeout(() => { toast.classList.add('show'); }, 10);
             const closeButton = toast.querySelector('.toast-close');
-            closeButton.addEventListener('click', () => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            });
-
-            // Auto close after 5 seconds
-            setTimeout(() => {
-                if (document.body.contains(toast)) {
-                    toast.classList.remove('show');
-                    setTimeout(() => {
-                        if (document.body.contains(toast)) {
-                            toast.remove();
-                        }
-                    }, 300);
-                }
-            }, 5000);
+            closeButton.addEventListener('click', () => { toast.classList.remove('show'); setTimeout(() => { toast.remove(); }, 300); });
+            setTimeout(() => { if (document.body.contains(toast)) { toast.classList.remove('show'); setTimeout(() => { if (document.body.contains(toast)) { toast.remove(); } }, 300); } }, 5000);
         }
 
-        // Simulate dashboard activity
         function simulateActivity() {
-            // Random updates every 30-60 seconds
             setInterval(() => {
                 const activities = [
-                    () => {
-                        // Update pending orders
-                        const pendingOrders = document.getElementById('pending-orders');
-                        if (pendingOrders) {
-                            const currentValue = parseInt(pendingOrders.textContent);
-                            const newValue = currentValue + Math.floor(Math.random() * 3) - 1;
-                            if (newValue >= 0) {
-                                pendingOrders.textContent = newValue;
-
-                                if (newValue > currentValue) {
-                                    showToast('Nuovo ordine', 'È stato ricevuto un nuovo ordine', 'success');
-                                }
-                            }
-                        }
-                    },
-                    () => {
-                        // Update active customers
-                        const activeCustomers = document.getElementById('active-customers');
-                        if (activeCustomers) {
-                            const currentValue = parseInt(activeCustomers.textContent);
-                            const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
-                            const newValue = Math.max(0, currentValue + change);
-                            activeCustomers.textContent = newValue;
-                        }
-                    },
-                    () => {
-                        // Update sales chart if available
-                        if (window.salesChart) {
-                            try {
-                                const lastValue = window.salesChart.data.datasets[0].data[window.salesChart.data.datasets[0].data.length - 1];
-                                const change = Math.random() * 50 - 20; // -20 to +30
-                                window.salesChart.data.datasets[0].data[window.salesChart.data.datasets[0].data.length - 1] = Math.max(0, lastValue + change);
-                                window.salesChart.update();
-                            } catch (error) {
-                                console.error('Error updating chart during simulation', error);
-                            }
-                        }
-                    }
+                    () => { const pendingOrders = document.getElementById('pending-orders'); if (pendingOrders) { const currentValue = parseInt(pendingOrders.textContent); const newValue = currentValue + Math.floor(Math.random() * 3) - 1; if (newValue >= 0) { pendingOrders.textContent = newValue; if (newValue > currentValue) { showToast('Nuovo ordine', 'È stato ricevuto un nuovo ordine', 'success'); } } } },
+                    () => { const activeCustomers = document.getElementById('active-customers'); if (activeCustomers) { const currentValue = parseInt(activeCustomers.textContent); const change = Math.floor(Math.random() * 5) - 2; const newValue = Math.max(0, currentValue + change); activeCustomers.textContent = newValue; } },
+                    () => { if (window.salesChart) { try { const lastValue = window.salesChart.data.datasets[0].data[window.salesChart.data.datasets[0].data.length - 1]; const change = Math.random() * 50 - 20; window.salesChart.data.datasets[0].data[window.salesChart.data.datasets[0].data.length - 1] = Math.max(0, lastValue + change); window.salesChart.update(); } catch (error) { console.error('Error updating chart during simulation', error); } } }
                 ];
-
-                // Execute a random activity
                 const randomActivity = activities[Math.floor(Math.random() * activities.length)];
                 randomActivity();
-
-            }, Math.random() * 30000 + 30000); // 30-60 seconds
+            }, Math.random() * 30000 + 30000);
         }
 
-        // Function for logout
         function logout() {
-            // Show loading overlay
             const loadingOverlay = document.createElement('div');
-            loadingOverlay.style.position = 'fixed';
-            loadingOverlay.style.top = '0';
-            loadingOverlay.style.left = '0';
-            loadingOverlay.style.width = '100%';
-            loadingOverlay.style.height = '100%';
-            loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            loadingOverlay.style.display = 'flex';
-            loadingOverlay.style.flexDirection = 'column';
-            loadingOverlay.style.justifyContent = 'center';
-            loadingOverlay.style.alignItems = 'center';
-            loadingOverlay.style.zIndex = '2000';
-            loadingOverlay.style.backdropFilter = 'blur(5px)';
-
+            loadingOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(255,255,255,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2000;backdrop-filter:blur(5px);';
             const spinnerContainer = document.createElement('div');
-            spinnerContainer.style.width = '60px';
-            spinnerContainer.style.height = '60px';
-            spinnerContainer.style.position = 'relative';
-
+            spinnerContainer.style.cssText = 'width:60px;height:60px;position:relative;';
             const spinner = document.createElement('div');
-            spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
-            spinner.style.borderTopColor = '#5e60ce'; // Usa --primary per lo spinner
-            spinner.style.borderRadius = '50%';
-            spinner.style.width = '100%';
-            spinner.style.height = '100%';
-            spinner.style.animation = 'spin 1s linear infinite';
-
+            // MODIFICATO: colore spinner rosso
+            spinner.style.cssText = 'border:4px solid rgba(0,0,0,0.1);border-top-color:var(--navbar-red-main);border-radius:50%;width:100%;height:100%;animation:spin 1s linear infinite;';
             const style = document.createElement('style');
-            style.textContent = `
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            `;
-
+            style.textContent = `@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`;
             document.head.appendChild(style);
             spinnerContainer.appendChild(spinner);
-
             const loadingText = document.createElement('p');
             loadingText.textContent = 'Logout in corso...';
-            loadingText.style.marginTop = '20px';
-            loadingText.style.color = 'var(--primary)';
-            loadingText.style.fontWeight = '500';
-
+            // MODIFICATO: colore testo rosso
+            loadingText.style.cssText = 'margin-top:20px;color:var(--navbar-red-main);font-weight:500;';
             loadingOverlay.appendChild(spinnerContainer);
             loadingOverlay.appendChild(loadingText);
             document.body.appendChild(loadingOverlay);
-
-            // Perform logout
-            fetch('/logout', {
-                method: 'POST',
-            })
+            fetch('/logout', { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
                         loadingText.textContent = 'Reindirizzamento...';
-                        setTimeout(() => {
-                            window.location.href = '/login';
-                        }, 800);
-                    } else {
-                        throw new Error('Errore durante il logout');
-                    }
+                        setTimeout(() => { window.location.href = '/login'; }, 800);
+                    } else { throw new Error('Errore durante il logout'); }
                 })
                 .catch(error => {
                     console.error('Errore durante il logout:', error);
                     loadingText.textContent = 'Si è verificato un errore. Riprova.';
-
-                    // Add retry button
                     const retryButton = document.createElement('button');
                     retryButton.textContent = 'Riprova';
-                    retryButton.style.marginTop = '15px';
-                    retryButton.style.padding = '8px 20px';
-                    retryButton.style.background = 'var(--primary)';
-                    retryButton.style.color = 'white';
-                    retryButton.style.border = 'none';
-                    retryButton.style.borderRadius = 'var(--radius-sm)';
-                    retryButton.style.cursor = 'pointer';
-                    retryButton.onclick = function () {
-                        document.body.removeChild(loadingOverlay);
-                        logout();
-                    };
-
+                    // MODIFICATO: sfondo bottone rosso
+                    retryButton.style.cssText = 'margin-top:15px;padding:8px 20px;background:var(--navbar-red-main);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;';
+                    retryButton.onclick = function () { document.body.removeChild(loadingOverlay); logout(); };
                     loadingOverlay.appendChild(retryButton);
                 });
         }
