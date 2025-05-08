@@ -267,7 +267,8 @@
         .tab-header {
             display: flex;
             background: var(--border-light);
-            /* overflow-x: auto; Allow scrolling if needed, but hide bar */
+            overflow-x: auto; /* MODIFIED: Default to allow scrolling */
+            justify-content: flex-start; /* MODIFIED: Default to left align */
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
@@ -275,10 +276,9 @@
             display: none; /* Chrome, Safari, Opera */
         }
 
-
         .tab-btn {
-            flex: 1; 
-            padding: 1.2rem 1rem; 
+            flex: 0 0 auto; /* MODIFIED: Do not grow, base width */
+            padding: 1.2rem 1.5rem; /* MODIFIED: Default padding */
             text-align: center;
             font-weight: 600;
             color: var(--text-light); 
@@ -307,7 +307,7 @@
             content: '';
             position: absolute;
             bottom: 0;
-            left: 15%; /* Per centrare se width è 70% */
+            left: 15%; 
             width: 70%; 
             height: 4px;
             background: var(--primary);
@@ -318,11 +318,11 @@
         @keyframes slideInFromCenter {
             from {
                 width: 0;
-                left: 50%; /* Inizia dal centro se si anima la larghezza da 0 */
+                left: 50%; 
             }
             to {
                 width: 70%;
-                left: 15%; /* Posizione finale se width è 70% */
+                left: 15%; 
             }
         }
 
@@ -1439,14 +1439,14 @@
         }
         
         /* Responsive Adjustments */
-        @media (min-width: 769px) { /* Specific to larger screens for centering tabs */
+        @media (min-width: 769px) { /* Tablet (landscape) and Desktop: Center tabs */
              .tab-header {
-                justify-content: center; /* Center tabs only if they don't fill up the space */
+                justify-content: center; /* MODIFIED: Center tabs */
              }
         }
 
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1024px) { /* Tablet (portrait) and Mobile */
             .nav-links {
                 gap: 0.5rem;
             }
@@ -1456,18 +1456,18 @@
             .brand {
                 font-size: 1.5rem;
             }
-             .tab-header {
-                justify-content: flex-start; /* Allow scrolling from the left on smaller screens */
-                overflow-x: auto; /* Re-enable auto scroll for mobile if tabs overflow */
-             }
+             /* .tab-header:
+                justify-content: flex-start; /* This is now the base style */
+                /* overflow-x: auto; /* This is now the base style */
+             /* } */
              .tab-btn {
-                padding: 1rem 0.8rem;
-                flex-grow: 0; /* Don't let them grow to fill, allow natural width for scroll */
-                flex-shrink: 0;
+                padding: 1rem 0.8rem; /* MODIFIED: Padding for smaller screens */
+                /* flex-grow: 0; /* MODIFIED: Removed, handled by base flex */
+                /* flex-shrink: 0; /* MODIFIED: Removed, handled by base flex */
              }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px) { /* Mobile specific */
             .header {
                 padding: 1rem;
                 flex-wrap: wrap; 
@@ -1513,8 +1513,8 @@
 
             .tabs { margin: 1rem; }
            
-             .tab-btn {
-                padding: 1rem 0.75rem;
+             .tab-btn { /* This rule can be refined if needed, or inherit from max-width: 1024px */
+                padding: 1rem 0.75rem; /* Further reduced padding for small mobile */
                 font-size: 0.9rem;
             }
 
