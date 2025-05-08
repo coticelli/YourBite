@@ -1,18 +1,17 @@
 FROM node:18-alpine
 
-# Crea la directory dell'applicazione
 WORKDIR /usr/src/app
 
-# Copia package.json e package-lock.json
+# Copia i file di configurazione del progetto
 COPY package*.json ./
 
 # Installa le dipendenze
 RUN npm install
 
-# Copia il resto dell'applicazione
+# Copia il codice sorgente
 COPY . .
 
-# Esponi la porta su cui l'app è in ascolto
+# Esponi la porta su cui l'app ascolterà
 EXPOSE 3000
 
 # Comando per avviare l'applicazione
