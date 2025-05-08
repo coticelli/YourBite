@@ -174,6 +174,11 @@
       overflow: hidden;
       position: relative;
     }
+    
+    /* Add margin to subsequent login buttons for spacing */
+    .login-button + .login-button {
+        margin-top: 1rem; 
+    }
 
     .login-button::before {
       content: '';
@@ -235,12 +240,12 @@
       padding: 0 2px;
     }
 
-    a:hover {
+    a:not(.login-button):hover { /* Exclude login button from this specific hover style */
       color: #ff3333;
       text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
     }
 
-    a::after {
+    a:not(.login-button)::after { /* Exclude login button from this specific after style */
       content: '';
       position: absolute;
       width: 0;
@@ -252,7 +257,7 @@
       border-radius: 4px;
     }
 
-    a:hover::after {
+    a:not(.login-button):hover::after { /* Exclude login button from this specific after style */
       width: 100%;
     }
 
@@ -427,6 +432,9 @@
       .login-button {
         height: 50px;
       }
+      .login-button + .login-button {
+        margin-top: 0.8rem; 
+      }
     }
 
     @media (max-width: 480px) {
@@ -447,6 +455,9 @@
 
       .login-button {
         height: 48px;
+      }
+       .login-button + .login-button {
+        margin-top: 0.7rem; 
       }
 
       .login-text {
@@ -477,6 +488,9 @@
       .login-button {
         height: 44px;
       }
+       .login-button + .login-button {
+        margin-top: 0.6rem; 
+      }
       
       .signup-text {
         margin-top: 1rem;
@@ -489,7 +503,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-around;
-        gap: 2rem;
+        gap: 1rem; /* Reduced gap for landscape */
       }
       
       .logo-container {
@@ -500,6 +514,10 @@
       .login-container {
         flex: 1;
         max-width: 280px;
+        padding: 1rem; /* Ensure padding is consistent */
+      }
+      .login-button + .login-button { /* Ensure spacing is appropriate */
+        margin-top: 0.5rem; 
       }
     }
   </style>
@@ -516,6 +534,10 @@
     <div class="login-container">
       <a href="/login" class="login-button">
         <span class="login-text">Log in</span>
+      </a>
+      <!-- New Swagger/API Docs Button -->
+      <a href="/swagger" class="login-button"> <!-- Change /swagger to your actual API docs URL -->
+        <span class="login-text">View API Docs</span>
       </a>
       <div class="signup-text">Don't have an account? <a href="/signup">Sign Up</a></div>
     </div>
@@ -798,11 +820,14 @@
     }, { once: true });
 
     // Sound effects for interactive elements
-    const loginButton = document.querySelector('.login-button');
+    const allLoginButtons = document.querySelectorAll('.login-button'); // Select ALL login buttons
     const signupLink = document.querySelector('.signup-text a');
 
-    loginButton.addEventListener('mouseenter', playHoverSound);
-    loginButton.addEventListener('click', playClickSound);
+    allLoginButtons.forEach(button => { // Apply to each button
+        button.addEventListener('mouseenter', playHoverSound);
+        button.addEventListener('click', playClickSound);
+    });
+
     signupLink.addEventListener('mouseenter', playHoverSound);
     signupLink.addEventListener('click', playClickSound);
 
@@ -840,16 +865,19 @@
     document.addEventListener('DOMContentLoaded', createBubbles);
 
     // Interactive particle effect on button hover
-    document.querySelector('.login-button').addEventListener('mousemove', function(e) {
-      const rect = this.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      this.style.background = `radial-gradient(circle at ${x}px ${y}px, #ff3333, #ff0000 70%)`;
-    });
+    document.querySelectorAll('.login-button').forEach(button => { // Apply to ALL login buttons
+        button.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Use the --primary-hover variable for consistency, or a slightly different one
+            this.style.background = `radial-gradient(circle at ${x}px ${y}px, var(--primary-hover), var(--primary-color) 70%)`;
+        });
 
-    document.querySelector('.login-button').addEventListener('mouseleave', function() {
-      this.style.background = 'var(--primary-color)';
+        button.addEventListener('mouseleave', function() {
+            this.style.background = 'var(--primary-color)'; // Reset to the original background
+        });
     });
     
     // Show initial notification to let users know they need to enable sounds
