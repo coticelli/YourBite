@@ -1061,7 +1061,7 @@
             opacity: 0.8;
         }
 
-        .stats-chart-container {
+        .stats-chart-container-card { /* Renamed to avoid conflict */
             position: relative;
             height: 180px;
             margin-bottom: 20px;
@@ -1261,6 +1261,12 @@
             background-color: rgba(0, 0, 0, 0.05);
             color: var(--text-light);
         }
+        
+        .status-vip {
+            background-color: rgba(241, 196, 15, 0.15);
+            color: var(--accent-yellow);
+        }
+
 
         .table-loyalty-points {
             background: rgba(243, 156, 18, 0.15);
@@ -1402,7 +1408,15 @@
             height: 100%;
             border-radius: var(--radius);
             background-color: var(--gray-light);
-            background-image: url('https://maps.googleapis.com/maps/api/staticmap?center=Milan,IT&zoom=12&size=1200x500&key=YOUR_API_KEY');
+            /* 
+              L'URL seguente è per un'immagine di mappa STATICA da Google. 
+              Per una mappa interattiva (zoom, pan, marker cliccabili) 
+              sarebbe necessaria un'integrazione con un'API JavaScript come 
+              Google Maps JavaScript API, Leaflet o Mapbox GL JS, 
+              che richiederebbe una chiave API e una configurazione più complessa.
+              Per questa demo, si usa un'immagine statica o una stilizzazione che la simuli.
+            */
+            background-image: url('https://picsum.photos/seed/citymap/1200/500'); /* Placeholder per mappa */
             background-position: center;
             background-size: cover;
         }
@@ -1420,9 +1434,15 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             border: 2px solid var(--primary);
             cursor: pointer;
-            transition: var(--transition-spring);
+            transition: var(--transition-spring), opacity 0.3s ease;
             z-index: 5;
+            opacity: 1;
         }
+         .customer-marker.filtered-out {
+            opacity: 0.3;
+            transform: scale(0.8);
+        }
+
 
         .customer-marker::after {
             content: '';
@@ -1459,8 +1479,18 @@
             transform: scale(1.2);
             z-index: 10;
         }
+         .customer-marker.marker-vip {
+            border-color: var(--accent-yellow);
+        }
 
-        .marker-active {
+        .customer-marker.marker-vip::after {
+            background: var(--accent-yellow);
+        }
+        .customer-marker.marker-vip::before {
+             border-top-color: var(--accent-yellow);
+        }
+
+        .marker-active { /* Da usare per un marker selezionato, se implementato */
             position: absolute;
             width: 50px;
             height: 50px;
@@ -1516,7 +1546,7 @@
 
         .marker-info {
             position: absolute;
-            bottom: 70px;
+            bottom: 70px; /* O top/right/left a seconda del design per il popup info */
             left: 50%;
             transform: translateX(-50%);
             background: white;
@@ -1526,7 +1556,15 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             z-index: 30;
             text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+        .customer-marker:hover .marker-info, .marker-active .marker-info { /* Per mostrare al hover o se selezionato */
+             opacity: 1;
+             visibility: visible;
+        }
+
 
         .marker-info::after {
             content: '';
@@ -1666,6 +1704,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        #total-customers-value, #active-customers-value, #vip-customers-value { /* Specific IDs for overview stats */
+            /* Inherits .stats-card-value */
+        }
+
 
         .stats-card-trend {
             display: flex;
@@ -1684,7 +1726,7 @@
             color: var(--accent-red);
         }
 
-        .stats-chart-container {
+        .stats-chart-container { /* Generic for charts in stats view */
             background: white;
             border-radius: var(--radius);
             padding: 25px;
@@ -1751,11 +1793,12 @@
         .pagination {
             display: flex;
             justify-content: center;
+            align-items: center;
             margin: 30px 0;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .pagination a {
+        .pagination a, .pagination span {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1767,7 +1810,13 @@
             text-decoration: none;
             font-weight: 600;
             transition: var(--transition-spring);
+            cursor: pointer;
         }
+        .pagination span {
+            border-color: transparent;
+            color: var(--text-light);
+        }
+
 
         .pagination a:hover {
             border-color: var(--primary);
@@ -1782,6 +1831,13 @@
             border-color: transparent;
             box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
         }
+         .pagination a.disabled {
+            color: var(--gray-dark);
+            border-color: var(--gray-dark);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
 
         /* === TOAST NOTIFICATION === */
         .toast-notification {
@@ -1987,7 +2043,7 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background: url('https://source.unsplash.com/random/800x200/?pattern') center/cover;
+            background: url('https://picsum.photos/seed/profilebg/800/200') center/cover; /* Placeholder per pattern */
             opacity: 0.1;
         }
 
@@ -2061,7 +2117,12 @@
 
         .profile-content {
             padding: 30px;
+            min-height: 200px; /* Assicura che ci sia spazio per il contenuto */
         }
+         .profile-content .profile-tab-content:not([data-tab="info"]) { /* Nasconde le altre tab per default */
+            display: none;
+        }
+
 
         .profile-section {
             margin-bottom: 30px;
@@ -2159,6 +2220,13 @@
             color: var(--text-light);
             font-weight: 500;
         }
+         .no-data-message {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
 
         /* === RESPONSIVE DESIGN === */
         @media (max-width: 1200px) {
@@ -2277,6 +2345,11 @@
             .view-switcher {
                 margin-bottom: 15px;
             }
+             .pagination a, .pagination span {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -2286,6 +2359,13 @@
             
             .search-filter-container {
                 gap: 10px;
+            }
+             .filter-controls {
+                flex-direction: column;
+            }
+            .add-customer-btn, .export-btn {
+                width: 100%;
+                justify-content: center;
             }
             
             .filter-dropdown {
@@ -2298,6 +2378,15 @@
             
             .map-filters {
                 flex-direction: column;
+                gap: 10px;
+            }
+             .chart-filter-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            .stats-chart-header {
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 10px;
             }
         }
@@ -2368,7 +2457,7 @@
                     <div class="stats-card-icon"><i class="fas fa-users"></i></div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value">248</div>
+                    <div class="stats-card-value" id="total-customers-value">0</div>
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +12% questo mese
                     </div>
@@ -2383,7 +2472,7 @@
                     </div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" style="background: linear-gradient(120deg, #2ecc71, #27ae60); -webkit-background-clip: text;">215</div>
+                    <div class="stats-card-value" id="active-customers-value" style="background: linear-gradient(120deg, #2ecc71, #27ae60); -webkit-background-clip: text;">0</div>
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +8% questo mese
                     </div>
@@ -2398,7 +2487,7 @@
                     </div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" style="background: linear-gradient(120deg, #f39c12, #e67e22); -webkit-background-clip: text;">€24,70</div>
+                    <div class="stats-card-value" id="average-spend-value" style="background: linear-gradient(120deg, #f39c12, #e67e22); -webkit-background-clip: text;">€24,70</div>
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +5.5% questo mese
                     </div>
@@ -2413,7 +2502,7 @@
                     </div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" style="background: linear-gradient(120deg, #9b59b6, #8e44ad); -webkit-background-clip: text;">32</div>
+                    <div class="stats-card-value" id="vip-customers-value" style="background: linear-gradient(120deg, #9b59b6, #8e44ad); -webkit-background-clip: text;">0</div>
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +15% questo mese
                     </div>
@@ -2440,7 +2529,7 @@
         <!-- Search and Filter -->
         <div class="search-filter-container animate-in animate-delay-2">
             <div class="search-box">
-                <input type="text" placeholder="Cerca cliente per nome, email, indirizzo...">
+                <input type="text" id="customer-search-input" placeholder="Cerca cliente per nome, email...">
                 <i class="fas fa-search"></i>
             </div>
             
@@ -2456,13 +2545,12 @@
                 
                 <div class="filter-dropdown">
                     <select id="sort-filter">
-                        <option value="newest">Più recenti</option>
-                        <option value="oldest">Meno recenti</option>
+                        <option value="newest">Più recenti (ID)</option>
                         <option value="spend-high">Spesa maggiore</option>
                         <option value="spend-low">Spesa minore</option>
                         <option value="orders-high">Più ordini</option>
-                        <option value="orders-low">Meno ordini</option>
-                        <option value="loyalty">Punti fedeltà</option>
+                        <option value="loyalty-high">Più punti fedeltà</option>
+                        <option value="name-asc">Nome (A-Z)</option>
                     </select>
                 </div>
                 
@@ -2478,552 +2566,9 @@
         
         <!-- CARDS VIEW -->
         <div id="cards-view" class="view-content animate-in animate-delay-3">
-            <div class="customers-grid">
-                <!-- Customer Card 1 -->
-                <div class="customer-card card-hover-effect" data-customer-id="1">
-                    <div class="customer-card-inner">
-                        <!-- Front -->
-                        <div class="customer-card-front">
-                            <div class="vip-badge">
-                                <i class="fas fa-crown"></i> VIP
-                            </div>
-                            
-                            <div class="customer-card-header">
-                                <!-- Decorative background -->
-                            </div>
-                            
-                            <div class="customer-avatar-container">
-                                <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi" class="customer-avatar">
-                            </div>
-                            
-                            <div class="customer-card-body">
-                                <div class="customer-info">
-                                    <h3 class="customer-name">Marco Rossi</h3>
-                                    <p class="customer-email">marco.rossi@email.com</p>
-                                    
-                                    <div class="customer-stats">
-                                        <div class="customer-stat">
-                                            <div class="stat-value">12</div>
-                                            <div class="stat-label">Ordini</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">250</div>
-                                            <div class="stat-label">Punti</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">€320</div>
-                                            <div class="stat-label">Totale</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">8</div>
-                                            <div class="stat-label">Mesi</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    <button class="flip-btn">
-                                        <i class="fas fa-chart-line"></i> Statistiche
-                                    </button>
-                                    <button class="detail-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="edit-btn">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Back -->
-                        <div class="customer-card-back">
-                            <div class="card-back-header">
-                                <h3>Marco Rossi</h3>
-                                <p>Statistiche del cliente</p>
-                            </div>
-                            
-                            <div class="stats-chart-container">
-                                <canvas id="customer-chart-1"></canvas>
-                            </div>
-                            
-                            <div class="loyalty-progress">
-                                <div class="loyalty-title">
-                                    <span>Programma Fedeltà</span>
-                                    <span>250/500 punti</span>
-                                </div>
-                                <div class="loyalty-bar">
-                                    <div class="loyalty-progress-bar" style="width: 50%"></div>
-                                </div>
-                                <div class="loyalty-rewards">
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="card-back-footer">
-                                <button class="back-to-front-btn">
-                                    <i class="fas fa-arrow-left"></i> Indietro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Customer Card 2 -->
-                <div class="customer-card card-hover-effect" data-customer-id="2">
-                    <div class="customer-card-inner">
-                        <!-- Front -->
-                        <div class="customer-card-front">
-                            <div class="customer-card-header">
-                                <!-- Decorative background -->
-                            </div>
-                            
-                            <div class="customer-avatar-container">
-                                <img src="https://source.unsplash.com/random/100x100/?woman" alt="Laura Bianchi" class="customer-avatar">
-                            </div>
-                            
-                            <div class="customer-card-body">
-                                <div class="customer-info">
-                                    <h3 class="customer-name">Laura Bianchi</h3>
-                                    <p class="customer-email">laura.bianchi@email.com</p>
-                                    
-                                    <div class="customer-stats">
-                                        <div class="customer-stat">
-                                            <div class="stat-value">8</div>
-                                            <div class="stat-label">Ordini</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">180</div>
-                                            <div class="stat-label">Punti</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">€210</div>
-                                            <div class="stat-label">Totale</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">5</div>
-                                            <div class="stat-label">Mesi</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    <button class="flip-btn">
-                                        <i class="fas fa-chart-line"></i> Statistiche
-                                    </button>
-                                    <button class="detail-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="edit-btn">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Back -->
-                        <div class="customer-card-back">
-                            <div class="card-back-header">
-                                <h3>Laura Bianchi</h3>
-                                <p>Statistiche del cliente</p>
-                            </div>
-                            
-                            <div class="stats-chart-container">
-                                <canvas id="customer-chart-2"></canvas>
-                            </div>
-                            
-                            <div class="loyalty-progress">
-                                <div class="loyalty-title">
-                                    <span>Programma Fedeltà</span>
-                                    <span>180/500 punti</span>
-                                </div>
-                                <div class="loyalty-bar">
-                                    <div class="loyalty-progress-bar" style="width: 36%"></div>
-                                </div>
-                                <div class="loyalty-rewards">
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="card-back-footer">
-                                <button class="back-to-front-btn">
-                                    <i class="fas fa-arrow-left"></i> Indietro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Customer Card 3 -->
-                <div class="customer-card card-hover-effect" data-customer-id="3">
-                    <div class="customer-card-inner">
-                        <!-- Front -->
-                        <div class="customer-card-front">
-                            <div class="vip-badge">
-                                <i class="fas fa-crown"></i> VIP
-                            </div>
-                            
-                            <div class="customer-card-header">
-                                <!-- Decorative background -->
-                            </div>
-                            
-                            <div class="customer-avatar-container">
-                                <img src="https://source.unsplash.com/random/100x100/?man2" alt="Giuseppe Verdi" class="customer-avatar">
-                            </div>
-                            
-                            <div class="customer-card-body">
-                                <div class="customer-info">
-                                    <h3 class="customer-name">Giuseppe Verdi</h3>
-                                    <p class="customer-email">giuseppe.verdi@email.com</p>
-                                    
-                                    <div class="customer-stats">
-                                        <div class="customer-stat">
-                                            <div class="stat-value">15</div>
-                                            <div class="stat-label">Ordini</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">320</div>
-                                            <div class="stat-label">Punti</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">€420</div>
-                                            <div class="stat-label">Totale</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">10</div>
-                                            <div class="stat-label">Mesi</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    <button class="flip-btn">
-                                        <i class="fas fa-chart-line"></i> Statistiche
-                                    </button>
-                                    <button class="detail-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="edit-btn">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Back -->
-                        <div class="customer-card-back">
-                            <div class="card-back-header">
-                                <h3>Giuseppe Verdi</h3>
-                                <p>Statistiche del cliente</p>
-                            </div>
-                            
-                            <div class="stats-chart-container">
-                                <canvas id="customer-chart-3"></canvas>
-                            </div>
-                            
-                            <div class="loyalty-progress">
-                                <div class="loyalty-title">
-                                    <span>Programma Fedeltà</span>
-                                    <span>320/500 punti</span>
-                                </div>
-                                <div class="loyalty-bar">
-                                    <div class="loyalty-progress-bar" style="width: 64%"></div>
-                                </div>
-                                <div class="loyalty-rewards">
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="card-back-footer">
-                                <button class="back-to-front-btn">
-                                    <i class="fas fa-arrow-left"></i> Indietro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Customer Card 4 -->
-                <div class="customer-card card-hover-effect" data-customer-id="4">
-                    <div class="customer-card-inner">
-                        <!-- Front -->
-                        <div class="customer-card-front">
-                            <div class="customer-card-header">
-                                <!-- Decorative background -->
-                            </div>
-                            
-                            <div class="customer-avatar-container">
-                                <img src="https://source.unsplash.com/random/100x100/?woman2" alt="Francesca Neri" class="customer-avatar">
-                            </div>
-                            
-                            <div class="customer-card-body">
-                                <div class="customer-info">
-                                    <h3 class="customer-name">Francesca Neri</h3>
-                                    <p class="customer-email">francesca.neri@email.com</p>
-                                    
-                                    <div class="customer-stats">
-                                        <div class="customer-stat">
-                                            <div class="stat-value">5</div>
-                                            <div class="stat-label">Ordini</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">90</div>
-                                            <div class="stat-label">Punti</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">€85</div>
-                                            <div class="stat-label">Totale</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">3</div>
-                                            <div class="stat-label">Mesi</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    <button class="flip-btn">
-                                        <i class="fas fa-chart-line"></i> Statistiche
-                                    </button>
-                                    <button class="detail-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="edit-btn">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Back -->
-                        <div class="customer-card-back">
-                            <div class="card-back-header">
-                                <h3>Francesca Neri</h3>
-                                <p>Statistiche del cliente</p>
-                            </div>
-                            
-                            <div class="stats-chart-container">
-                                <canvas id="customer-chart-4"></canvas>
-                            </div>
-                            
-                            <div class="loyalty-progress">
-                                <div class="loyalty-title">
-                                    <span>Programma Fedeltà</span>
-                                    <span>90/500 punti</span>
-                                </div>
-                                <div class="loyalty-bar">
-                                    <div class="loyalty-progress-bar" style="width: 18%"></div>
-                                </div>
-                                <div class="loyalty-rewards">
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="card-back-footer">
-                                <button class="back-to-front-btn">
-                                    <i class="fas fa-arrow-left"></i> Indietro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Customer Card 5 -->
-                <div class="customer-card card-hover-effect" data-customer-id="5">
-                    <div class="customer-card-inner">
-                        <!-- Front -->
-                        <div class="customer-card-front">
-                            <div class="customer-card-header">
-                                <!-- Decorative background -->
-                            </div>
-                            
-                            <div class="customer-avatar-container">
-                                <img src="https://source.unsplash.com/random/100x100/?man3" alt="Antonio Russo" class="customer-avatar">
-                            </div>
-                            
-                            <div class="customer-card-body">
-                                <div class="customer-info">
-                                    <h3 class="customer-name">Antonio Russo</h3>
-                                    <p class="customer-email">antonio.russo@email.com</p>
-                                    
-                                    <div class="customer-stats">
-                                        <div class="customer-stat">
-                                            <div class="stat-value">3</div>
-                                            <div class="stat-label">Ordini</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">60</div>
-                                            <div class="stat-label">Punti</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">€75</div>
-                                            <div class="stat-label">Totale</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">2</div>
-                                            <div class="stat-label">Mesi</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    <button class="flip-btn">
-                                        <i class="fas fa-chart-line"></i> Statistiche
-                                    </button>
-                                    <button class="detail-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="edit-btn">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Back -->
-                        <div class="customer-card-back">
-                            <div class="card-back-header">
-                                <h3>Antonio Russo</h3>
-                                <p>Statistiche del cliente</p>
-                            </div>
-                            
-                            <div class="stats-chart-container">
-                                <canvas id="customer-chart-5"></canvas>
-                            </div>
-                            
-                            <div class="loyalty-progress">
-                                <div class="loyalty-title">
-                                    <span>Programma Fedeltà</span>
-                                    <span>60/500 punti</span>
-                                </div>
-                                <div class="loyalty-bar">
-                                    <div class="loyalty-progress-bar" style="width: 12%"></div>
-                                </div>
-                                <div class="loyalty-rewards">
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="card-back-footer">
-                                <button class="back-to-front-btn">
-                                    <i class="fas fa-arrow-left"></i> Indietro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Customer Card 6 -->
-                <div class="customer-card card-hover-effect" data-customer-id="6">
-                    <div class="customer-card-inner">
-                        <!-- Front -->
-                        <div class="customer-card-front">
-                            <div class="vip-badge">
-                                <i class="fas fa-crown"></i> VIP
-                            </div>
-                            
-                            <div class="customer-card-header">
-                                <!-- Decorative background -->
-                            </div>
-                            
-                            <div class="customer-avatar-container">
-                                <img src="https://source.unsplash.com/random/100x100/?woman3" alt="Elena Martini" class="customer-avatar">
-                            </div>
-                            
-                            <div class="customer-card-body">
-                                <div class="customer-info">
-                                    <h3 class="customer-name">Elena Martini</h3>
-                                    <p class="customer-email">elena.martini@email.com</p>
-                                    
-                                    <div class="customer-stats">
-                                        <div class="customer-stat">
-                                            <div class="stat-value">10</div>
-                                            <div class="stat-label">Ordini</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">210</div>
-                                            <div class="stat-label">Punti</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">€280</div>
-                                            <div class="stat-label">Totale</div>
-                                        </div>
-                                        <div class="customer-stat">
-                                            <div class="stat-value">7</div>
-                                            <div class="stat-label">Mesi</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    <button class="flip-btn">
-                                        <i class="fas fa-chart-line"></i> Statistiche
-                                    </button>
-                                    <button class="detail-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="edit-btn">
-                                        <i class="fas fa-edit"></i> Modifica
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Back -->
-                        <div class="customer-card-back">
-                            <div class="card-back-header">
-                                <h3>Elena Martini</h3>
-                                <p>Statistiche del cliente</p>
-                            </div>
-                            
-                            <div class="stats-chart-container">
-                                <canvas id="customer-chart-6"></canvas>
-                            </div>
-                            
-                            <div class="loyalty-progress">
-                                <div class="loyalty-title">
-                                    <span>Programma Fedeltà</span>
-                                    <span>210/500 punti</span>
-                                </div>
-                                <div class="loyalty-bar">
-                                    <div class="loyalty-progress-bar" style="width: 42%"></div>
-                                </div>
-                                <div class="loyalty-rewards">
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point active"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                    <span class="loyalty-point"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="card-back-footer">
-                                <button class="back-to-front-btn">
-                                    <i class="fas fa-arrow-left"></i> Indietro
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="customers-grid" id="customers-grid-container">
+                <!-- Le schede cliente verranno generate qui da JavaScript -->
+                 <p class="no-data-message" style="display:none;">Nessun cliente trovato per i filtri selezionati.</p>
             </div>
         </div>
         
@@ -3041,177 +2586,11 @@
                             <th>Azioni</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="animate-in">
-                            <td>
-                                <div class="customer-table-info">
-                                    <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi" class="table-customer-avatar">
-                                    <div>
-                                        <div class="table-customer-name">Marco Rossi</div>
-                                        <div class="table-customer-email">marco.rossi@email.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>+39 123 456 7890</td>
-                            <td>12 ordini - €320</td>
-                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 250 punti</span></td>
-                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
-                                        <i class="fas fa-user"></i>
-                                    </button>
-                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="animate-in animate-delay-1">
-                            <td>
-                                <div class="customer-table-info">
-                                    <img src="https://source.unsplash.com/random/100x100/?woman" alt="Laura Bianchi" class="table-customer-avatar">
-                                    <div>
-                                        <div class="table-customer-name">Laura Bianchi</div>
-                                        <div class="table-customer-email">laura.bianchi@email.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>+39 123 456 7891</td>
-                            <td>8 ordini - €210</td>
-                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 180 punti</span></td>
-                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
-                                        <i class="fas fa-user"></i>
-                                    </button>
-                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="animate-in animate-delay-2">
-                            <td>
-                                <div class="customer-table-info">
-                                    <img src="https://source.unsplash.com/random/100x100/?man2" alt="Giuseppe Verdi" class="table-customer-avatar">
-                                    <div>
-                                        <div class="table-customer-name">Giuseppe Verdi</div>
-                                        <div class="table-customer-email">giuseppe.verdi@email.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>+39 123 456 7892</td>
-                            <td>15 ordini - €420</td>
-                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 320 punti</span></td>
-                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
-                                        <i class="fas fa-user"></i>
-                                    </button>
-                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="animate-in animate-delay-3">
-                            <td>
-                                <div class="customer-table-info">
-                                    <img src="https://source.unsplash.com/random/100x100/?woman2" alt="Francesca Neri" class="table-customer-avatar">
-                                    <div>
-                                        <div class="table-customer-name">Francesca Neri</div>
-                                        <div class="table-customer-email">francesca.neri@email.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>+39 123 456 7893</td>
-                            <td>5 ordini - €85</td>
-                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 90 punti</span></td>
-                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
-                                        <i class="fas fa-user"></i>
-                                    </button>
-                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="animate-in animate-delay-4">
-                            <td>
-                                <div class="customer-table-info">
-                                    <img src="https://source.unsplash.com/random/100x100/?man3" alt="Antonio Russo" class="table-customer-avatar">
-                                    <div>
-                                        <div class="table-customer-name">Antonio Russo</div>
-                                        <div class="table-customer-email">antonio.russo@email.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>+39 123 456 7894</td>
-                            <td>3 ordini - €75</td>
-                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 60 punti</span></td>
-                            <td><span class="customer-status status-inactive"><i class="fas fa-circle"></i> Inattivo</span></td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
-                                        <i class="fas fa-user"></i>
-                                    </button>
-                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="animate-in animate-delay-5">
-                            <td>
-                                <div class="customer-table-info">
-                                    <img src="https://source.unsplash.com/random/100x100/?woman3" alt="Elena Martini" class="table-customer-avatar">
-                                    <div>
-                                        <div class="table-customer-name">Elena Martini</div>
-                                        <div class="table-customer-email">elena.martini@email.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>+39 123 456 7895</td>
-                            <td>10 ordini - €280</td>
-                            <td><span class="table-loyalty-points"><i class="fas fa-star"></i> 210 punti</span></td>
-                            <td><span class="customer-status status-active"><i class="fas fa-circle"></i> Attivo</span></td>
-                            <td>
-                                <div class="table-actions">
-                                    <button class="table-action-btn table-view-btn" title="Visualizza profilo">
-                                        <i class="fas fa-user"></i>
-                                    </button>
-                                    <button class="table-action-btn table-edit-btn" title="Modifica cliente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="table-action-btn table-delete-btn" title="Elimina cliente">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tbody id="customers-table-body">
+                        <!-- Le righe della tabella verranno generate qui da JavaScript -->
                     </tbody>
                 </table>
+                <p class="no-data-message" id="table-no-data-message" style="display:none;">Nessun cliente trovato per i filtri selezionati.</p>
             </div>
         </div>
         
@@ -3223,59 +2602,41 @@
                         <i class="fas fa-map-marker-alt"></i> Distribuzione Clienti
                     </div>
                     <div class="map-filters">
-                        <button class="map-filter-btn active" data-filter="all">
+                        <button class="map-filter-btn active" data-map-filter="all">
                             <i class="fas fa-users"></i> Tutti
                         </button>
-                        <button class="map-filter-btn" data-filter="active">
+                        <button class="map-filter-btn" data-map-filter="active">
                             <i class="fas fa-user-check"></i> Attivi
                         </button>
-                        <button class="map-filter-btn" data-filter="inactive">
+                        <button class="map-filter-btn" data-map-filter="inactive">
                             <i class="fas fa-user-slash"></i> Inattivi
                         </button>
-                        <button class="map-filter-btn" data-filter="vip">
+                        <button class="map-filter-btn" data-map-filter="vip">
                             <i class="fas fa-crown"></i> VIP
                         </button>
                     </div>
                 </div>
                 
                 <div class="map-canvas-container">
-                    <div class="map-canvas">
-                        <!-- Customer Markers -->
-                        <div class="customer-marker" style="top: 150px; left: 350px;">
-                            <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi">
-                        </div>
-                        <div class="customer-marker" style="top: 180px; left: 500px;">
-                            <img src="https://source.unsplash.com/random/100x100/?woman" alt="Laura Bianchi">
-                        </div>
-                        <div class="customer-marker" style="top: 300px; left: 600px;">
-                            <img src="https://source.unsplash.com/random/100x100/?man2" alt="Giuseppe Verdi">
-                        </div>
-                        <div class="customer-marker" style="top: 250px; left: 200px;">
-                            <img src="https://source.unsplash.com/random/100x100/?woman2" alt="Francesca Neri">
-                        </div>
-                        <div class="customer-marker" style="top: 350px; left: 400px;">
-                            <img src="https://source.unsplash.com/random/100x100/?man3" alt="Antonio Russo">
-                        </div>
-                        
-                        <!-- Active Marker with Info -->
+                    <div class="map-canvas" id="map-canvas-markers">
+                        <!-- Customer Markers verranno generati qui da JS -->
+                        <!-- Esempio di come potrebbe essere un marker selezionato, per ora commentato -->
+                        <!-- 
                         <div class="marker-active" style="top: 220px; left: 300px;">
-                            <img src="https://source.unsplash.com/random/100x100/?woman3" alt="Elena Martini">
-                            
+                            <img src="https://randomuser.me/api/portraits/women/66.jpg" alt="Elena Martini">
                             <div class="marker-info">
                                 <h3>Elena Martini</h3>
                                 <p>Via Roma 123, Milano</p>
                                 <div class="marker-info-actions">
-                                    <button class="marker-info-btn">
-                                        <i class="fas fa-user"></i> Profilo
-                                    </button>
-                                    <button class="marker-info-btn">
-                                        <i class="fas fa-route"></i> Indicazioni
-                                    </button>
+                                    <button class="marker-info-btn"><i class="fas fa-user"></i> Profilo</button>
+                                    <button class="marker-info-btn"><i class="fas fa-route"></i> Indicazioni</button>
                                 </div>
                             </div>
                         </div>
+                        -->
                     </div>
                 </div>
+                 <p class="no-data-message" id="map-no-data-message" style="display:none;">Nessun cliente da mostrare sulla mappa.</p>
             </div>
         </div>
         
@@ -3287,10 +2648,10 @@
                     <div class="stats-chart-title">
                         <i class="fas fa-chart-pie"></i> Demografia Clienti
                     </div>
-                    <div class="stats-chart-filters">
-                        <button class="chart-filter-btn active" data-period="age">Età</button>
-                        <button class="chart-filter-btn" data-period="gender">Genere</button>
-                        <button class="chart-filter-btn" data-period="location">Località</button>
+                    <div class="stats-chart-filters" id="demographics-filters">
+                        <button class="chart-filter-btn active" data-chart="demographics" data-filter="age">Età</button>
+                        <button class="chart-filter-btn" data-chart="demographics" data-filter="gender">Genere</button>
+                        <button class="chart-filter-btn" data-chart="demographics" data-filter="location">Località</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
@@ -3304,10 +2665,10 @@
                     <div class="stats-chart-title">
                         <i class="fas fa-chart-line"></i> Acquisizione Clienti
                     </div>
-                    <div class="stats-chart-filters">
-                        <button class="chart-filter-btn active" data-period="month">Mensile</button>
-                        <button class="chart-filter-btn" data-period="quarter">Trimestrale</button>
-                        <button class="chart-filter-btn" data-period="year">Annuale</button>
+                    <div class="stats-chart-filters" id="acquisition-filters">
+                        <button class="chart-filter-btn active" data-chart="acquisition" data-filter="month">Mensile</button>
+                        <button class="chart-filter-btn" data-chart="acquisition" data-filter="quarter">Trimestrale</button>
+                        <button class="chart-filter-btn" data-chart="acquisition" data-filter="year">Annuale</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
@@ -3321,10 +2682,10 @@
                     <div class="stats-chart-title">
                         <i class="fas fa-utensils"></i> Abitudini Ordini
                     </div>
-                    <div class="stats-chart-filters">
-                        <button class="chart-filter-btn active" data-period="category">Categoria</button>
-                        <button class="chart-filter-btn" data-period="time">Ora</button>
-                        <button class="chart-filter-btn" data-period="day">Giorno</button>
+                    <div class="stats-chart-filters" id="habits-filters">
+                        <button class="chart-filter-btn active" data-chart="habits" data-filter="category">Categoria</button>
+                        <button class="chart-filter-btn" data-chart="habits" data-filter="time">Ora</button>
+                        <button class="chart-filter-btn" data-chart="habits" data-filter="day">Giorno</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
@@ -3338,10 +2699,10 @@
                     <div class="stats-chart-title">
                         <i class="fas fa-user-clock"></i> Tasso di Fidelizzazione
                     </div>
-                    <div class="stats-chart-filters">
-                        <button class="chart-filter-btn active" data-period="3m">3 mesi</button>
-                        <button class="chart-filter-btn" data-period="6m">6 mesi</button>
-                        <button class="chart-filter-btn" data-period="1y">1 anno</button>
+                    <div class="stats-chart-filters" id="retention-filters">
+                        <button class="chart-filter-btn active" data-chart="retention" data-filter="3m">3 mesi</button>
+                        <button class="chart-filter-btn" data-chart="retention" data-filter="6m">6 mesi</button>
+                        <button class="chart-filter-btn" data-chart="retention" data-filter="1y">1 anno</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
@@ -3351,12 +2712,8 @@
         </div>
         
         <!-- Pagination -->
-        <div class="pagination">
-            <a href="#"><i class="fas fa-chevron-left"></i></a>
-            <a href="#" class="active">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#"><i class="fas fa-chevron-right"></i></a>
+        <div class="pagination" id="pagination-controls">
+            <!-- I controlli di paginazione verranno generati qui da JavaScript -->
         </div>
     </div>
     
@@ -3365,884 +2722,990 @@
         <div class="modal">
             <div class="profile-header">
                 <div class="profile-header-content">
-                    <img src="https://source.unsplash.com/random/100x100/?man" alt="Marco Rossi" class="profile-avatar">
+                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Nome Cliente" class="profile-avatar" id="modal-profile-avatar">
                     <div class="profile-info">
-                        <h3>Marco Rossi</h3>
-                        <p>Cliente dal 12 Settembre 2024</p>
-                        <div class="profile-meta">
-                            <div class="profile-meta-item"><i class="fas fa-crown"></i> VIP</div>
-                            <div class="profile-meta-item"><i class="fas fa-star"></i> 250 Punti</div>
-                            <div class="profile-meta-item"><i class="fas fa-shopping-bag"></i> 12 Ordini</div>
+                        <h3 id="modal-profile-name">Nome Cliente</h3>
+                        <p id="modal-profile-member-since">Cliente dal DD/MM/YYYY</p>
+                        <div class="profile-meta" id="modal-profile-meta">
+                            <!-- Meta info verranno popolate da JS -->
                         </div>
                     </div>
                 </div>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close" id="customerProfileModalClose">&times;</button>
             </div>
             
-            <div class="profile-tabs">
+            <div class="profile-tabs" id="profile-tabs-container">
                 <div class="profile-tab active" data-tab="info">Informazioni</div>
                 <div class="profile-tab" data-tab="orders">Ordini</div>
-                <div class="profile-tab" data-tab="stats">Statistiche</div>
+                <div class="profile-tab" data-tab="stats_individual">Statistiche</div>
                 <div class="profile-tab" data-tab="notes">Note</div>
             </div>
             
             <div class="profile-content">
-                <div class="profile-section profile-tab-content" data-tab="info">
-                    <div class="profile-section-title">
-                        <i class="fas fa-user"></i> Dettagli Personali
-                    </div>
-                    <!-- Info content -->
+                <div class="profile-section profile-tab-content" data-tab="info" id="profile-tab-info">
+                    <div class="profile-section-title"><i class="fas fa-user"></i> Dettagli Personali</div>
+                    <p><strong>Email:</strong> <span id="modal-info-email">-</span></p>
+                    <p><strong>Telefono:</strong> <span id="modal-info-phone">-</span></p>
+                    <p><strong>Indirizzo:</strong> <span id_:"modal-info-address">-</span></p>
+                    <p><strong>Data Registrazione:</strong> <span id="modal-info-registration-date">-</span></p>
+                    <p><strong>Ultimo Ordine:</strong> <span id="modal-info-last-order">-</span></p>
                 </div>
-                <!-- Other tab contents -->
+                <div class="profile-section profile-tab-content" data-tab="orders" id="profile-tab-orders">
+                    <div class="profile-section-title"><i class="fas fa-shopping-bag"></i> Cronologia Ordini</div>
+                    <div class="profile-order-list" id="modal-orders-list">
+                         <!-- Ordini verranno popolati qui -->
+                         <p class="no-data-message">Nessun ordine trovato.</p>
+                    </div>
+                </div>
+                <div class="profile-section profile-tab-content" data-tab="stats_individual" id="profile-tab-stats">
+                    <div class="profile-section-title"><i class="fas fa-chart-bar"></i> Statistiche Cliente</div>
+                     <div class="profile-stats" id="modal-stats-cards">
+                        <!-- Statistiche card verranno popolate qui -->
+                         <p class="no-data-message">Nessuna statistica disponibile.</p>
+                    </div>
+                    <div class="chart-wrapper" style="height: 250px; margin-top: 20px;">
+                         <canvas id="modal-customer-spend-chart"></canvas>
+                    </div>
+                </div>
+                <div class="profile-section profile-tab-content" data-tab="notes" id="profile-tab-notes">
+                    <div class="profile-section-title"><i class="fas fa-sticky-note"></i> Note Cliente</div>
+                    <textarea class="form-control" id="modal-customer-notes" rows="5" placeholder="Aggiungi note su questo cliente..."></textarea>
+                    <button class="action-btn add-customer-btn" style="margin-top:15px;" id="save-customer-notes-btn">
+                        <i class="fas fa-save"></i> Salva Note
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Create particles background
-            createParticles();
+            // Populate username in header if placeholder exists
+            const usernameSpan = document.querySelector('.user-controls .username');
+            if (usernameSpan && usernameSpan.textContent.includes('{{user.username}}')) {
+                usernameSpan.textContent = currentUser.username;
+            }
             
-            // Set active navigation link
-            setActiveNavLink();
+            // Constants
+            const ITEMS_PER_PAGE = 6;
             
-            // Load notifications
-            loadNotifications();
-            
-            // Setup view switcher
-            setupViewSwitcher();
-            
-            // Setup customer cards
-            setupCustomerCards();
-            
-            // Initialize charts
-            initializeCharts();
-            
-            // Setup action buttons
-            setupActionButtons();
+            // State
+            let currentPage = 1;
+            let currentCustomers = [];
+            let currentView = 'cards'; // 'cards', 'table', 'map', 'stats'
+            let activeChartInstances = {};
 
-                        // Setup interactive map
+
+            // --- DEMO DATA ---
+            const allCustomersData = [
+                { id: 1, name: "Marco Rossi", email: "marco.rossi@email.com", avatar: "https://randomuser.me/api/portraits/men/11.jpg", orders: 12, loyaltyPoints: 250, totalSpend: 320, monthsActive: 8, status: "active", isVip: true, phone: "+39 333 1234567", address: "Via Roma 1, Milano", registrationDate: "2023-03-15", lastOrderDate: "2024-07-10", mapX: 25, mapY: 30, notes: "Preferisce Coca-Cola Zero." },
+                { id: 2, name: "Laura Bianchi", email: "laura.bianchi@email.com", avatar: "https://randomuser.me/api/portraits/women/22.jpg", orders: 8, loyaltyPoints: 180, totalSpend: 210, monthsActive: 5, status: "active", isVip: false, phone: "+39 333 2345678", address: "Corso Garibaldi 10, Milano", registrationDate: "2023-10-01", lastOrderDate: "2024-07-05", mapX: 35, mapY: 38, notes: "" },
+                { id: 3, name: "Giuseppe Verdi", email: "g.verdi@email.com", avatar: "https://randomuser.me/api/portraits/men/33.jpg", orders: 15, loyaltyPoints: 320, totalSpend: 420, monthsActive: 10, status: "active", isVip: true, phone: "+39 333 3456789", address: "Piazza Duomo 5, Milano", registrationDate: "2023-01-20", lastOrderDate: "2024-07-12", mapX: 42, mapY: 60, notes: "Allergico alle noci." },
+                { id: 4, name: "Francesca Neri", email: "francesca.n@email.com", avatar: "https://randomuser.me/api/portraits/women/44.jpg", orders: 5, loyaltyPoints: 90, totalSpend: 85, monthsActive: 3, status: "active", isVip: false, phone: "+39 333 4567890", address: "Via Montenapoleone 20, Milano", registrationDate: "2024-04-01", lastOrderDate: "2024-06-28", mapX: 15, mapY: 50, notes: "" },
+                { id: 5, name: "Antonio Russo", email: "a.russo@email.com", avatar: "https://randomuser.me/api/portraits/men/55.jpg", orders: 3, loyaltyPoints: 60, totalSpend: 75, monthsActive: 2, status: "inactive", isVip: false, phone: "+39 333 5678901", address: "Viale Monza 100, Milano", registrationDate: "2024-05-10", lastOrderDate: "2024-05-20", mapX: 28, mapY: 70, notes: "Ha chiesto info su eventi." },
+                { id: 6, name: "Elena Martini", email: "elena.martini@email.com", avatar: "https://randomuser.me/api/portraits/women/66.jpg", orders: 10, loyaltyPoints: 210, totalSpend: 280, monthsActive: 7, status: "active", isVip: true, phone: "+39 333 6789012", address: "Via Dante 3, Milano", registrationDate: "2023-06-05", lastOrderDate: "2024-07-08", mapX: 22, mapY: 60, notes: "" },
+                { id: 7, name: "Paolo Ferrari", email: "paolo.f@email.it", avatar: "https://randomuser.me/api/portraits/men/7.jpg", orders: 22, loyaltyPoints: 450, totalSpend: 580, monthsActive: 12, status: "active", isVip: true, phone: "+39 334 1112233", address: "Corso Como 8, Milano", registrationDate: "2022-07-01", lastOrderDate: "2024-07-11", mapX: 50, mapY: 25, notes: "Cliente abituale, molto esigente sulla cottura della carne." },
+                { id: 8, name: "Sofia Romano", email: "sofia.r@email.it", avatar: "https://randomuser.me/api/portraits/women/8.jpg", orders: 6, loyaltyPoints: 120, totalSpend: 150, monthsActive: 4, status: "active", isVip: false, phone: "+39 334 2223344", address: "Via Brera 12, Milano", registrationDate: "2024-03-10", lastOrderDate: "2024-07-01", mapX: 60, mapY: 55, notes: "" },
+                { id: 9, name: "Giovanni De Luca", email: "giovanni.dl@email.com", avatar: "https://randomuser.me/api/portraits/men/9.jpg", orders: 1, loyaltyPoints: 10, totalSpend: 25, monthsActive: 1, status: "inactive", isVip: false, phone: "+39 334 3334455", address: "Via Torino 50, Milano", registrationDate: "2024-06-15", lastOrderDate: "2024-06-15", mapX: 70, mapY: 30, notes: "Primo ordine, non più tornato." },
+                { id: 10, name: "Chiara Marino", email: "chiara.marino@email.com", avatar: "https://randomuser.me/api/portraits/women/10.jpg", orders: 9, loyaltyPoints: 190, totalSpend: 230, monthsActive: 6, status: "active", isVip: false, phone: "+39 334 4445566", address: "Largo Cairoli 1, Milano", registrationDate: "2023-09-22", lastOrderDate: "2024-07-03", mapX: 30, mapY: 80, notes: "" },
+                { id: 11, name: "Alessandro Conti", email: "alex.conti@email.it", avatar: "https://randomuser.me/api/portraits/men/21.jpg", orders: 18, loyaltyPoints: 380, totalSpend: 480, monthsActive: 11, status: "active", isVip: true, phone: "+39 335 1212121", address: "Via Paolo Sarpi 25, Milano", registrationDate: "2022-08-10", lastOrderDate: "2024-07-14", mapX: 65, mapY: 70, notes: "Organizza spesso cene con amici." },
+                { id: 12, name: "Isabella Greco", email: "isabella.g@email.it", avatar: "https://randomuser.me/api/portraits/women/23.jpg", orders: 4, loyaltyPoints: 70, totalSpend: 95, monthsActive: 3, status: "active", isVip: false, phone: "+39 335 2323232", address: "Naviglio Grande 5, Milano", registrationDate: "2024-04-18", lastOrderDate: "2024-06-20", mapX: 10, mapY: 15, notes: "Richiede sempre il tavolo vicino alla finestra." },
+                { id: 13, name: "Davide Lombardi", email: "davide.lombardi@email.com", avatar: "https://randomuser.me/api/portraits/men/31.jpg", orders: 7, loyaltyPoints: 150, totalSpend: 190, monthsActive: 5, status: "active", isVip: false, phone: "+39 335 3434343", address: "Piazzale Loreto 3, Milano", registrationDate: "2023-11-05", lastOrderDate: "2024-07-02", mapX: 80, mapY: 40, notes: "" },
+                { id: 14, name: "Valentina Galli", email: "vale.galli@email.com", avatar: "https://randomuser.me/api/portraits/women/41.jpg", orders: 11, loyaltyPoints: 230, totalSpend: 300, monthsActive: 9, status: "active", isVip: true, phone: "+39 335 4545454", address: "Via Vitruvio 15, Milano", registrationDate: "2023-02-10", lastOrderDate: "2024-07-09", mapX: 55, mapY: 85, notes: "Festeggia il compleanno qui ogni anno." },
+                { id: 15, name: "Riccardo Moretti", email: "r.moretti@email.it", avatar: "https://randomuser.me/api/portraits/men/51.jpg", orders: 2, loyaltyPoints: 30, totalSpend: 50, monthsActive: 1, status: "inactive", isVip: false, phone: "+39 335 5656565", address: "Corso Sempione 30, Milano", registrationDate: "2024-06-01", lastOrderDate: "2024-06-05", mapX: 20, mapY: 22, notes: "Studente." },
+                { id: 16, name: "Martina Rizzo", email: "marty.rizzo@email.com", avatar: "https://randomuser.me/api/portraits/women/61.jpg", orders: 14, loyaltyPoints: 290, totalSpend: 390, monthsActive: 10, status: "active", isVip: false, phone: "+39 335 6767676", address: "Via Washington 7, Milano", registrationDate: "2023-01-15", lastOrderDate: "2024-07-13", mapX: 40, mapY: 10, notes: "" },
+                { id: 17, name: "Federico Barbieri", email: "fede.barbieri@email.it", avatar: "https://randomuser.me/api/portraits/men/71.jpg", orders: 5, loyaltyPoints: 100, totalSpend: 120, monthsActive: 4, status: "active", isVip: false, phone: "+39 338 1010101", address: "Via Mecenate 22, Milano", registrationDate: "2024-03-20", lastOrderDate: "2024-06-25", mapX: 90, mapY: 50, notes: "Vegetariano." },
+                { id: 18, name: "Silvia Pellegrini", email: "silvia.pelle@email.com", avatar: "https://randomuser.me/api/portraits/women/81.jpg", orders: 20, loyaltyPoints: 410, totalSpend: 550, monthsActive: 11, status: "active", isVip: true, phone: "+39 338 2020202", address: "Piazza Gae Aulenti 4, Milano", registrationDate: "2022-09-01", lastOrderDate: "2024-07-15", mapX: 48, mapY: 48, notes: "Preferisce tavoli all'aperto se disponibili." }
+            ];
+            currentCustomers = [...allCustomersData]; // Start with all customers
+
+
+            // --- UI ELEMENTS ---
+            const customersGridContainer = document.getElementById('customers-grid-container');
+            const customersTableBody = document.getElementById('customers-table-body');
+            const paginationControls = document.getElementById('pagination-controls');
+            const searchInput = document.getElementById('customer-search-input');
+            const statusFilterSelect = document.getElementById('status-filter');
+            const sortFilterSelect = document.getElementById('sort-filter');
+            
+            const totalCustomersValueEl = document.getElementById('total-customers-value');
+            const activeCustomersValueEl = document.getElementById('active-customers-value');
+            const vipCustomersValueEl = document.getElementById('vip-customers-value');
+
+            const mapCanvasMarkers = document.getElementById('map-canvas-markers');
+            const mapNoDataMessage = document.getElementById('map-no-data-message');
+            const cardsNoDataMessage = customersGridContainer.querySelector('.no-data-message');
+            const tableNoDataMessage = document.getElementById('table-no-data-message');
+
+
+            // --- INITIALIZATION ---
+            createParticles();
+            setActiveNavLink();
+            loadNotifications(); // Simulated
+            updateOverviewStats();
+            applyFiltersAndSort(); // This will also call renderCurrentPageData and renderPagination
+            setupViewSwitcher();
+            initializeAllCharts();
+            setupActionButtons();
             setupMap();
-            
-            // Setup modal functionality
             setupModals();
-            
-            // Show welcome toast
+
             setTimeout(() => {
-                showToast('Clienti caricati', 'Gestione clienti inizializzata correttamente', 'success');
+                showToast('Clienti caricati', 'Gestione clienti pronta!', 'success');
             }, 1000);
-        });
-        
-        // Create background particles
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            if (!particles) return;
-            
-            // Clear any existing particles
-            particles.innerHTML = '';
-            
-            // Settings
-            const particleCount = 50; // Number of particles
-            
-            // Create particles
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // Random position
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                
-                // Random size
-                const size = Math.random() * 10 + 2;
-                
-                // Random opacity
-                const opacity = Math.random() * 0.5 + 0.1;
-                
-                // Random animation duration
-                const duration = Math.random() * 60 + 30;
-                
-                // Apply styles
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.opacity = opacity;
-                
-                // Alternate between primary and secondary colors
-                if (i % 2 === 0) {
-                    particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
-                } else {
-                    particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
-                }
-                
-                // Add floating animation
-                particle.style.animation = `
-                    particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
-                    particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
-                `;
-                
-                // Append to container
-                particles.appendChild(particle);
-            }
-        }
-        
-        // Set active navigation link
-        function setActiveNavLink() {
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.header-nav a');
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (currentPath === link.getAttribute('href')) {
-                    link.classList.add('active');
-                }
-            });
-        }
-        
-        // Load notifications
-        function loadNotifications() {
-            try {
-                fetch('/notifiche')
-                    .then(response => response.json())
-                    .then(notifications => {
-                        const badge = document.getElementById('notification-badge');
-                        if (!badge) return;
-                        
-                        const unreadCount = notifications.filter(n => !n.letto).length;
-                        badge.textContent = unreadCount;
-                        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
-                        
-                        if (unreadCount > 0) {
-                            showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
-                        }
-                    })
-                    .catch(error => console.error('Errore caricamento notifiche:', error));
-            } catch (e) {
-                console.log('Caricamento notifiche non disponibile in questa pagina');
-                
-                // Demo data for presentation
-                setTimeout(() => {
-                    const badge = document.getElementById('notification-badge');
-                    if (badge) {
-                        badge.textContent = "3";
-                        badge.style.display = 'flex';
-                    }
-                }, 3000);
-            }
-        }
-        
-        // Setup view switcher
-        function setupViewSwitcher() {
-            const viewButtons = document.querySelectorAll('.view-btn');
-            const viewContents = document.querySelectorAll('.view-content');
-            
-            viewButtons.forEach(button => {
+
+            // --- EVENT LISTENERS ---
+            searchInput.addEventListener('input', debounce(applyFiltersAndSort, 300));
+            statusFilterSelect.addEventListener('change', applyFiltersAndSort);
+            sortFilterSelect.addEventListener('change', applyFiltersAndSort);
+
+            // Chart filter buttons
+            document.querySelectorAll('.stats-chart-filters .chart-filter-btn').forEach(button => {
                 button.addEventListener('click', function() {
-                    const view = this.dataset.view;
-                    
-                    // Remove active class from all buttons
-                    viewButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    
-                    // Hide all views
-                    viewContents.forEach(content => {
-                        content.style.display = 'none';
-                    });
-                    
-                    // Show selected view
-                    const selectedView = document.getElementById(`${view}-view`);
-                    if (selectedView) {
-                        selectedView.style.display = 'block';
-                        
-                        // Special handling for map view
-                        if (view === 'map') {
-                            // In a real implementation, you would initialize or refresh the map here
-                            simulateMapAnimation();
-                        }
-                        
-                        // Special handling for stats view
-                        if (view === 'stats') {
-                            // In a real implementation, you would initialize or refresh the charts here
-                            refreshCharts();
-                        }
-                    }
-                    
-                    // Show toast notification
-                    showToast('Vista cambiata', `Visualizzazione: ${getViewName(view)}`, 'success');
-                });
-            });
-        }
-        
-        // Get view name
-        function getViewName(view) {
-            switch (view) {
-                case 'cards': return 'Schede Cliente';
-                case 'table': return 'Tabella Cliente';
-                case 'map': return 'Mappa Distribuzione';
-                case 'stats': return 'Statistiche Cliente';
-                default: return view;
-            }
-        }
-        
-        // Setup customer cards
-        function setupCustomerCards() {
-            const flipBtns = document.querySelectorAll('.flip-btn');
-            const backToFrontBtns = document.querySelectorAll('.back-to-front-btn');
-            const detailBtns = document.querySelectorAll('.detail-btn');
-            
-            // Flip card to show stats
-            flipBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const card = this.closest('.customer-card');
-                    card.classList.add('flipped');
-                    
-                    // Get customer ID
-                    const customerId = card.dataset.customerId;
-                    
-                    // Initialize or update chart
-                    initializeCustomerChart(customerId);
-                });
-            });
-            
-            // Flip card back
-            backToFrontBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const card = this.closest('.customer-card');
-                    card.classList.remove('flipped');
-                });
-            });
-            
-            // Show detail profile modal
-            detailBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const card = this.closest('.customer-card');
-                    const customerId = card.dataset.customerId;
-                    
-                    // Show profile modal
-                    showProfileModal(customerId);
-                });
-            });
-        }
-        
-        // Initialize customer specific chart
-        function initializeCustomerChart(customerId) {
-            const chartId = `customer-chart-${customerId}`;
-            const ctx = document.getElementById(chartId);
-            
-            if (!ctx) return;
-            
-            // Destroy existing chart if any
-            if (window[`customerChart${customerId}`]) {
-                window[`customerChart${customerId}`].destroy();
-            }
-            
-            // Generate random data for demo
-            const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'];
-            const data = months.map(() => Math.floor(Math.random() * 100) + 20);
-            
-            // Create chart
-            window[`customerChart${customerId}`] = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Spesa Mensile',
-                        data: data,
-                        borderColor: 'rgba(255, 255, 255, 0.8)',
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: 'rgba(255, 255, 255, 0.8)',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.7)'
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.7)',
-                                callback: function(value) {
-                                    return '€' + value;
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-        
-        // Initialize all charts for statistics view
-        function initializeCharts() {
-            // Demographics chart
-            const demographicsCtx = document.getElementById('demographics-chart');
-            if (demographicsCtx) {
-                window.demographicsChart = new Chart(demographicsCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['18-25', '26-35', '36-45', '46-55', '56+'],
-                        datasets: [{
-                            data: [15, 30, 25, 20, 10],
-                            backgroundColor: [
-                                '#5e60ce',
-                                '#5390d9',
-                                '#4ea8de',
-                                '#48bfe3',
-                                '#56cfe1'
-                            ],
-                            borderColor: 'white',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'right',
-                                labels: {
-                                    font: {
-                                        family: 'Montserrat'
-                                    }
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Distribuzione per Età',
-                                font: {
-                                    size: 16,
-                                    family: 'Montserrat',
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Acquisition chart
-            const acquisitionCtx = document.getElementById('acquisition-chart');
-            if (acquisitionCtx) {
-                window.acquisitionChart = new Chart(acquisitionCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
-                        datasets: [{
-                            label: 'Nuovi Clienti',
-                            data: [12, 19, 14, 15, 22, 18],
-                            backgroundColor: 'rgba(94, 96, 206, 0.7)',
-                            borderColor: 'rgba(94, 96, 206, 1)',
-                            borderWidth: 2,
-                            borderRadius: 5
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Habits chart
-            const habitsCtx = document.getElementById('habits-chart');
-            if (habitsCtx) {
-                window.habitsChart = new Chart(habitsCtx, {
-                    type: 'radar',
-                    data: {
-                        labels: ['Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert'],
-                        datasets: [{
-                            label: 'Ordini per categoria',
-                            data: [65, 75, 45, 80, 32],
-                            backgroundColor: 'rgba(94, 96, 206, 0.3)',
-                            borderColor: 'rgba(94, 96, 206, 1)',
-                            pointBackgroundColor: 'rgba(94, 96, 206, 1)',
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgba(94, 96, 206, 1)',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                angleLines: {
-                                    color: 'rgba(0, 0, 0, 0.1)'
-                                },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)'
-                                },
-                                ticks: {
-                                    backdropColor: 'transparent'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Retention chart
-            const retentionCtx = document.getElementById('retention-chart');
-            if (retentionCtx) {
-                window.retentionChart = new Chart(retentionCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'],
-                        datasets: [{
-                            label: 'Tasso di Fidelizzazione',
-                            data: [85, 82, 88, 90, 92, 95],
-                            backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                            borderColor: 'rgba(46, 204, 113, 1)',
-                            tension: 0.3,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                suggestedMin: 75,
-                                suggestedMax: 100
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        
-        // Refresh charts for stats view
-        function refreshCharts() {
-            // If charts are initialized, update them with new animations
-            if (window.demographicsChart) {
-                window.demographicsChart.options.animation = {
-                    duration: 800,
-                    easing: 'easeOutBounce'
-                };
-                window.demographicsChart.update();
-            }
-            
-            if (window.acquisitionChart) {
-                window.acquisitionChart.options.animation = {
-                    duration: 800,
-                    easing: 'easeOutBounce'
-                };
-                window.acquisitionChart.update();
-            }
-            
-            if (window.habitsChart) {
-                window.habitsChart.options.animation = {
-                    duration: 800,
-                    easing: 'easeOutBounce'
-                };
-                window.habitsChart.update();
-            }
-            
-            if (window.retentionChart) {
-                window.retentionChart.options.animation = {
-                    duration: 800,
-                    easing: 'easeOutBounce'
-                };
-                window.retentionChart.update();
-            }
-        }
-        
-        // Simulate map animation
-        function simulateMapAnimation() {
-            const markers = document.querySelectorAll('.customer-marker');
-            
-            markers.forEach((marker, index) => {
-                setTimeout(() => {
-                    marker.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        marker.style.transform = '';
-                    }, 300);
-                }, index * 200);
-            });
-        }
-        
-        // Setup interactive map
-        function setupMap() {
-            // Setup map filter buttons
-            const mapFilters = document.querySelectorAll('.map-filter-btn');
-            
-            mapFilters.forEach(filter => {
-                filter.addEventListener('click', function() {
-                    // Remove active class from all filters
-                    mapFilters.forEach(f => f.classList.remove('active'));
-                    
-                    // Add active class to clicked filter
-                    this.classList.add('active');
-                    
-                    // Filter map markers (in a real implementation)
+                    const chartName = this.dataset.chart;
                     const filterType = this.dataset.filter;
                     
-                    // Show toast notification
-                    showToast('Filtro applicato', `Filtro: ${getFilterName(filterType)}`, 'success');
-                });
-            });
-            
-            // Setup marker clicks
-            const markers = document.querySelectorAll('.customer-marker');
-            
-            markers.forEach(marker => {
-                marker.addEventListener('click', function() {
-                    // Remove active class from all markers
-                    document.querySelectorAll('.marker-active').forEach(m => {
-                        m.classList.remove('marker-active');
-                        m.classList.add('customer-marker');
-                    });
-                    
-                    // Make this marker active (in a real implementation)
-                    // For demo, just show a toast
-                    const img = this.querySelector('img');
-                    const name = img ? img.alt : 'Cliente';
-                    
-                    showToast('Cliente selezionato', `Hai selezionato ${name}`, 'success');
-                });
-            });
-        }
-        
-        // Get filter name
-        function getFilterName(filter) {
-            switch (filter) {
-                case 'all': return 'Tutti i clienti';
-                case 'active': return 'Clienti attivi';
-                case 'inactive': return 'Clienti inattivi';
-                case 'vip': return 'Clienti VIP';
-                default: return filter;
-            }
-        }
-        
-        // Setup modals
-        function setupModals() {
-            const modalOverlays = document.querySelectorAll('.modal-overlay');
-            const closeBtns = document.querySelectorAll('.modal-close');
-            
-            // Close modal on X button click
-            closeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = this.closest('.modal-overlay');
-                    closeModal(modal);
-                });
-            });
-            
-            // Close modal on overlay click
-            modalOverlays.forEach(overlay => {
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeModal(this);
-                    }
-                });
-            });
-            
-            // Setup profile tabs
-            const profileTabs = document.querySelectorAll('.profile-tab');
-            
-            profileTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Get tab ID
-                    const tabId = this.dataset.tab;
-                    
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.profile-tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    
-                    // Add active class to clicked tab
+                    // Update active button style for this specific chart's filters
+                    this.parentElement.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Hide all tab contents
-                    document.querySelectorAll('.profile-tab-content').forEach(content => {
-                        content.style.display = 'none';
-                    });
-                    
-                    // Show selected tab content
-                    const selectedContent = document.querySelector(`.profile-tab-content[data-tab="${tabId}"]`);
-                    if (selectedContent) {
-                        selectedContent.style.display = 'block';
-                    }
-                });
-            });
-        }
-        
-        // Close modal
-        function closeModal(modal) {
-            modal.classList.remove('open');
-        }
-        
-        // Show profile modal
-        function showProfileModal(customerId) {
-            const modal = document.getElementById('customerProfileModal');
-            if (!modal) return;
-            
-            // In a real implementation, you would load customer data based on ID
-            // For this demo, we'll just show the modal
-            
-            modal.classList.add('open');
-            
-            // Show toast notification
-            showToast('Profilo cliente', 'Visualizzazione del profilo cliente', 'success');
-        }
-        
-        // Setup action buttons for table view
-        function setupActionButtons() {
-            // Table view buttons
-            const viewBtns = document.querySelectorAll('.table-view-btn');
-            const editBtns = document.querySelectorAll('.table-edit-btn');
-            const deleteBtns = document.querySelectorAll('.table-delete-btn');
-            
-            // View profile
-            viewBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const name = row.querySelector('.table-customer-name').textContent;
-                    
-                    // Show profile modal
-                    showProfileModal(1); // Using a dummy ID for demo
-                    
-                    // Show toast notification
-                    showToast('Profilo cliente', `Visualizzazione del profilo di ${name}`, 'success');
+                    updateChart(chartName, filterType);
                 });
             });
             
-            // Edit customer
-            editBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const name = row.querySelector('.table-customer-name').textContent;
-                    
-                    // Show toast notification
-                    showToast('Modifica cliente', `Modifica di ${name}`, 'info');
+            //Map filter buttons
+            document.querySelectorAll('.map-filters .map-filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.map-filters .map-filter-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    const filter = this.dataset.mapFilter;
+                    renderMapMarkers(currentCustomers, filter); // Re-render map markers with new filter
                 });
             });
-            
-            // Delete customer
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const name = row.querySelector('.table-customer-name').textContent;
-                    
-                    // Confirm delete
-                    if (confirm(`Sei sicuro di voler eliminare ${name}?`)) {
-                        // Remove row with animation
-                        row.style.opacity = '0';
-                        row.style.transform = 'translateX(-20px)';
-                        
-                        setTimeout(() => {
-                            row.remove();
-                            
-                            // Show toast notification
-                            showToast('Cliente eliminato', `${name} è stato eliminato`, 'success');
-                        }, 300);
-                    }
-                });
-            });
-            
-            // Add customer button
-            const addBtn = document.querySelector('.add-customer-btn');
-            if (addBtn) {
-                addBtn.addEventListener('click', function() {
-                    // In a real implementation, you would show a form modal
-                    // For this demo, just show a toast
-                    showToast('Nuovo cliente', 'Funzionalità di aggiunta nuovo cliente', 'info');
-                });
-            }
-            
-            // Export button
-            const exportBtn = document.querySelector('.export-btn');
-            if (exportBtn) {
-                exportBtn.addEventListener('click', function() {
-                    // In a real implementation, you would trigger export
-                    // For this demo, just show a toast
-                    showToast('Esporta dati', 'Esportazione dati clienti in corso...', 'info');
-                    
-                    // Simulate export success
-                    setTimeout(() => {
-                        showToast('Esportazione completata', 'I dati dei clienti sono stati esportati con successo', 'success');
-                    }, 2000);
-                });
-            }
-        }
-        
-        // Show toast notification
-        function showToast(title, message, type = 'success') {
-            // Remove existing toasts
-            const existingToasts = document.querySelectorAll('.toast-notification');
-            existingToasts.forEach(toast => {
-                toast.remove();
-            });
-            
-            // Create new toast
-            const toast = document.createElement('div');
-            toast.className = `toast-notification toast-${type}`;
-            
-            // Icon based on type
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            if (type === 'error') icon = 'exclamation-circle';
-            if (type === 'warning') icon = 'exclamation-triangle';
-            
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${icon}"></i>
-                </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
-                </div>
-                <div class="toast-close">
-                    <i class="fas fa-times"></i>
-                </div>
-            `;
-            
-            document.body.appendChild(toast);
-            
-            // Add show class after a small delay to trigger animation
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-            
-            // Add event listener to close button
-            const closeButton = toast.querySelector('.toast-close');
-            closeButton.addEventListener('click', () => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            });
-            
-            // Auto close after 5 seconds
-            setTimeout(() => {
-                if (document.body.contains(toast)) {
-                    toast.classList.remove('show');
-                    setTimeout(() => {
-                        if (document.body.contains(toast)) {
-                            toast.remove();
-                        }
-                    }, 300);
-                }
-            }, 5000);
-        }
-        
-        // Function for logout
-        function logout() {
-            // Show loading overlay
-            const loadingOverlay = document.createElement('div');
-            loadingOverlay.style.position = 'fixed';
-            loadingOverlay.style.top = '0';
-            loadingOverlay.style.left = '0';
-            loadingOverlay.style.width = '100%';
-            loadingOverlay.style.height = '100%';
-            loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-            loadingOverlay.style.display = 'flex';
-            loadingOverlay.style.flexDirection = 'column';
-            loadingOverlay.style.justifyContent = 'center';
-            loadingOverlay.style.alignItems = 'center';
-            loadingOverlay.style.zIndex = '2000';
-            loadingOverlay.style.backdropFilter = 'blur(5px)';
-            
-            const spinnerContainer = document.createElement('div');
-            spinnerContainer.style.width = '60px';
-            spinnerContainer.style.height = '60px';
-            spinnerContainer.style.position = 'relative';
-            
-            const spinner = document.createElement('div');
-            spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
-            spinner.style.borderTopColor = '#5e60ce';
-            spinner.style.borderRadius = '50%';
-            spinner.style.width = '100%';
-            spinner.style.height = '100%';
-            spinner.style.animation = 'spin 1s linear infinite';
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            `;
-            
-            document.head.appendChild(style);
-            spinnerContainer.appendChild(spinner);
-            
-            const loadingText = document.createElement('p');
-            loadingText.textContent = 'Logout in corso...';
-            loadingText.style.marginTop = '20px';
-            loadingText.style.color = 'var(--primary)';
-            loadingText.style.fontWeight = '500';
-            
-            loadingOverlay.appendChild(spinnerContainer);
-            loadingOverlay.appendChild(loadingText);
-            document.body.appendChild(loadingOverlay);
-            
-            // Perform logout
-            fetch('/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    loadingText.textContent = 'Reindirizzamento...';
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 800);
-                } else {
-                    throw new Error('Errore durante il logout');
-                }
-            })
-            .catch(error => {
-                console.error('Errore durante il logout:', error);
-                loadingText.textContent = 'Si è verificato un errore. Riprova.';
-                
-                // Add retry button
-                const retryButton = document.createElement('button');
-                retryButton.textContent = 'Riprova';
-                retryButton.style.marginTop = '15px';
-                retryButton.style.padding = '8px 20px';
-                retryButton.style.background = 'var(--primary)';
-                retryButton.style.color = 'white';
-                retryButton.style.border = 'none';
-                retryButton.style.borderRadius = 'var(--radius-sm)';
-                retryButton.style.cursor = 'pointer';
-                retryButton.onclick = function() {
-                    document.body.removeChild(loadingOverlay);
-                    logout();
+
+            // --- FUNCTIONS ---
+            function debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
                 };
+            }
+            
+            function applyFiltersAndSort() {
+                let filtered = [...allCustomersData];
+                const searchTerm = searchInput.value.toLowerCase();
+                const statusFilter = statusFilterSelect.value;
+                const sortFilter = sortFilterSelect.value;
+
+                // Filter by search term
+                if (searchTerm) {
+                    filtered = filtered.filter(c => 
+                        c.name.toLowerCase().includes(searchTerm) ||
+                        c.email.toLowerCase().includes(searchTerm)
+                    );
+                }
+
+                // Filter by status
+                if (statusFilter !== "all") {
+                    if (statusFilter === "vip") {
+                        filtered = filtered.filter(c => c.isVip);
+                    } else {
+                        filtered = filtered.filter(c => c.status === statusFilter);
+                    }
+                }
+
+                // Sort
+                switch (sortFilter) {
+                    case 'newest': // by ID desc
+                        filtered.sort((a, b) => b.id - a.id);
+                        break;
+                    case 'spend-high':
+                        filtered.sort((a, b) => b.totalSpend - a.totalSpend);
+                        break;
+                    case 'spend-low':
+                        filtered.sort((a, b) => a.totalSpend - b.totalSpend);
+                        break;
+                    case 'orders-high':
+                        filtered.sort((a, b) => b.orders - a.orders);
+                        break;
+                    case 'loyalty-high':
+                        filtered.sort((a, b) => b.loyaltyPoints - b.loyaltyPoints);
+                        break;
+                    case 'name-asc':
+                        filtered.sort((a, b) => a.name.localeCompare(b.name));
+                        break;
+                }
                 
-                loadingOverlay.appendChild(retryButton);
-            });
-        }
+                currentCustomers = filtered;
+                currentPage = 1; // Reset to first page after filtering/sorting
+                renderCurrentPageData();
+                renderPagination();
+                renderMapMarkers(getPaginatedData(), 'all'); // Update map with currently displayed customers
+            }
+
+            function getPaginatedData() {
+                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIndex = startIndex + ITEMS_PER_PAGE;
+                return currentCustomers.slice(startIndex, endIndex);
+            }
+
+            function renderCurrentPageData() {
+                const customersToDisplay = getPaginatedData();
+                if (currentView === 'cards') {
+                    renderCustomerCards(customersToDisplay);
+                } else if (currentView === 'table') {
+                    renderCustomerTable(customersToDisplay);
+                }
+                // Map is updated separately on view switch or filter change
+            }
+
+            function renderCustomerCards(customers) {
+                customersGridContainer.innerHTML = ''; // Clear existing cards
+                if (customers.length === 0) {
+                    customersGridContainer.innerHTML = '<p class="no-data-message">Nessun cliente trovato per i filtri selezionati.</p>';
+                    return;
+                }
+
+                customers.forEach(customer => {
+                    const card = document.createElement('div');
+                    card.className = 'customer-card card-hover-effect animate-in';
+                    card.dataset.customerId = customer.id;
+                    
+                    let vipBadgeHtml = customer.isVip ? `
+                        <div class="vip-badge">
+                            <i class="fas fa-crown"></i> VIP
+                        </div>` : '';
+
+                    card.innerHTML = `
+                        <div class="customer-card-inner">
+                            <div class="customer-card-front">
+                                ${vipBadgeHtml}
+                                <div class="customer-card-header"></div>
+                                <div class="customer-avatar-container">
+                                    <img src="${customer.avatar}" alt="${customer.name}" class="customer-avatar">
+                                </div>
+                                <div class="customer-card-body">
+                                    <div class="customer-info">
+                                        <h3 class="customer-name">${customer.name}</h3>
+                                        <p class="customer-email">${customer.email}</p>
+                                        <div class="customer-stats">
+                                            <div class="customer-stat"><div class="stat-value">${customer.orders}</div><div class="stat-label">Ordini</div></div>
+                                            <div class="customer-stat"><div class="stat-value">${customer.loyaltyPoints}</div><div class="stat-label">Punti</div></div>
+                                            <div class="customer-stat"><div class="stat-value">€${customer.totalSpend.toFixed(2)}</div><div class="stat-label">Totale</div></div>
+                                            <div class="customer-stat"><div class="stat-value">${customer.monthsActive}</div><div class="stat-label">Mesi</div></div>
+                                        </div>
+                                    </div>
+                                    <div class="customer-actions">
+                                        <button class="flip-btn"><i class="fas fa-chart-line"></i> Statistiche</button>
+                                        <button class="detail-btn"><i class="fas fa-user"></i> Profilo</button>
+                                        <button class="edit-btn"><i class="fas fa-edit"></i> Modifica</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="customer-card-back">
+                                <div class="card-back-header">
+                                    <h3>${customer.name}</h3>
+                                    <p>Statistiche del cliente</p>
+                                </div>
+                                <div class="stats-chart-container-card">
+                                    <canvas id="customer-chart-${customer.id}"></canvas>
+                                </div>
+                                <div class="loyalty-progress">
+                                    <div class="loyalty-title">
+                                        <span>Programma Fedeltà</span>
+                                        <span>${customer.loyaltyPoints}/500 punti</span>
+                                    </div>
+                                    <div class="loyalty-bar">
+                                        <div class="loyalty-progress-bar" style="width: ${(customer.loyaltyPoints / 500 * 100).toFixed(0)}%"></div>
+                                    </div>
+                                    <div class="loyalty-rewards">
+                                        ${[...Array(5)].map((_, i) => `<span class="loyalty-point ${i < Math.floor(customer.loyaltyPoints / 100) ? 'active' : ''}"></span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="card-back-footer">
+                                    <button class="back-to-front-btn"><i class="fas fa-arrow-left"></i> Indietro</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    customersGridContainer.appendChild(card);
+                });
+                setupDynamicCardButtons();
+            }
+            
+            function renderCustomerTable(customers) {
+                customersTableBody.innerHTML = ''; // Clear existing rows
+                 if (customers.length === 0) {
+                    tableNoDataMessage.style.display = 'block';
+                    customersTableBody.innerHTML = ''; // Make sure it's empty
+                    return;
+                }
+                tableNoDataMessage.style.display = 'none';
+
+                customers.forEach(customer => {
+                    const row = customersTableBody.insertRow();
+                    row.className = 'animate-in';
+                    row.dataset.customerId = customer.id;
+
+                    let statusClass = customer.status === 'active' ? 'status-active' : 'status-inactive';
+                    if (customer.isVip) statusClass = 'status-vip';
+                    let statusText = customer.status.charAt(0).toUpperCase() + customer.status.slice(1);
+                    if(customer.isVip) statusText = "VIP";
+
+
+                    row.innerHTML = `
+                        <td>
+                            <div class="customer-table-info">
+                                <img src="${customer.avatar}" alt="${customer.name}" class="table-customer-avatar">
+                                <div>
+                                    <div class="table-customer-name">${customer.name}</div>
+                                    <div class="table-customer-email">${customer.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${customer.phone || '-'}</td>
+                        <td>${customer.orders} ordini - €${customer.totalSpend.toFixed(2)}</td>
+                        <td><span class="table-loyalty-points"><i class="fas fa-star"></i> ${customer.loyaltyPoints} punti</span></td>
+                        <td><span class="customer-status ${statusClass}"><i class="fas ${customer.isVip ? 'fa-crown' : 'fa-circle'}"></i> ${statusText}</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="table-action-btn table-view-btn" title="Visualizza profilo"><i class="fas fa-user"></i></button>
+                                <button class="table-action-btn table-edit-btn" title="Modifica cliente"><i class="fas fa-edit"></i></button>
+                                <button class="table-action-btn table-delete-btn" title="Elimina cliente"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    `;
+                });
+                setupDynamicTableButtons();
+            }
+
+            function renderPagination() {
+                paginationControls.innerHTML = ''; // Clear existing controls
+                const totalPages = Math.ceil(currentCustomers.length / ITEMS_PER_PAGE);
+
+                if (totalPages <= 1) return; // No pagination needed for 1 or 0 pages
+
+                // Previous button
+                const prevButton = document.createElement('a');
+                prevButton.href = '#';
+                prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                if (currentPage === 1) {
+                    prevButton.classList.add('disabled');
+                } else {
+                    prevButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) {
+                            currentPage--;
+                            renderCurrentPageData();
+                            renderPagination();
+                             renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
+                        }
+                    });
+                }
+                paginationControls.appendChild(prevButton);
+
+                // Page numbers
+                // Show ellipsis logic for many pages (simplified for now)
+                let startPage = Math.max(1, currentPage - 1);
+                let endPage = Math.min(totalPages, currentPage + 1);
+                if (currentPage === 1) endPage = Math.min(totalPages, 3);
+                if (currentPage === totalPages) startPage = Math.max(1, totalPages - 2);
+
+
+                if (startPage > 1) {
+                    const firstPageLink = document.createElement('a');
+                    firstPageLink.href = '#';
+                    firstPageLink.textContent = '1';
+                    firstPageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = 1;
+                        renderCurrentPageData();
+                        renderPagination();
+                         renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
+                    });
+                    paginationControls.appendChild(firstPageLink);
+                    if (startPage > 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        paginationControls.appendChild(ellipsis);
+                    }
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageLink = document.createElement('a');
+                    pageLink.href = '#';
+                    pageLink.textContent = i;
+                    if (i === currentPage) {
+                        pageLink.classList.add('active');
+                    }
+                    pageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = i;
+                        renderCurrentPageData();
+                        renderPagination();
+                         renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
+                    });
+                    paginationControls.appendChild(pageLink);
+                }
+
+                if (endPage < totalPages) {
+                    if (endPage < totalPages -1) {
+                         const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        paginationControls.appendChild(ellipsis);
+                    }
+                    const lastPageLink = document.createElement('a');
+                    lastPageLink.href = '#';
+                    lastPageLink.textContent = totalPages;
+                    lastPageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = totalPages;
+                        renderCurrentPageData();
+                        renderPagination();
+                        renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
+                    });
+                    paginationControls.appendChild(lastPageLink);
+                }
+
+
+                // Next button
+                const nextButton = document.createElement('a');
+                nextButton.href = '#';
+                nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                if (currentPage === totalPages) {
+                    nextButton.classList.add('disabled');
+                } else {
+                    nextButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            renderCurrentPageData();
+                            renderPagination();
+                            renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
+                        }
+                    });
+                }
+                paginationControls.appendChild(nextButton);
+            }
+            
+            function setupDynamicCardButtons() {
+                document.querySelectorAll('.customer-card .flip-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const card = this.closest('.customer-card');
+                        card.classList.add('flipped');
+                        const customerId = parseInt(card.dataset.customerId);
+                        initializeCustomerCardChart(customerId);
+                    });
+                });
+
+                document.querySelectorAll('.customer-card .back-to-front-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        this.closest('.customer-card').classList.remove('flipped');
+                    });
+                });
+                 document.querySelectorAll('.customer-card .detail-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const customerId = parseInt(this.closest('.customer-card').dataset.customerId);
+                        showProfileModal(customerId);
+                    });
+                });
+                 document.querySelectorAll('.customer-card .edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const customerId = parseInt(this.closest('.customer-card').dataset.customerId);
+                        const customer = allCustomersData.find(c => c.id === customerId);
+                        // For demo: log to console or show a toast
+                        console.log("Modifica cliente (card):", customer);
+                        showToast('Modifica Cliente', `Apertura editor per ${customer.name}`, 'info');
+                    });
+                });
+
+            }
+
+            function setupDynamicTableButtons() {
+                 document.querySelectorAll('.customers-table .table-view-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const customerId = parseInt(this.closest('tr').dataset.customerId);
+                         showProfileModal(customerId);
+                    });
+                });
+                document.querySelectorAll('.customers-table .table-edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const customerId = parseInt(this.closest('tr').dataset.customerId);
+                        const customer = allCustomersData.find(c => c.id === customerId);
+                        console.log("Modifica cliente (tabella):", customer);
+                        showToast('Modifica Cliente', `Apertura editor per ${customer.name}`, 'info');
+                    });
+                });
+                document.querySelectorAll('.customers-table .table-delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const customerId = parseInt(this.closest('tr').dataset.customerId);
+                        const customer = allCustomersData.find(c => c.id === customerId);
+                        if (confirm(`Sei sicuro di voler eliminare ${customer.name}? Questa azione non è reversibile.`)) {
+                            allCustomersData = allCustomersData.filter(c => c.id !== customerId); // Remove from main data
+                            applyFiltersAndSort(); // Re-filter and re-render
+                            updateOverviewStats();
+                            showToast('Cliente Eliminato', `${customer.name} è stato eliminato.`, 'success');
+                        }
+                    });
+                });
+            }
+            
+            function updateOverviewStats() {
+                totalCustomersValueEl.textContent = allCustomersData.length;
+                activeCustomersValueEl.textContent = allCustomersData.filter(c => c.status === 'active').length;
+                vipCustomersValueEl.textContent = allCustomersData.filter(c => c.isVip).length;
+                // Average spend would require summing up totalSpend and dividing.
+                const totalSpendAll = allCustomersData.reduce((sum, c) => sum + c.totalSpend, 0);
+                const avgSpend = allCustomersData.length > 0 ? (totalSpendAll / allCustomersData.length) : 0;
+                document.getElementById('average-spend-value').textContent = `€${avgSpend.toFixed(2)}`;
+            }
+
+            // --- PARTICLE, NAV, NOTIFICATIONS (unchanged but kept) ---
+            function createParticles() { /* ... as before ... */ 
+                const particles = document.getElementById('particles');
+                if (!particles) return;
+                particles.innerHTML = '';
+                const particleCount = 50;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    const posX = Math.random() * 100;
+                    const posY = Math.random() * 100;
+                    const size = Math.random() * 10 + 2;
+                    const opacity = Math.random() * 0.5 + 0.1;
+                    const duration = Math.random() * 60 + 30;
+                    particle.style.left = `${posX}%`;
+                    particle.style.top = `${posY}%`;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.opacity = opacity;
+                    if (i % 2 === 0) particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
+                    else particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
+                    particle.style.animation = `particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s, particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s`;
+                    particles.appendChild(particle);
+                }
+            }
+            function setActiveNavLink() { /* ... as before ... */ 
+                const currentPath = window.location.pathname;
+                const navLinks = document.querySelectorAll('.header-nav a');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (currentPath === link.getAttribute('href') || (currentPath.startsWith(link.getAttribute('href')) && link.getAttribute('href') !== '/')) {
+                         if(link.getAttribute('href') === "/clienti") link.classList.add('active'); // Make sure this page is active
+                    }
+                });
+                 // Ensure 'Clienti' is active for this page regardless of sub-paths
+                document.querySelector('.header-nav a[href="/clienti"]').classList.add('active');
+            }
+             function loadNotifications() { /* ... as before, with demo data ... */ 
+                try {
+                    // fetch('/notifiche').then... (simulated)
+                    setTimeout(() => {
+                        const badge = document.getElementById('notification-badge');
+                        if (badge) {
+                            badge.textContent = "3"; // Demo count
+                            badge.style.display = 'flex';
+                           // showToast('Nuove notifiche', `Hai 3 notifiche non lette`, 'warning');
+                        }
+                    }, 2500);
+                } catch (e) { console.log('Notifiche non disponibili (demo).'); }
+            }
+
+            // --- VIEW SWITCHER ---
+            function setupViewSwitcher() {
+                const viewButtons = document.querySelectorAll('.view-btn');
+                const viewContents = document.querySelectorAll('.view-content');
+                
+                viewButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        currentView = this.dataset.view;
+                        
+                        viewButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        viewContents.forEach(content => content.style.display = 'none');
+                        
+                        const selectedView = document.getElementById(`${currentView}-view`);
+                        if (selectedView) {
+                            selectedView.style.display = 'block';
+                             if (currentView === 'cards' || currentView === 'table') {
+                                applyFiltersAndSort(); // This re-renders paginated data
+                            } else if (currentView === 'map') {
+                                renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
+                            } else if (currentView === 'stats') {
+                                initializeAllCharts(); // Re-initialize or refresh all charts
+                            }
+                        }
+                        showToast('Vista cambiata', `Visualizzazione: ${getViewName(currentView)}`, 'success');
+                    });
+                });
+            }
+
+            function getViewName(view) { /* ... as before ... */ 
+                switch(view){case 'cards':return 'Schede Cliente';case 'table':return 'Tabella Cliente';case 'map':return 'Mappa Distribuzione';case 'stats':return 'Statistiche Cliente';default:return view;}
+            }
+            
+            // --- CHARTS (Card and Stats View) ---
+            function initializeCustomerCardChart(customerId) {
+                const chartCanvasId = `customer-chart-${customerId}`;
+                const ctx = document.getElementById(chartCanvasId);
+                if (!ctx) return;
+
+                const customer = allCustomersData.find(c => c.id === customerId);
+                if (!customer) return;
+                
+                if (activeChartInstances[chartCanvasId]) {
+                    activeChartInstances[chartCanvasId].destroy();
+                }
+
+                const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu']; // Example labels
+                const data = months.map(() => Math.floor(Math.random() * (customer.totalSpend / 3) ) + 10); // Spend over 6 months
+
+                activeChartInstances[chartCanvasId] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Spesa Mensile', data: data,
+                            borderColor: 'rgba(255, 255, 255, 0.8)', tension: 0.4, fill: true,
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)', pointBackgroundColor: '#ffffff',
+                            pointBorderColor: 'rgba(255, 255, 255, 0.8)', pointRadius: 4, pointHoverRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false,
+                        scales: { x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'rgba(255,255,255,0.7)' } },
+                                  y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'rgba(255,255,255,0.7)', callback: value => '€' + value } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            function initializeAllCharts() {
+                // Clear previous instances if any
+                Object.values(activeChartInstances).forEach(chart => { if(chart.canvas.id.startsWith('customer-chart-')) return; chart.destroy(); });
+                activeChartInstances = {}; // Reset specific for main stats charts
+                
+                updateChart('demographics', 'age');
+                updateChart('acquisition', 'month');
+                updateChart('habits', 'category');
+                updateChart('retention', '3m');
+            }
+            
+            function updateChart(chartName, filterType) {
+                const ctx = document.getElementById(`${chartName}-chart`)?.getContext('2d');
+                if (!ctx) return;
+
+                if (activeChartInstances[chartName]) {
+                    activeChartInstances[chartName].destroy();
+                }
+
+                let chartData = {};
+                let chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {font: {family:'Montserrat'}}}}, animation: {duration: 800, easing: 'easeOutBounce'} };
+                let chartType = 'pie';
+
+                if (chartName === 'demographics') {
+                    chartType = 'pie';
+                    if (filterType === 'age') {
+                        chartData = { labels: ['18-25', '26-35', '36-45', '46-55', '56+'], datasets: [{ data: [25, 35, 20, 15, 5], backgroundColor: ['#5e60ce', '#5390d9', '#4ea8de', '#48bfe3', '#56cfe1'], borderColor: '#fff', borderWidth: 2 }] };
+                        chartOptions.plugins.title = { display: true, text: 'Distribuzione Clienti per Età', font: {size: 16, family:'Montserrat', weight:'bold'}};
+                    } else if (filterType === 'gender') {
+                        chartData = { labels: ['Uomini', 'Donne', 'Altro'], datasets: [{ data: [48, 45, 7], backgroundColor: ['#5390d9', '#ff8fab', '#80ffdb'], borderColor: '#fff', borderWidth: 2 }] };
+                        chartOptions.plugins.title = { display: true, text: 'Distribuzione Clienti per Genere', font: {size: 16, family:'Montserrat', weight:'bold'}};
+                    } else if (filterType === 'location') {
+                         chartData = { labels: ['Milano', 'Hinterland', 'Fuori Provincia'], datasets: [{ data: [60, 25, 15], backgroundColor: ['#48bfe3', '#9b59b6', '#f39c12'], borderColor: '#fff', borderWidth: 2 }] };
+                         chartOptions.plugins.title = { display: true, text: 'Provenienza Clienti', font: {size: 16, family:'Montserrat', weight:'bold'}};
+                    }
+                } else if (chartName === 'acquisition') {
+                    chartType = 'bar';
+                    let labels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'];
+                    let data = [12, 19, 14, 15, 22, 18];
+                    if (filterType === 'quarter') { labels = ['T1', 'T2']; data = [45, 55]; }
+                    else if (filterType === 'year') { labels = ['2023']; data = [248]; } // Assuming total of the year
+                    chartData = { labels: labels, datasets: [{ label: 'Nuovi Clienti', data: data, backgroundColor: 'rgba(94, 96, 206, 0.7)', borderColor: '#5e60ce', borderWidth: 1, borderRadius:5 }]};
+                    chartOptions.scales = { y: { beginAtZero: true }};
+                    chartOptions.plugins.title = { display: true, text: `Acquisizione Clienti (${filterType})`, font: {size: 16, family:'Montserrat', weight:'bold'}};
+                     chartOptions.plugins.legend.display = false;
+                } else if (chartName === 'habits') {
+                    chartType = 'radar';
+                    let labels = ['Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert'];
+                    let data = [65, 75, 45, 80, 32];
+                     if (filterType === 'time') { labels = ['Pranzo', 'Pomeriggio', 'Cena', 'Notte']; data = [30,10,50,10];}
+                     else if (filterType === 'day') { labels = ['Lun-Gio', 'Ven', 'Sab', 'Dom']; data = [40, 25, 25, 10];}
+                    chartData = { labels: labels, datasets: [{ label: 'Popolarità', data: data, backgroundColor: 'rgba(72, 191, 227, 0.3)', borderColor: '#48bfe3', borderWidth: 2, pointBackgroundColor: '#48bfe3' }]};
+                    chartOptions.scales = { r: { angleLines: {color: 'rgba(0,0,0,0.1)'}, grid: {color: 'rgba(0,0,0,0.1)'}, ticks: {backdropColor: 'transparent',font:{size:10}} }};
+                    chartOptions.plugins.title = { display: true, text: `Abitudini Ordini (${filterType})`, font: {size: 16, family:'Montserrat', weight:'bold'}};
+                     chartOptions.plugins.legend.display = true;
+                } else if (chartName === 'retention') {
+                    chartType = 'line';
+                    let labels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'];
+                    let data = [85, 82, 88, 90, 92, 95];
+                    if (filterType === '6m') { data = [70, 75, 72, 78, 80, 82]; }
+                    else if (filterType === '1y') { data = [60,62,65,63,68,70,72,75,73,77,79,80].slice(0,12); labels = ['G', 'F', 'M', 'A', 'M', 'G', 'L', 'A', 'S', 'O', 'N', 'D'];}
+                    chartData = { labels: labels, datasets: [{ label: 'Tasso Fidelizzazione %', data: data, backgroundColor: 'rgba(46, 204, 113, 0.2)', borderColor: '#2ecc71', tension: 0.3, fill: true }]};
+                    chartOptions.scales = { y: { suggestedMin: 50, suggestedMax: 100, ticks: {callback: v => v + "%"} }};
+                    chartOptions.plugins.title = { display: true, text: `Tasso di Fidelizzazione (${filterType})`, font: {size: 16, family:'Montserrat', weight:'bold'}};
+                     chartOptions.plugins.legend.display = false;
+                }
+                
+                if (Object.keys(chartData).length > 0) {
+                     activeChartInstances[chartName] = new Chart(ctx, { type: chartType, data: chartData, options: chartOptions });
+                }
+            }
+
+            // --- MAP FUNCTIONS ---
+            function setupMap() {
+                // Map filters are handled in main event listeners
+                renderMapMarkers(getPaginatedData(), 'all'); // Initial render
+            }
+            
+            function renderMapMarkers(customers, filter = 'all') {
+                mapCanvasMarkers.innerHTML = ''; // Clear existing markers
+                if(customers.length === 0){
+                    mapNoDataMessage.style.display = 'block';
+                    return;
+                }
+                mapNoDataMessage.style.display = 'none';
+
+                const mapWidth = mapCanvasMarkers.offsetWidth;
+                const mapHeight = mapCanvasMarkers.offsetHeight;
+
+                customers.forEach(customer => {
+                    let isVisible = true;
+                    if (filter !== 'all') {
+                        if (filter === 'active' && customer.status !== 'active') isVisible = false;
+                        if (filter === 'inactive' && customer.status !== 'inactive') isVisible = false;
+                        if (filter === 'vip' && !customer.isVip) isVisible = false;
+                    }
+
+                    const marker = document.createElement('div');
+                    marker.className = 'customer-marker animate-in';
+                    if (customer.isVip) marker.classList.add('marker-vip');
+                    if (!isVisible) marker.classList.add('filtered-out');
+                    
+                    // Use customer's mapX, mapY which are percentages
+                    // Adjusting for marker size to center it approx.
+                    marker.style.top = `calc(${customer.mapY}% - 20px)`; 
+                    marker.style.left = `calc(${customer.mapX}% - 20px)`;
+                    marker.dataset.customerId = customer.id;
+
+                    marker.innerHTML = `
+                        <img src="${customer.avatar}" alt="${customer.name}">
+                        <div class="marker-info">
+                            <h3>${customer.name}</h3>
+                            <p>${customer.address || 'Indirizzo non disponibile'}</p>
+                            <div class="marker-info-actions">
+                                <button class="marker-info-btn profile-map-btn"><i class="fas fa-user"></i> Profilo</button>
+                                <!-- <button class="marker-info-btn"><i class="fas fa-route"></i> Indicazioni</button> -->
+                            </div>
+                        </div>`;
+                    mapCanvasMarkers.appendChild(marker);
+                });
+                 // Add event listeners to new profile buttons on map markers
+                document.querySelectorAll('.profile-map-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevents map click if any
+                        const customerId = parseInt(this.closest('.customer-marker').dataset.customerId);
+                        showProfileModal(customerId);
+                    });
+                });
+            }
+
+            // --- MODALS ---
+            function setupModals() {
+                const modalOverlay = document.getElementById('customerProfileModal');
+                const closeBtn = document.getElementById('customerProfileModalClose');
+                const profileTabsContainer = document.getElementById('profile-tabs-container');
+
+                closeBtn.addEventListener('click', () => closeModal(modalOverlay));
+                modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(modalOverlay); });
+
+                profileTabsContainer.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('profile-tab')) {
+                        const tabId = e.target.dataset.tab;
+                        profileTabsContainer.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                        e.target.classList.add('active');
+                        
+                        modalOverlay.querySelectorAll('.profile-tab-content').forEach(content => content.style.display = 'none');
+                        const selectedContent = modalOverlay.querySelector(`.profile-tab-content[data-tab="${tabId}"]`);
+                        if (selectedContent) selectedContent.style.display = 'block';
+                    }
+                });
+                 document.getElementById('save-customer-notes-btn').addEventListener('click', function() {
+                    const customerId = parseInt(modalOverlay.dataset.customerId);
+                    const notes = document.getElementById('modal-customer-notes').value;
+                    const customer = allCustomersData.find(c => c.id === customerId);
+                    if(customer) {
+                        customer.notes = notes;
+                        showToast('Note salvate', `Note per ${customer.name} aggiornate.`, 'success');
+                    }
+                });
+            }
+
+            function showProfileModal(customerId) {
+                const modal = document.getElementById('customerProfileModal');
+                const customer = allCustomersData.find(c => c.id === customerId);
+                if (!customer || !modal) return;
+
+                modal.dataset.customerId = customerId; // Store customerId on the modal itself
+
+                document.getElementById('modal-profile-avatar').src = customer.avatar;
+                document.getElementById('modal-profile-avatar').alt = customer.name;
+                document.getElementById('modal-profile-name').textContent = customer.name;
+                document.getElementById('modal-profile-member-since').textContent = `Cliente dal ${new Date(customer.registrationDate).toLocaleDateString('it-IT')}`;
+
+                const metaContainer = document.getElementById('modal-profile-meta');
+                metaContainer.innerHTML = '';
+                if (customer.isVip) metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-crown"></i> VIP</div>`;
+                metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-star"></i> ${customer.loyaltyPoints} Punti</div>`;
+                metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-shopping-bag"></i> ${customer.orders} Ordini</div>`;
+
+                // Info Tab
+                document.getElementById('modal-info-email').textContent = customer.email;
+                document.getElementById('modal-info-phone').textContent = customer.phone || '-';
+                document.getElementById('modal-info-address').textContent = customer.address || '-';
+                document.getElementById('modal-info-registration-date').textContent = new Date(customer.registrationDate).toLocaleDateString('it-IT');
+                document.getElementById('modal-info-last-order').textContent = customer.lastOrderDate ? new Date(customer.lastOrderDate).toLocaleDateString('it-IT') : '-';
+                
+                // Orders Tab (dummy example)
+                const ordersList = document.getElementById('modal-orders-list');
+                ordersList.innerHTML = ''; // Clear previous
+                if (customer.orders > 0) {
+                    for (let i = 1; i <= Math.min(customer.orders, 5) ; i++) { // Show max 5 dummy orders
+                        const randomAmount = (Math.random() * 50 + 15).toFixed(2);
+                        const randomDate = new Date(new Date(customer.lastOrderDate) - (i * 15 * 24*60*60*1000)).toLocaleDateString('it-IT');
+                        const orderItem = `
+                            <div class="profile-order-item">
+                                <div class="profile-order-info">
+                                    <span class="profile-order-id">Ordine #${Math.floor(Math.random()*10000 + customer.id * 1000 + i)}</span>
+                                    <span class="profile-order-date">Data: ${randomDate}</span>
+                                </div>
+                                <div class="profile-order-amount">€${randomAmount}</div>
+                                <span class="profile-order-status status-active" style="background-color: rgba(46,204,113,0.15); color: var(--accent-green);">Completato</span>
+                            </div>`;
+                        ordersList.innerHTML += orderItem;
+                    }
+                } else {
+                    ordersList.innerHTML = '<p class="no-data-message">Nessun ordine trovato per questo cliente.</p>';
+                }
+
+                // Stats Tab (dummy example)
+                const statsCardsContainer = document.getElementById('modal-stats-cards');
+                statsCardsContainer.innerHTML = `
+                    <div class="profile-stat-card"><div class="profile-stat-value">€${(customer.totalSpend / customer.orders || 0).toFixed(2)}</div><div class="profile-stat-label">Spesa Media/Ordine</div></div>
+                    <div class="profile-stat-card"><div class="profile-stat-value">${customer.monthsActive}</div><div class="profile-stat-label">Mesi Attività</div></div>
+                    <div class="profile-stat-card"><div class="profile-stat-value">${(customer.loyaltyPoints / (customer.monthsActive||1)).toFixed(1)}</div><div class="profile-stat-label">Punti/Mese</div></div>
+                `;
+                 initializeModalCustomerSpendChart(customer);
+
+                // Notes Tab
+                document.getElementById('modal-customer-notes').value = customer.notes || '';
+
+
+                // Reset to info tab
+                modal.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                modal.querySelector('.profile-tab[data-tab="info"]').classList.add('active');
+                modal.querySelectorAll('.profile-tab-content').forEach(c => c.style.display = 'none');
+                modal.querySelector('.profile-tab-content[data-tab="info"]').style.display = 'block';
+
+                modal.classList.add('open');
+            }
+            
+            function initializeModalCustomerSpendChart(customer) {
+                const chartId = 'modal-customer-spend-chart';
+                const ctx = document.getElementById(chartId)?.getContext('2d');
+                if (!ctx) return;
+
+                if (activeChartInstances[chartId]) activeChartInstances[chartId].destroy();
+
+                const spendData = [
+                    (Math.random() * customer.totalSpend * 0.1).toFixed(0), (Math.random() * customer.totalSpend * 0.2).toFixed(0),
+                    (Math.random() * customer.totalSpend * 0.15).toFixed(0), (Math.random() * customer.totalSpend * 0.25).toFixed(0),
+                    (Math.random() * customer.totalSpend * 0.1).toFixed(0), (Math.random() * customer.totalSpend * 0.2).toFixed(0)
+                ]; // Dummy spend over 6 months
+
+                activeChartInstances[chartId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mese 1', 'Mese 2', 'Mese 3', 'Mese 4', 'Mese 5', 'Mese 6'],
+                        datasets: [{
+                            label: 'Spesa Mensile', data: spendData,
+                            backgroundColor: 'rgba(94, 96, 206, 0.7)', borderColor: '#5e60ce', borderWidth: 1
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value }}}, plugins: { legend: { display: false }, title: { display: true, text: 'Spesa ultimi 6 mesi (Esempio)'}}}
+                });
+            }
+
+
+            function closeModal(modal) {
+                modal.classList.remove('open');
+                 // Destroy chart in modal if it exists to free resources
+                if (activeChartInstances['modal-customer-spend-chart']) {
+                    activeChartInstances['modal-customer-spend-chart'].destroy();
+                    delete activeChartInstances['modal-customer-spend-chart'];
+                }
+            }
+
+            // --- GENERIC ACTION BUTTONS (Add, Export) & TOAST ---
+            function setupActionButtons() {
+                // Main 'Add Customer' and 'Export' are general, not per-item
+                document.querySelector('.add-customer-btn.action-btn').addEventListener('click', () => {
+                     const newId = Math.max(...allCustomersData.map(c => c.id), 0) + 1;
+                     const newCustomer = {
+                        id: newId, name: "Nuovo Cliente " + newId, email: `cliente${newId}@email.com`, avatar: `https://randomuser.me/api/portraits/${newId % 2 === 0 ? 'women' : 'men'}/${newId % 99}.jpg`,
+                        orders: 0, loyaltyPoints: 0, totalSpend: 0, monthsActive: 0, status: "active", isVip: false,
+                        phone: "", address: "", registrationDate: new Date().toISOString().split('T')[0], lastOrderDate: null,
+                        mapX: Math.floor(Math.random()*80+10), mapY: Math.floor(Math.random()*80+10), notes: ""
+                     };
+                     allCustomersData.unshift(newCustomer); // Add to beginning for immediate visibility
+                     applyFiltersAndSort();
+                     updateOverviewStats();
+                     showToast('Nuovo Cliente', `${newCustomer.name} aggiunto con successo!`, 'success');
+                     showProfileModal(newId); // Open profile for the new customer
+                });
+                document.querySelector('.export-btn').addEventListener('click', () => {
+                    showToast('Esporta Dati', 'Esportazione in CSV (simulata)...', 'info');
+                    setTimeout(() => {
+                        // Simulate CSV creation
+                        let csvContent = "data:text/csv;charset=utf-8,ID,Nome,Email,Ordini,Punti,Spesa Totale,Stato,VIP\n";
+                        currentCustomers.forEach(c => {
+                            csvContent += `${c.id},"${c.name}","${c.email}",${c.orders},${c.loyaltyPoints},${c.totalSpend},${c.status},${c.isVip}\n`;
+                        });
+                        const encodedUri = encodeURI(csvContent);
+                        const link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", "clienti_yourbite.csv");
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        showToast('Esportazione Completata', 'Dati clienti esportati in CSV.', 'success');
+                    }, 1500);
+                });
+            }
+
+            function showToast(title, message, type = 'success') { /* ... as before ... */ 
+                const existingToasts = document.querySelectorAll('.toast-notification');
+                existingToasts.forEach(toast => toast.remove());
+                const toast = document.createElement('div');
+                toast.className = `toast-notification toast-${type}`;
+                let icon = 'info-circle';
+                if (type === 'success') icon = 'check-circle'; if (type === 'error') icon = 'exclamation-circle'; if (type === 'warning') icon = 'exclamation-triangle';
+                toast.innerHTML = `<div class="toast-icon"><i class="fas fa-${icon}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><div class="toast-close"><i class="fas fa-times"></i></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+                toast.querySelector('.toast-close').addEventListener('click', () => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); });
+                setTimeout(() => { if (document.body.contains(toast)) { toast.classList.remove('show'); setTimeout(() => { if (document.body.contains(toast)) toast.remove(); }, 300); } }, 5000);
+            }
+            
+            // Logout Function (simplified from previous)
+            function logout() {
+                showToast('Logout', 'Logout in corso...', 'info');
+                 fetch('/logout', { method: 'POST', headers: {'Content-Type': 'application/json'} })
+                .then(response => { if (response.ok) window.location.href = '/login'; else throw new Error('Errore logout'); })
+                .catch(error => { console.error('Errore:', error); showToast('Errore Logout', 'Impossibile effettuare il logout.', 'error'); });
+            }
+
+        }); // END DOMContentLoaded
     </script>
 </body>
 </html>
