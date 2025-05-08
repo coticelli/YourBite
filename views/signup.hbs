@@ -1,101 +1,608 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{!-- Titolo dinamico passato dal server --}}
-    <title>{{pageTitle}}</title>
-    {{!-- Percorso CSS assoluto dalla root (assumendo style.css in public/) --}}
-    <link rel="stylesheet" href="/style.css">
-    {{!-- Se style.css è in public/css/style.css, usa href="/css/style.css" --}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Correzioni per il particles-js */
+    #particles-js {
+      position: fixed !important; /* Forza position fixed */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    
+    /* Assicuriamo che il contenuto principale sia al di sopra delle particelle */
+    .logo-container, .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Riduciamo lo spazio sopra il logo */
+    .logo-container {
+      padding-top: 20px;
+      margin-top: 0;
+    }
+
+    /* Impostiamo il logo come immagine */
+    .logo {
+      width: 320px;
+      height: 160px;
+      transform: translateY(0);
+    }
+  </style>
+  <title>{{pageTitle}}</title>
 </head>
 <body>
-    <!-- Header Section -->
-    <div class="header">
-        <!-- Logo -->
-        {{!-- Percorso immagine assoluto dalla root --}}
-        <img src="/img/logo.png" alt="YourBite Logo" class="logo">
-    </div>
-
-    <!-- Main Content -->
-    <div class="content">
-        <div>
-            {{!-- Link aggiornati alle route Express --}}
-            <button class="tab"><a href="/login" style="text-decoration:none; color: black;">Log in</a></button>
-            <button class="tab active"><a href="/signup" style="text-decoration:none; color: black;">Sign Up</a></button><br><br>
+  <div class="page-transition-overlay"></div>
+  
+  <!-- Elemento per le particelle impostato come fisso che copre tutto lo schermo -->
+  <div id="particles-js"></div>
+  
+  <div class="page-wrapper">
+    <div class="page-content">
+      <div class="bg"></div>
+      
+      <!-- Logo container senza spazio eccessivo sopra -->
+      <div class="logo-container">
+        <div class="logo"></div>
+      </div>
+      
+      <div class="container">
+        <div class="tabs">
+          <button class="tab"><a href="/login" data-direction="right">Log in</a></button>
+          <button class="tab active"><a href="/signup" data-direction="left">Sign Up</a></button>
         </div>
-        <div class="welcome-message"><br>
+        
+        <div class="form-container">
+          <div class="welcome-message">
             Create your account
-        </div>
+          </div>
 
-        <!-- Sign Up Form -->
-        <form id="signupForm" class="form">
+          <form id="signupForm" class="form">
             <div class="form-group">
-                <input type="text" id="username" placeholder=" " required autocomplete="username">
-                <label for="username">Username</label>
+              <input type="text" id="username" placeholder=" " required autocomplete="username">
+              <label for="username">Username</label>
             </div>
             <div class="form-group">
-                <input type="email" id="email" placeholder=" " required autocomplete="email">
-                <label for="email">E-mail</label>
+              <input type="email" id="email" placeholder=" " required autocomplete="email">
+              <label for="email">E-mail</label>
             </div>
             <div class="form-group">
-                <input type="password" id="password" placeholder=" " required autocomplete="current-password">
-                <label for="password">Password</label>
+              <input type="password" id="password" placeholder=" " required autocomplete="current-password">
+              <label for="password">Password</label>
             </div>
             <div class="form-group">
-                <select id="userType" required>
-                    <option value="" disabled selected>Choose User Type</option>
-                    <option value="cliente">Cliente</option>
-                    <option value="amministratore">Amministratore</option>
-                    <option value="capo">Capo</option>
-                </select>
+              <select id="userType" required>
+                <option value="" disabled selected>Choose User Type</option>
+                <option value="cliente">Cliente</option>
+                <option value="amministratore">Amministratore</option>
+                <option value="capo">Capo</option>
+              </select>
             </div>
-            <!-- Sign Up Button outside the form-group -->
             <button type="submit" class="primary-btn">Sign Up</button>
-        </form>
+          </form>
 
-        <!-- Message Div for errors -->
-        <div id="message" style="color: red; font-size: 16px;"></div>
+          <div id="message"></div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    {{!-- Lo script JS rimane uguale, si interfaccia con l'API /signup --}}
-    <script>
-        document.getElementById('signupForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+  <div class="sound-control" id="soundControl" title="Toggle sound">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    </svg>
+    <div class="sound-status" id="soundStatus">Sound Off</div>
+  </div>
 
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const tipo = document.getElementById('userType').value;
-
-    fetch('/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password, tipo })
-    })
-    .then(response => {
-        // Always try to parse the response as JSON, regardless of status code
-        return response.json().then(data => {
-            if (!response.ok) {
-                // If server returned an error message, throw it
-                throw new Error(data.error || `Error: ${response.status}`);
+  <div class="notification" id="notification"></div>
+  
+  <script>
+    // Particles JS Configuration
+    document.addEventListener('DOMContentLoaded', function() {
+      particlesJS('particles-js', {
+        "particles": {
+          "number": {
+            "value": 80,
+            "density": {
+              "enable": true,
+              "value_area": 800
             }
-            return data;
-        });
-    })
-    .then(data => {
-        console.log('Risposta dal server:', data);
-        if (data.success && data.redirectUrl) {
-            window.location.href = data.redirectUrl;
-        } else {
-            document.getElementById('message').innerText = 'Risposta inattesa dal server.';
-        }
-    })
-    .catch(error => {
-        console.error('Errore durante la registrazione:', error);
-        document.getElementById('message').innerText = error.message || 'Errore durante la registrazione. Riprova.';
+          },
+          "color": {
+            "value": "#ff0000"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            },
+            "polygon": {
+              "nb_sides": 5
+            }
+          },
+          "opacity": {
+            "value": 0.5,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 2,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#ff0000",
+            "opacity": 0.2,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": true,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "repulse"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          },
+          "modes": {
+            "grab": {
+              "distance": 140,
+              "line_linked": {
+                "opacity": 1
+              }
+            },
+            "bubble": {
+              "distance": 400,
+              "size": 40,
+              "duration": 2,
+              "opacity": 8,
+              "speed": 3
+            },
+            "repulse": {
+              "distance": 100,
+              "duration": 0.4
+            },
+            "push": {
+              "particles_nb": 4
+            },
+            "remove": {
+              "particles_nb": 2
+            }
+          }
+        },
+        "retina_detect": true
+      });
     });
-});
-    </script>
+
+    // Create audio context for sound synthesis
+    let audioContext;
+    let soundEnabled = false;
+    const soundControl = document.getElementById('soundControl');
+    const soundStatus = document.getElementById('soundStatus');
+    const notification = document.getElementById('notification');
+
+    // Function to show notification
+    function showNotification(message) {
+      notification.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Initialize audio context on user interaction
+    function initAudio() {
+      if (!audioContext) {
+        try {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          console.log("Audio context initialized");
+        } catch (e) {
+          console.error("Web Audio API not supported:", e);
+        }
+      }
+    }
+
+    // Sound synthesis functions
+    function playHoverSound() {
+      if (!audioContext || !soundEnabled) return;
+      
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(1800, audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+    function playClickSound() {
+      if (!audioContext || !soundEnabled) return;
+      
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(1800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.15);
+      
+      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.15);
+    }
+
+    // Special transition effect sound
+    function playTransitionSound(direction) {
+      if (!audioContext || !soundEnabled) return;
+      
+      // Create multiple oscillators for a richer sound
+      const oscillator1 = audioContext.createOscillator();
+      const oscillator2 = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      // Direction-dependent frequencies
+      const startFreq = direction === 'left' ? 800 : 300;
+      const endFreq = direction === 'left' ? 300 : 800;
+      
+      oscillator1.type = 'sine';
+      oscillator2.type = 'triangle';
+      
+      // Sweep frequencies
+      oscillator1.frequency.setValueAtTime(startFreq, audioContext.currentTime);
+      oscillator1.frequency.exponentialRampToValueAtTime(endFreq, audioContext.currentTime + 0.5);
+      
+      oscillator2.frequency.setValueAtTime(startFreq * 2, audioContext.currentTime);
+      oscillator2.frequency.exponentialRampToValueAtTime(endFreq * 2, audioContext.currentTime + 0.5);
+      
+      // Gain envelope
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime + 0.4);
+      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+      
+      // Connect and play
+      oscillator1.connect(gainNode);
+      oscillator2.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator1.start();
+      oscillator2.start();
+      oscillator1.stop(audioContext.currentTime + 0.5);
+      oscillator2.stop(audioContext.currentTime + 0.5);
+    }
+
+    // Background ambient sound
+    function startBackgroundSound() {
+      if (!audioContext || !soundEnabled) return;
+      
+      const lfoFreq = 0.1 + Math.random() * 0.1;
+      
+      function createAmbientNote() {
+        const noteOsc = audioContext.createOscillator();
+        const noteGain = audioContext.createGain();
+        const lfo = audioContext.createOscillator();
+        const lfoGain = audioContext.createGain();
+        
+        const baseFreq = 100 + Math.random() * 200;
+        noteOsc.frequency.value = baseFreq;
+        noteOsc.type = 'sine';
+        
+        lfo.frequency.value = lfoFreq;
+        lfoGain.gain.value = baseFreq * 0.02;
+        lfo.connect(lfoGain);
+        lfoGain.connect(noteOsc.frequency);
+        
+        noteGain.gain.setValueAtTime(0, audioContext.currentTime);
+        noteGain.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 1);
+        noteGain.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 4);
+        noteGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+        
+        noteOsc.connect(noteGain);
+        noteGain.connect(audioContext.destination);
+        
+        lfo.start();
+        noteOsc.start();
+        noteOsc.stop(audioContext.currentTime + 5);
+        
+        setTimeout(() => {
+          lfo.disconnect();
+          noteOsc.disconnect();
+          noteGain.disconnect();
+          
+          if (soundEnabled) {
+            scheduleNextNote();
+          }
+        }, 5000);
+      }
+      
+      function scheduleNextNote() {
+        const delay = 2000 + Math.random() * 3000;
+        setTimeout(createAmbientNote, delay);
+      }
+      
+      createAmbientNote();
+      scheduleNextNote();
+    }
+
+    // Sound control functionality
+    soundControl.addEventListener('click', function() {
+      initAudio();
+      soundEnabled = !soundEnabled;
+      
+      if (soundEnabled) {
+        if (audioContext && audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        
+        this.style.backgroundColor = 'rgba(255, 0, 0, 0.7)';
+        soundStatus.textContent = 'Sound On';
+        showNotification('Sound effects enabled!');
+        startBackgroundSound();
+        playClickSound();
+      } else {
+        this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        soundStatus.textContent = 'Sound Off';
+        showNotification('Sound effects disabled');
+      }
+      
+      // Save the sound preference
+      localStorage.setItem('soundEnabled', soundEnabled);
+    });
+
+    // First click anywhere will initialize audio
+    document.addEventListener('click', function initOnFirstClick() {
+      initAudio();
+      document.removeEventListener('click', initOnFirstClick);
+    }, { once: true });
+
+    // Sound effects for interactive elements
+    const buttons = document.querySelectorAll('button:not(.tab), select');
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', playHoverSound);
+      button.addEventListener('click', playClickSound);
+    });
+    
+    // Sound effects for select elements
+    document.querySelectorAll('select').forEach(select => {
+      select.addEventListener('change', playClickSound);
+    });
+
+    // Get stored sound preference
+    document.addEventListener('DOMContentLoaded', function() {
+      const storedSoundPreference = localStorage.getItem('soundEnabled');
+      if (storedSoundPreference === 'true') {
+        soundEnabled = true;
+        soundControl.style.backgroundColor = 'rgba(255, 0, 0, 0.7)';
+        soundStatus.textContent = 'Sound On';
+        setTimeout(() => {
+          initAudio();
+          startBackgroundSound();
+        }, 500);
+      }
+    });
+
+    // Create floating bubbles dynamically
+    function createBubbles() {
+      const bubbleCount = 8;
+      
+      for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        const size = Math.random() * 60 + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        
+        const xPos = Math.random() * 100;
+        const yPos = Math.random() * 100;
+        bubble.style.left = `${xPos}%`;
+        bubble.style.top = `${yPos}%`;
+        
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        bubble.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+        
+        document.body.appendChild(bubble);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', createBubbles);
+    
+    // Form submission handling
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const tipo = document.getElementById('userType').value;
+        const messageDiv = document.getElementById('message');
+        
+        messageDiv.innerText = '';
+
+        if (!username || !email || !password || !tipo) {
+            messageDiv.innerText = 'Please fill in all fields.';
+            return;
+        }
+
+        fetch('/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, tipo })
+        })
+        .then(response => {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.error || `Error: ${response.status}`);
+                }
+                return data;
+            });
+        })
+        .then(data => {
+            console.log('Server response:', data);
+            if (data.success && data.redirectUrl) {
+                // Show transition effect before redirecting
+                triggerPageTransition('right');
+                
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl;
+                }, 800);
+            } else {
+                messageDiv.innerText = 'Unexpected response from server.';
+            }
+        })
+        .catch(error => {
+            console.error('Signup error:', error);
+            messageDiv.innerText = error.message || 'Error during signup. Please try again.';
+        });
+    });
+
+    // Enhanced page transition system
+    function triggerPageTransition(direction) {
+      const transitionOverlay = document.querySelector('.page-transition-overlay');
+      const pageWrapper = document.querySelector('.page-wrapper');
+      const transitionClassName = direction === 'left' ? 'transition-active' : 'transition-reverse';
+      
+      // Create transition particles
+      createTransitionParticles(direction);
+      
+      // Play transition sound
+      playTransitionSound(direction);
+      
+      // Add transition classes for animation
+      document.body.classList.add(transitionClassName);
+      pageWrapper.classList.add('transitioning');
+      
+      // Reset transition after animation completes
+      setTimeout(() => {
+        document.body.classList.remove(transitionClassName);
+        pageWrapper.classList.remove('transitioning');
+      }, 1000);
+    }
+    
+    // Create particles for transition effect
+    function createTransitionParticles(direction) {
+      const particleCount = 15;
+      const body = document.body;
+      const startX = direction === 'left' ? 0 : window.innerWidth;
+      const endX = direction === 'left' ? window.innerWidth : 0;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('transition-particle');
+        
+        const size = Math.random() * 8 + 5;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        const yPos = Math.random() * window.innerHeight;
+        particle.style.top = `${yPos}px`;
+        particle.style.left = `${startX}px`;
+        
+        const speedFactor = Math.random() * 0.5 + 0.5;
+        const delay = Math.random() * 200;
+        
+        body.appendChild(particle);
+        
+        setTimeout(() => {
+          particle.style.transition = `transform ${0.8 * speedFactor}s cubic-bezier(0.165, 0.84, 0.44, 1), opacity ${0.8 * speedFactor}s ease`;
+          particle.style.transform = `translateX(${direction === 'left' ? '' : '-'}${Math.abs(endX - startX)}px)`;
+          particle.style.opacity = '1';
+          
+          setTimeout(() => {
+            particle.style.opacity = '0';
+            setTimeout(() => {
+              body.removeChild(particle);
+            }, 800);
+          }, 400);
+        }, delay);
+      }
+    }
+    
+    // Page transition for navigation
+    document.querySelectorAll('.tab a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        // Only apply transition for internal links
+        if (this.getAttribute('href').startsWith('/')) {
+          e.preventDefault();
+          const destination = this.getAttribute('href');
+          const direction = this.getAttribute('data-direction') || 'left';
+          
+          // Trigger the transition effect
+          triggerPageTransition(direction);
+          
+          setTimeout(() => {
+            window.location.href = destination;
+          }, 800);
+        }
+      });
+    });
+
+    // Button hover effects
+    const primaryBtn = document.querySelector('.primary-btn');
+    if (primaryBtn) {
+      primaryBtn.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        this.style.background = `radial-gradient(circle at ${x}px ${y}px, #ff3333, #ff0000 70%)`;
+      });
+
+      primaryBtn.addEventListener('mouseleave', function() {
+        this.style.background = 'var(--primary-color)';
+      });
+    }
+  </script>
 </body>
 </html>

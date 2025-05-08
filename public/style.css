@@ -1,408 +1,593 @@
-/* Impostazioni globali per viewport */
-html,
-body {
+/* Reset completo per evitare scrollbar indesiderate */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-}
-/* Aggiungi questi stili al tuo CSS esistente */
-
-/* Controlli utente nell'header */
-.user-controls {
-    display: flex;
-    align-items: center;
-    margin-left: 20px;
-}
-
-.username {
-    color: white;
-    font-weight: 500;
-    margin-right: 10px;
-}
-
-.logout-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s;
-}
-
-.logout-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-/* Badge notifiche */
-.notification-badge {
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    display: none;
-}
-
-/* Stile per bottoni azioni */
-.action-button {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s, color 0.3s;
-    margin-right: 10px;
-}
-
-.btn-primary {
-    background-color: #ff5100;
-    color: white;
-}
-
-.btn-secondary {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ddd;
-}
-
-.btn-danger {
-    background-color: #ff4d4d;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #e04600;
-}
-
-.btn-secondary:hover {
-    background-color: #e8e8e8;
-}
-
-.btn-danger:hover {
-    background-color: #e04545;
-}
-/* Impostazioni globali */
-body {
-    font-family: 'Arial', sans-serif;
-    background: url('img/bg.png') no-repeat center center/cover; /* Background unificato */
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Distribuisce Header, Content e Footer */
-}
-
-/* Navbar */
-.navbar {
-    background-color: #333; /* Colore di sfondo navbar */
-    padding: 15px;
-    overflow: hidden;
-}
-
-.navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 15px;
-    float: left;
-    display: inline-block;
-}
-
-.navbar a:hover {
-    background-color: #575757;
-    border-radius: 5px;
-}
-
-/* Hero Section */
-.hero {
-    height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: black;
-    background-image: url('./img/hero-background.jpg'); /* Percorso corretto per l'immagine hero */
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    position: relative;
-}
-
-.hero-content {
-    color: black;
-    text-align: center;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombra leggera per dare profondità */
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.8); /* Sfondo bianco semi-trasparente per migliorare la leggibilità */
-    max-width: 600px; /* Impostato un massimo per la larghezza del contenuto */
-    margin: 0 auto;
-    animation: fadeIn 2s ease-out; /* Aggiunto effetto di animazione */
-}
-
-/* Animazione di ingresso */
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Titolo */
-.hero h1 {
-    font-size: 3rem;
-    margin: 0;
-    color: #ffcc00; /* Giallo per richiamare il brand */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-    animation: fadeIn 2s ease-out; /* Aggiunto effetto di animazione */
-}
-
-/* Descrizione */
-.hero p {
-    font-size: 1.5rem;
-    margin: 1rem 0;
-    color: #333;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* Pulsanti */
-.buttons {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: center;
-}
-
-.primary-button,
-.secondary-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin: 0 10px;
-    border-radius: 5px;
-}
-
-.primary-button {
-    background-color: #007BFF; /* Colore blu per il pulsante registrazione */
-    color: white;
-}
-
-.primary-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-4px); /* Leggera animazione al passaggio del mouse */
-}
-
-.secondary-button {
-    background-color: #ffcc00; /* Giallo per il pulsante login */
-    color: black;
-}
-
-.secondary-button:hover {
-    background-color: #e6b800;
-    transform: translateY(-4px); /* Leggera animazione al passaggio del mouse */
-}
-
-/* General Page Styles con Flexbox per organizzare Header, Content e Footer */
-.footer {
-    background-color: rgb(241, 235, 235);
-    height: 50vh; /* Altezza fissa per il Footer */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 0; /* Assicura che il footer sia sotto Header e Content */
-}
-
-/* Header Styles */
-.header {
-    flex: 0 0 40vh; /* L'Header occupa il 40% dell'altezza disponibile */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 1; /* Assicura che l'Header sia sopra il Content */
-}
-
-.logo {
-    width: 300px; /* Dimensione del logo */
-    margin-bottom: 20px;
-}
-
-.tabs {
-    position: absolute;
-    bottom: -30px;
-    display: flex;
-    gap: 20px;
+  }
+  
+  html, body {
+    height: 100%;
     width: 100%;
-    justify-content: center;
-}
-
-.tab {
-    width: 450px;
-    padding: 10px 0; /* Padding per evitare che i bottoni diventino troppo alti */
-    background-color: white;
-    border: 2px solid red;
-    border-radius: 25px;
-    font-size: 18px;
-    color: red;
-    cursor: pointer;
-    transition: 0.3s ease;
-    text-align: center; /* Centra il testo */
-}
-
-.tab.active,
-.tab:hover {
-    background-color: red;
-    color: white;
-}
-
-/* Main Content Styles */
-.content {
-    flex: 1 0 auto; /* Il Content occupa lo spazio rimanente */
-    background: white;
-    margin: 0 auto;
-    padding: 30px; /* Padding aumentato */
-    width: 80%;
-    max-width: 1200px; /* Larghezza massima per schermi larghi */
-    text-align: center;
-    border-radius: 35px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column; /* Stack verticale */
-    align-items: center; /* Centra il contenuto orizzontalmente */
-    justify-content: center; /* Centra verticalmente il contenuto */
-    box-sizing: border-box;
-    margin-top: -50px; /* Crea effetto di overlap */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Previene scrollbar orizzontale */
+  }
+  
+  body {
+    font-family: 'Nunito', sans-serif;
+    color: #ffffff;
+    background-color: #121212; /* Fallback */
     position: relative;
-    z-index: 1; /* Il Content sta sopra il background ma sotto l'Header */
-}
-
-.form {
-    width: 100%; /* La form occupa tutta la larghezza disponibile */
-    max-width: 400px; /* Larghezza massima della form */
-    text-align: left;
+  }
+  
+  /* SOLUZIONE SEMPLICE E SICURA PER LO SFONDO */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/img/bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -10;
+    opacity: 0.85; /* Leggermente più visibile */
+  }
+  
+  /* Overlay più scuro per garantire leggibilità */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.75) 100%);
+    z-index: -5;
+  }
+  
+  /* Resto del CSS principale */
+  :root {
+    --primary-color: rgba(255, 0, 0, 1);
+    --primary-hover: #ff3333;
+    --primary-active: #e60000;
+    --text-color: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.85);
+    --transition-speed: 0.3s;
+    --shadow-color: rgba(255, 0, 0, 0.35);
+    --form-bg: rgba(0, 0, 0, 0.25);
+    --input-bg: rgba(255, 255, 255, 0.08);
+    --input-border: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Wrapper principale per evitare problemi di overflow */
+  .page-wrapper {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra il contenuto della form */
-}
-
-.form-group {
-    margin-bottom: 10px; /* Spazio ridotto tra i campi */
-    position: relative; /* Posizionamento relativo per il label */
-    width: 100%; /* Il campo input occupa tutta la larghezza */
-}
-
-.form-group label {
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    overflow-x: hidden;
+  }
+  
+  /* LOGO GRANDE E CENTRATO */
+  .logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+  }
+  
+  .logo {
+    width: 90%; /* Dimensione relativa al contenitore */
+    max-width: 500px; /* Dimensione massima */
+    height: auto; /* Mantiene proporzioni */
+    object-fit: contain;
+    background-image: url("/img/logo.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 250px; /* Altezza minima garantita */
+    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.5));
+  }
+  
+  /* Container per il form */
+  .container {
+    width: 90%;
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Tabs */
+  .tabs {
+    display: flex;
+    width: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .tab {
+    flex: 1;
+    padding: 18px 0;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 17px;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+  
+  .tab a {
+    text-decoration: none;
+    color: var(--text-color);
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .tab.active {
+    background: var(--primary-color);
+  }
+  
+  .tab:first-child {
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+  }
+  
+  .tab:last-child {
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+  }
+  
+  .tab:hover:not(.active) {
+    background: rgba(255, 0, 0, 0.3);
+  }
+  
+  /* Effetto hover per i tab */
+  .tab::before {
+    content: '';
     position: absolute;
     top: 0;
-    left: 15px;
-    font-size: 14px;
-    color: #555;
-    background-color: white; /* Sfondo bianco per una migliore leggibilità */
-    padding: 0 5px;
-    transition: 0.2s ease-in-out;
-    pointer-events: none; /* Impedisce il click sul label */
-}
-
-.form-group input {
-    width: 100%; /* L'input occupa tutta la larghezza */
-    padding: 20px 10px 10px 10px; /* Padding aumentato per lasciare spazio al label */
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-.form-group input:focus + label,
-.form-group input:not(:placeholder-shown) + label {
-    top: -30px; /* Sposta il label in alto quando l'input è attivo o ha contenuto */
-    left: 15px;
-    font-size: 12px;
-    color: #007BFF; /* Cambia colore del label in caso di focus */
-}
-
-/* Button inside form */
-.primary-btn {
-    padding: 10px 20px;
-    background-color: red;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s;
+  }
+  
+  .tab:hover::before {
+    left: 100%;
+  }
+  
+  /* Form container */
+  .form-container {
+    width: 100%;
+    padding: 2.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  
+  /* Effetto bordo */
+  .form-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--primary-color), transparent, var(--primary-color));
+    z-index: -1;
+    animation: borderAnimation 5s linear infinite;
+    border-radius: 20px;
+    filter: blur(10px);
+    opacity: 0.5;
+  }
+  
+  .welcome-message {
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1.8rem;
     color: white;
-    border: none;
-    border-radius: 25px;
+    text-shadow: 0 2px 10px rgba(255, 0, 0, 0.5);
+  }
+  
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+  
+  .form-group {
+    position: relative;
+    width: 100%;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 16px;
+    font-size: 17px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    color: var(--text-color);
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group select {
     cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s ease;
-    width: 100%; /* Il bottone occupa tutta la larghezza della form */
-    max-width: 500px; /* Larghezza massima del bottone */
-    margin-top: 10px; /* Spazio ridotto sopra il bottone */
-}
-
-.primary-btn:hover {
-    background-color: darkred;
-}
-
-/* Forgot Password Link */
-.forgot-password {
-    margin-top: 15px;
+    appearance: none;
+    padding-right: 30px;
+  }
+  
+  .form-group select option {
+    background-color: #252525;
+    color: var(--text-color);
+  }
+  
+  .form-group label {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    font-size: 17px;
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus,
+  .form-group input:not(:placeholder-shown) {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+  }
+  
+  .form-group input:focus + label,
+  .form-group input:not(:placeholder-shown) + label {
+    top: -12px;
+    left: 10px;
     font-size: 14px;
-}
-
-.forgot-password a {
-    color: black;
+    background: #121212;
+    padding: 0 6px;
+  }
+  
+  /* Freccia per i select */
+  .form-group::after {
+    content: '';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--text-secondary);
+    pointer-events: none;
+    display: none;
+  }
+  
+  .form-group:has(select)::after {
+    display: block;
+  }
+  
+  /* Button styles */
+  .primary-btn {
+    width: 100%;
+    height: 58px;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 30px;
+    color: var(--text-color);
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: all var(--transition-speed);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+  }
+  
+  .primary-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s;
+  }
+  
+  .primary-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--shadow-color);
+    background: var(--primary-hover);
+  }
+  
+  .primary-btn:hover::before {
+    left: 100%;
+  }
+  
+  .primary-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+    background: var(--primary-active);
+  }
+  
+  /* Google Sign in Button */
+  .google-signin {
+    width: 100%;
+    margin-top: 1.8rem;
+    text-align: center;
+  }
+  
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 17px;
     text-decoration: none;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-}
-
-.welcome-message {
-    font-size: 24px;
-    font-weight: bold;
-    color: red;
-    margin-bottom: 20px;
-}
-
-/* Media Query per dispositivi con max-width: 768px */
-@media only screen and (max-width: 768px) {
-    body {
-        padding: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .google-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .google-btn img {
+    border-radius: 50%;
+    background-color: white;
+    padding: 2px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Message styling */
+  #message {
+    margin-top: 1.2rem;
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 15px;
+    font-weight: 600;
+    min-height: 22px;
+  }
+  
+  /* Sound controls */
+  .sound-control {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+  
+  .sound-control:hover {
+    background: rgba(255, 0, 0, 0.7);
+    transform: scale(1.1);
+  }
+  
+  .sound-control svg {
+    width: 22px;
+    height: 22px;
+    fill: white;
+  }
+  
+  .sound-status {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 3px 8px;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .sound-control:hover .sound-status {
+    opacity: 1;
+  }
+  
+  /* Notification toast */
+  .notification {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    z-index: 100;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-size: 15px;
+  }
+  
+  .notification.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  /* Floating bubbles */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.1));
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+    opacity: 0.6;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* Animazione bordo */
+  @keyframes borderAnimation {
+    0% {
+      transform: rotate(0deg);
     }
-    .header,
-    .content {
-        margin: 0 auto;
-        width: 95%;
+    100% {
+      transform: rotate(360deg);
     }
-    .header {
-        flex: 0 0 30vh; /* Riduce l'altezza dell'Header */
+  }
+  
+  /* Transizione tra pagine */
+  .page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), var(--primary-color), rgba(255, 0, 0, 0.2), transparent);
+    opacity: 0;
+    z-index: 1000;
+    pointer-events: none;
+    transform: skewX(-15deg);
+  }
+  
+  .transition-active .page-transition-overlay {
+    animation: slideRightOverlay 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  }
+  
+  .transition-reverse .page-transition-overlay {
+    left: 100%;
+    animation: slideLeftOverlay 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  }
+  
+  /* Transition particles */
+  .transition-particle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.5);
+  }
+  
+  @keyframes slideRightOverlay {
+    0% {
+      left: -100%;
+      opacity: 0;
     }
-    .content {
-        padding: 20px;
-        margin-top: -30px; /* Riduce l'effetto overlap */
+    30% {
+      opacity: 1;
     }
+    70% {
+      left: 10%;
+      opacity: 1;
+    }
+    100% {
+      left: 100%;
+      opacity: 0;
+    }
+  }
+  
+  @keyframes slideLeftOverlay {
+    0% {
+      left: 100%;
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    70% {
+      left: 0%;
+      opacity: 1;
+    }
+    100% {
+      left: -100%;
+      opacity: 0;
+    }
+  }
+  
+  /* Media queries */
+  @media (max-width: 768px) {  
+    .form-container {
+      padding: 1.8rem;
+    }
+    
+    .welcome-message {
+      font-size: 1.6rem;
+    }
+    
     .logo {
-        width: 200px; /* Riduce il logo */
+      min-height: 180px;
+      max-width: 400px;
     }
-    .form,
+  }
+  
+  @media (max-width: 480px) {
+    .form-container {
+      padding: 1.5rem;
+    }
+    
+    .welcome-message {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    
     .form-group input,
-    .form-group label,
-    button {
-        width: 100%;
-        box-sizing: border-box;
+    .form-group select {
+      padding: 14px;
+      font-size: 15px;
     }
-    .tab {
-        display: block;
-        margin-bottom: 10px;
-        text-align: center;
+    
+    .form-group label {
+      font-size: 15px;
     }
-}
+    
+    .primary-btn {
+      height: 52px;
+      font-size: 17px;
+    }
+    
+    .logo {
+      min-height: 150px;
+    }
+  }

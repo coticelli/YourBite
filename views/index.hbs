@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -11,123 +12,850 @@
       padding: 0;
     }
 
+    :root {
+      --primary-color: rgba(255, 0, 0, 1);
+      --primary-hover: #ff3333;
+      --primary-active: #e60000;
+      --text-color: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.85);
+      --transition-speed: 0.3s;
+      --shadow-color: rgba(255, 0, 0, 0.35);
+    }
+
     body {
-      font-size: 14px;
-      background-color: #f4f4f4; /* Optional: Light background */
+      font-family: 'Nunito', sans-serif;
+      background-color: #121212;
       height: 100vh;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
       overflow: hidden;
+      position: relative;
+      color: var(--text-color);
     }
 
-    .v82_15 {
+    #particles-js {
+      position: absolute;
       width: 100%;
       height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+      animation: fadeIn 1s ease-in-out;
       position: relative;
     }
 
     .bg {
-      position: fixed; /* Fixed background */
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       background-image: url("/img/bg.png");
-      background-size: cover; /* Ensures it covers the entire viewport */
+      background-size: cover;
       background-position: center;
-      z-index: -2; /* Place it in the background */
+      z-index: -2;
+      opacity: 0;
+      animation: fadeIn 1.5s ease-in-out forwards;
+    }
+
+    /* Overlay to enhance readability */
+    .bg::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%);
+      z-index: -1;
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 5vh;
+      position: relative;
     }
 
     .logo {
-      position: relative;
-      width: 60%; /* Adjust as needed */
-      background-image: url("/img/logo.png"); /* Potrebbe diventare dinamico se necessario */
+      width: 100%;
+      max-width: 550px;
+      height: 280px;
+      background-image: url("/img/logo.png");
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      height: 320px; /* Adjust height of the image as needed */
-      margin: 20px auto;
-      z-index: -1; /* Make sure it's above the background */
+      z-index: 3;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: slideUp 0.8s ease-out 0.3s forwards, pulse 6s ease-in-out 3s infinite;
+      filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.3));
     }
 
-    .v82_18 {
+    /* Logo glow effect */
+    .logo::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+      z-index: -1;
+      opacity: 0;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    .login-container {
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      width: 100%;
+      max-width: 360px;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: slideUp 0.8s ease-out 0.6s forwards;
+      padding: 1.5rem;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
-      z-index: 1; /* Ensures it’s above the images */
+      overflow: hidden;
+      z-index: 2;
     }
 
-    .v82_19 {
+    /* Login container neon border effect */
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--primary-color), transparent, var(--primary-color));
+      z-index: -1;
+      animation: borderAnimation 5s linear infinite;
+      border-radius: 20px;
+      filter: blur(10px);
+      opacity: 0.5;
+    }
+
+    .login-button {
       width: 100%;
-      max-width: 300px;
-      height: 50px;
-      background: rgba(255, 0, 0, 1);
-      border-radius: 40px;
+      height: 54px;
+      background: var(--primary-color);
+      border-radius: 30px;
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: all var(--transition-speed);
+      box-shadow: 0 4px 12px var(--shadow-color),
+                  0 0 0 0 var(--primary-color);
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
     }
 
-    .v82_20 {
-      color: rgba(255, 255, 255, 1);
+    .login-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s;
+    }
+
+    .login-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 20px var(--shadow-color),
+                  0 0 15px 3px rgba(255, 0, 0, 0.15);
+      background: var(--primary-hover);
+    }
+
+    .login-button:hover::before {
+      left: 100%;
+    }
+
+    .login-button:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 3px 8px rgba(230, 0, 0, 0.3);
+      background: var(--primary-active);
+    }
+
+    .login-text {
+      color: var(--text-color);
       font-family: 'Nunito', sans-serif;
-      font-weight: bold;
-      font-size: 16px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.5px;
       text-align: center;
+      width: 100%;
+      display: block;
     }
 
-    .v82_21 {
+    .signup-text {
       width: 100%;
       text-align: center;
-      color: white;
+      color: var(--text-secondary);
       font-family: 'Nunito', sans-serif;
-      font-weight: bold;
-      font-size: 14px;
-      margin-top: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      margin-top: 1.5rem;
+      opacity: 0.9;
+      letter-spacing: 0.2px;
     }
 
     a {
-      color: rgba(255, 0, 0, 1);
+      color: var(--primary-color);
       text-decoration: none;
       font-weight: bold;
+      transition: all var(--transition-speed);
+      position: relative;
+      padding: 0 2px;
+    }
+
+    a:hover {
+      color: #ff3333;
+      text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+    }
+
+    a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: var(--primary-color);
+      transition: width var(--transition-speed);
+      border-radius: 4px;
+    }
+
+    a:hover::after {
+      width: 100%;
+    }
+
+    /* Floating bubbles */
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 70% 30%, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.1));
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+      opacity: 0.6;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Sound controls */
+    .sound-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .sound-control:hover {
+      background: rgba(255, 0, 0, 0.7);
+      transform: scale(1.1);
+    }
+
+    .sound-control svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* Sound status indicator */
+    .sound-status {
+      position: absolute;
+      bottom: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 3px 8px;
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .sound-control:hover .sound-status {
+      opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.3));
+      }
+      50% {
+        transform: scale(1.03);
+        filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.5));
+      }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        opacity: 0.1;
+        transform: translate(-50%, -50%) scale(0.9);
+      }
+      50% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      25% {
+        transform: translate(10px, -15px);
+      }
+      50% {
+        transform: translate(20px, 0);
+      }
+      75% {
+        transform: translate(10px, 15px);
+      }
+    }
+
+    @keyframes borderAnimation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Notification toast for sound */
+    .notification {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      background: rgba(255, 0, 0, 0.8);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      z-index: 100;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Media Queries - Enhanced for better responsiveness */
+    @media (min-width: 1600px) {
+      .logo {
+        max-width: 650px;
+        height: 330px;
+      }
+      
+      .login-container {
+        max-width: 400px;
+      }
     }
 
     @media (max-width: 768px) {
-      .v82_16, .v82_17, .v82_18 {
-        margin-bottom: 10px;
+      .container {
+        padding: 1.5rem;
+      }
+      
+      .logo {
+        max-width: 450px;
+        height: 230px;
+        margin-bottom: 2vh;
       }
 
-      .v82_19 {
-        height: 40px;
+      .login-button {
+        height: 50px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1rem;
       }
 
-      .v82_20 {
+      .logo {
+        max-width: 320px;
+        height: 180px;
+        margin-bottom: 1.5vh;
+      }
+
+      .login-container {
+        max-width: 300px;
+        padding: 1.2rem;
+      }
+
+      .login-button {
+        height: 48px;
+      }
+
+      .login-text {
+        font-size: 16px;
+      }
+
+      .signup-text {
         font-size: 14px;
+        margin-top: 1.2rem;
+      }
+    }
+
+    /* For very small screens */
+    @media (max-height: 500px) {
+      .logo-container {
+        margin-bottom: 3vh;
+      }
+      
+      .logo {
+        max-width: 280px;
+        height: 140px;
       }
 
-      .v82_21 {
-        font-size: 12px;
+      .login-container {
+        padding: 1rem;
+      }
+      
+      .login-button {
+        height: 44px;
+      }
+      
+      .signup-text {
+        margin-top: 1rem;
+      }
+    }
+
+    /* For landscape mobile orientation */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        gap: 2rem;
+      }
+      
+      .logo-container {
+        margin-bottom: 0;
+        flex: 1;
+      }
+      
+      .login-container {
+        flex: 1;
+        max-width: 280px;
       }
     }
   </style>
-  {{!-- Il titolo ora può essere passato come variabile dal server --}}
-  <title>{{pageTitle}}</title> 
+  <title>{{pageTitle}}</title>
 </head>
 <body>
-  <div class="v82_15">
-    <div class="bg"></div>
-    <div class="logo"></div>
-    <div class="v82_18">
-      <div class="v82_19">
-        {{!-- Cambia i link per puntare ai nuovi percorsi senza .html --}}
-        <a href="/login"><span class="v82_20">Log in</span></a>
-      </div>
-      <span class="v82_21">Don’t have an account? <a href="/signup">Sign Up</a></span>
+  <div class="bg"></div>
+  <div id="particles-js"></div>
+  
+  <div class="container">
+    <div class="logo-container">
+      <div class="logo"></div>
+    </div>
+    <div class="login-container">
+      <a href="/login" class="login-button">
+        <span class="login-text">Log in</span>
+      </a>
+      <div class="signup-text">Don't have an account? <a href="/signup">Sign Up</a></div>
     </div>
   </div>
+
+  <div class="sound-control" id="soundControl" title="Toggle sound">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    </svg>
+    <div class="sound-status" id="soundStatus">Sound Off</div>
+  </div>
+
+  <div class="notification" id="notification">Sound effects enabled!</div>
+  
+  <script>
+    // Particles JS Configuration
+    document.addEventListener('DOMContentLoaded', function() {
+      particlesJS('particles-js', {
+        "particles": {
+          "number": {
+            "value": 80,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#ff0000"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            },
+            "polygon": {
+              "nb_sides": 5
+            }
+          },
+          "opacity": {
+            "value": 0.5,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 2,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#ff0000",
+            "opacity": 0.2,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": true,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "repulse"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          },
+          "modes": {
+            "grab": {
+              "distance": 140,
+              "line_linked": {
+                "opacity": 1
+              }
+            },
+            "bubble": {
+              "distance": 400,
+              "size": 40,
+              "duration": 2,
+              "opacity": 8,
+              "speed": 3
+            },
+            "repulse": {
+              "distance": 100,
+              "duration": 0.4
+            },
+            "push": {
+              "particles_nb": 4
+            },
+            "remove": {
+              "particles_nb": 2
+            }
+          }
+        },
+        "retina_detect": true
+      });
+    });
+
+    // Create audio context for sound synthesis (no external files needed)
+    let audioContext;
+    let soundEnabled = false;
+    const soundControl = document.getElementById('soundControl');
+    const soundStatus = document.getElementById('soundStatus');
+    const notification = document.getElementById('notification');
+
+    // Function to show notification
+    function showNotification(message) {
+      notification.textContent = message;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Initialize audio context on user interaction
+    function initAudio() {
+      if (!audioContext) {
+        try {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          console.log("Audio context initialized");
+        } catch (e) {
+          console.error("Web Audio API not supported:", e);
+        }
+      }
+    }
+
+    // Sound synthesis functions
+    function playHoverSound() {
+      if (!audioContext || !soundEnabled) return;
+      
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(2000, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(1800, audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+    function playClickSound() {
+      if (!audioContext || !soundEnabled) return;
+      
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(1800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.15);
+      
+      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.15);
+    }
+
+    // Background ambient sound
+    function startBackgroundSound() {
+      if (!audioContext || !soundEnabled) return;
+      
+      const lfoFreq = 0.1 + Math.random() * 0.1;
+      
+      function createAmbientNote() {
+        const noteOsc = audioContext.createOscillator();
+        const noteGain = audioContext.createGain();
+        const lfo = audioContext.createOscillator();
+        const lfoGain = audioContext.createGain();
+        
+        // Random note frequency
+        const baseFreq = 100 + Math.random() * 200;
+        noteOsc.frequency.value = baseFreq;
+        noteOsc.type = 'sine';
+        
+        // Setup LFO for vibrato effect
+        lfo.frequency.value = lfoFreq;
+        lfoGain.gain.value = baseFreq * 0.02;
+        lfo.connect(lfoGain);
+        lfoGain.connect(noteOsc.frequency);
+        
+        // Setup note amplitude
+        noteGain.gain.setValueAtTime(0, audioContext.currentTime);
+        noteGain.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 1);
+        noteGain.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 4);
+        noteGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+        
+        // Connect and start
+        noteOsc.connect(noteGain);
+        noteGain.connect(audioContext.destination);
+        
+        lfo.start();
+        noteOsc.start();
+        noteOsc.stop(audioContext.currentTime + 5);
+        
+        // Schedule cleanup
+        setTimeout(() => {
+          lfo.disconnect();
+          noteOsc.disconnect();
+          noteGain.disconnect();
+          
+          if (soundEnabled) {
+            scheduleNextNote();
+          }
+        }, 5000);
+      }
+      
+      function scheduleNextNote() {
+        const delay = 2000 + Math.random() * 3000;
+        setTimeout(createAmbientNote, delay);
+      }
+      
+      // Start the ambient sound
+      createAmbientNote();
+      scheduleNextNote();
+    }
+
+    // Sound control functionality
+    soundControl.addEventListener('click', function() {
+      initAudio();
+      soundEnabled = !soundEnabled;
+      
+      if (soundEnabled) {
+        // Resume audio context if suspended (browser policy)
+        if (audioContext && audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        
+        this.style.backgroundColor = 'rgba(255, 0, 0, 0.7)';
+        soundStatus.textContent = 'Sound On';
+        showNotification('Sound effects enabled!');
+        startBackgroundSound();
+        playClickSound();
+      } else {
+        this.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        soundStatus.textContent = 'Sound Off';
+        showNotification('Sound effects disabled');
+      }
+    });
+
+    // First click anywhere will initialize audio
+    document.addEventListener('click', function initOnFirstClick() {
+      initAudio();
+      document.removeEventListener('click', initOnFirstClick);
+    }, { once: true });
+
+    // Sound effects for interactive elements
+    const loginButton = document.querySelector('.login-button');
+    const signupLink = document.querySelector('.signup-text a');
+
+    loginButton.addEventListener('mouseenter', playHoverSound);
+    loginButton.addEventListener('click', playClickSound);
+    signupLink.addEventListener('mouseenter', playHoverSound);
+    signupLink.addEventListener('click', playClickSound);
+
+    // Create floating bubbles dynamically
+    function createBubbles() {
+      const container = document.querySelector('.container');
+      const bubbleCount = 10;
+      
+      for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        // Random size between 20px and 100px
+        const size = Math.random() * 80 + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        
+        // Random position
+        const xPos = Math.random() * 100;
+        const yPos = Math.random() * 100;
+        bubble.style.left = `${xPos}%`;
+        bubble.style.top = `${yPos}%`;
+        
+        // Random animation duration and delay
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        bubble.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+        
+        // Add to DOM
+        document.body.appendChild(bubble);
+      }
+    }
+
+    // Start creating bubbles
+    document.addEventListener('DOMContentLoaded', createBubbles);
+
+    // Interactive particle effect on button hover
+    document.querySelector('.login-button').addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      this.style.background = `radial-gradient(circle at ${x}px ${y}px, #ff3333, #ff0000 70%)`;
+    });
+
+    document.querySelector('.login-button').addEventListener('mouseleave', function() {
+      this.style.background = 'var(--primary-color)';
+    });
+    
+    // Show initial notification to let users know they need to enable sounds
+    setTimeout(() => {
+      showNotification('Click the sound icon to enable audio effects!');
+    }, 2000);
+  </script>
 </body>
 </html>
