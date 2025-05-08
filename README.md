@@ -5,7 +5,7 @@
   ![Version](https://img.shields.io/badge/version-1.0.0-blue)
   ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)
   
-  <p>Ultimo aggiornamento: 2025-04-04</p>
+  <p>Ultimo aggiornamento: 2025-05-08</p>
 </div>
 
 ---
@@ -91,6 +91,7 @@ YourBite si rivolge a due segmenti chiave del mercato:
 ### Prerequisiti
 - Docker installato sul sistema
 - Connessione internet stabile
+- Credenziali Google OAuth (per funzionalità di login)
 
 ### Windows
 1. Scarica questa repository
@@ -117,7 +118,15 @@ YourBite si rivolge a due segmenti chiave del mercato:
 3. Avvia l'applicazione utilizzando Docker:
    ```bash
    docker pull cotii/yourbite-app
+   
+   # Avvio base (senza autenticazione OAuth)
    docker run -d -p 3000:3000 --name yourbite-container cotii/yourbite-app
+   
+   # OPPURE: Avvio con autenticazione Google OAuth configurata
+   docker run -d -p 3000:3000 --name yourbite-container \
+     -e GOOGLE_CLIENT_ID=tuo_client_id \
+     -e GOOGLE_CLIENT_SECRET=tuo_client_secret \
+     cotii/yourbite-app
    ```
 4. Verifica che il container sia in esecuzione:
    ```bash
@@ -132,6 +141,16 @@ YourBite si rivolge a due segmenti chiave del mercato:
    ```bash
    docker start yourbite-container
    ```
+8. Se hai bisogno di ricreare il container (es. dopo un errore):
+   ```bash
+   docker rm yourbite-container
+   ```
+   E poi ripeti il passo 3 per ricrearlo.
+
+### ⚠️ Nota importante sull'autenticazione OAuth
+Per utilizzare il login con Google, devi configurare le variabili d'ambiente `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` come mostrato sopra. Queste credenziali possono essere ottenute dalla [Console Google Cloud](https://console.cloud.google.com/).
+
+Per sviluppo locale, imposta l'URL di redirect autorizzato su: `http://localhost:3000/auth/google/callback`
 
 ---
 
