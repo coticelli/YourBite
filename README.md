@@ -16,6 +16,7 @@
 - [Problema e Soluzione](#-problema-e-soluzione)
 - [Target di Mercato](#-target-di-mercato)
 - [Avvio Rapido](#-avvio-rapido)
+- [Installazione e Deployment](#-installazione-e-deployment)
 - [Guida Dettagliata](#-guida-dettagliata)
 - [Requisiti Funzionali](#-requisiti-funzionali)
 - [Requisiti Non Funzionali](#-requisiti-non-funzionali)
@@ -91,66 +92,139 @@ YourBite si rivolge a due segmenti chiave del mercato:
 ### Prerequisiti
 - Docker installato sul sistema
 - Connessione internet stabile
-- Credenziali Google OAuth (per funzionalità di login)
 
-### Windows
+### Metodo 1: Utilizzo dell'immagine precostruita
+```bash
+# Pulli l'immagine da Docker Hub
+docker pull cotii/yourbite-app
+
+# Avvia il container (versione base)
+docker run -d -p 3000:3000 --name yourbite-container cotii/yourbite-app
+
+# OPPURE con supporto OAuth
+docker run -d -p 3000:3000 --name yourbite-container \
+  -e GOOGLE_CLIENT_ID=tuo_client_id \
+  -e GOOGLE_CLIENT_SECRET=tuo_client_secret \
+  cotii/yourbite-app
+```
+
+### Metodo 2: Utilizzo degli script automatizzati
+#### Windows
 1. Scarica questa repository
 2. Fai doppio clic su `start-yourbite.bat`
 3. Attendi l'avvio dell'applicazione (lo script installerà Docker se necessario)
 4. Il browser si aprirà automaticamente su http://localhost:3000
 
-### Linux
+#### Linux
 1. Scarica questa repository
 2. Apri il terminale nella cartella del progetto
 3. Rendi eseguibile lo script: `chmod +x start-yourbite.sh`
 4. Esegui lo script: `./start-yourbite.sh`
 5. L'applicazione si avvierà e aprirà automaticamente il browser
 
-### Da GitHub Codespace o Terminale
-1. Clona il repository usando Git:
+### Accesso all'applicazione
+Apri il browser e naviga su [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🔧 Installazione e Deployment
+
+### Creazione dell'immagine Docker da zero
+
+1. **Clona il repository**
    ```bash
    git clone https://github.com/coticelli/yourbite.git
-   ```
-2. Entra nella directory del progetto:
-   ```bash
    cd yourbite
    ```
-3. Avvia l'applicazione utilizzando Docker:
+
+2. **Crea il Dockerfile** (se non esiste già)
+   ```dockerfile
+   FROM node:18-alpine
+   
+   WORKDIR /usr/src/app
+   
+   COPY package*.json ./
+   RUN npm install
+   
+   COPY . .
+   
+   EXPOSE 3000
+   
+   CMD ["node", "server.js"]
+   ```
+
+3. **Costruisci l'immagine**
    ```bash
-   docker pull cotii/yourbite-app
+   docker build -t yourbite-app .
+   ```
+
+4. **Verifica che l'immagine sia stata creata**
+   ```bash
+   docker images
+   ```
+
+5. **Esegui un container dall'immagine**
+   ```bash
+   docker run -d -p 3000:3000 --name yourbite-container yourbite-app
+   ```
+
+6. **In caso di errore "container name already in use"**
+   ```bash
+   # Ferma il container esistente
+   docker stop yourbite-container
    
-   # Avvio base (senza autenticazione OAuth)
-   docker run -d -p 3000:3000 --name yourbite-container cotii/yourbite-app
+   # Rimuovi il container
+   docker rm yourbite-container
    
-   # OPPURE: Avvio con autenticazione Google OAuth configurata
+   # Ricrea il container
+   docker run -d -p 3000:3000 --name yourbite-container yourbite-app
+   ```
+
+### Configurazione dell'autenticazione OAuth
+
+Per utilizzare l'autenticazione Google OAuth:
+
+1. Ottieni `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` dalla [Console Google Cloud](https://console.cloud.google.com/)
+2. Configura l'URL di redirect: `http://localhost:3000/auth/google/callback`
+3. Esegui il container con le variabili d'ambiente:
+   ```bash
    docker run -d -p 3000:3000 --name yourbite-container \
      -e GOOGLE_CLIENT_ID=tuo_client_id \
      -e GOOGLE_CLIENT_SECRET=tuo_client_secret \
-     cotii/yourbite-app
+     yourbite-app
    ```
-4. Verifica che il container sia in esecuzione:
-   ```bash
-   docker ps
-   ```
-5. Accedi all'applicazione aprendo il browser su http://localhost:3000
-6. Per fermare l'applicazione quando hai finito:
-   ```bash
-   docker stop yourbite-container
-   ```
-7. Per riavviare l'applicazione in seguito:
-   ```bash
-   docker start yourbite-container
-   ```
-8. Se hai bisogno di ricreare il container (es. dopo un errore):
-   ```bash
-   docker rm yourbite-container
-   ```
-   E poi ripeti il passo 3 per ricrearlo.
 
-### ⚠️ Nota importante sull'autenticazione OAuth
-Per utilizzare il login con Google, devi configurare le variabili d'ambiente `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` come mostrato sopra. Queste credenziali possono essere ottenute dalla [Console Google Cloud](https://console.cloud.google.com/).
+### Pubblicazione su Docker Hub (per sviluppatori)
 
-Per sviluppo locale, imposta l'URL di redirect autorizzato su: `http://localhost:3000/auth/google/callback`
+```bash
+# Accedi a Docker Hub
+docker login
+
+# Tagga l'immagine
+docker tag yourbite-app:latest cotii/yourbite-app:latest
+
+# Carica l'immagine su Docker Hub
+docker push cotii/yourbite-app:latest
+```
+
+### Gestione dei container
+
+```bash
+# Verifica i container in esecuzione
+docker ps
+
+# Ferma il container
+docker stop yourbite-container
+
+# Riavvia il container
+docker start yourbite-container
+
+# Visualizza i log
+docker logs yourbite-container
+
+# Rimuovi il container (quando non serve più)
+docker rm yourbite-container
+```
 
 ---
 
@@ -194,28 +268,34 @@ Poi accedi all'applicazione su http://localhost:8080
 </details>
 
 <details>
-<summary><b>Avvio manuale dell'applicazione</b></summary>
+<summary><b>Problemi con l'autenticazione Google</b></summary>
 
-Su Windows:
-```bash
-docker pull cotii/yourbite-app
-docker run -d -p 3000:3000 cotii/yourbite-app
-```
-
-Su Linux:
-```bash
-sudo docker pull cotii/yourbite-app
-sudo docker run -d -p 3000:3000 cotii/yourbite-app
-```
+Se ricevi l'errore "OAuth2Strategy requires a clientID option":
+1. Assicurati di fornire le variabili d'ambiente corrette:
+   ```bash
+   docker run -d -p 3000:3000 \
+     -e GOOGLE_CLIENT_ID=tuo_client_id \
+     -e GOOGLE_CLIENT_SECRET=tuo_client_secret \
+     --name yourbite-container cotii/yourbite-app
+   ```
+2. Verifica che il servizio sia accessibile tramite il localhost esatto configurato
+3. Controlla che l'URL di callback impostato nella console Google Cloud sia esattamente: `http://localhost:3000/auth/google/callback`
 </details>
 
 <details>
-<summary><b>Problemi con l'autenticazione Google</b></summary>
+<summary><b>Conflitti con container esistenti</b></summary>
 
-Assicurati che:
-1. Il servizio sia accessibile tramite il localhost esatto configurato (http://localhost:3000)
-2. Le credenziali Google OAuth siano configurate correttamente
-3. L'URL di callback impostato nella console Google Cloud sia esattamente: `http://localhost:3000/auth/google/callback`
+Se ricevi l'errore "Conflict. The container name is already in use":
+```bash
+# Ferma il container esistente
+docker stop yourbite-container
+
+# Rimuovi il container
+docker rm yourbite-container
+
+# Ricrea il container
+docker run -d -p 3000:3000 --name yourbite-container cotii/yourbite-app
+```
 </details>
 
 <details>
