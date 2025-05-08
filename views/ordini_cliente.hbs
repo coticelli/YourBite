@@ -6,13 +6,11 @@
     <title>I Tuoi Ordini - YourBite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- MODIFICATO: Font Montserrat come homepage_cliente -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Script rimossi come richiesto -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
         /* === VARIABILI E IMPOSTAZIONI BASE (MODIFICATO) === */
@@ -52,12 +50,6 @@
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-            /* --shadow-colored non più usato per header */
-            --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25); 
-            --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25); 
-            --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25); 
-            --shadow-purple: 0 8px 25px rgba(155, 89, 182, 0.25); 
-             /* NUOVA Ombra Rossa */
             --shadow-red: 0 8px 25px rgba(238, 27, 27, 0.25); 
 
             --radius: 16px;
@@ -69,36 +61,43 @@
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             --transition-bounce: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Colori specifici usati in precedenza */
+            --border: var(--gray-dark);
+            --border-light: var(--gray);
+            --shadow-md: 0 10px 20px rgba(0,0,0,0.1);
+            --success: var(--accent-green);
+            --warning: var(--accent-orange);
+            --danger: var(--accent-red);
+            --danger-dark: #c0392b; /* Un rosso più scuro per hover su danger */
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-             /* MODIFICATO: Font Montserrat come homepage_cliente */
             font-family: 'Montserrat', 'Arial', sans-serif;
             scroll-behavior: smooth;
         }
-        html { scroll-behavior: smooth; font-size: 16px; } /* Aggiunto da homepage */
-        main { padding-top: 0; } /* Aggiunto da homepage */
+        html { scroll-behavior: smooth; font-size: 16px; }
+        main { padding-top: 0; }
 
 
         body {
             background-color: var(--gray);
-            /* MODIFICATO: background rosso tenue */
             background-image:
                 radial-gradient(circle at 25% 10%, rgba(238, 27, 27, 0.05) 0%, transparent 40%),
                 radial-gradient(circle at 75% 75%, rgba(212, 16, 16, 0.05) 0%, transparent 40%);
             color: var(--text);
             overflow-x: hidden;
-            min-height: 100vh; /* Aggiunto da homepage */
-            display: flex; /* Aggiunto da homepage */
-            flex-direction: column; /* Aggiunto da homepage */
-            margin: 0; /* Aggiunto da homepage */
-            padding: 0; /* Aggiunto da homepage */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Header e Navigazione (MODIFICATO - Preso da homepage_cliente aggiornata) */
+        /* Header e Navigazione */
         header {
             background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             padding: 0;
@@ -107,99 +106,66 @@
             top: 0;
             z-index: 100;
             transition: var(--transition);
-            height: 80px; /* Match homepage_cliente */
+            height: 80px;
             display: flex;
             align-items: center;
         }
-
-        header:hover {
-            box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35);
-        }
-
-        header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(120deg, rgba(0, 0, 0, 0), rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0)); background-size: 200% 100%; animation: headerShimmer 6s linear infinite; pointer-events: none; }
+        header:hover { box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35); }
+        header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(120deg, rgba(0,0,0,0), rgba(255,255,255,0.1), rgba(0,0,0,0)); background-size: 200% 100%; animation: headerShimmer 6s linear infinite; pointer-events: none; }
         @keyframes headerShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; /* Match homepage */ margin: 0 auto; padding: 0 25px; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 25px; }
         .logo-container { display: flex; align-items: center; gap: 16px; }
-
-        .logo { width: 48px; height: 48px; /* Match homepage */ border-radius: 12px; object-fit: cover; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); transition: var(--transition-spring); position: relative; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.4); background: white; /* Assicurarsi ci sia sfondo */ display: flex; align-items: center; justify-content: center; }
-        .logo img { width: 40px; height: 40px; object-fit: contain; } /* Assicura che l'img si adatti */
-        .logo::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to bottom right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0)); transform: rotate(45deg); transition: var(--transition); opacity: 0; }
-        .logo:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); border-color: rgba(255, 255, 255, 0.8); }
+        .logo { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: var(--transition-spring); position: relative; overflow: hidden; border: 2px solid rgba(255,255,255,0.4); }
+        .logo::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to bottom right, rgba(255,255,255,0), rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0)); transform: rotate(45deg); transition: var(--transition); opacity: 0; }
+        .logo:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 8px 25px rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.8); }
         .logo:hover::after { animation: logoPulse 1.5s ease-out infinite; opacity: 1; }
         @keyframes logoPulse { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
-
-        .header-title { color: white; font-size: 1.8rem; /* Match homepage */ font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); position: relative; letter-spacing: 0.5px; }
-        .header-title::after { content: ''; display: block; width: 0; height: 2px; background: var(--accent); /* Ora arancione */ transition: var(--transition); position: absolute; bottom: -5px; left: 0; }
+        .header-title { color: white; font-size: 1.8rem; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.15); position: relative; letter-spacing: 0.5px; }
+        .header-title::after { content: ''; display: block; width: 0; height: 2px; background: var(--accent); transition: var(--transition); position: absolute; bottom: -5px; left: 0; }
         .header-title:hover::after { width: 100%; }
-
-        .nav-menu { display: flex; gap: 15px; align-items: center; } /* Usato .nav-menu */
-        .nav-item { color: white; text-decoration: none; font-weight: 600; padding: 10px 16px; border-radius: 12px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 15px; letter-spacing: 0.5px; position: relative; overflow: hidden; background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; gap: 8px; } /* Usato .nav-item */
+        .nav-menu { display: flex; gap: 15px; align-items: center; }
+        .nav-item { color: white; text-decoration: none; font-weight: 600; padding: 10px 16px; border-radius: 12px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 15px; letter-spacing: 0.5px; position: relative; overflow: hidden; background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 8px; }
         .nav-item i { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 16px; }
-        .nav-item::before { content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)); top: 0; left: -100%; transition: var(--transition); transform: skewX(-15deg); }
-        .nav-item:hover { background-color: rgba(255, 255, 255, 0.15); transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.3); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+        .nav-item::before { content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0), rgba(255,255,255,0.2), rgba(255,255,255,0)); top: 0; left: -100%; transition: var(--transition); transform: skewX(-15deg); }
+        .nav-item:hover { background-color: rgba(255,255,255,0.15); transform: translateY(-5px); border-color: rgba(255,255,255,0.3); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .nav-item:hover i { transform: scale(1.2) rotate(10deg); }
         .nav-item:hover::before { left: 100%; transition: all 0.7s ease; }
-        .nav-item.active { background-color: rgba(255, 255, 255, 0.2); font-weight: 700; border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-
-        .user-control { display: flex; align-items: center; gap: 15px; } /* Usato .user-control */
-        .cart-btn { position: relative; width: 45px; height: 45px; border-radius: 50%; background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; cursor: pointer; transition: var(--transition-spring); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
-        .cart-btn:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
-        .cart-count { position: absolute; top: -5px; right: -5px; background: var(--accent-red); /* Rosso ok */ color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); border: 2px solid white; transition: var(--transition-spring); }
+        .nav-item.active { background-color: rgba(255,255,255,0.2); font-weight: 700; border-color: rgba(255,255,255,0.4); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .user-control { display: flex; align-items: center; gap: 15px; }
+        .cart-btn { position: relative; width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; cursor: pointer; transition: var(--transition-spring); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .cart-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .cart-count { position: absolute; top: -5px; right: -5px; background: var(--accent-red); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; transition: var(--transition-spring); }
         .cart-btn:hover .cart-count { transform: scale(1.2) translateY(-2px); }
-        .profile-btn { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; padding: 7px 15px 7px 7px; color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
-        .profile-btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
-        .profile-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.5); transition: var(--transition-spring); }
+        .profile-btn { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 7px 15px 7px 7px; color: white; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .profile-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .profile-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); transition: var(--transition-spring); }
         .profile-btn:hover .profile-avatar { transform: scale(1.1) rotate(10deg); border-color: white; }
-        .user-menu { position: absolute; top: 60px; right: 20px; background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); width: 200px; padding: 10px 0; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: var(--transition-spring); z-index: 1000; border: 1px solid rgba(0, 0, 0, 0.05); }
+        .user-menu { position: absolute; top: 70px; /* Aumentato leggermente per non sovrapporre header */ right: 20px; background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); width: 200px; padding: 10px 0; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: var(--transition-spring); z-index: 1000; border: 1px solid rgba(0,0,0,0.05); }
         .user-menu.show { opacity: 1; visibility: visible; transform: translateY(0); }
         .user-menu-item { padding: 12px 20px; display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 500; transition: var(--transition-fast); cursor: pointer; }
-        .user-menu-item:hover { background: var(--gray-light); 
-            /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); }
-        .user-menu-item.logout { border-top: 1px solid var(--gray-dark); margin-top: 5px; color: var(--accent-red); } /* Rosso ok */
+        .user-menu-item:hover { background: var(--gray-light); color: var(--navbar-red-main); }
+        .user-menu-item.logout { border-top: 1px solid var(--gray-dark); margin-top: 5px; color: var(--accent-red); }
         .user-menu-item.logout:hover { background: #fee; }
 
-
         /* Hero Section */
-        .hero {
-            /* MODIFICATO: rosso */
-            background: linear-gradient(135deg, rgba(238, 27, 27, 0.05), rgba(212, 16, 16, 0.1)); 
-            padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden;
-        }
+        .hero { background: linear-gradient(135deg, rgba(238,27,27,0.05), rgba(212,16,16,0.1)); padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden; }
         .hero-title { font-size: 2.5rem; margin-bottom: 1rem; position: relative; z-index: 2; }
-        .hero-title span { 
-             /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); 
-            position: relative; display: inline-block; }
-        .hero-title span::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 4px; 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); 
-            border-radius: var(--radius-full); }
+        .hero-title span { color: var(--navbar-red-main); position: relative; display: inline-block; }
+        .hero-title span::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 4px; background: var(--navbar-red-main); border-radius: var(--radius-full); }
         .hero-subtitle { font-size: 1.1rem; color: var(--text-light); max-width: 600px; margin: 0 auto 2rem; position: relative; z-index: 2; line-height: 1.6; text-align: center; }
-        .circle-decoration { position: absolute; width: 300px; height: 300px; border-radius: 50%; 
-            /* MODIFICATO: rosso */
-            background: radial-gradient(circle, rgba(238, 27, 27, 0.1), rgba(238, 27, 27, 0.05)); 
-            z-index: 1; animation: float 8s ease-in-out infinite; }
+        .circle-decoration { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(238,27,27,0.1), rgba(238,27,27,0.05)); z-index: 1; animation: float 8s ease-in-out infinite; }
         .circle-decoration-1 { top: -100px; right: 10%; }
         .circle-decoration-2 { bottom: -100px; left: 5%; width: 200px; height: 200px; animation-delay: 2s; }
         @keyframes float { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } }
 
         /* Tabs */
         .tabs { max-width: 1200px; margin: 2rem auto; background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
-        .tab-header { display: flex; background: var(--border-light); overflow-x: auto; justify-content: flex-start; -ms-overflow-style: none; scrollbar-width: none; } /* Default left-align */
+        .tab-header { display: flex; background: var(--border-light); overflow-x: auto; justify-content: flex-start; -ms-overflow-style: none; scrollbar-width: none; }
         .tab-header::-webkit-scrollbar { display: none; }
         .tab-btn { flex: 0 0 auto; padding: 1.2rem 1.5rem; text-align: center; font-weight: 600; color: var(--text-light); background: transparent; border: none; cursor: pointer; transition: all 0.3s ease; position: relative; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-        .tab-btn:hover { 
-            /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); }
-        .tab-btn.active { 
-             /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 15%; width: 70%; height: 4px; 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); 
-            animation: slideInFromCenter 0.3s ease-out; border-radius: var(--radius-full); }
+        .tab-btn:hover { color: var(--navbar-red-main); }
+        .tab-btn.active { color: var(--navbar-red-main); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 15%; width: 70%; height: 4px; background: var(--navbar-red-main); animation: slideInFromCenter 0.3s ease-out; border-radius: var(--radius-full); }
         @keyframes slideInFromCenter { from { width: 0; left: 50%; } to { width: 70%; left: 15%; } }
         .tab-content { display: none; padding: 2rem; animation: fadeIn 0.5s ease; }
         .tab-content.active { display: block; }
@@ -209,15 +175,12 @@
         .active-orders { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
         .order-card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: all 0.3s ease; border: 1px solid var(--border); }
         .order-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
-        .order-header { 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); 
-            color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .order-header { background: var(--navbar-red-main); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
         .order-number { font-weight: 600; font-size: 1.1rem; }
         .order-status { padding: 0.3rem 0.8rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600; }
-        .order-status.preparing { background: var(--warning); color: white; } /* Arancio ok */
-        .order-status.delivering { background: var(--accent-orange); color: white; } /* Arancio per coerenza */
-        .order-status.ready { background: var(--success); color: white; } /* Verde ok */
+        .order-status.preparing { background: var(--warning); color: white; }
+        .order-status.delivering { background: var(--accent-orange); color: white; }
+        .order-status.ready { background: var(--success); color: white; }
         .order-body { padding: 1.5rem; }
         .order-restaurant { display: flex; align-items: center; margin-bottom: 1rem; gap: 0.8rem; }
         .restaurant-logo { width: 50px; height: 50px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; }
@@ -226,52 +189,32 @@
         .restaurant-info p { margin: 0; font-size: 0.85rem; color: var(--text-light); line-height: 1.3; }
         .order-progress { margin: 1.5rem 0; }
         .progress-container { position: relative; height: 5px; background: var(--border-light); border-radius: var(--radius-full); margin: 1rem 0; }
-        .progress-bar { height: 100%; 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); 
-            border-radius: var(--radius-full); position: absolute; top: 0; left: 0; transition: width 1s ease; }
+        .progress-bar { height: 100%; background: var(--navbar-red-main); border-radius: var(--radius-full); position: absolute; top: 0; left: 0; transition: width 1s ease; }
         .progress-steps { display: flex; justify-content: space-between; }
         .progress-step { display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; color: var(--text-light); position: relative; flex: 1; }
         .step-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--border-light); border: 3px solid white; box-shadow: 0 0 0 2px var(--border); margin-bottom: 0.5rem; z-index: 1; transition: all 0.3s ease; }
-        .progress-step.completed .step-dot { 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); box-shadow: 0 0 0 2px var(--navbar-red-main); }
-        .progress-step.current .step-dot { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); box-shadow: 0 0 0 3px rgba(238, 27, 27, 0.3); animation: pulseRed 1.5s infinite; }
+        .progress-step.completed .step-dot { background: var(--navbar-red-main); box-shadow: 0 0 0 2px var(--navbar-red-main); }
+        .progress-step.current .step-dot { background: var(--navbar-red-main); box-shadow: 0 0 0 3px rgba(238,27,27,0.3); animation: pulseRed 1.5s infinite; }
         .step-label { text-align: center; font-weight: 500; font-size: 0.75rem; }
-        .progress-step.completed { 
-             /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); }
+        .progress-step.completed { color: var(--navbar-red-main); }
         .progress-step.current { color: var(--text); font-weight: 600; }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(238, 27, 27, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(238, 27, 27, 0); } 100% { box-shadow: 0 0 0 0 rgba(238, 27, 27, 0); } }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(238,27,27,0.7); } 70% { box-shadow: 0 0 0 10px rgba(238,27,27,0); } 100% { box-shadow: 0 0 0 0 rgba(238,27,27,0); } }
         .order-details { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; }
         .order-item { display: flex; align-items: center; margin-bottom: 0.8rem; }
-        .item-quantity { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); 
-            color: white; width: 25px; height: 25px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; margin-right: 0.8rem; }
+        .item-quantity { background: var(--navbar-red-main); color: white; width: 25px; height: 25px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; margin-right: 0.8rem; }
         .item-name { flex: 1; font-size: 0.95rem; }
         .item-price { font-weight: 600; }
         .order-total { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); }
         .total-label { font-weight: 600; }
-        .total-price { font-weight: 700; font-size: 1.2rem; 
-             /* MODIFICATO: rosso */
-            color: var(--navbar-red-gradient-dark); }
+        .total-price { font-weight: 700; font-size: 1.2rem; color: var(--navbar-red-gradient-dark); }
         .order-actions { margin-top: 1.5rem; display: flex; gap: 1rem; }
         .order-btn { flex: 1; padding: 0.8rem; border-radius: var(--radius); font-weight: 600; text-align: center; cursor: pointer; transition: all 0.2s ease; border: none; }
-        .track-btn { 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); color: white; }
-        .track-btn:hover { 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-gradient-dark); }
+        .track-btn { background: var(--navbar-red-main); color: white; }
+        .track-btn:hover { background: var(--navbar-red-gradient-dark); }
         .cancel-btn { background: var(--border-light); color: var(--text); }
         .cancel-btn:hover { background: var(--border); }
         .estimated-time { background: var(--border-light); padding: 0.8rem; border-radius: var(--radius); text-align: center; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-        .delivery-time { font-weight: 700; 
-             /* MODIFICATO: rosso */
-            color: var(--navbar-red-gradient-dark); }
+        .delivery-time { font-weight: 700; color: var(--navbar-red-gradient-dark); }
 
         /* Ordini passati */
         .order-history { margin-top: 1rem; }
@@ -279,12 +222,8 @@
         .history-filters::-webkit-scrollbar { height: 5px; }
         .history-filters::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
         .filter-btn { padding: 0.6rem 1.2rem; background: var(--border-light); border: 1px solid var(--border); border-radius: var(--radius-full); color: var(--text-light); font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; }
-        .filter-btn:hover { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); color: white; border-color: var(--navbar-red-main); }
-        .filter-btn.active { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); color: white; border-color: var(--navbar-red-main); }
+        .filter-btn:hover { background: var(--navbar-red-main); color: white; border-color: var(--navbar-red-main); }
+        .filter-btn.active { background: var(--navbar-red-main); color: white; border-color: var(--navbar-red-main); }
         .history-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
         .history-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: all 0.3s ease; }
         .history-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
@@ -297,12 +236,8 @@
         .history-total { display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); font-weight: 600; }
         .history-actions { display: flex; gap: 1rem; margin-top: 1rem; }
         .history-btn { flex: 1; padding: 0.8rem; border-radius: var(--radius); text-align: center; font-weight: 500; cursor: pointer; transition: all 0.2s ease; border:none; }
-        .reorder-btn { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); color: white; }
-        .reorder-btn:hover { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-gradient-dark); }
+        .reorder-btn { background: var(--navbar-red-main); color: white; }
+        .reorder-btn:hover { background: var(--navbar-red-gradient-dark); }
         .review-btn { background: var(--border-light); color: var(--text); }
         .review-btn:hover { background: var(--border); }
 
@@ -312,17 +247,13 @@
         .stat-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; display: flex; flex-direction: column; }
         .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
         .stat-icon { width: 50px; height: 50px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .stat-primary .stat-icon { 
-            /* MODIFICATO: rosso */
-            background: rgba(238, 27, 27, 0.1); color: var(--primary); }
-        .stat-success .stat-icon { background: rgba(16, 185, 129, 0.1); color: var(--success); } /* Verde ok */
-        .stat-warning .stat-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning); } /* Arancio ok */
-        .stat-info .stat-icon { 
-             /* MODIFICATO: rosso */
-            background: rgba(238, 27, 27, 0.1); color: var(--primary); }
+        .stat-primary .stat-icon { background: rgba(238,27,27,0.1); color: var(--primary); }
+        .stat-success .stat-icon { background: rgba(16,185,129,0.1); color: var(--success); }
+        .stat-warning .stat-icon { background: rgba(245,158,11,0.1); color: var(--warning); }
+        .stat-info .stat-icon { background: rgba(238,27,27,0.1); color: var(--primary); }
         .stat-trend { padding: 0.3rem 0.6rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
-        .stat-up { background: rgba(16, 185, 129, 0.1); color: var(--success); } /* Verde ok */
-        .stat-down { background: rgba(239, 68, 68, 0.1); color: var(--danger); } /* Rosso ok */
+        .stat-up { background: rgba(16,185,129,0.1); color: var(--success); }
+        .stat-down { background: rgba(239,68,68,0.1); color: var(--danger); }
         .stat-value { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
         .stat-label { color: var(--text-light); font-size: 0.9rem; }
         .chart-container { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; height: 320px; margin-bottom: 2rem; }
@@ -331,39 +262,25 @@
         .preferences-container { display: flex; flex-wrap: wrap; gap: 1.5rem; }
         .preference-card { flex: 1 0 300px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem; }
         .preference-title { margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-        .preference-edit { font-size: 0.9rem; 
-            /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); 
-            cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease; }
-        .preference-edit:hover { 
-            /* MODIFICATO: rosso */
-            color: var(--navbar-red-gradient-dark); }
+        .preference-edit { font-size: 0.9rem; color: var(--navbar-red-main); cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s ease; }
+        .preference-edit:hover { color: var(--navbar-red-gradient-dark); }
         .preference-section { margin-bottom: 1rem; }
         .preference-section h4 { margin-bottom: 0.5rem; color: var(--text-light); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .address-card { padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.5rem; position: relative; transition: all 0.2s ease; }
-        .address-card.default { 
-             /* MODIFICATO: rosso */
-            border-color: var(--navbar-red-main); background: rgba(238, 27, 27, 0.03); }
+        .address-card.default { border-color: var(--navbar-red-main); background: rgba(238,27,27,0.03); }
         .address-card-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
         .address-type { font-weight: 600; }
-        .default-badge { 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); 
-            color: white; padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 500; }
+        .default-badge { background: var(--navbar-red-main); color: white; padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 500; }
         .address-details { font-size: 0.9rem; color: var(--text-light); }
         .payment-method { display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s ease; }
-        .payment-method.default { 
-             /* MODIFICATO: rosso */
-            border-color: var(--navbar-red-main); background: rgba(238, 27, 27, 0.03); }
+        .payment-method.default { border-color: var(--navbar-red-main); background: rgba(238,27,27,0.03); }
         .payment-method:hover { background: var(--border-light); }
         .payment-logo { width: 40px; height: auto; max-height: 40px; object-fit: contain; }
         .payment-info { flex: 1; }
         .payment-name { font-weight: 600; }
         .payment-details { font-size: 0.9rem; color: var(--text-light); }
         .delivery-option { display: flex; align-items: center; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s ease; }
-        .delivery-option.selected { 
-            /* MODIFICATO: rosso */
-            border-color: var(--navbar-red-main); background: rgba(238, 27, 27, 0.03); }
+        .delivery-option.selected { border-color: var(--navbar-red-main); background: rgba(238,27,27,0.03); }
         .delivery-option:hover { background: var(--border-light); }
         .delivery-radio { margin-right: 1rem; }
         .delivery-details { flex: 1; }
@@ -372,33 +289,25 @@
         .delivery-price { font-weight: 600; color: var(--text); }
 
         /* Modals */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 1rem; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; padding: 1rem; }
         .modal.active { opacity: 1; visibility: visible; }
         .modal-content { background: white; border-radius: var(--radius); width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: var(--shadow-lg); transform: translateY(20px) scale(0.95); transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0; }
         .modal.active .modal-content { transform: translateY(0) scale(1); opacity: 1; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
         .modal-title { font-size: 1.5rem; font-weight: 600; }
         .close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); transition: color 0.2s ease; }
-        .close-modal:hover { 
-             /* MODIFICATO: rosso */
-            color: var(--navbar-red-main); }
+        .close-modal:hover { color: var(--navbar-red-main); }
         .modal-form .form-group { margin-bottom: 1.5rem; }
         .modal-form label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .modal-form input, .modal-form select, .modal-form textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem; }
-        .modal-form input:focus, .modal-form select:focus, .modal-form textarea:focus { outline: none; 
-             /* MODIFICATO: rosso */
-            border-color: var(--navbar-red-main); box-shadow: 0 0 0 3px rgba(238, 27, 27, 0.1); }
+        .modal-form input:focus, .modal-form select:focus, .modal-form textarea:focus { outline: none; border-color: var(--navbar-red-main); box-shadow: 0 0 0 3px rgba(238,27,27,0.1); }
         .modal-actions { display: flex; gap: 1rem; margin-top: 2rem; }
         .modal-btn { flex: 1; padding: 0.8rem; border-radius: var(--radius); font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: none; text-align: center; }
-        .primary-btn, .modal-btn.primary-btn { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); color: white; }
-        .primary-btn:hover, .modal-btn.primary-btn:hover { 
-             /* MODIFICATO: rosso */
-            background: var(--navbar-red-gradient-dark); }
+        .primary-btn, .modal-btn.primary-btn { background: var(--navbar-red-main); color: white; }
+        .primary-btn:hover, .modal-btn.primary-btn:hover { background: var(--navbar-red-gradient-dark); }
         .secondary-btn, .modal-btn.secondary-btn { background: var(--border-light); color: var(--text); }
         .secondary-btn:hover, .modal-btn.secondary-btn:hover { background: var(--border); }
-        .modal-btn.danger-btn { background-color: var(--danger); color: white; } /* Rosso ok */
+        .modal-btn.danger-btn { background-color: var(--danger); color: white; }
         .modal-btn.danger-btn:hover { background-color: var(--danger-dark); }
 
         /* Tracking map modal */
@@ -407,21 +316,24 @@
         .tracking-info { flex: 1; }
         .courier-info { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--border-light); border-radius: var(--radius); margin-bottom: 1rem; }
         .courier-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        #callScreenCourierAvatar { width: 80px; height: 80px; margin-bottom: 1rem; 
-             /* MODIFICATO: rosso */
-            border: 3px solid var(--navbar-red-main); }
+        /* Specific for call screen avatar, slightly larger */
+        #callScreenCourierAvatar { 
+            width: 80px; 
+            height: 80px; 
+            margin-bottom: 1rem; 
+            border: 3px solid var(--navbar-red-main); 
+            box-shadow: 0 0 15px rgba(238, 27, 27, 0.3);
+        }
         .courier-name { font-weight: 600; }
         .courier-vehicle { font-size: 0.9rem; color: var(--text-light); }
         .tracking-timeline { margin-top: 1.5rem; }
         .tracking-step { display: flex; margin-bottom: 1rem; }
         .tracking-icon { width: 30px; margin-right: 1rem; display: flex; flex-direction: column; align-items: center; }
         .tracking-icon-circle { width: 20px; height: 20px; border-radius: 50%; background: var(--border); margin-bottom: 0.5rem; position: relative; z-index: 1; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
-        .tracking-step.completed .tracking-icon-circle { background: var(--success); } /* Verde ok */
-        .tracking-step.current .tracking-icon-circle { 
-            /* MODIFICATO: rosso */
-            background: var(--navbar-red-main); box-shadow: 0 0 0 4px rgba(238, 27, 27, 0.2); animation: pulseRed 1.5s infinite; }
+        .tracking-step.completed .tracking-icon-circle { background: var(--success); }
+        .tracking-step.current .tracking-icon-circle { background: var(--navbar-red-main); box-shadow: 0 0 0 4px rgba(238,27,27,0.2); animation: pulseRed 1.5s infinite; }
         .tracking-line { width: 2px; flex: 1; background: var(--border); margin: 0 auto; }
-        .tracking-step.completed .tracking-line { background: var(--success); } /* Verde ok */
+        .tracking-step.completed .tracking-line { background: var(--success); }
         .tracking-content { flex: 1; }
         .tracking-time { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.2rem; }
         .tracking-text { font-weight: 500; }
@@ -430,30 +342,52 @@
         /* Review Modal Rating Stars */
         .rating-stars { display: flex; justify-content: center; gap: 0.5rem; }
         .rating-stars i { color: #ddd; cursor: pointer; transition: color 0.2s ease; }
-        .rating-stars i.fas { color: var(--warning); } /* Giallo/Arancio ok */
+        .rating-stars i.fas { color: var(--warning); }
         .rating-stars i:hover { color: var(--warning); }
         .file-upload { margin-top: 0.5rem; }
         .upload-preview { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
         .upload-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); }
 
         /* Call Screen Modal Specifics */
-        #callScreenModal .modal-content.call-screen-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; max-width: 380px; background: white; }
-        #callScreenModal .call-animation-container { margin-bottom: 1rem; width: 120px; height: 120px; }
-        #callScreenModal h3#callScreenCourierName { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text); }
-        #callScreenModal .call-status-text { font-size: 1rem; color: var(--text-light); margin-bottom: 1.5rem; }
+        #callScreenModal .modal-content.call-screen-content { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            padding: 2rem; 
+            max-width: 380px; 
+            background: white; /* Potrebbe essere interessante un background più scuro per immersione */
+        }
+        #callScreenModal .call-animation-container { 
+            margin-bottom: 1rem; 
+            width: 120px; /* Lottie animation size */
+            height: 120px; 
+        }
+        #callScreenModal h3#callScreenCourierName { 
+            font-size: 1.5rem; 
+            margin-bottom: 0.5rem; 
+            color: var(--text); 
+        }
+        #callScreenModal .call-status-text { 
+            font-size: 1rem; 
+            color: var(--text-light); 
+            margin-bottom: 1.5rem; 
+            min-height: 1.2em; /* Per evitare salti di layout quando il testo cambia */
+        }
 
         /* Toasts */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
         .toast { background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 1rem 1.5rem; margin-top: 1rem; display: flex; align-items: center; gap: 1rem; animation: toastSlideIn 0.3s ease forwards; max-width: 350px; border-left: 5px solid; }
-        .toast-success { border-left-color: var(--success); } /* Verde ok */
-        .toast-error { border-left-color: var(--danger); } /* Rosso ok */
-        .toast-warning { border-left-color: var(--warning); } /* Arancio ok */
-        .toast-info { border-left-color: var(--navbar-red-main); } /* Rosso per info */
+        .toast-success { border-left-color: var(--success); }
+        .toast-error { border-left-color: var(--danger); }
+        .toast-warning { border-left-color: var(--warning); }
+        .toast-info { border-left-color: var(--navbar-red-main); }
         .toast-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .toast-success .toast-icon { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .toast-error .toast-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        .toast-warning .toast-icon { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .toast-info .toast-icon { background: rgba(238, 27, 27, 0.1); color: var(--navbar-red-main); }
+        .toast-success .toast-icon { background: rgba(16,185,129,0.1); color: var(--success); }
+        .toast-error .toast-icon { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .toast-warning .toast-icon { background: rgba(245,158,11,0.1); color: var(--warning); }
+        .toast-info .toast-icon { background: rgba(238,27,27,0.1); color: var(--navbar-red-main); }
         .toast-content { flex: 1; }
         .toast-title { font-weight: 600; margin-bottom: 0.2rem; }
         .toast-message { font-size: 0.9rem; color: var(--text-light); }
@@ -466,38 +400,51 @@
         .footer { background-color: #f8f9fa; padding: 3rem 2rem 1.5rem; color: #495057; margin-top: 3rem; border-top: 1px solid var(--border); }
         
         /* Responsive Adjustments */
-        @media (min-width: 769px) { .tab-header { justify-content: center; } } /* MODIFICATO: Centrato tab header */
-        @media (max-width: 1024px) { .nav-links { gap: 0.5rem; } .nav-link { padding: 0.6rem 1rem; } .brand { font-size: 1.5rem; } .tab-btn { padding: 1rem 0.8rem; } }
+        @media (min-width: 769px) { .tab-header { justify-content: center; } }
+        @media (max-width: 1024px) { .nav-menu { gap: 0.5rem; } .nav-item { padding: 0.6rem 1rem; } .header-title { font-size: 1.5rem; } .tab-btn { padding: 1rem 0.8rem; } }
         @media (max-width: 768px) { 
-            .header { padding: 1rem; flex-wrap: wrap; } .logo-area { margin-bottom: 0.5rem; } .logo { width: 40px; height: 40px; } .logo img { width: 30px; height: 30px; } .brand { font-size: 1.3rem; }
-            .nav-links { /* Sostituito da nav-menu */ display: none; }
-            .nav-menu { /* Stile da homepage_cliente mobile */
-                 position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 0.5rem; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); z-index: 100; border-top: 1px solid var(--border);
-            }
-             .nav-item { /* Usa .nav-item per la bottom bar */
-                 flex-direction: column; padding: 0.5rem; font-size: 0.75rem; gap: 0.2rem; border-radius: var(--radius-sm); height: 50px; justify-content: center; background-color: transparent; border: none; box-shadow: none; color: var(--text-light);
-             }
-             .nav-item span { display: block; } /* Mostra il testo */
-             .nav-item i { font-size: 1rem; }
-             .nav-item.active { background: var(--navbar-red-main); color: white; }
-             .nav-item.active i { color: white; }
-             .nav-item:hover { background-color: var(--gray-light); color: var(--primary); }
+            header { padding: 1rem; flex-wrap: wrap; height: auto; /* Altezza automatica per mobile header */ } 
+            .header-container { flex-direction: column; align-items: flex-start; } /* Stack logo/title and user controls */
+            .logo-container { margin-bottom: 1rem; width: 100%; display: flex; justify-content: space-between; /* Per menu hamburger se aggiunto */ }
+            .user-control { margin-left: 0; margin-top: 0.5rem; width: 100%; justify-content: flex-end; } /* User controls a destra sotto il logo */
 
-            .user-control { margin-left: auto; } /* Messo .user-control */
+            .logo { width: 40px; height: 40px; } 
+            .header-title { font-size: 1.5rem; }
+
+            .nav-menu { /* Bottom nav bar */
+                 position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 0.5rem; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; border-top: 1px solid var(--border);
+                 /* Rimuovere per desktop nav */
+                 /* display: none; */
+            }
+            .nav-item { /* Stili per bottom nav items */
+                 flex-direction: column; padding: 0.5rem; font-size: 0.75rem; gap: 0.2rem; border-radius: var(--radius-sm); height: 60px; justify-content: center; background-color: transparent; border: none; box-shadow: none; color: var(--text-light);
+            }
+            .nav-item span { display: block; }
+            .nav-item i { font-size: 1.2rem; /* Icone più grandi per bottom nav */ }
+            .nav-item.active { background: var(--navbar-red-main); color: white; }
+            .nav-item.active i { color: white; }
+            .nav-item:hover { background-color: var(--gray-light); color: var(--primary); }
+
+            /* Nascondere nav desktop su mobile */
+            header .header-container > .nav-menu { display: none; }
+            /* Mostrare bottom nav su mobile */
+            body > .nav-menu { display: grid; } /* Se la nav-menu è figlio diretto di body */
+            /* Se nav-menu è dentro header, devi gestire diversamente la visibilità */
+
             .hero { padding: 2rem 1rem; } .hero-title { font-size: 2rem; } .hero-subtitle { font-size: 1rem; max-width: 90%;}
             .tabs { margin: 1rem; } .tab-btn { padding: 1rem 0.75rem; font-size: 0.9rem; }
             .tab-content { padding: 1rem; } .active-orders, .history-list, .stats-grid { grid-template-columns: 1fr; }
+            body { padding-bottom: 70px; /* Spazio per la bottom navbar */ }
         }
         @media (max-width: 480px) {
-            .user-control { gap: 0.5rem; } /* Messo .user-control */
-            .profile-btn { display: none; } /* Nasconde profile btn su mobile piccolo */
-            .nav-menu { grid-template-columns: repeat(4, 1fr); } /* Adatta numero icone */
-             .nav-item span { font-size: 0.65rem; } /* Testo più piccolo */
+            .user-control { gap: 0.5rem; } 
+            .profile-btn { display: none; } 
+            .nav-menu { grid-template-columns: repeat(4, 1fr); /* Adatta numero icone */ }
+            .nav-item span { font-size: 0.65rem; } 
             .hero-title { font-size: 1.8rem; } .hero-subtitle { font-size: 0.9rem; }
             .stat-card { padding: 1rem; } .stat-value { font-size: 1.5rem; }
             .modal-content { padding: 1.5rem; } .modal-title { font-size: 1.2rem; }
-            /* Nascondere testo span in header desktop (se ancora presente) */
-             header .nav-item span { display: none; }
+            header .nav-item span { display: none; } /* Nasconde testo in header desktop se visibile per errore */
         }
 
         /* Animations and Interactivity */
@@ -506,12 +453,10 @@
         .fadeInUp { animation-name: fadeInUp; }
         .tag { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.6rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 500; margin-right: 0.5rem; margin-bottom: 0.5rem; cursor: default; }
         .tag.interactive { cursor: pointer; transition: background-color 0.2s, color 0.2s; }
-        .tag.interactive.active { 
-            /* MODIFICATO: rosso */
-            background-color: var(--navbar-red-main); color: white; }
-        .tag-primary { /* MODIFICATO: rosso */ background: rgba(238, 27, 27, 0.1); color: var(--primary); }
-        .tag-secondary { background: rgba(16, 185, 129, 0.1); color: var(--success); } /* Verde ok */
-        .tag-accent { background: rgba(245, 158, 11, 0.1); color: var(--warning); } /* Arancio ok */
+        .tag.interactive.active { background-color: var(--navbar-red-main); color: white; }
+        .tag-primary { background: rgba(238,27,27,0.1); color: var(--primary); }
+        .tag-secondary { background: rgba(16,185,129,0.1); color: var(--success); }
+        .tag-accent { background: rgba(245,158,11,0.1); color: var(--warning); }
 
         /* Hover effects */
         .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
@@ -522,24 +467,21 @@
         .confetti { position: absolute; width: 10px; height: 10px; opacity: 0; }
         @keyframes confettiDrop { 0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(120vh) rotate(720deg); opacity: 0; } }
         @keyframes confettiRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body>
-    <!-- Header (MODIFICATO - Uguale a homepage_cliente) -->
-    <header> <!-- Rimosso classe .header se non necessaria -->
+    <header>
         <div class="header-container">
             <div class="logo-container">
-                <img src="https://api.dicebear.com/7.x/shapes/svg?seed=YourBite" alt="YourBite Logo" class="logo">
+                <img src="/img/logo.png" alt="YourBite Logo" class="logo"> <!-- Assicurati che il path sia corretto -->
                 <h1 class="header-title">YourBite</h1>
             </div>
-
-            <!-- Navigazione Desktop -->
-            <nav class="nav-menu"> <!-- Usato .nav-menu -->
+            <!-- Navigazione Desktop (nascosta su mobile se .nav-menu è usato per bottom bar) -->
+            <nav class="nav-menu" id="desktopNavMenu">
                 <a href="/Homepage_cliente" class="nav-item">
                     <i class="fas fa-utensils"></i> <span>Menu</span>
                 </a>
-                <a href="/ordini_cliente" class="nav-item active"> <!-- Assumendo che l'URL sia questo -->
+                <a href="/ordini_cliente" class="nav-item active">
                     <i class="fas fa-shopping-bag"></i> <span>Ordini</span>
                 </a>
                 <a href="#" class="nav-item">
@@ -548,812 +490,976 @@
                 <a href="#" class="nav-item">
                     <i class="fas fa-gift"></i> <span>Premi</span>
                 </a>
-                <a href="/Login" class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </a>
+                <!-- Logout spostato nel menu utente per coerenza con homepage -->
             </nav>
 
-            <div class="user-control"> <!-- Usato .user-control -->
+            <div class="user-control">
                 <button class="cart-btn">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count">3</span>
                 </button>
                 
-                 <div class="profile-btn" id="profileBtn">
+                <div class="profile-btn" id="profileBtnTrigger">
                     <img src="https://source.unsplash.com/random/100x100/?person" alt="Avatar" class="profile-avatar">
-                    <!-- Span username rimosso per coerenza con homepage_cliente, ma può essere reinserito se necessario -->
-                    <!-- <span id="username">{{ username }}</span> -->
                 </div>
 
-                 <div class="user-menu" id="userMenu">
-                    <div class="user-menu-item">
+                <div class="user-menu" id="profileUserMenu">
+                    <div class="user-menu-item" onclick="alert('Profilo cliccato')">
                         <i class="fas fa-user-circle"></i> Profilo
                     </div>
-                    <div class="user-menu-item">
+                    <div class="user-menu-item" onclick="alert('Impostazioni cliccate')">
                         <i class="fas fa-cog"></i> Impostazioni
                     </div>
-                    <div class="user-menu-item">
+                    <div class="user-menu-item" onclick="alert('Notifiche cliccate')">
                         <i class="fas fa-bell"></i> Notifiche
                     </div>
-                    <div class="user-menu-item logout" id="logoutButton">
+                    <div class="user-menu-item logout" onclick="window.location.href='/Login'">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </div>
                 </div>
             </div>
         </div>
     </header>
+    
+    <!-- Navigazione Mobile (Bottom Bar) -->
+    <nav class="nav-menu" id="mobileNavMenu" style="display: none;"> <!-- Inizialmente nascosta, JS la mostrerà se mobile -->
+        <a href="/Homepage_cliente" class="nav-item">
+            <i class="fas fa-utensils"></i> <span>Menu</span>
+        </a>
+        <a href="/ordini_cliente" class="nav-item active">
+            <i class="fas fa-shopping-bag"></i> <span>Ordini</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-heart"></i> <span>Preferiti</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user-circle"></i> <span>Profilo</span> <!-- Link al profilo/logout per mobile -->
+        </a>
+    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="circle-decoration circle-decoration-1"></div>
-        <div class="circle-decoration circle-decoration-2"></div>
-        <h1 class="hero-title">I Tuoi <span>Ordini</span></h1>
-        <p class="hero-subtitle">Controlla lo stato dei tuoi ordini, visualizza la cronologia e gestisci le tue preferenze per un'esperienza d'ordine perfetta</p>
-    </section>
 
-    <!-- Main Tabs -->
-    <div class="tabs">
-        <div class="tab-header">
-            <button class="tab-btn active" data-tab="attivi">
-                <i class="fas fa-spinner"></i> Ordini Attivi
-            </button>
-            <button class="tab-btn" data-tab="passati">
-                <i class="fas fa-history"></i> Ordini Passati
-            </button>
-            <button class="tab-btn" data-tab="stats">
-                <i class="fas fa-chart-pie"></i> Statistiche
-            </button>
-            <button class="tab-btn" data-tab="preferences">
-                <i class="fas fa-cog"></i> Preferenze
-            </button>
-        </div>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="circle-decoration circle-decoration-1"></div>
+    <div class="circle-decoration circle-decoration-2"></div>
+    <h1 class="hero-title">I Tuoi <span>Ordini</span></h1>
+    <p class="hero-subtitle">Controlla lo stato dei tuoi ordini, visualizza la cronologia e gestisci le tue preferenze per un'esperienza d'ordine perfetta</p>
+</section>
 
-        <!-- Tab Content: Ordini Attivi -->
-        <div class="tab-content active" id="attivi">
-            <div class="active-orders">
-                <!-- Ordine 1 -->
-                <div class="order-card animated fadeInUp">
-                    <div class="order-header">
-                        <span class="order-number">#ORD-87562</span>
-                        <span class="order-status preparing">In preparazione</span>
-                    </div>
-                    <div class="order-body">
-                        <div class="order-restaurant">
-                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=PI&backgroundColor=ffad08" alt="Pizza Delight" class="restaurant-logo">
-                            <div class="restaurant-info">
-                                <h4>Pizza Delight</h4>
-                                <p>Via Roma, 123</p>
-                            </div>
-                        </div>
-                        <div class="order-progress">
-                            <div class="progress-steps">
-                                <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">Confermato</div></div>
-                                <div class="progress-step current"><div class="step-dot"></div><div class="step-label">In preparazione</div></div>
-                                <div class="progress-step"><div class="step-dot"></div><div class="step-label">In consegna</div></div>
-                                <div class="progress-step"><div class="step-dot"></div><div class="step-label">Consegnato</div></div>
-                            </div>
-                            <div class="progress-container"><div class="progress-bar" style="width: 35%"></div></div>
-                        </div>
-                        <div class="order-details">
-                            <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Pizza Margherita Grande</div><div class="item-price">€9.90</div></div>
-                            <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Coca Cola 33cl</div><div class="item-price">€5.00</div></div>
-                            <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Tiramisu</div><div class="item-price">€4.50</div></div>
-                            <div class="order-total"><div class="total-label">Totale</div><div class="total-price">€19.40</div></div>
-                        </div>
-                        <div class="order-actions">
-                            <button class="order-btn track-btn" onclick="openTrackingModal('ORD-87562', 'Pizza Delight', 'Luigi M.', 'https://api.dicebear.com/7.x/micah/svg?seed=Luigi&hair=fonze,full&baseColor=f9c9b6&earrings=none')"><i class="fas fa-map-marker-alt"></i> Traccia</button>
-                            <button class="order-btn cancel-btn" onclick="showCancelConfirm('ORD-87562')"><i class="fas fa-times"></i> Annulla</button>
-                        </div>
-                        <div class="estimated-time"><i class="far fa-clock"></i>Consegna prevista: <span class="delivery-time">19:35</span></div>
-                    </div>
+<!-- Main Tabs -->
+<div class="tabs">
+    <div class="tab-header">
+        <button class="tab-btn active" data-tab="attivi">
+            <i class="fas fa-spinner"></i> Ordini Attivi
+        </button>
+        <button class="tab-btn" data-tab="passati">
+            <i class="fas fa-history"></i> Ordini Passati
+        </button>
+        <button class="tab-btn" data-tab="stats">
+            <i class="fas fa-chart-pie"></i> Statistiche
+        </button>
+        <button class="tab-btn" data-tab="preferences">
+            <i class="fas fa-cog"></i> Preferenze
+        </button>
+    </div>
+
+    <!-- Tab Content: Ordini Attivi -->
+    <div class="tab-content active" id="attivi">
+        <div class="active-orders">
+            <!-- Ordine 1 -->
+            <div class="order-card animated fadeInUp">
+                <div class="order-header">
+                    <span class="order-number">#ORD-87562</span>
+                    <span class="order-status preparing">In preparazione</span>
                 </div>
-
-                <!-- Ordine 2 -->
-                <div class="order-card animated fadeInUp" style="animation-delay: 0.2s">
-                    <div class="order-header">
-                        <span class="order-number">#ORD-87553</span>
-                        <span class="order-status delivering">In consegna</span>
+                <div class="order-body">
+                    <div class="order-restaurant">
+                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=PI&backgroundColor=ffad08" alt="Pizza Delight" class="restaurant-logo">
+                        <div class="restaurant-info">
+                            <h4>Pizza Delight</h4>
+                            <p>Via Roma, 123</p>
+                        </div>
                     </div>
-                    <div class="order-body">
-                        <div class="order-restaurant">
-                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=BU&backgroundColor=ff5630" alt="Burger House" class="restaurant-logo">
-                            <div class="restaurant-info">
-                                <h4>Burger House</h4>
-                                <p>Piazza Garibaldi, 42</p>
-                            </div>
+                    <div class="order-progress">
+                        <div class="progress-steps">
+                            <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">Confermato</div></div>
+                            <div class="progress-step current"><div class="step-dot"></div><div class="step-label">In preparazione</div></div>
+                            <div class="progress-step"><div class="step-dot"></div><div class="step-label">In consegna</div></div>
+                            <div class="progress-step"><div class="step-dot"></div><div class="step-label">Consegnato</div></div>
                         </div>
-                        <div class="order-progress">
-                             <div class="progress-steps">
-                                <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">Confermato</div></div>
-                                <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">In preparazione</div></div>
-                                <div class="progress-step current"><div class="step-dot"></div><div class="step-label">In consegna</div></div>
-                                <div class="progress-step"><div class="step-dot"></div><div class="step-label">Consegnato</div></div>
-                            </div>
-                            <div class="progress-container"><div class="progress-bar" style="width: 75%"></div></div>
-                        </div>
-                         <div class="order-details">
-                            <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Cheeseburger Speciale</div><div class="item-price">€19.80</div></div>
-                            <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Patatine Grandi</div><div class="item-price">€4.50</div></div>
-                            <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Sprite 45cl</div><div class="item-price">€6.00</div></div>
-                            <div class="order-total"><div class="total-label">Totale</div><div class="total-price">€30.30</div></div>
-                        </div>
-                        <div class="order-actions">
-                            <button class="order-btn track-btn" onclick="openTrackingModal('ORD-87553', 'Burger House', 'Mario R.', 'https://api.dicebear.com/7.x/micah/svg?seed=MarioR&hair=mrT&mouth=laughing,smile')"><i class="fas fa-map-marker-alt"></i> Traccia</button>
-                            <button class="order-btn cancel-btn" disabled><i class="fas fa-times"></i> Annulla</button>
-                        </div>
-                        <div class="estimated-time"><i class="far fa-clock"></i>Consegna prevista: <span class="delivery-time">19:15</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width: 35%"></div></div>
                     </div>
+                    <div class="order-details">
+                        <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Pizza Margherita Grande</div><div class="item-price">€9.90</div></div>
+                        <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Coca Cola 33cl</div><div class="item-price">€5.00</div></div>
+                        <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Tiramisu</div><div class="item-price">€4.50</div></div>
+                        <div class="order-total"><div class="total-label">Totale</div><div class="total-price">€19.40</div></div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn track-btn" onclick="openTrackingModal('ORD-87562', 'Pizza Delight', 'Luigi M.', 'https://api.dicebear.com/7.x/micah/svg?seed=Luigi&hair=fonze,full&baseColor=f9c9b6&earrings=none')"><i class="fas fa-map-marker-alt"></i> Traccia</button>
+                        <button class="order-btn cancel-btn" onclick="showCancelConfirm('ORD-87562')"><i class="fas fa-times"></i> Annulla</button>
+                    </div>
+                    <div class="estimated-time"><i class="far fa-clock"></i>Consegna prevista: <span class="delivery-time">19:35</span></div>
                 </div>
+            </div>
 
-                <!-- Ordine 3 -->
-                <div class="order-card animated fadeInUp" style="animation-delay: 0.4s">
-                    <div class="order-header">
-                        <span class="order-number">#ORD-87544</span>
-                        <span class="order-status ready">Pronto per il ritiro</span>
+            <!-- Ordine 2 -->
+            <div class="order-card animated fadeInUp" style="animation-delay: 0.2s">
+                <div class="order-header">
+                    <span class="order-number">#ORD-87553</span>
+                    <span class="order-status delivering">In consegna</span>
+                </div>
+                <div class="order-body">
+                    <div class="order-restaurant">
+                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=BU&backgroundColor=ff5630" alt="Burger House" class="restaurant-logo">
+                        <div class="restaurant-info">
+                            <h4>Burger House</h4>
+                            <p>Piazza Garibaldi, 42</p>
+                        </div>
                     </div>
-                    <div class="order-body">
-                        <div class="order-restaurant">
-                             <img src="https://api.dicebear.com/7.x/initials/svg?seed=SU&backgroundColor=36b37e" alt="Sushi King" class="restaurant-logo">
-                            <div class="restaurant-info">
-                                <h4>Sushi King</h4>
-                                <p>Corso Italia, 85</p>
-                            </div>
+                    <div class="order-progress">
+                         <div class="progress-steps">
+                            <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">Confermato</div></div>
+                            <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">In preparazione</div></div>
+                            <div class="progress-step current"><div class="step-dot"></div><div class="step-label">In consegna</div></div>
+                            <div class="progress-step"><div class="step-dot"></div><div class="step-label">Consegnato</div></div>
                         </div>
-                         <div class="order-progress">
-                             <div class="progress-steps">
-                                <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">Confermato</div></div>
-                                <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">In preparazione</div></div>
-                                <div class="progress-step completed current"><div class="step-dot"></div><div class="step-label">Pronto</div></div> 
-                                <div class="progress-step"><div class="step-dot"></div><div class="step-label">Ritirato</div></div>
-                            </div>
-                            <div class="progress-container"><div class="progress-bar" style="width: 90%"></div></div>
-                        </div>
-                        <div class="order-details">
-                            <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Box Sushi Mix (24pz)</div><div class="item-price">€25.90</div></div>
-                            <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Gyoza di Verdure</div><div class="item-price">€9.00</div></div>
-                            <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Acqua Naturale 50cl</div><div class="item-price">€1.50</div></div>
-                            <div class="order-total"><div class="total-label">Totale</div><div class="total-price">€36.40</div></div>
-                        </div>
-                        <div class="order-actions">
-                            <button class="order-btn track-btn" onclick="openMapDirections('Corso Italia, 85')"><i class="fas fa-map-marked-alt"></i> Indicazioni</button>
-                            <button class="order-btn cancel-btn" disabled><i class="fas fa-times"></i> Annulla</button>
-                        </div>
-                        <div class="estimated-time"><i class="fas fa-check-circle" style="color: var(--success)"></i>Pronto per il ritiro: <span class="delivery-time">Ora</span></div>
+                        <div class="progress-container"><div class="progress-bar" style="width: 75%"></div></div>
                     </div>
+                     <div class="order-details">
+                        <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Cheeseburger Speciale</div><div class="item-price">€19.80</div></div>
+                        <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Patatine Grandi</div><div class="item-price">€4.50</div></div>
+                        <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Sprite 45cl</div><div class="item-price">€6.00</div></div>
+                        <div class="order-total"><div class="total-label">Totale</div><div class="total-price">€30.30</div></div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn track-btn" onclick="openTrackingModal('ORD-87553', 'Burger House', 'Mario R.', 'https://api.dicebear.com/7.x/micah/svg?seed=MarioR&hair=mrT&mouth=laughing,smile')"><i class="fas fa-map-marker-alt"></i> Traccia</button>
+                        <button class="order-btn cancel-btn" disabled><i class="fas fa-times"></i> Annulla</button>
+                    </div>
+                    <div class="estimated-time"><i class="far fa-clock"></i>Consegna prevista: <span class="delivery-time">19:15</span></div>
+                </div>
+            </div>
+
+            <!-- Ordine 3 -->
+            <div class="order-card animated fadeInUp" style="animation-delay: 0.4s">
+                <div class="order-header">
+                    <span class="order-number">#ORD-87544</span>
+                    <span class="order-status ready">Pronto per il ritiro</span>
+                </div>
+                <div class="order-body">
+                    <div class="order-restaurant">
+                         <img src="https://api.dicebear.com/7.x/initials/svg?seed=SU&backgroundColor=36b37e" alt="Sushi King" class="restaurant-logo">
+                        <div class="restaurant-info">
+                            <h4>Sushi King</h4>
+                            <p>Corso Italia, 85</p>
+                        </div>
+                    </div>
+                     <div class="order-progress">
+                         <div class="progress-steps">
+                            <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">Confermato</div></div>
+                            <div class="progress-step completed"><div class="step-dot"></div><div class="step-label">In preparazione</div></div>
+                            <div class="progress-step completed current"><div class="step-dot"></div><div class="step-label">Pronto</div></div> 
+                            <div class="progress-step"><div class="step-dot"></div><div class="step-label">Ritirato</div></div>
+                        </div>
+                        <div class="progress-container"><div class="progress-bar" style="width: 90%"></div></div>
+                    </div>
+                    <div class="order-details">
+                        <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Box Sushi Mix (24pz)</div><div class="item-price">€25.90</div></div>
+                        <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Gyoza di Verdure</div><div class="item-price">€9.00</div></div>
+                        <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Acqua Naturale 50cl</div><div class="item-price">€1.50</div></div>
+                        <div class="order-total"><div class="total-label">Totale</div><div class="total-price">€36.40</div></div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn track-btn" onclick="openMapDirections('Corso Italia, 85')"><i class="fas fa-map-marked-alt"></i> Indicazioni</button>
+                        <button class="order-btn cancel-btn" disabled><i class="fas fa-times"></i> Annulla</button>
+                    </div>
+                    <div class="estimated-time"><i class="fas fa-check-circle" style="color: var(--success)"></i>Pronto per il ritiro: <span class="delivery-time">Ora</span></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Tab Content: Ordini Passati -->
-        <div class="tab-content" id="passati">
-            <div class="history-filters">
-                <button class="filter-btn active">Tutti (24)</button>
-                <button class="filter-btn">Ultimo mese (8)</button>
-                <button class="filter-btn">Ultima settimana (3)</button>
-                <button class="filter-btn">Pizza (10)</button>
-                <button class="filter-btn">Hamburger (7)</button>
-                <button class="filter-btn">Sushi (5)</button>
-                <button class="filter-btn">Altro (2)</button>
-            </div>
-            
-            <div class="history-list">
-                <!-- Ordine passato 1 -->
-                <div class="history-card hover-lift">
-                    <div class="history-header">
-                        <span class="history-date">5 Maggio 2025</span>
-                        <span class="history-order-number">#ORD-87521</span>
-                    </div>
-                    <div class="history-body">
-                        <div class="restaurant-row">
-                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=PizzaDelight&backgroundColor=ffad08" alt="Pizza Delight" class="restaurant-logo">
-                            <div class="restaurant-info">
-                                <h4>Pizza Delight</h4>
-                                <div style="display: flex; gap: 5px; margin-top: 3px; align-items: center;">
-                                    <span class="tag tag-primary">Pizza</span>
-                                    <div style="color: var(--warning); display: flex; align-items: center; gap: 0.2rem;">
-                                        <i class="fas fa-star"></i> 4.8
-                                    </div>
+    <!-- Tab Content: Ordini Passati -->
+    <div class="tab-content" id="passati">
+        <div class="history-filters">
+            <button class="filter-btn active">Tutti (24)</button>
+            <button class="filter-btn">Ultimo mese (8)</button>
+            <button class="filter-btn">Ultima settimana (3)</button>
+            <button class="filter-btn">Pizza (10)</button>
+            <button class="filter-btn">Hamburger (7)</button>
+            <button class="filter-btn">Sushi (5)</button>
+            <button class="filter-btn">Altro (2)</button>
+        </div>
+        
+        <div class="history-list">
+            <!-- Ordine passato 1 -->
+            <div class="history-card hover-lift">
+                <div class="history-header">
+                    <span class="history-date">5 Maggio 2025</span>
+                    <span class="history-order-number">#ORD-87521</span>
+                </div>
+                <div class="history-body">
+                    <div class="restaurant-row">
+                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=PizzaDelight&backgroundColor=ffad08" alt="Pizza Delight" class="restaurant-logo">
+                        <div class="restaurant-info">
+                            <h4>Pizza Delight</h4>
+                            <div style="display: flex; gap: 5px; margin-top: 3px; align-items: center;">
+                                <span class="tag tag-primary">Pizza</span>
+                                <div style="color: var(--warning); display: flex; align-items: center; gap: 0.2rem;">
+                                    <i class="fas fa-star"></i> 4.8
                                 </div>
                             </div>
                         </div>
-                        <div class="history-items">
-                            <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Pizza Diavola</div><div class="item-price">€21.80</div></div>
-                            <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Calzone Classico</div><div class="item-price">€8.50</div></div>
-                            <div class="order-item"><div class="item-quantity">3</div><div class="item-name">Birra Artigianale</div><div class="item-price">€15.00</div></div>
-                        </div>
-                        <div class="history-total"><span>Totale</span><span>€45.30</span></div>
-                        <div class="history-actions">
-                            <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87521')"><i class="fas fa-redo-alt"></i> Riordina</button>
-                            <button class="history-btn review-btn" onclick="openReviewModal('Pizza Delight')"><i class="fas fa-star"></i> Recensisci</button>
-                        </div>
+                    </div>
+                    <div class="history-items">
+                        <div class="order-item"><div class="item-quantity">2</div><div class="item-name">Pizza Diavola</div><div class="item-price">€21.80</div></div>
+                        <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Calzone Classico</div><div class="item-price">€8.50</div></div>
+                        <div class="order-item"><div class="item-quantity">3</div><div class="item-name">Birra Artigianale</div><div class="item-price">€15.00</div></div>
+                    </div>
+                    <div class="history-total"><span>Totale</span><span>€45.30</span></div>
+                    <div class="history-actions">
+                        <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87521')"><i class="fas fa-redo-alt"></i> Riordina</button>
+                        <button class="history-btn review-btn" onclick="openReviewModal('Pizza Delight')"><i class="fas fa-star"></i> Recensisci</button>
                     </div>
                 </div>
-                <div class="history-card hover-lift">
-                    <div class="history-header"><span class="history-date">3 Maggio 2025</span><span class="history-order-number">#ORD-87498</span></div>
-                    <div class="history-body">
-                        <div class="restaurant-row">
-                            <img src="https://api.dicebear.com/7.x/initials/svg?seed=BurgerHouse&backgroundColor=ff5630" alt="Burger House" class="restaurant-logo">
-                            <div class="restaurant-info">
-                                <h4>Burger House</h4>
-                                <div style="display: flex; gap: 5px; margin-top: 3px; align-items: center;">
-                                    <span class="tag tag-accent">Hamburger</span>
-                                    <div style="color: var(--warning); display: flex; align-items: center; gap: 0.2rem;">
-                                        <i class="fas fa-star"></i> 4.6
-                                    </div>
+            </div>
+            <div class="history-card hover-lift">
+                <div class="history-header"><span class="history-date">3 Maggio 2025</span><span class="history-order-number">#ORD-87498</span></div>
+                <div class="history-body">
+                    <div class="restaurant-row">
+                        <img src="https://api.dicebear.com/7.x/initials/svg?seed=BurgerHouse&backgroundColor=ff5630" alt="Burger House" class="restaurant-logo">
+                        <div class="restaurant-info">
+                            <h4>Burger House</h4>
+                            <div style="display: flex; gap: 5px; margin-top: 3px; align-items: center;">
+                                <span class="tag tag-accent">Hamburger</span>
+                                <div style="color: var(--warning); display: flex; align-items: center; gap: 0.2rem;">
+                                    <i class="fas fa-star"></i> 4.6
                                 </div>
                             </div>
                         </div>
-                        <div class="history-items">
-                             <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Burger Gourmet</div><div class="item-price">€12.90</div></div>
-                             <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Anelli di Cipolla</div><div class="item-price">€5.50</div></div>
-                             <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Milkshake Fragola</div><div class="item-price">€4.00</div></div>
-                        </div>
-                        <div class="history-total"><span>Totale</span><span>€22.40</span></div>
-                        <div class="history-actions">
-                            <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87498')"><i class="fas fa-redo-alt"></i> Riordina</button>
-                            <button class="history-btn review-btn" onclick="openReviewModal('Burger House')"><i class="fas fa-star"></i> Recensisci</button>
-                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab Content: Statistiche -->
-        <div class="tab-content" id="stats">
-            <div class="stats-section">
-                <div class="stats-grid">
-                    <div class="stat-card stat-primary hover-lift">
-                        <div class="stat-header"><div class="stat-icon"><i class="fas fa-shopping-bag"></i></div><div class="stat-trend stat-up"><i class="fas fa-arrow-up"></i> 15%</div></div>
-                        <div class="stat-value">24</div><div class="stat-label">Ordini Totali</div>
+                    <div class="history-items">
+                         <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Burger Gourmet</div><div class="item-price">€12.90</div></div>
+                         <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Anelli di Cipolla</div><div class="item-price">€5.50</div></div>
+                         <div class="order-item"><div class="item-quantity">1</div><div class="item-name">Milkshake Fragola</div><div class="item-price">€4.00</div></div>
                     </div>
-                    <div class="stat-card stat-success hover-lift">
-                        <div class="stat-header"><div class="stat-icon"><i class="fas fa-euro-sign"></i></div><div class="stat-trend stat-up"><i class="fas fa-arrow-up"></i> 8%</div></div>
-                        <div class="stat-value">€345</div><div class="stat-label">Spesa Totale</div>
-                    </div>
-                    <div class="stat-card stat-info hover-lift">
-                         <div class="stat-header"><div class="stat-icon"><i class="fas fa-calculator"></i></div><div class="stat-trend stat-down"><i class="fas fa-arrow-down"></i> 3%</div></div>
-                         <div class="stat-value">€14.40</div><div class="stat-label">Media per Ordine</div>
-                    </div>
-                    <div class="stat-card stat-warning hover-lift">
-                        <div class="stat-header"><div class="stat-icon"><i class="fas fa-medal"></i></div><div class="stat-trend stat-up"><i class="fas fa-arrow-up"></i> 20%</div></div>
-                        <div class="stat-value">380</div><div class="stat-label">Punti Fedeltà</div>
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <canvas id="ordersOverTimeChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <canvas id="spendingByCategoryChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab Content: Preferenze -->
-        <div class="tab-content" id="preferences">
-             <div class="preferences-container">
-                <div class="preference-card">
-                    <div class="preference-title"><h3>Indirizzi di Consegna</h3><span class="preference-edit" onclick="openAddressModal()"><i class="fas fa-plus-circle"></i> Aggiungi</span></div>
-                    <div class="preference-section">
-                        <div class="address-card default">
-                            <div class="address-card-header"><span class="address-type">Casa</span><span class="default-badge">Predefinito</span></div>
-                            <div class="address-details">Via Roma 123, Interno 4<br>Milano, MI 20121<br>Citofono: Rossi</div>
-                        </div>
-                         <div class="address-card">
-                            <div class="address-card-header"><span class="address-type">Ufficio</span></div>
-                            <div class="address-details">Viale Monza 45<br>Milano, MI 20125<br>Piano 3, Ufficio 302</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="preference-card">
-                    <div class="preference-title"><h3>Metodi di Pagamento</h3><span class="preference-edit" onclick="openPaymentModal()"><i class="fas fa-plus-circle"></i> Aggiungi</span></div>
-                    <div class="preference-section">
-                        <div class="payment-method default">
-                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/mastercard.svg" alt="Mastercard" class="payment-logo">
-                            <div class="payment-info"><div class="payment-name">Mastercard •••• 4587</div><div class="payment-details">Scade 09/27</div></div>
-                            <span class="default-badge">Predefinito</span>
-                        </div>
-                        <div class="payment-method">
-                             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visa.svg" alt="Visa" class="payment-logo">
-                             <div class="payment-info"><div class="payment-name">Visa •••• 2356</div><div class="payment-details">Scade 04/26</div></div>
-                        </div>
-                         <div class="payment-method">
-                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/paypal.svg" alt="PayPal" class="payment-logo">
-                            <div class="payment-info"><div class="payment-name">PayPal</div><div class="payment-details">mario.rossi@email.com</div></div>
-                        </div>
+                    <div class="history-total"><span>Totale</span><span>€22.40</span></div>
+                    <div class="history-actions">
+                        <button class="history-btn reorder-btn" onclick="reorderItems('ORD-87498')"><i class="fas fa-redo-alt"></i> Riordina</button>
+                        <button class="history-btn review-btn" onclick="openReviewModal('Burger House')"><i class="fas fa-star"></i> Recensisci</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <!-- Tracking Modal -->
-    <div class="modal" id="trackingModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Traccia Ordine <span id="trackingOrderIdDisplay"></span></h3>
-                <button class="close-modal" onclick="closeModal('trackingModal')">×</button>
-            </div>
-            <div class="map-container" id="deliveryMap">
-                <lottie-player src="https://lottie.host/eda60867-3c70-4e00-900e-95044e3d9858/jFKS2ZhrF1.json" background="transparent" speed="1" style="width: 100%; height: 100%;" loop autoplay></lottie-player>
-            </div>
-            <div class="tracking-details">
-                <div class="tracking-info">
-                    <div class="courier-info">
-                        <img src="https://api.dicebear.com/7.x/micah/svg?seed=Luigi&hair=fonze,full&baseColor=f9c9b6&earrings=none" alt="Courier" class="courier-photo" id="trackingCourierPhoto">
-                        <div>
-                            <div class="courier-name" id="trackingCourierName">Luigi M.</div>
-                            <div class="courier-vehicle">Scooter 🛵</div>
-                        </div>
-                    </div>
-                    <div class="estimated-time" id="trackingEstimatedTime">
-                        <i class="far fa-clock"></i>Arrivo stimato: <span class="delivery-time">19:35</span>
-                    </div>
+    <!-- Tab Content: Statistiche -->
+    <div class="tab-content" id="stats">
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card stat-primary hover-lift">
+                    <div class="stat-header"><div class="stat-icon"><i class="fas fa-shopping-bag"></i></div><div class="stat-trend stat-up"><i class="fas fa-arrow-up"></i> 15%</div></div>
+                    <div class="stat-value">24</div><div class="stat-label">Ordini Totali</div>
                 </div>
-            </div>
-            <div class="tracking-timeline" id="trackingTimelineContainer">
-                <!-- Timeline steps will be dynamically populated or updated -->
-            </div>
-            <div class="modal-actions">
-                <button class="modal-btn secondary-btn" onclick="callCourier()">
-                    <i class="fas fa-phone"></i> Chiama Corriere
-                </button>
-                <button class="modal-btn primary-btn" onclick="closeModal('trackingModal')">
-                    Chiudi
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Cancel Order Modal -->
-    <div class="modal" id="cancelModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Annulla Ordine</h3>
-                <button class="close-modal" onclick="closeModal('cancelModal')">×</button>
-            </div>
-            <p>Sei sicuro di voler annullare l'ordine <strong id="cancelOrderIdDisplay"></strong>?</p>
-            <p style="margin-top: 10px; color: var(--text-light);">Nota: Puoi annullare un ordine solo se è ancora in fase di preparazione. L'importo sarà riaccreditato entro 5-7 giorni lavorativi.</p>
-            
-            <div style="margin-top: 20px;" class="modal-form">
-                <div class="form-group">
-                    <label for="cancelReason">Motivo dell'annullamento:</label>
-                    <select id="cancelReason" name="cancelReason" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--border); border-radius: var(--radius);">
-                        <option>Ho cambiato idea</option>
-                        <option>Ho inserito un indirizzo sbagliato</option>
-                        <option>Ho inserito un ordine sbagliato</option>
-                        <option>Tempo di consegna troppo lungo</option>
-                        <option>Altro (specificare)</option>
-                    </select>
+                <div class="stat-card stat-success hover-lift">
+                    <div class="stat-header"><div class="stat-icon"><i class="fas fa-euro-sign"></i></div><div class="stat-trend stat-up"><i class="fas fa-arrow-up"></i> 8%</div></div>
+                    <div class="stat-value">€345</div><div class="stat-label">Spesa Totale</div>
                 </div>
-                 <div class="form-group">
-                    <label for="cancelReasonOther">Altro motivo (opzionale):</label>
-                    <textarea id="cancelReasonOther" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--border); border-radius: var(--radius); min-height: 80px;" placeholder="Specificare se 'Altro'"></textarea>
+                <div class="stat-card stat-info hover-lift">
+                     <div class="stat-header"><div class="stat-icon"><i class="fas fa-calculator"></i></div><div class="stat-trend stat-down"><i class="fas fa-arrow-down"></i> 3%</div></div>
+                     <div class="stat-value">€14.40</div><div class="stat-label">Media per Ordine</div>
+                </div>
+                <div class="stat-card stat-warning hover-lift">
+                    <div class="stat-header"><div class="stat-icon"><i class="fas fa-medal"></i></div><div class="stat-trend stat-up"><i class="fas fa-arrow-up"></i> 20%</div></div>
+                    <div class="stat-value">380</div><div class="stat-label">Punti Fedeltà</div>
                 </div>
             </div>
             
-            <div class="modal-actions" style="margin-top: 20px;">
-                <button class="modal-btn secondary-btn" onclick="closeModal('cancelModal')">Torna Indietro</button>
-                <button class="modal-btn danger-btn" onclick="confirmCancelOrder()"><i class="fas fa-times"></i> Conferma Annullamento</button>
+            <div class="chart-container">
+                <canvas id="ordersOverTimeChart"></canvas>
             </div>
-        </div>
-    </div>
-    
-    <!-- Review Modal -->
-    <div class="modal" id="reviewModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Recensisci <strong id="reviewRestaurantName"></strong></h3>
-                <button class="close-modal" onclick="closeModal('reviewModal')">×</button>
-            </div>
-            
-            <div style="margin: 20px 0; text-align: center;">
-                <div style="font-size: 1.2rem; margin-bottom: 10px;">Il tuo voto</div>
-                <div class="rating-stars">
-                    <i class="far fa-star fa-2x" data-rating="1"></i>
-                    <i class="far fa-star fa-2x" data-rating="2"></i>
-                    <i class="far fa-star fa-2x" data-rating="3"></i>
-                    <i class="far fa-star fa-2x" data-rating="4"></i>
-                    <i class="far fa-star fa-2x" data-rating="5"></i>
-                </div>
-            </div>
-            
-            <div class="modal-form">
-                <div class="form-group">
-                    <label for="reviewExperience">La tua esperienza</label>
-                    <textarea id="reviewExperience" rows="4" placeholder="Racconta la tua esperienza con questo ristorante..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Cosa ti è piaciuto di più?</label>
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-utensils"></i> Qualità del cibo</span>
-                        <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-shipping-fast"></i> Velocità</span>
-                        <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-coins"></i> Rapporto qualità/prezzo</span>
-                        <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-box"></i> Packaging</span>
-                        <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-smile"></i> Servizio clienti</span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Aggiungi foto (opzionale)</label>
-                    <div class="file-upload">
-                        <input type="file" id="photoUpload" accept="image/*" multiple hidden onchange="previewPhotos(event)">
-                        <button type="button" class="modal-btn secondary-btn" onclick="document.getElementById('photoUpload').click()">
-                            <i class="fas fa-camera"></i> Seleziona foto
-                        </button>
-                        <div class="upload-preview" id="uploadPreview"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="modal-btn secondary-btn" onclick="closeModal('reviewModal')">Annulla</button>
-                <button class="modal-btn primary-btn" onclick="submitReview()">Invia recensione</button>
+            <div class="chart-container">
+                <canvas id="spendingByCategoryChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Call Screen Modal -->
-    <div class="modal" id="callScreenModal">
-        <div class="modal-content call-screen-content">
-            <img id="callScreenCourierAvatar" src="" alt="Avatar corriere" class="courier-photo"> 
-            <h3 id="callScreenCourierName">Corriere</h3>
-            <div class="call-animation-container">
-                <lottie-player src="https://lottie.host/0f5f2ec1-a674-4d83-8fd5-cc957ef8e042/BHYRKEnh9B.json" background="transparent" speed="1" style="width: 100%; height: 100%;" loop autoplay></lottie-player>
+    <!-- Tab Content: Preferenze -->
+    <div class="tab-content" id="preferences">
+         <div class="preferences-container">
+            <div class="preference-card">
+                <div class="preference-title"><h3>Indirizzi di Consegna</h3><span class="preference-edit" onclick="openAddressModal()"><i class="fas fa-plus-circle"></i> Aggiungi</span></div>
+                <div class="preference-section">
+                    <div class="address-card default">
+                        <div class="address-card-header"><span class="address-type">Casa</span><span class="default-badge">Predefinito</span></div>
+                        <div class="address-details">Via Roma 123, Interno 4<br>Milano, MI 20121<br>Citofono: Rossi</div>
+                    </div>
+                     <div class="address-card">
+                        <div class="address-card-header"><span class="address-type">Ufficio</span></div>
+                        <div class="address-details">Viale Monza 45<br>Milano, MI 20125<br>Piano 3, Ufficio 302</div>
+                    </div>
+                </div>
             </div>
-            <p class="call-status-text">Chiamata in corso...</p>
-            <button class="modal-btn danger-btn" onclick="terminateCall()" style="margin-top: 1rem;"> 
-                <i class="fas fa-phone-slash"></i> Termina Chiamata
+            <div class="preference-card">
+                <div class="preference-title"><h3>Metodi di Pagamento</h3><span class="preference-edit" onclick="openPaymentModal()"><i class="fas fa-plus-circle"></i> Aggiungi</span></div>
+                <div class="preference-section">
+                    <div class="payment-method default">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/mastercard.svg" alt="Mastercard" class="payment-logo">
+                        <div class="payment-info"><div class="payment-name">Mastercard •••• 4587</div><div class="payment-details">Scade 09/27</div></div>
+                        <span class="default-badge">Predefinito</span>
+                    </div>
+                    <div class="payment-method">
+                         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visa.svg" alt="Visa" class="payment-logo">
+                         <div class="payment-info"><div class="payment-name">Visa •••• 2356</div><div class="payment-details">Scade 04/26</div></div>
+                    </div>
+                     <div class="payment-method">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/paypal.svg" alt="PayPal" class="payment-logo">
+                        <div class="payment-info"><div class="payment-name">PayPal</div><div class="payment-details">mario.rossi@email.com</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Tracking Modal -->
+<div class="modal" id="trackingModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Traccia Ordine <span id="trackingOrderIdDisplay"></span></h3>
+            <button class="close-modal" onclick="closeModal('trackingModal')">×</button>
+        </div>
+        <div class="map-container" id="deliveryMap">
+            <lottie-player src="https://lottie.host/eda60867-3c70-4e00-900e-95044e3d9858/jFKS2ZhrF1.json" background="transparent" speed="1" style="width: 100%; height: 100%;" loop autoplay></lottie-player>
+        </div>
+        <div class="tracking-details">
+            <div class="tracking-info">
+                <div class="courier-info">
+                    <img src="https://api.dicebear.com/7.x/micah/svg?seed=Luigi&hair=fonze,full&baseColor=f9c9b6&earrings=none" alt="Courier" class="courier-photo" id="trackingCourierPhoto">
+                    <div>
+                        <div class="courier-name" id="trackingCourierName">Luigi M.</div>
+                        <div class="courier-vehicle">Scooter 🛵</div>
+                    </div>
+                </div>
+                <div class="estimated-time" id="trackingEstimatedTime">
+                    <i class="far fa-clock"></i>Arrivo stimato: <span class="delivery-time">19:35</span>
+                </div>
+            </div>
+        </div>
+        <div class="tracking-timeline" id="trackingTimelineContainer">
+            <!-- Timeline steps will be dynamically populated or updated -->
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn secondary-btn" onclick="callCourier()">
+                <i class="fas fa-phone"></i> Chiama Corriere
+            </button>
+            <button class="modal-btn primary-btn" onclick="closeModal('trackingModal')">
+                Chiudi
             </button>
         </div>
     </div>
+</div>
 
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-    
-    <!-- Confetti Container -->
-    <div class="confetti-container" id="confettiContainer"></div>
-
-    <script>
-        let currentOpenOrderId = null; 
-        let chartsInitialized = false;
-        let currentRating = 0;
-        let currentCourierPhotoForCall = "https://api.dicebear.com/7.x/micah/svg?seed=GenericCaller"; 
-
-        // Tab Navigation
-        document.querySelectorAll('.tab-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.getAttribute('data-tab');
-                
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                const activeTabContent = document.getElementById(tabId);
-                if (activeTabContent) {
-                    activeTabContent.classList.add('active');
-                }
-                
-                document.querySelectorAll(`#${tabId} .animated`).forEach(el => {
-                    el.style.opacity = '0'; 
-                    setTimeout(() => { el.classList.add('fadeInUp'); el.style.opacity = '1'; }, 100);
-                });
-
-                if (tabId === 'stats' && !chartsInitialized) {
-                    initCharts();
-                    chartsInitialized = true;
-                }
-            });
-        });
-
-        function initCharts() {
-            if (window.ordersOverTimeChartInstance) window.ordersOverTimeChartInstance.destroy();
-            if (window.spendingByCategoryChartInstance) window.spendingByCategoryChartInstance.destroy();
-
-            const ootCtx = document.getElementById('ordersOverTimeChart');
-            if(ootCtx) {
-                window.ordersOverTimeChartInstance = new Chart(ootCtx.getContext('2d'), {
-                    type: 'bar',
-                    data: { labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'], datasets: [{ label: 'Numero di Ordini', data: [5, 7, 4, 6, 8, 3], backgroundColor: 'rgba(99, 102, 241, 0.7)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 1, borderRadius: 5, }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)'}}, x: {grid: {display: false}} }, plugins: { legend: { display: true, position: 'top' }} }
-                });
-            }
-
-            const sbcCtx = document.getElementById('spendingByCategoryChart');
-            if(sbcCtx) {
-                window.spendingByCategoryChartInstance = new Chart(sbcCtx.getContext('2d'), {
-                    type: 'doughnut',
-                    data: { labels: ['Pizza', 'Hamburger', 'Sushi', 'Altro'], datasets: [{ label: 'Spesa per Categoria (€)', data: [150, 90, 75, 30], backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'], borderColor: ['rgba(255, 99, 132, 1)','rgba(255, 159, 64, 1)','rgba(75, 192, 192, 1)','rgba(153, 102, 255, 1)'], borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top' }} }
-                });
-            }
-        }
+<!-- Cancel Order Modal -->
+<div class="modal" id="cancelModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Annulla Ordine</h3>
+            <button class="close-modal" onclick="closeModal('cancelModal')">×</button>
+        </div>
+        <p>Sei sicuro di voler annullare l'ordine <strong id="cancelOrderIdDisplay"></strong>?</p>
+        <p style="margin-top: 10px; color: var(--text-light);">Nota: Puoi annullare un ordine solo se è ancora in fase di preparazione. L'importo sarà riaccreditato entro 5-7 giorni lavorativi.</p>
         
-        // Modal functions
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if(modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-        }
+        <div style="margin-top: 20px;" class="modal-form">
+            <div class="form-group">
+                <label for="cancelReason">Motivo dell'annullamento:</label>
+                <select id="cancelReason" name="cancelReason" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--border); border-radius: var(--radius);">
+                    <option>Ho cambiato idea</option>
+                    <option>Ho inserito un indirizzo sbagliato</option>
+                    <option>Ho inserito un ordine sbagliato</option>
+                    <option>Tempo di consegna troppo lungo</option>
+                    <option>Altro (specificare)</option>
+                </select>
+            </div>
+             <div class="form-group">
+                <label for="cancelReasonOther">Altro motivo (opzionale):</label>
+                <textarea id="cancelReasonOther" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--border); border-radius: var(--radius); min-height: 80px;" placeholder="Specificare se 'Altro'"></textarea>
+            </div>
+        </div>
         
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if(modal) {
-                modal.classList.remove('active');
-                const activeModals = document.querySelectorAll('.modal.active');
-                if (activeModals.length === 0) {
-                    document.body.style.overflow = '';
-                }
-            }
-        }
-        
-        function openTrackingModal(orderId, restaurantName, courierName, courierPhoto) {
-            currentOpenOrderId = orderId;
-            currentCourierPhotoForCall = courierPhoto || "https://api.dicebear.com/7.x/micah/svg?seed=GenericCaller"; 
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button class="modal-btn secondary-btn" onclick="closeModal('cancelModal')">Torna Indietro</button>
+            <button class="modal-btn danger-btn" onclick="confirmCancelOrder()"><i class="fas fa-times"></i> Conferma Annullamento</button>
+        </div>
+    </div>
+</div>
 
-            document.getElementById('trackingOrderIdDisplay').textContent = "#" + orderId;
-            document.getElementById('trackingCourierName').textContent = courierName || "Corriere";
-            document.getElementById('trackingCourierPhoto').src = courierPhoto || "https://api.dicebear.com/7.x/micah/svg?seed=GenericCourier"; 
+<!-- Review Modal -->
+<div class="modal" id="reviewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Recensisci <strong id="reviewRestaurantName"></strong></h3>
+            <button class="close-modal" onclick="closeModal('reviewModal')">×</button>
+        </div>
+        
+        <div style="margin: 20px 0; text-align: center;">
+            <div style="font-size: 1.2rem; margin-bottom: 10px;">Il tuo voto</div>
+            <div class="rating-stars">
+                <i class="far fa-star fa-2x" data-rating="1"></i>
+                <i class="far fa-star fa-2x" data-rating="2"></i>
+                <i class="far fa-star fa-2x" data-rating="3"></i>
+                <i class="far fa-star fa-2x" data-rating="4"></i>
+                <i class="far fa-star fa-2x" data-rating="5"></i>
+            </div>
+        </div>
+        
+        <div class="modal-form">
+            <div class="form-group">
+                <label for="reviewExperience">La tua esperienza</label>
+                <textarea id="reviewExperience" rows="4" placeholder="Racconta la tua esperienza con questo ristorante..."></textarea>
+            </div>
             
-            const timelineContainer = document.getElementById('trackingTimelineContainer');
-            timelineContainer.innerHTML = ''; 
-            let steps = [
-                { time: '18:50', text: 'Ordine confermato', subtext: `${restaurantName} ha ricevuto il tuo ordine`, status: 'completed' },
-                { time: '19:05', text: 'Preparazione in corso', subtext: 'Il tuo ordine è in preparazione', status: 'completed' },
-                { time: '19:20', text: 'In consegna', subtext: `${courierName || 'Il corriere'} sta arrivando`, status: 'current' },
-                { time: '19:35 (stimato)', text: 'Consegnato', subtext: 'Il tuo ordine sarà consegnato', status: '' }
-            ];
-             if (orderId === "ORD-87553") { 
-                 steps = [
-                    { time: '18:40', text: 'Ordine confermato', subtext: `${restaurantName} ha ricevuto il tuo ordine`, status: 'completed' },
-                    { time: '18:55', text: 'Preparazione in corso', subtext: 'Il tuo ordine è in preparazione', status: 'completed' },
-                    { time: '19:05', text: 'In consegna', subtext: `${courierName || 'Il corriere'} sta arrivando`, status: 'current' },
-                    { time: '19:15 (stimato)', text: 'Consegnato', subtext: 'Il tuo ordine sarà consegnato', status: '' }
-                ];
-                document.getElementById('trackingEstimatedTime').innerHTML = `<i class="far fa-clock"></i> Arrivo stimato: <span class="delivery-time">19:15</span>`;
-            } else { 
-                document.getElementById('trackingEstimatedTime').innerHTML = `<i class="far fa-clock"></i> Arrivo stimato: <span class="delivery-time">19:35</span>`;
-            }
-
-
-            steps.forEach(step => {
-                const stepDiv = document.createElement('div');
-                stepDiv.className = `tracking-step ${step.status}`;
-                stepDiv.innerHTML = `
-                    <div class="tracking-icon">
-                        <div class="tracking-icon-circle"></div>
-                        ${step.status !== '' && step.status !== 'current' && steps.indexOf(step) < steps.length -1 ? '<div class="tracking-line"></div>' : (steps.indexOf(step) < steps.length -1 && (step.status === 'current' || step.status==='completed')? '<div class="tracking-line"></div>':'') }
-                         ${step.status === 'current' && steps.indexOf(step) === steps.length -2 ? '<div class="tracking-line"></div>' : ''}
-
-                    </div>
-                    <div class="tracking-content">
-                        <div class="tracking-time">${step.time}</div>
-                        <div class="tracking-text">${step.text}</div>
-                        <div class="tracking-subtext">${step.subtext}</div>
-                    </div>
-                `;
-                timelineContainer.appendChild(stepDiv);
-            });
-            openModal('trackingModal');
-        }
-        
-        function showCancelConfirm(orderId) {
-            currentOpenOrderId = orderId;
-            document.getElementById('cancelOrderIdDisplay').textContent = "#" + orderId;
-            openModal('cancelModal');
-        }
-        
-        function confirmCancelOrder() {
-            closeModal('cancelModal');
-            const orderCard = Array.from(document.querySelectorAll('.order-card .order-number'))
-                                .find(el => el.textContent === `#${currentOpenOrderId}`)
-                                ?.closest('.order-card');
-            if (orderCard) {
-                orderCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                orderCard.style.opacity = '0';
-                orderCard.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    orderCard.remove();
-                     if (document.querySelectorAll('.active-orders .order-card').length === 0) {
-                        const emptyState = document.createElement('div');
-                        emptyState.innerHTML = `<p style="text-align:center; padding:2rem; color:var(--text-light);">Nessun ordine attivo al momento.</p>`;
-                        document.querySelector('.active-orders').appendChild(emptyState);
-                    }
-                }, 500);
-            }
-            showToast('success', 'Ordine annullato', `L'ordine ${currentOpenOrderId} è stato annullato.`);
-        }
-
-        function openReviewModal(restaurantName) {
-            document.getElementById('reviewRestaurantName').textContent = restaurantName;
-            openModal('reviewModal');
-            resetReviewStars();
-            document.getElementById('reviewExperience').value = '';
-            document.querySelectorAll('#reviewModal .tag.interactive.active').forEach(tag => tag.classList.remove('active'));
-            document.getElementById('uploadPreview').innerHTML = '';
-            document.getElementById('photoUpload').value = '';
-        }
-        
-        function submitReview() {
-            closeModal('reviewModal');
-            showToast('success', 'Recensione inviata', 'Grazie per aver condiviso la tua esperienza!');
-            triggerConfetti();
-        }
-
-        function callCourier() {
-            const courierNameFromTracking = document.getElementById('trackingCourierName')?.textContent || "Corriere";
-            
-            document.getElementById('callScreenCourierName').textContent = courierNameFromTracking;
-            document.getElementById('callScreenCourierAvatar').src = currentCourierPhotoForCall; // Usa la foto globale
-
-            openModal('callScreenModal');
-            try {
-                const callAudio = new Audio('https://www.soundjay.com/phone/phone-ringing-1.mp3'); 
-                callAudio.loop = true;
-                callAudio.play().catch(e => console.warn("Autoplay audio non permesso dal browser.", e));
-                document.getElementById('callScreenModal').callAudio = callAudio; 
-            } catch (e) {
-                console.error("Errore nel tentativo di riprodurre audio chiamata:", e);
-            }
-        }
-
-        function terminateCall() {
-            const callAudio = document.getElementById('callScreenModal').callAudio;
-            if (callAudio) {
-                callAudio.pause();
-                callAudio.currentTime = 0; 
-            }
-            closeModal('callScreenModal');
-            showToast('info', 'Chiamata terminata', 'La chiamata con il corriere è stata terminata.');
-        }
-        
-        function toggleTag(tagElement) {
-            tagElement.classList.toggle('active');
-        }
-
-        function previewPhotos(event) {
-            const previewContainer = document.getElementById('uploadPreview');
-            previewContainer.innerHTML = ''; 
-            Array.from(event.target.files).forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        previewContainer.appendChild(img);
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        // Review Stars Logic
-        function setupReviewStars() {
-            const reviewStarsContainer = document.querySelector('#reviewModal .rating-stars');
-            if (!reviewStarsContainer) return;
-            const stars = reviewStarsContainer.querySelectorAll('i');
-
-            stars.forEach(star => {
-                star.addEventListener('mouseenter', function() { paintStars(parseInt(this.dataset.rating), stars); });
-                star.addEventListener('mouseleave', function() { paintStars(currentRating, stars); });
-                star.addEventListener('click', function() {
-                    currentRating = parseInt(this.dataset.rating);
-                    paintStars(currentRating, stars);
-                });
-            });
-        }
-        function paintStars(rating, starElements) {
-            starElements.forEach(s => {
-                if (parseInt(s.dataset.rating) <= rating) {
-                    s.classList.remove('far'); s.classList.add('fas');
-                } else {
-                    s.classList.remove('fas'); s.classList.add('far');
-                }
-            });
-        }
-        function resetReviewStars() {
-            currentRating = 0;
-            const reviewStarsContainer = document.querySelector('#reviewModal .rating-stars');
-            if (reviewStarsContainer) {
-                const stars = reviewStarsContainer.querySelectorAll('i');
-                paintStars(0, stars);
-            }
-        }
-        
-        // Toast Notification
-        function showToast(type, title, message) {
-            const toastContainer = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <div class="form-group">
+                <label>Cosa ti è piaciuto di più?</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-utensils"></i> Qualità del cibo</span>
+                    <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-shipping-fast"></i> Velocità</span>
+                    <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-coins"></i> Rapporto qualità/prezzo</span>
+                    <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-box"></i> Packaging</span>
+                    <span class="tag tag-primary interactive" onclick="toggleTag(this)"><i class="fas fa-smile"></i> Servizio clienti</span>
                 </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
+            </div>
+            <div class="form-group">
+                <label>Aggiungi foto (opzionale)</label>
+                <div class="file-upload">
+                    <input type="file" id="photoUpload" accept="image/*" multiple hidden onchange="previewPhotos(event)">
+                    <button type="button" class="modal-btn secondary-btn" onclick="document.getElementById('photoUpload').click()">
+                        <i class="fas fa-camera"></i> Seleziona foto
+                    </button>
+                    <div class="upload-preview" id="uploadPreview"></div>
                 </div>
-                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
-            `;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'toastSlideOut 0.3s forwards';
-                toast.addEventListener('animationend', () => toast.remove());
-            }, 5000);
-        }
+            </div>
+        </div>
         
-        // Confetti Effect
-        function triggerConfetti() {
-            const confettiContainer = document.getElementById('confettiContainer');
-            const colors = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#3B82F6'];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const shape = Math.random() > 0.5 ? 'circle' : 'rect';
-                let size = Math.random() * 10 + 5;
-                
-                if (shape === 'circle') confetti.style.borderRadius = '50%';
-                
-                confetti.style.backgroundColor = color;
-                confetti.style.width = `${size}px`; confetti.style.height = `${size}px`;
-                confetti.style.left = `${Math.random() * 100}%`;
-                confetti.style.top = `${Math.random() * -20 - 10}%`; 
-                confetti.style.opacity = '1';
-                
-                const duration = Math.random() * 3 + 2; const delay = Math.random() * 0.5;
-                confetti.style.animation = `confettiDrop ${duration}s ease-out ${delay}s forwards, confettiRotate ${duration / 2}s linear ${delay}s infinite`;
-                confettiContainer.appendChild(confetti);
-                setTimeout(() => confetti.remove(), (duration + delay + 1) * 1000);
-            }
-        }
+        <div class="modal-actions">
+            <button class="modal-btn secondary-btn" onclick="closeModal('reviewModal')">Annulla</button>
+            <button class="modal-btn primary-btn" onclick="submitReview()">Invia recensione</button>
+        </div>
+    </div>
+</div>
 
-        function openMapDirections(address) {
-            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
-            window.open(googleMapsUrl, '_blank');
-            showToast('info', 'Indicazioni', `Apertura di Google Maps per ${address}`);
-        }
-        
-        // GSAP and other initializations
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.from('.hero-title', { y: 30, opacity: 0, duration: 1, ease: 'back.out(1.7)' });
-            gsap.from('.hero-subtitle', { y: 30, opacity: 0, duration: 1, delay: 0.3, ease: 'back.out(1.7)' });
-            gsap.from('.tab-btn', { y: 20, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power1.out' });
-            
-            document.querySelectorAll('#attivi .animated').forEach(el => {
+<!-- Call Screen Modal -->
+<div class="modal" id="callScreenModal">
+    <div class="modal-content call-screen-content">
+        <img id="callScreenCourierAvatar" src="" alt="Avatar corriere" class="courier-photo"> 
+        <h3 id="callScreenCourierName">Corriere</h3>
+        <div class="call-animation-container">
+            <lottie-player src="https://lottie.host/0f5f2ec1-a674-4d83-8fd5-cc957ef8e042/BHYRKEnh9B.json" background="transparent" speed="1" style="width: 100%; height: 100%;" loop autoplay></lottie-player>
+        </div>
+        <p class="call-status-text">Chiamata in corso...</p>
+        <button class="modal-btn danger-btn" onclick="terminateCall()" style="margin-top: 1rem;"> 
+            <i class="fas fa-phone-slash"></i> Termina Chiamata
+        </button>
+    </div>
+</div>
+
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Confetti Container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+        let currentOpenOrderId = null;
+    let chartsInitialized = false;
+    let currentRating = 0;
+    let currentCourierPhotoForCall = "https://api.dicebear.com/7.x/micah/svg?seed=GenericCaller";
+
+    // Variabili per gli oggetti audio della chiamata e sintesi vocale
+    let ringingAudio = null;
+    let voiceAudio = null; // Per fallback se SpeechSynthesis non è supportato
+    let speechUtterance = null; // Per la sintesi vocale
+    const CALL_RESPONSE_DELAY = 4000; // 4 secondi prima che "risponda"
+
+    // Tab Navigation
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            const activeTabContent = document.getElementById(tabId);
+            if (activeTabContent) {
+                activeTabContent.classList.add('active');
+            }
+
+            document.querySelectorAll(`#${tabId} .animated`).forEach(el => {
                 el.style.opacity = '0';
                 setTimeout(() => { el.classList.add('fadeInUp'); el.style.opacity = '1'; }, 100);
             });
 
+            if (tabId === 'stats' && !chartsInitialized) {
+                initCharts();
+                chartsInitialized = true;
+            }
+        });
+    });
 
-            gsap.registerPlugin(ScrollTrigger);
-            gsap.utils.toArray('.stat-card').forEach(card => {
-                 gsap.from(card, {
-                    scrollTrigger: { trigger: card, start: 'top 90%', toggleActions: 'play none none none' },
-                    y: 30, opacity: 0, duration: 0.8, ease: 'back.out(1.2)'
-                });
+    function initCharts() {
+        if (window.ordersOverTimeChartInstance) window.ordersOverTimeChartInstance.destroy();
+        if (window.spendingByCategoryChartInstance) window.spendingByCategoryChartInstance.destroy();
+
+        const ootCtx = document.getElementById('ordersOverTimeChart');
+        if(ootCtx) {
+            window.ordersOverTimeChartInstance = new Chart(ootCtx.getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'], datasets: [{ label: 'Numero di Ordini', data: [5, 7, 4, 6, 8, 3], backgroundColor: 'rgba(238, 27, 27, 0.7)', borderColor: 'rgba(238, 27, 27, 1)', borderWidth: 1, borderRadius: 5, }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { display: true, color: 'rgba(0,0,0,0.05)'}}, x: {grid: {display: false}} }, plugins: { legend: { display: true, position: 'top' }} }
             });
-             gsap.utils.toArray('.history-card').forEach(card => {
-                gsap.from(card, {
-                    scrollTrigger: { trigger: card, start: 'top 90%', toggleActions: 'play none none none' },
-                    y: 20, opacity: 0, duration: 0.6, ease: 'power1.out'
-                });
+        }
+
+        const sbcCtx = document.getElementById('spendingByCategoryChart');
+        if(sbcCtx) {
+            window.spendingByCategoryChartInstance = new Chart(sbcCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['Pizza', 'Hamburger', 'Sushi', 'Altro'], datasets: [{ label: 'Spesa per Categoria (€)', data: [150, 90, 75, 30], backgroundColor: ['rgba(238, 27, 27, 0.7)', 'rgba(243, 156, 18, 0.7)', 'rgba(46, 204, 113, 0.7)', 'rgba(155, 89, 182, 0.7)'], borderColor: ['rgba(238, 27, 27, 1)','rgba(243, 156, 18, 1)','rgba(46, 204, 113, 1)','rgba(155, 89, 182, 1)'], borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'top' }} }
             });
-             gsap.utils.toArray('.preference-card').forEach(card => {
-                gsap.from(card, {
-                    scrollTrigger: { trigger: card, start: 'top 90%', toggleActions: 'play none none none' },
-                    y: 20, opacity: 0, duration: 0.6, ease: 'power1.out'
-                });
-            });
+        }
+    }
+
+    // Modal functions
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if(modal) {
+            modal.classList.remove('active');
+            const activeModals = document.querySelectorAll('.modal.active');
+            if (activeModals.length === 0) {
+                document.body.style.overflow = '';
+            }
+        }
+    }
+
+    function openTrackingModal(orderId, restaurantName, courierName, courierPhoto) {
+        currentOpenOrderId = orderId;
+        currentCourierPhotoForCall = courierPhoto || "https://api.dicebear.com/7.x/micah/svg?seed=GenericCaller";
+
+        document.getElementById('trackingOrderIdDisplay').textContent = "#" + orderId;
+        document.getElementById('trackingCourierName').textContent = courierName || "Corriere";
+        document.getElementById('trackingCourierPhoto').src = courierPhoto || "https://api.dicebear.com/7.x/micah/svg?seed=GenericCourier";
+
+        const timelineContainer = document.getElementById('trackingTimelineContainer');
+        timelineContainer.innerHTML = '';
+        let steps = [
+            { time: '18:50', text: 'Ordine confermato', subtext: `${restaurantName} ha ricevuto il tuo ordine`, status: 'completed' },
+            { time: '19:05', text: 'Preparazione in corso', subtext: 'Il tuo ordine è in preparazione', status: 'completed' },
+            { time: '19:20', text: 'In consegna', subtext: `${courierName || 'Il corriere'} sta arrivando`, status: 'current' },
+            { time: '19:35 (stimato)', text: 'Consegnato', subtext: 'Il tuo ordine sarà consegnato', status: '' }
+        ];
+         if (orderId === "ORD-87553") {
+             steps = [
+                { time: '18:40', text: 'Ordine confermato', subtext: `${restaurantName} ha ricevuto il tuo ordine`, status: 'completed' },
+                { time: '18:55', text: 'Preparazione in corso', subtext: 'Il tuo ordine è in preparazione', status: 'completed' },
+                { time: '19:05', text: 'In consegna', subtext: `${courierName || 'Il corriere'} sta arrivando`, status: 'current' },
+                { time: '19:15 (stimato)', text: 'Consegnato', subtext: 'Il tuo ordine sarà consegnato', status: '' }
+            ];
+            document.getElementById('trackingEstimatedTime').innerHTML = `<i class="far fa-clock"></i> Arrivo stimato: <span class="delivery-time" id="modalEstimatedTimeValue">19:15</span>`;
+        } else {
+            document.getElementById('trackingEstimatedTime').innerHTML = `<i class="far fa-clock"></i> Arrivo stimato: <span class="delivery-time" id="modalEstimatedTimeValue">19:35</span>`;
+        }
+
+        steps.forEach(step => {
+            const stepDiv = document.createElement('div');
+            stepDiv.className = `tracking-step ${step.status}`;
+            let lineHtml = '';
+            const isLastVisibleStep = steps.indexOf(step) === steps.length -1 || (steps.indexOf(step) === steps.length -2 && steps[steps.length -1].status === '');
+            if (!isLastVisibleStep && (step.status === 'completed' || step.status === 'current')) {
+                 lineHtml = '<div class="tracking-line"></div>';
+            }
+
+            stepDiv.innerHTML = `
+                <div class="tracking-icon">
+                    <div class="tracking-icon-circle"></div>
+                    ${lineHtml}
+                </div>
+                <div class="tracking-content">
+                    <div class="tracking-time">${step.time}</div>
+                    <div class="tracking-text">${step.text}</div>
+                    <div class="tracking-subtext">${step.subtext}</div>
+                </div>
+            `;
+            timelineContainer.appendChild(stepDiv);
+        });
+        openModal('trackingModal');
+    }
+
+    function showCancelConfirm(orderId) {
+        currentOpenOrderId = orderId;
+        document.getElementById('cancelOrderIdDisplay').textContent = "#" + orderId;
+        openModal('cancelModal');
+    }
+
+    function confirmCancelOrder() {
+        closeModal('cancelModal');
+        const orderCard = Array.from(document.querySelectorAll('.order-card .order-number'))
+                            .find(el => el.textContent === `#${currentOpenOrderId}`)
+                            ?.closest('.order-card');
+        if (orderCard) {
+            orderCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            orderCard.style.opacity = '0';
+            orderCard.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                orderCard.remove();
+                 if (document.querySelectorAll('.active-orders .order-card').length === 0) {
+                    const emptyState = document.createElement('div');
+                    emptyState.innerHTML = `<p style="text-align:center; padding:2rem; color:var(--text-light);">Nessun ordine attivo al momento.</p>`;
+                    document.querySelector('.active-orders').appendChild(emptyState);
+                }
+            }, 500);
+        }
+        showToast('success', 'Ordine annullato', `L'ordine ${currentOpenOrderId} è stato annullato.`);
+    }
+
+    function openReviewModal(restaurantName) {
+        document.getElementById('reviewRestaurantName').textContent = restaurantName;
+        openModal('reviewModal');
+        resetReviewStars();
+        document.getElementById('reviewExperience').value = '';
+        document.querySelectorAll('#reviewModal .tag.interactive.active').forEach(tag => tag.classList.remove('active'));
+        document.getElementById('uploadPreview').innerHTML = '';
+        document.getElementById('photoUpload').value = '';
+    }
+
+    function submitReview() {
+        closeModal('reviewModal');
+        showToast('success', 'Recensione inviata', 'Grazie per aver condiviso la tua esperienza!');
+        triggerConfetti();
+    }
+
+    function callCourier() {
+        const courierNameFromTracking = document.getElementById('trackingCourierName')?.textContent || "Corriere";
+        const callScreenModalElement = document.getElementById('callScreenModal');
+        const callStatusTextElement = document.querySelector('#callScreenModal .call-status-text');
+
+        document.getElementById('callScreenCourierName').textContent = courierNameFromTracking;
+        document.getElementById('callScreenCourierAvatar').src = currentCourierPhotoForCall;
+        callStatusTextElement.textContent = "Chiamata in corso...";
+
+        openModal('callScreenModal');
+
+        // Interrompi audio/speech precedenti
+        terminateCallSoundsAndSpeech(); // Funzione helper per pulire
+        
+        // Cancella timeout precedente se esiste
+        if (callScreenModalElement.voiceTimeoutId) {
+            clearTimeout(callScreenModalElement.voiceTimeoutId);
+            callScreenModalElement.voiceTimeoutId = null;
+        }
+
+        // 1. Suono di chiamata in corso (squillo)
+        try {
+            ringingAudio = new Audio('https://www.soundjay.com/phone/telephone-ring-04.mp3');
+            ringingAudio.loop = true;
+            ringingAudio.play().catch(e => console.warn("Autoplay suono di squillo non permesso:", e));
+        } catch (e) {
+            console.error("Errore nel tentativo di riprodurre suono di squillo:", e);
+        }
+
+        // 2. Simula risposta e voce del corriere dopo un ritardo
+        callScreenModalElement.voiceTimeoutId = setTimeout(() => {
+            if (!callScreenModalElement.classList.contains('active')) {
+                if (ringingAudio) ringingAudio.pause();
+                return;
+            }
+
+            if (ringingAudio) {
+                ringingAudio.pause();
+                ringingAudio.currentTime = 0;
+            }
+
+            callStatusTextElement.textContent = "Connesso";
+
+            if ('speechSynthesis' in window) {
+                const estimatedTimeValue = document.getElementById('modalEstimatedTimeValue')?.textContent || "pochi minuti";
+                const restaurantNameForSpeech = document.querySelector(`#trackingModal .tracking-timeline .tracking-step:first-child .tracking-subtext`)?.textContent.split(' ha ricevuto')[0] || "il ristorante";
+
+                const speechMessages = [
+                    `Pronto, sono ${courierNameFromTracking}. Chiamo per l'ordine da ${restaurantNameForSpeech}. Sarò da lei tra circa ${estimatedTimeValue}.`,
+                    `Salve, qui ${courierNameFromTracking}, il suo corriere YourBite. Prevedo di arrivare per le ${estimatedTimeValue}. Tutto a posto per la consegna?`,
+                    `Ehilà, sono ${courierNameFromTracking}! Sto arrivando con il suo ordine, tempo stimato ${estimatedTimeValue}. Se ci sono problemi per trovarla, mi faccia sapere!`
+                ];
+                const randomMessage = speechMessages[Math.floor(Math.random() * speechMessages.length)];
+
+                speechUtterance = new SpeechSynthesisUtterance(randomMessage);
+                speechUtterance.lang = 'it-IT';
+                
+                // Tenta di selezionare una voce italiana
+                const voices = window.speechSynthesis.getVoices();
+                const italianVoice = voices.find(voice => voice.lang.startsWith('it-')); // it-IT, it-CH etc.
+                if (italianVoice) {
+                    speechUtterance.voice = italianVoice;
+                } else if (voices.length > 0) { // Se non c'è italiana, usa la prima disponibile per avere un feedback
+                     console.warn("Nessuna voce italiana trovata, usando la predefinita o la prima disponibile.");
+                     speechUtterance.voice = voices[0];
+                }
 
 
-            setupReviewStars(); 
+                speechUtterance.onend = () => {
+                    if (callScreenModalElement.classList.contains('active')) {
+                        // Potresti voler cambiare lo stato qui, es. "In attesa" o lasciare "Connesso"
+                        // callStatusTextElement.textContent = "Conversazione terminata. In attesa...";
+                    }
+                };
+                speechUtterance.onerror = (event) => {
+                    console.error('Errore nella sintesi vocale:', event.error);
+                    callStatusTextElement.textContent = "Errore audio";
+                     // Fallback a un suono semplice se speech synthesis fallisce
+                    playFallbackVoiceSound();
+                };
+
+                window.speechSynthesis.speak(speechUtterance);
+
+            } else {
+                console.warn("SpeechSynthesis non supportato. Riproduzione audio di fallback.");
+                playFallbackVoiceSound();
+            }
+        }, CALL_RESPONSE_DELAY);
+    }
+    
+    function playFallbackVoiceSound() {
+        const callStatusTextElement = document.querySelector('#callScreenModal .call-status-text');
+        try {
+            voiceAudio = new Audio('https://www.soundjay.com/human/sounds/voice-template-male-hello-1.mp3'); // Sostituisci con un file audio più lungo se vuoi
+            voiceAudio.play().catch(e => {
+                console.warn("Autoplay voce (fallback) non permesso:", e);
+                if(callStatusTextElement) callStatusTextElement.textContent = "Errore audio fallback";
+            });
+        } catch (e) {
+            console.error("Errore nel tentativo di riprodurre voce (fallback):", e);
+            if(callStatusTextElement) callStatusTextElement.textContent = "Errore audio fallback";
+        }
+    }
+
+
+    function terminateCallSoundsAndSpeech() {
+        if (ringingAudio) {
+            ringingAudio.pause();
+            ringingAudio.currentTime = 0;
+            ringingAudio = null;
+        }
+        if (voiceAudio) {
+            voiceAudio.pause();
+            voiceAudio.currentTime = 0;
+            voiceAudio = null;
+        }
+        if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+        speechUtterance = null;
+    }
+
+    function terminateCall() {
+        const callScreenModalElement = document.getElementById('callScreenModal');
+        terminateCallSoundsAndSpeech();
+
+        if (callScreenModalElement.voiceTimeoutId) {
+            clearTimeout(callScreenModalElement.voiceTimeoutId);
+            callScreenModalElement.voiceTimeoutId = null;
+        }
+        closeModal('callScreenModal');
+        showToast('info', 'Chiamata terminata', 'La chiamata con il corriere è stata terminata.');
+    }
+
+
+    function toggleTag(tagElement) {
+        tagElement.classList.toggle('active');
+    }
+
+    function previewPhotos(event) {
+        const previewContainer = document.getElementById('uploadPreview');
+        previewContainer.innerHTML = '';
+        Array.from(event.target.files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Review Stars Logic
+    function setupReviewStars() {
+        const reviewStarsContainer = document.querySelector('#reviewModal .rating-stars');
+        if (!reviewStarsContainer) return;
+        const stars = reviewStarsContainer.querySelectorAll('i');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseenter', function() { paintStars(parseInt(this.dataset.rating), stars); });
+            star.addEventListener('mouseleave', function() { paintStars(currentRating, stars); });
+            star.addEventListener('click', function() {
+                currentRating = parseInt(this.dataset.rating);
+                paintStars(currentRating, stars);
+            });
+        });
+    }
+    function paintStars(rating, starElements) {
+        starElements.forEach(s => {
+            if (parseInt(s.dataset.rating) <= rating) {
+                s.classList.remove('far'); s.classList.add('fas');
+            } else {
+                s.classList.remove('fas'); s.classList.add('far');
+            }
+        });
+    }
+    function resetReviewStars() {
+        currentRating = 0;
+        const reviewStarsContainer = document.querySelector('#reviewModal .rating-stars');
+        if (reviewStarsContainer) {
+            const stars = reviewStarsContainer.querySelectorAll('i');
+            paintStars(0, stars);
+        }
+    }
+
+    // Toast Notification
+    function showToast(type, title, message) {
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-icon">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+        `;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'toastSlideOut 0.3s forwards';
+            toast.addEventListener('animationend', () => toast.remove());
+        }, 5000);
+    }
+
+    // Confetti Effect
+    function triggerConfetti() {
+        const confettiContainer = document.getElementById('confettiContainer');
+        const colors = ['var(--navbar-red-main)', 'var(--accent-orange)', 'var(--accent-yellow)', '#2ecc71', '#3498db'];
+        for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const shape = Math.random() > 0.5 ? 'circle' : 'rect';
+            let size = Math.random() * 10 + 5;
+
+            if (shape === 'circle') confetti.style.borderRadius = '50%';
+
+            confetti.style.backgroundColor = color;
+            confetti.style.width = `${size}px`; confetti.style.height = `${size}px`;
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.top = `${Math.random() * -20 - 10}%`;
+            confetti.style.opacity = '1';
+
+            const duration = Math.random() * 3 + 2; const delay = Math.random() * 0.5;
+            confetti.style.animation = `confettiDrop ${duration}s ease-out ${delay}s forwards, confettiRotate ${duration / 2}s linear ${delay}s infinite`;
+            confettiContainer.appendChild(confetti);
+            setTimeout(() => confetti.remove(), (duration + delay + 1) * 1000);
+        }
+    }
+
+    function openMapDirections(address) {
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+        window.open(googleMapsUrl, '_blank');
+        showToast('info', 'Indicazioni', `Apertura di Google Maps per ${address}`);
+    }
+
+    // GSAP and other initializations
+    document.addEventListener('DOMContentLoaded', () => {
+        // Carica le voci per la sintesi vocale (alcuni browser ne hanno bisogno in anticipo)
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.getVoices(); // Chiamata iniziale per popolare la lista
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = () => {
+                    // Le voci sono ora caricate e disponibili in window.speechSynthesis.getVoices()
+                    // console.log("Voci caricate:", window.speechSynthesis.getVoices());
+                };
+            }
+        }
+
+
+        gsap.from('.hero-title', { y: 30, opacity: 0, duration: 1, ease: 'back.out(1.7)' });
+        gsap.from('.hero-subtitle', { y: 30, opacity: 0, duration: 1, delay: 0.3, ease: 'back.out(1.7)' });
+        gsap.from('.tab-btn', { y: 20, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power1.out' });
+
+        document.querySelectorAll('#attivi .animated').forEach(el => {
+            el.style.opacity = '0';
+            setTimeout(() => { el.classList.add('fadeInUp'); el.style.opacity = '1'; }, 100);
         });
 
-    </script>
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.stat-card, .history-card, .preference-card').forEach(card => {
+             gsap.from(card, {
+                scrollTrigger: { trigger: card, start: 'top 90%', toggleActions: 'play none none none' },
+                y: 30, opacity: 0, duration: 0.8, ease: 'back.out(1.2)'
+            });
+        });
+
+        setupReviewStars();
+
+        // Profile Menu Toggle
+        const profileBtn = document.getElementById('profileBtnTrigger');
+        const userMenu = document.getElementById('profileUserMenu');
+        if (profileBtn && userMenu) {
+            profileBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                userMenu.classList.toggle('show');
+            });
+            document.addEventListener('click', (event) => {
+                if (!userMenu.contains(event.target) && !profileBtn.contains(event.target)) {
+                    userMenu.classList.remove('show');
+                }
+            });
+        }
+
+        // Gestione Navigazione Mobile/Desktop
+        const desktopNav = document.getElementById('desktopNavMenu');
+        const mobileNav = document.getElementById('mobileNavMenu');
+        function handleNavDisplay() {
+            if (window.innerWidth <= 768) {
+                if(desktopNav) desktopNav.style.display = 'none';
+                if(mobileNav) mobileNav.style.display = 'grid';
+                 document.body.style.paddingBottom = mobileNav ? `${mobileNav.offsetHeight}px` : '70px'; // Aggiungi padding per la bottom nav
+            } else {
+                if(desktopNav) desktopNav.style.display = 'flex';
+                if(mobileNav) mobileNav.style.display = 'none';
+                document.body.style.paddingBottom = '0'; // Rimuovi padding
+            }
+        }
+        handleNavDisplay();
+        window.addEventListener('resize', handleNavDisplay);
+    });
+
+    // Funzioni placeholder per modali non implementati completamente
+    function openAddressModal() { showToast('info', 'Funzione non disponibile', 'L\'aggiunta di indirizzi sarà implementata presto.'); }
+    function openPaymentModal() { showToast('info', 'Funzione non disponibile', 'L\'aggiunta di metodi di pagamento sarà implementata presto.'); }
+    function reorderItems(orderId) { showToast('info', 'Riordino...', `Stai per riordinare gli articoli dell'ordine ${orderId}.`); }
+</script>
 </body>
 </html>
