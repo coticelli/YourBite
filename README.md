@@ -105,6 +105,34 @@ YourBite si rivolge a due segmenti chiave del mercato:
 4. Esegui lo script: `./start-yourbite.sh`
 5. L'applicazione si avvierà e aprirà automaticamente il browser
 
+### Da GitHub Codespace o Terminale
+1. Clona il repository usando Git:
+   ```bash
+   git clone https://github.com/coticelli/yourbite.git
+   ```
+2. Entra nella directory del progetto:
+   ```bash
+   cd yourbite
+   ```
+3. Avvia l'applicazione utilizzando Docker:
+   ```bash
+   docker pull cotii/yourbite-app
+   docker run -d -p 3000:3000 --name yourbite-container cotii/yourbite-app
+   ```
+4. Verifica che il container sia in esecuzione:
+   ```bash
+   docker ps
+   ```
+5. Accedi all'applicazione aprendo il browser su http://localhost:3000
+6. Per fermare l'applicazione quando hai finito:
+   ```bash
+   docker stop yourbite-container
+   ```
+7. Per riavviare l'applicazione in seguito:
+   ```bash
+   docker start yourbite-container
+   ```
+
 ---
 
 ## 📖 Guida Dettagliata
