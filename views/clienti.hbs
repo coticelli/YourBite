@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YourBite - Gestione Clienti</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.4/build/global/luxon.min.js"></script>
@@ -14,18 +16,37 @@
     <style>
         /* === VARIABILI E IMPOSTAZIONI BASE === */
         :root {
-            /* Palette colori moderna e vibrante */
-            --primary: #5e60ce;
-            --primary-light: #6930c3;
-            --primary-dark: #5390d9;
-            --secondary: #48bfe3;
-            --secondary-light: #64dfdf;
-            --accent: #80ffdb;
+            /* NUOVI COLORI PER LA NAVBAR E ELEMENTI PRINCIPALI (MODIFICATO) */
+            --navbar-red-main: #EE1B1B;
+            --navbar-red-gradient-dark: #D41010;
+
+            /* Palette colori - MODIFICATO per usare i nuovi rossi/arancioni */
+            --primary: var(--navbar-red-main);
+            /* Era #5e60ce */
+            --primary-light: var(--navbar-red-main);
+            /* Era #6930c3 */
+            --primary-dark: var(--navbar-red-gradient-dark);
+            /* Era #5390d9 */
+
+            --secondary: var(--navbar-red-main);
+            /* Era #48bfe3 */
+            --secondary-light: var(--navbar-red-main);
+            /* Era #64dfdf */
+
+            --accent: var(--accent-orange);
+            /* Era #80ffdb, ora arancione */
+
             --accent-green: #2ecc71;
+            /* Mantenuto */
             --accent-red: #e74c3c;
+            /* Mantenuto */
             --accent-orange: #f39c12;
+            /* Mantenuto */
             --accent-purple: #9b59b6;
+            /* Mantenuto per badge VIP */
             --accent-yellow: #f1c40f;
+            /* Mantenuto per badge VIP */
+
             --dark: #1a1a2e;
             --dark-blue: #16213e;
             --medium-dark: #252941;
@@ -35,15 +56,19 @@
             --gray-dark: #e9ecef;
             --text: #212529;
             --text-light: #6c757d;
-            
+
             /* Effetti e animazioni */
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --shadow-colored: 0 8px 25px rgba(94, 96, 206, 0.25);
+            /* --shadow-colored era basata su --primary, ora l'header usa ombra rossa diretta */
             --shadow-success: 0 8px 25px rgba(46, 204, 113, 0.25);
+            /* Mantenuto */
             --shadow-warning: 0 8px 25px rgba(243, 156, 18, 0.25);
+            /* Mantenuto */
             --shadow-danger: 0 8px 25px rgba(231, 76, 60, 0.25);
+            /* Mantenuto */
             --shadow-purple: 0 8px 25px rgba(155, 89, 182, 0.25);
+            /* Mantenuto */
             --radius: 16px;
             --radius-sm: 10px;
             --radius-lg: 24px;
@@ -64,9 +89,10 @@
 
         body {
             background-color: var(--gray);
-            background-image: 
-                radial-gradient(circle at 25% 10%, rgba(94, 96, 206, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 75% 75%, rgba(72, 191, 227, 0.05) 0%, transparent 40%);
+            /* MODIFICATO: background-image con tonalità rosse */
+            background-image:
+                radial-gradient(circle at 25% 10%, rgba(238, 27, 27, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(212, 16, 16, 0.05) 0%, transparent 40%);
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -90,11 +116,13 @@
 
         .card-hover-effect:hover {
             transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
-            box-shadow: 0 20px 40px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 20px 40px rgba(238, 27, 27, 0.2);
         }
 
         .text-gradient {
-            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            /* MODIFICATO: gradiente rosso */
+            background: linear-gradient(120deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: inline-block;
@@ -123,16 +151,26 @@
         }
 
         @keyframes glowPulse {
-            0% { opacity: 0; }
-            50% { opacity: 0.2; }
-            100% { opacity: 0; }
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
 
-        /* === HEADER E NAVIGAZIONE === */
+        /* === HEADER E NAVIGAZIONE (MODIFICATO) === */
         header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            /* MODIFICATO: sfondo rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             padding: 0;
-            box-shadow: var(--shadow-colored);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 8px 25px rgba(238, 27, 27, 0.25);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -143,7 +181,8 @@
         }
 
         header:hover {
-            box-shadow: 0 8px 30px rgba(94, 96, 206, 0.35);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 8px 30px rgba(238, 27, 27, 0.35);
         }
 
         header::before {
@@ -153,18 +192,23 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(120deg, 
-                rgba(0, 0, 0, 0), 
-                rgba(255, 255, 255, 0.1),
-                rgba(0, 0, 0, 0));
+            background: linear-gradient(120deg,
+                    rgba(0, 0, 0, 0),
+                    rgba(255, 255, 255, 0.1),
+                    rgba(0, 0, 0, 0));
             background-size: 200% 100%;
             animation: headerShimmer 6s linear infinite;
             pointer-events: none;
         }
 
         @keyframes headerShimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .header-container {
@@ -202,13 +246,11 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 255, 255, 0)
-            );
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.3),
+                    rgba(255, 255, 255, 0));
             transform: rotate(45deg);
             transition: var(--transition);
             opacity: 0;
@@ -226,8 +268,13 @@
         }
 
         @keyframes logoPulse {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
         }
 
         .header-title {
@@ -246,6 +293,7 @@
             width: 0;
             height: 2px;
             background: var(--accent);
+            /* Ora arancione */
             transition: var(--transition);
             position: absolute;
             bottom: -5px;
@@ -291,10 +339,10 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(120deg, 
-                rgba(255, 255, 255, 0), 
-                rgba(255, 255, 255, 0.2), 
-                rgba(255, 255, 255, 0));
+            background: linear-gradient(120deg,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.2),
+                    rgba(255, 255, 255, 0));
             top: 0;
             left: -100%;
             transition: var(--transition);
@@ -339,21 +387,27 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                to bottom right,
-                rgba(255, 255, 255, 0),
-                rgba(255, 255, 255, 0.1),
-                rgba(255, 255, 255, 0)
-            );
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.1),
+                    rgba(255, 255, 255, 0));
             transform: rotate(45deg);
             animation: homeButtonShimmer 3s infinite;
             opacity: 0.5;
         }
 
         @keyframes homeButtonShimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            50% { transform: translateX(100%) rotate(45deg); }
-            100% { transform: translateX(-100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+
+            50% {
+                transform: translateX(100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(-100%) rotate(45deg);
+            }
         }
 
         .header-nav a.home-button:hover {
@@ -364,6 +418,7 @@
 
         .header-nav a.home-button i {
             color: var(--accent);
+            /* Ora arancione */
             transition: var(--transition-spring);
         }
 
@@ -390,8 +445,13 @@
         }
 
         @keyframes badgePulse {
-            0% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-            100% { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+            0% {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            100% {
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
         }
 
         .user-role-badge i {
@@ -400,11 +460,25 @@
         }
 
         @keyframes rotateIcon {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(10deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(-10deg); }
-            100% { transform: rotate(0deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            50% {
+                transform: rotate(0deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
         }
 
         #notification-badge {
@@ -427,8 +501,13 @@
         }
 
         @keyframes notificationPulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.15); }
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.15);
+            }
         }
 
         .user-controls {
@@ -468,10 +547,10 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(120deg, 
-                rgba(255, 255, 255, 0), 
-                rgba(255, 255, 255, 0.2), 
-                rgba(255, 255, 255, 0));
+            background: linear-gradient(120deg,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 0.2),
+                    rgba(255, 255, 255, 0));
             top: 0;
             left: -100%;
             transition: var(--transition);
@@ -505,19 +584,38 @@
             position: absolute;
             width: 5px;
             height: 5px;
-            background-color: rgba(94, 96, 206, 0.1);
+            /* MODIFICATO: rosso */
+            background-color: rgba(238, 27, 27, 0.1);
             border-radius: 50%;
         }
 
-        @keyframes particleFloat {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(80px, -80px); }
+        .particle:nth-child(odd) {
+            background-color: rgba(212, 16, 16, 0.15);
         }
-        
+
+
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(80px, -80px);
+            }
+        }
+
         @keyframes particleFade {
-            0% { opacity: 0.05; }
-            50% { opacity: 0.2; }
-            100% { opacity: 0.05; }
+            0% {
+                opacity: 0.05;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 0.05;
+            }
         }
 
         /* === CUSTOMIZED SCROLLBAR === */
@@ -525,20 +623,22 @@
             width: 8px;
             height: 8px;
         }
-        
+
         ::-webkit-scrollbar-track {
             background: var(--gray-light);
             border-radius: 10px;
         }
-        
+
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--primary-light), var(--primary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(var(--navbar-red-main), var(--navbar-red-gradient-dark));
             border-radius: 10px;
             transition: var(--transition);
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(var(--primary), var(--primary-dark));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(var(--navbar-red-gradient-dark), var(--navbar-red-gradient-dark));
         }
 
         /* === CUSTOMERS CONTAINER === */
@@ -551,8 +651,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .customers-header {
@@ -572,7 +679,8 @@
             position: absolute;
             width: 50%;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(90deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             bottom: -8px;
             left: 0;
             border-radius: 2px;
@@ -617,14 +725,17 @@
         }
 
         .view-btn.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
-            box-shadow: 0 4px 15px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 4px 15px rgba(238, 27, 27, 0.2);
         }
 
         .view-btn:not(.active):hover {
             background-color: var(--gray-light);
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
             transform: translateY(-2px);
         }
 
@@ -660,8 +771,9 @@
 
         .search-box input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(94, 96, 206, 0.15);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            box-shadow: 0 0 0 4px rgba(238, 27, 27, 0.15);
         }
 
         .search-box i {
@@ -675,8 +787,9 @@
             transition: var(--transition);
         }
 
-        .search-box input:focus + i {
-            color: var(--primary);
+        .search-box input:focus+i {
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
         }
 
         .filter-controls {
@@ -703,8 +816,9 @@
 
         .filter-dropdown select:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(94, 96, 206, 0.15);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            box-shadow: 0 0 0 4px rgba(238, 27, 27, 0.15);
         }
 
         .filter-dropdown::after {
@@ -721,7 +835,8 @@
         }
 
         .filter-dropdown:hover::after {
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
         }
 
         .action-btn {
@@ -747,8 +862,9 @@
         .action-btn:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow);
-            border-color: var(--primary-light);
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            color: var(--navbar-red-main);
         }
 
         .action-btn:hover i {
@@ -756,14 +872,17 @@
         }
 
         .add-customer-btn {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
             border: none;
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
         }
 
         .add-customer-btn:hover {
-            box-shadow: 0 8px 25px rgba(94, 96, 206, 0.3);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 8px 25px rgba(238, 27, 27, 0.3);
             color: white;
         }
 
@@ -784,8 +903,9 @@
         .export-btn:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow);
-            border-color: var(--secondary);
-            color: var(--secondary);
+            /* Mantenuto colore secondario originale per Export, oppure cambiare in var(--accent-orange) o altro */
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
         }
 
         .export-btn:hover i {
@@ -841,13 +961,15 @@
         .customer-card-back {
             transform: rotateY(180deg);
             padding: 20px;
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-gradient-dark), var(--navbar-red-main));
             color: white;
         }
 
         .customer-card-header {
             height: 120px;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             padding: 20px;
             color: white;
             position: relative;
@@ -866,8 +988,13 @@
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .customer-card-body {
@@ -877,6 +1004,7 @@
         }
 
         .vip-badge {
+            /* Mantenuto Giallo/Arancio */
             position: absolute;
             top: 15px;
             right: 15px;
@@ -971,7 +1099,8 @@
         .stat-value {
             font-size: 20px;
             font-weight: 700;
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
             margin-bottom: 3px;
         }
 
@@ -1009,19 +1138,23 @@
         }
 
         .flip-btn {
-            background-color: rgba(94, 96, 206, 0.1);
-            color: var(--primary);
+            background-color: rgba(238, 27, 27, 0.1);
+            color: var(--navbar-red-main);
         }
 
+        /* MODIFICATO: rosso */
         .detail-btn {
             background-color: rgba(46, 204, 113, 0.1);
             color: var(--accent-green);
         }
 
+        /* Verde ok */
         .edit-btn {
             background-color: rgba(243, 156, 18, 0.1);
             color: var(--accent-orange);
         }
+
+        /* Arancione ok */
 
         .flip-btn:hover,
         .detail-btn:hover,
@@ -1031,19 +1164,23 @@
         }
 
         .flip-btn:hover {
-            background-color: var(--primary);
+            background-color: var(--navbar-red-main);
             color: white;
         }
 
+        /* MODIFICATO: rosso */
         .detail-btn:hover {
             background-color: var(--accent-green);
             color: white;
         }
 
+        /* Verde ok */
         .edit-btn:hover {
             background-color: var(--accent-orange);
             color: white;
         }
+
+        /* Arancione ok */
 
         /* Card back styles */
         .card-back-header {
@@ -1061,7 +1198,7 @@
             opacity: 0.8;
         }
 
-        .stats-chart-container-card { /* Renamed to avoid conflict */
+        .stats-chart-container-card {
             position: relative;
             height: 180px;
             margin-bottom: 20px;
@@ -1088,14 +1225,17 @@
 
         .loyalty-progress-bar {
             height: 100%;
-            background: linear-gradient(to right, var(--accent), var(--secondary-light));
+            /* MODIFICATO: gradiente arancione/rosso */
+            background: linear-gradient(to right, var(--accent-orange), var(--navbar-red-main));
             border-radius: 6px;
             position: relative;
             animation: growWidth 1.5s ease-out;
         }
 
         @keyframes growWidth {
-            from { width: 0; }
+            from {
+                width: 0;
+            }
         }
 
         .loyalty-rewards {
@@ -1124,15 +1264,28 @@
         }
 
         .loyalty-point.active::before {
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-            animation: pulse 2s infinite;
+            /* MODIFICATO: arancione */
+            background: var(--accent-orange);
+            box-shadow: 0 0 10px var(--accent-orange);
+            animation: pulseOrange 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(128, 255, 219, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(128, 255, 219, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(128, 255, 219, 0); }
+        /* Rinominato animazione */
+
+        @keyframes pulseOrange {
+
+            /* Nuova animazione per arancio */
+            0% {
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(243, 156, 18, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+            }
         }
 
         .card-back-footer {
@@ -1172,7 +1325,7 @@
             border-collapse: collapse;
         }
 
-        .customers-table th, 
+        .customers-table th,
         .customers-table td {
             padding: 16px 20px;
             text-align: left;
@@ -1199,7 +1352,8 @@
         }
 
         .customers-table tbody tr:hover {
-            background-color: rgba(94, 96, 206, 0.03);
+            /* MODIFICATO: rosso tenue */
+            background-color: rgba(238, 27, 27, 0.03);
         }
 
         .customers-table tbody tr:last-child {
@@ -1223,8 +1377,9 @@
 
         .customers-table tr:hover .table-customer-avatar {
             transform: scale(1.1) rotate(10deg);
-            border-color: var(--primary);
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
         }
 
         .table-customer-name {
@@ -1234,7 +1389,8 @@
         }
 
         .table-customer-name:hover {
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
         }
 
         .table-customer-email {
@@ -1257,18 +1413,22 @@
             color: var(--accent-green);
         }
 
+        /* Verde ok */
         .status-inactive {
             background-color: rgba(0, 0, 0, 0.05);
             color: var(--text-light);
         }
-        
+
+        /* Grigio ok */
         .status-vip {
             background-color: rgba(241, 196, 15, 0.15);
             color: var(--accent-yellow);
         }
 
+        /* Giallo ok */
 
         .table-loyalty-points {
+            /* Arancione ok */
             background: rgba(243, 156, 18, 0.15);
             color: var(--accent-orange);
             padding: 6px 12px;
@@ -1299,41 +1459,49 @@
         }
 
         .table-view-btn {
-            background-color: rgba(94, 96, 206, 0.1);
-            color: var(--primary);
+            background-color: rgba(238, 27, 27, 0.1);
+            color: var(--navbar-red-main);
         }
 
+        /* MODIFICATO: rosso */
         .table-edit-btn {
             background-color: rgba(243, 156, 18, 0.1);
             color: var(--accent-orange);
         }
 
+        /* Arancione ok */
         .table-delete-btn {
             background-color: rgba(231, 76, 60, 0.1);
             color: var(--accent-red);
         }
+
+        /* Rosso ok */
 
         .table-action-btn:hover {
             transform: translateY(-3px) scale(1.1);
         }
 
         .table-view-btn:hover {
-            background-color: var(--primary);
+            background-color: var(--navbar-red-main);
             color: white;
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
         }
 
+        /* MODIFICATO: rosso */
         .table-edit-btn:hover {
             background-color: var(--accent-orange);
             color: white;
             box-shadow: 0 5px 15px rgba(243, 156, 18, 0.2);
         }
 
+        /* Arancione ok */
         .table-delete-btn:hover {
             background-color: var(--accent-red);
             color: white;
             box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
         }
+
+        /* Rosso ok */
 
         /* === MAP VIEW === */
         .customers-map-container {
@@ -1382,17 +1550,19 @@
         }
 
         .map-filter-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            color: var(--navbar-red-main);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transform: translateY(-2px);
         }
 
         .map-filter-btn.active {
-            background: var(--primary);
+            /* MODIFICATO: rosso */
+            background: var(--navbar-red-main);
             color: white;
-            border-color: var(--primary);
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            border-color: var(--navbar-red-main);
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
         }
 
         .map-canvas-container {
@@ -1408,20 +1578,11 @@
             height: 100%;
             border-radius: var(--radius);
             background-color: var(--gray-light);
-            /* 
-              L'URL seguente è per un'immagine di mappa STATICA da Google. 
-              Per una mappa interattiva (zoom, pan, marker cliccabili) 
-              sarebbe necessaria un'integrazione con un'API JavaScript come 
-              Google Maps JavaScript API, Leaflet o Mapbox GL JS, 
-              che richiederebbe una chiave API e una configurazione più complessa.
-              Per questa demo, si usa un'immagine statica o una stilizzazione che la simuli.
-            */
-            background-image: url('https://picsum.photos/seed/citymap/1200/500'); /* Placeholder per mappa */
+            background-image: url('https://picsum.photos/seed/citymap/1200/500');
             background-position: center;
             background-size: cover;
         }
 
-        /* Map customer markers */
         .customer-marker {
             position: absolute;
             width: 40px;
@@ -1432,24 +1593,26 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border: 2px solid var(--primary);
+            /* MODIFICATO: rosso */
+            border: 2px solid var(--navbar-red-main);
             cursor: pointer;
             transition: var(--transition-spring), opacity 0.3s ease;
             z-index: 5;
             opacity: 1;
         }
-         .customer-marker.filtered-out {
+
+        .customer-marker.filtered-out {
             opacity: 0.3;
             transform: scale(0.8);
         }
-
 
         .customer-marker::after {
             content: '';
             position: absolute;
             width: 10px;
             height: 10px;
-            background: var(--primary);
+            /* MODIFICATO: rosso */
+            background: var(--navbar-red-main);
             border-radius: 50%;
             bottom: -15px;
             transform: translateX(-50%);
@@ -1462,7 +1625,8 @@
             position: absolute;
             border-width: 10px;
             border-style: solid;
-            border-color: var(--primary) transparent transparent transparent;
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main) transparent transparent transparent;
             bottom: -25px;
             left: calc(50% - 10px);
             filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
@@ -1479,18 +1643,21 @@
             transform: scale(1.2);
             z-index: 10;
         }
-         .customer-marker.marker-vip {
+
+        .customer-marker.marker-vip {
             border-color: var(--accent-yellow);
         }
 
+        /* Giallo VIP ok */
         .customer-marker.marker-vip::after {
             background: var(--accent-yellow);
         }
+
         .customer-marker.marker-vip::before {
-             border-top-color: var(--accent-yellow);
+            border-top-color: var(--accent-yellow);
         }
 
-        .marker-active { /* Da usare per un marker selezionato, se implementato */
+        .marker-active {
             position: absolute;
             width: 50px;
             height: 50px;
@@ -1499,18 +1666,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 30px rgba(94, 96, 206, 0.3);
-            border: 3px solid var(--primary);
+            /* MODIFICATO: rosso */
+            box-shadow: 0 10px 30px rgba(238, 27, 27, 0.3);
+            border: 3px solid var(--navbar-red-main);
             z-index: 20;
             transition: var(--transition-spring);
-            animation: markerPulse 2s infinite;
+            animation: markerPulseRed 2s infinite;
             transform-origin: center bottom;
         }
 
-        @keyframes markerPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Nuova animazione rossa */
+        @keyframes markerPulseRed {
+
+            /* Nuova animazione rossa */
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .marker-active img {
@@ -1525,7 +1704,8 @@
             position: absolute;
             width: 15px;
             height: 15px;
-            background: var(--primary);
+            /* MODIFICATO: rosso */
+            background: var(--navbar-red-main);
             border-radius: 50%;
             bottom: -20px;
             transform: translateX(-50%);
@@ -1538,7 +1718,8 @@
             position: absolute;
             border-width: 15px;
             border-style: solid;
-            border-color: var(--primary) transparent transparent transparent;
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main) transparent transparent transparent;
             bottom: -35px;
             left: calc(50% - 15px);
             filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
@@ -1546,7 +1727,7 @@
 
         .marker-info {
             position: absolute;
-            bottom: 70px; /* O top/right/left a seconda del design per il popup info */
+            bottom: 70px;
             left: 50%;
             transform: translateX(-50%);
             background: white;
@@ -1560,11 +1741,12 @@
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        .customer-marker:hover .marker-info, .marker-active .marker-info { /* Per mostrare al hover o se selezionato */
-             opacity: 1;
-             visibility: visible;
-        }
 
+        .customer-marker:hover .marker-info,
+        .marker-active .marker-info {
+            opacity: 1;
+            visibility: visible;
+        }
 
         .marker-info::after {
             content: '';
@@ -1608,7 +1790,8 @@
         }
 
         .marker-info-btn:hover {
-            background: var(--primary);
+            /* MODIFICATO: rosso */
+            background: var(--navbar-red-main);
             color: white;
         }
 
@@ -1648,7 +1831,8 @@
             height: 5px;
             bottom: 0;
             left: 0;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(90deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             transform: translateY(5px);
             transition: var(--transition);
         }
@@ -1680,9 +1864,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: rosso */
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
             font-size: 20px;
             transition: var(--transition-spring);
         }
@@ -1698,16 +1884,14 @@
         .stats-card-value {
             font-size: 36px;
             font-weight: 800;
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
             margin-bottom: 5px;
-            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(120deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        #total-customers-value, #active-customers-value, #vip-customers-value { /* Specific IDs for overview stats */
-            /* Inherits .stats-card-value */
-        }
-
 
         .stats-card-trend {
             display: flex;
@@ -1722,11 +1906,14 @@
             color: var(--accent-green);
         }
 
+        /* Verde ok */
         .trend-down {
             color: var(--accent-red);
         }
 
-        .stats-chart-container { /* Generic for charts in stats view */
+        /* Rosso ok */
+
+        .stats-chart-container {
             background: white;
             border-radius: var(--radius);
             padding: 25px;
@@ -1774,14 +1961,16 @@
         }
 
         .chart-filter-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            color: var(--navbar-red-main);
         }
 
         .chart-filter-btn.active {
-            background: var(--primary);
+            /* MODIFICATO: rosso */
+            background: var(--navbar-red-main);
             color: white;
-            border-color: var(--primary);
+            border-color: var(--navbar-red-main);
         }
 
         .chart-wrapper {
@@ -1798,7 +1987,8 @@
             gap: 8px;
         }
 
-        .pagination a, .pagination span {
+        .pagination a,
+        .pagination span {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1812,32 +2002,35 @@
             transition: var(--transition-spring);
             cursor: pointer;
         }
+
         .pagination span {
             border-color: transparent;
             color: var(--text-light);
         }
 
-
         .pagination a:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            color: var(--navbar-red-main);
             transform: translateY(-3px) scale(1.1);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .pagination a.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
             border-color: transparent;
-            box-shadow: 0 5px 15px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: ombra rossa */
+            box-shadow: 0 5px 15px rgba(238, 27, 27, 0.2);
         }
-         .pagination a.disabled {
+
+        .pagination a.disabled {
             color: var(--gray-dark);
             border-color: var(--gray-dark);
             cursor: not-allowed;
             pointer-events: none;
         }
-
 
         /* === TOAST NOTIFICATION === */
         .toast-notification {
@@ -1879,14 +2072,23 @@
             color: var(--accent-green);
         }
 
+        /* Verde ok */
         .toast-error .toast-icon {
             background-color: rgba(231, 76, 60, 0.15);
             color: var(--accent-red);
         }
 
+        /* Rosso ok */
         .toast-warning .toast-icon {
             background-color: rgba(243, 156, 18, 0.15);
             color: var(--accent-orange);
+        }
+
+        /* Arancio ok */
+        .toast-info .toast-icon {
+            /* Rosso per info */
+            background-color: rgba(238, 27, 27, 0.15);
+            color: var(--navbar-red-main);
         }
 
         .toast-content {
@@ -1958,12 +2160,13 @@
 
         .modal-header {
             padding: 20px 25px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-main), var(--navbar-red-gradient-dark));
             color: white;
             position: relative;
         }
 
-            .modal-header h3 {
+        .modal-header h3 {
             margin: 0;
             font-size: 20px;
             font-weight: 600;
@@ -1987,6 +2190,8 @@
 
         .modal-body {
             padding: 25px;
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .modal-footer {
@@ -2019,8 +2224,9 @@
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(94, 96, 206, 0.2);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            box-shadow: 0 0 0 3px rgba(238, 27, 27, 0.2);
         }
 
         /* Customer profile modal */
@@ -2029,7 +2235,8 @@
         }
 
         .profile-header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            /* MODIFICATO: rosso */
+            background: linear-gradient(135deg, var(--navbar-red-gradient-dark), var(--navbar-red-main));
             color: white;
             padding: 30px;
             position: relative;
@@ -2043,7 +2250,7 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background: url('https://picsum.photos/seed/profilebg/800/200') center/cover; /* Placeholder per pattern */
+            background: url('https://picsum.photos/seed/profilebg/800/200');
             opacity: 0.1;
         }
 
@@ -2107,22 +2314,24 @@
         }
 
         .profile-tab:hover {
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
         }
 
         .profile-tab.active {
-            border-color: var(--primary);
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            border-color: var(--navbar-red-main);
+            color: var(--navbar-red-main);
         }
 
         .profile-content {
             padding: 30px;
-            min-height: 200px; /* Assicura che ci sia spazio per il contenuto */
-        }
-         .profile-content .profile-tab-content:not([data-tab="info"]) { /* Nasconde le altre tab per default */
-            display: none;
+            min-height: 200px;
         }
 
+        .profile-content .profile-tab-content:not([data-tab="info"]) {
+            display: none;
+        }
 
         .profile-section {
             margin-bottom: 30px;
@@ -2168,7 +2377,8 @@
 
         .profile-order-id {
             font-weight: 700;
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
         }
 
         .profile-order-date {
@@ -2212,7 +2422,8 @@
         .profile-stat-value {
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            /* MODIFICATO: rosso */
+            color: var(--navbar-red-main);
             margin-bottom: 5px;
         }
 
@@ -2220,7 +2431,8 @@
             color: var(--text-light);
             font-weight: 500;
         }
-         .no-data-message {
+
+        .no-data-message {
             text-align: center;
             padding: 20px;
             color: var(--text-light);
@@ -2233,29 +2445,29 @@
             .header-nav a span {
                 display: none;
             }
-            
+
             .header-nav a {
                 padding: 10px;
                 font-size: 16px;
                 justify-content: center;
             }
-            
+
             .header-nav a i {
                 margin: 0;
             }
-            
+
             .user-role-badge {
                 padding: 8px 12px;
             }
-            
+
             .customers-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
-            
+
             .stats-row {
                 flex-wrap: wrap;
             }
-            
+
             .stats-card {
                 flex: 0 0 calc(50% - 10px);
                 margin-bottom: 10px;
@@ -2268,40 +2480,51 @@
                 justify-content: center;
                 gap: 10px;
             }
-            
+
             .logo-container {
                 margin-right: auto;
             }
-            
+
             .user-controls {
                 margin-left: auto;
             }
-            
+
             header {
                 height: auto;
                 padding: 10px 0;
             }
-            
+
+            /* Già modificato per colore */
             .customers-container {
                 padding: 20px 15px;
             }
-            
+
             .search-filter-container {
                 flex-direction: column;
             }
-            
+
             .search-box {
                 max-width: 100%;
             }
-            
+
             .filter-controls {
                 justify-content: space-between;
                 width: 100%;
+                flex-wrap: wrap;
             }
-            
+
             .filter-dropdown select {
-                width: 100%;
+                width: auto;
+                min-width: 150px;
             }
+
+            /* Allow shrinking */
+            .action-btn {
+                flex-grow: 1;
+                justify-content: center;
+            }
+
+            /* Make buttons take space */
         }
 
         @media (max-width: 768px) {
@@ -2310,45 +2533,59 @@
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .header-nav {
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 8px;
                 margin: 10px 0;
             }
-            
-            .logo-container, .user-controls {
+
+            .logo-container,
+            .user-controls {
                 margin: 0;
                 justify-content: center;
                 width: 100%;
             }
-            
+
             .customers-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .stats-card {
                 flex: 0 0 100%;
             }
-            
+
             .customers-table th:nth-child(n+4),
             .customers-table td:nth-child(n+4) {
                 display: none;
             }
-            
+
+            /* Hide less important columns */
             .table-actions {
-                flex-direction: column;
-                gap: 5px;
+                flex-direction: row;
             }
-            
+
+            /* Keep actions horizontal if possible */
             .view-switcher {
                 margin-bottom: 15px;
             }
-             .pagination a, .pagination span {
+
+            .pagination a,
+            .pagination span {
                 width: 35px;
                 height: 35px;
                 font-size: 14px;
+            }
+
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-tabs {
+                justify-content: center;
+                flex-wrap: wrap;
             }
         }
 
@@ -2356,46 +2593,80 @@
             .customers-header h1 {
                 font-size: 24px;
             }
-            
+
             .search-filter-container {
                 gap: 10px;
             }
-             .filter-controls {
+
+            .filter-controls {
                 flex-direction: column;
             }
-            .add-customer-btn, .export-btn {
+
+            .add-customer-btn,
+            .export-btn {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .filter-dropdown {
                 width: 100%;
             }
-            
+
             .filter-dropdown select {
                 width: 100%;
             }
-            
+
             .map-filters {
                 flex-direction: column;
                 gap: 10px;
             }
-             .chart-filter-btn {
+
+            .chart-filter-btn {
                 padding: 6px 10px;
                 font-size: 12px;
             }
+
             .stats-chart-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
+
+            .pagination {
+                flex-wrap: wrap;
+            }
+
+            .table-actions {
+                flex-wrap: wrap;
+            }
+
+            /* Allow table actions to wrap */
+            .modal {
+                max-width: 95%;
+            }
+
+            .modal-body {
+                padding: 15px;
+                max-height: calc(90vh - 130px);
+            }
+
+            .modal-footer {
+                padding: 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-footer button {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body class="capo-role">
     <!-- Particle Background -->
     <div class="particles" id="particles"></div>
-    
+
     <!-- Header migliorato -->
     <header>
         <div class="header-container">
@@ -2403,7 +2674,7 @@
                 <img src="/img/logo.png" alt="YourBite Logo" class="logo">
                 <h1 class="header-title">YourBite</h1>
             </div>
-            
+
             <div class="header-nav">
                 <!-- Pulsante Homepage con effetto speciale -->
                 <a href="/homepage_capo" class="home-button">
@@ -2418,13 +2689,13 @@
                 <a href="/menu">
                     <i class="fas fa-utensils"></i> <span>Menu</span>
                 </a>
-                <a href="/clienti" class="active">
+                <a href="/clienti" class="active"> <!-- Già active -->
                     <i class="fas fa-users"></i> <span>Clienti</span>
                 </a>
                 <a href="/impostazioni">
                     <i class="fas fa-cog"></i> <span>Impostazioni</span>
                 </a>
-                
+
                 <div style="position: relative; margin-left: 10px;">
                     <span id="notification-badge" style="display: none;">0</span>
                     <span class="user-role-badge">
@@ -2432,20 +2703,20 @@
                     </span>
                 </div>
             </div>
-            
+
             <div class="user-controls">
-                <span class="username">{{user.username}}</span>
+                <span class="username">Admin</span> <!-- Username placeholder -->
                 <button class="logout-btn btn-glow" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
         </div>
     </header>
-    
+
     <div class="customers-container">
         <!-- Customers Header -->
         <div class="customers-header animate-in">
-            <h1 class="text-gradient">Gestione Clienti</h1>
+            <h1 class="text-gradient">Gestione Clienti</h1> <!-- Rosso -->
             <p>Visualizza, analizza e gestisci i clienti del tuo locale</p>
         </div>
 
@@ -2454,65 +2725,74 @@
             <div class="stats-card card-hover-effect">
                 <div class="stats-card-header">
                     <span class="stats-card-title">Clienti Totali</span>
-                    <div class="stats-card-icon"><i class="fas fa-users"></i></div>
+                    <div class="stats-card-icon"><i class="fas fa-users"></i></div> <!-- Rosso -->
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" id="total-customers-value">0</div>
+                    <div class="stats-card-value" id="total-customers-value">0</div> <!-- Rosso -->
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +12% questo mese
                     </div>
                 </div>
             </div>
-            
+
             <div class="stats-card card-hover-effect">
                 <div class="stats-card-header">
                     <span class="stats-card-title">Clienti Attivi</span>
                     <div class="stats-card-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                        <!-- Verde -->
                         <i class="fas fa-user-check"></i>
                     </div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" id="active-customers-value" style="background: linear-gradient(120deg, #2ecc71, #27ae60); -webkit-background-clip: text;">0</div>
+                    <div class="stats-card-value" id="active-customers-value"
+                        style="background: linear-gradient(120deg, #2ecc71, #27ae60); -webkit-background-clip: text;">0
+                    </div> <!-- Verde -->
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +8% questo mese
                     </div>
                 </div>
             </div>
-            
+
             <div class="stats-card card-hover-effect">
                 <div class="stats-card-header">
                     <span class="stats-card-title">Spesa Media</span>
                     <div class="stats-card-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                        <!-- Arancione -->
                         <i class="fas fa-euro-sign"></i>
                     </div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" id="average-spend-value" style="background: linear-gradient(120deg, #f39c12, #e67e22); -webkit-background-clip: text;">€24,70</div>
+                    <div class="stats-card-value" id="average-spend-value"
+                        style="background: linear-gradient(120deg, #f39c12, #e67e22); -webkit-background-clip: text;">
+                        €24,70</div> <!-- Arancione -->
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +5.5% questo mese
                     </div>
                 </div>
             </div>
-            
+
             <div class="stats-card card-hover-effect">
                 <div class="stats-card-header">
                     <span class="stats-card-title">Clienti VIP</span>
-                    <div class="stats-card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                    <div class="stats-card-icon" style="background: linear-gradient(135deg, #f1c40f, #e67e22);">
+                        <!-- Giallo/Arancio -->
                         <i class="fas fa-crown"></i>
                     </div>
                 </div>
                 <div class="stats-card-body">
-                    <div class="stats-card-value" id="vip-customers-value" style="background: linear-gradient(120deg, #9b59b6, #8e44ad); -webkit-background-clip: text;">0</div>
+                    <div class="stats-card-value" id="vip-customers-value"
+                        style="background: linear-gradient(120deg, #f1c40f, #e67e22); -webkit-background-clip: text;">0
+                    </div> <!-- Giallo/Arancio -->
                     <div class="stats-card-trend trend-up">
                         <i class="fas fa-arrow-up"></i> +15% questo mese
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <!-- View Switcher -->
         <div class="view-switcher animate-in animate-delay-1">
-            <button class="view-btn active" data-view="cards">
+            <button class="view-btn active" data-view="cards"> <!-- Rosso -->
                 <i class="fas fa-id-card"></i> Schede
             </button>
             <button class="view-btn" data-view="table">
@@ -2530,9 +2810,10 @@
         <div class="search-filter-container animate-in animate-delay-2">
             <div class="search-box">
                 <input type="text" id="customer-search-input" placeholder="Cerca cliente per nome, email...">
+                <!-- Rosso on focus -->
                 <i class="fas fa-search"></i>
             </div>
-            
+
             <div class="filter-controls">
                 <div class="filter-dropdown">
                     <select id="status-filter">
@@ -2542,7 +2823,7 @@
                         <option value="vip">VIP</option>
                     </select>
                 </div>
-                
+
                 <div class="filter-dropdown">
                     <select id="sort-filter">
                         <option value="newest">Più recenti (ID)</option>
@@ -2553,25 +2834,25 @@
                         <option value="name-asc">Nome (A-Z)</option>
                     </select>
                 </div>
-                
-                <button class="add-customer-btn action-btn">
+
+                <button class="add-customer-btn action-btn"> <!-- Rosso -->
                     <i class="fas fa-plus"></i> Nuovo Cliente
                 </button>
-                
-                <button class="export-btn">
+
+                <button class="export-btn"> <!-- Arancione/Originale -->
                     <i class="fas fa-file-export"></i> Esporta
                 </button>
             </div>
         </div>
-        
+
         <!-- CARDS VIEW -->
         <div id="cards-view" class="view-content animate-in animate-delay-3">
             <div class="customers-grid" id="customers-grid-container">
                 <!-- Le schede cliente verranno generate qui da JavaScript -->
-                 <p class="no-data-message" style="display:none;">Nessun cliente trovato per i filtri selezionati.</p>
+                <p class="no-data-message" style="display:none;">Nessun cliente trovato per i filtri selezionati.</p>
             </div>
         </div>
-        
+
         <!-- TABLE VIEW (hidden by default) -->
         <div id="table-view" class="view-content" style="display: none;">
             <div class="customers-table-container animate-in">
@@ -2590,10 +2871,11 @@
                         <!-- Le righe della tabella verranno generate qui da JavaScript -->
                     </tbody>
                 </table>
-                <p class="no-data-message" id="table-no-data-message" style="display:none;">Nessun cliente trovato per i filtri selezionati.</p>
+                <p class="no-data-message" id="table-no-data-message" style="display:none;">Nessun cliente trovato per i
+                    filtri selezionati.</p>
             </div>
         </div>
-        
+
         <!-- MAP VIEW (hidden by default) -->
         <div id="map-view" class="view-content" style="display: none;">
             <div class="customers-map-container animate-in">
@@ -2602,7 +2884,7 @@
                         <i class="fas fa-map-marker-alt"></i> Distribuzione Clienti
                     </div>
                     <div class="map-filters">
-                        <button class="map-filter-btn active" data-map-filter="all">
+                        <button class="map-filter-btn active" data-map-filter="all"> <!-- Rosso -->
                             <i class="fas fa-users"></i> Tutti
                         </button>
                         <button class="map-filter-btn" data-map-filter="active">
@@ -2616,30 +2898,17 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="map-canvas-container">
                     <div class="map-canvas" id="map-canvas-markers">
-                        <!-- Customer Markers verranno generati qui da JS -->
-                        <!-- Esempio di come potrebbe essere un marker selezionato, per ora commentato -->
-                        <!-- 
-                        <div class="marker-active" style="top: 220px; left: 300px;">
-                            <img src="https://randomuser.me/api/portraits/women/66.jpg" alt="Elena Martini">
-                            <div class="marker-info">
-                                <h3>Elena Martini</h3>
-                                <p>Via Roma 123, Milano</p>
-                                <div class="marker-info-actions">
-                                    <button class="marker-info-btn"><i class="fas fa-user"></i> Profilo</button>
-                                    <button class="marker-info-btn"><i class="fas fa-route"></i> Indicazioni</button>
-                                </div>
-                            </div>
-                        </div>
-                        -->
+                        <!-- Customer Markers verranno generati qui da JS (bordo rosso) -->
                     </div>
                 </div>
-                 <p class="no-data-message" id="map-no-data-message" style="display:none;">Nessun cliente da mostrare sulla mappa.</p>
+                <p class="no-data-message" id="map-no-data-message" style="display:none;">Nessun cliente da mostrare
+                    sulla mappa.</p>
             </div>
         </div>
-        
+
         <!-- STATS VIEW (hidden by default) -->
         <div id="stats-view" class="view-content" style="display: none;">
             <!-- Customer Demographics Chart -->
@@ -2650,15 +2919,18 @@
                     </div>
                     <div class="stats-chart-filters" id="demographics-filters">
                         <button class="chart-filter-btn active" data-chart="demographics" data-filter="age">Età</button>
+                        <!-- Rosso -->
                         <button class="chart-filter-btn" data-chart="demographics" data-filter="gender">Genere</button>
-                        <button class="chart-filter-btn" data-chart="demographics" data-filter="location">Località</button>
+                        <button class="chart-filter-btn" data-chart="demographics"
+                            data-filter="location">Località</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
                     <canvas id="demographics-chart"></canvas>
+                    <!-- Usare colori rossi/arancio/giallo/verde per differenziare se necessario -->
                 </div>
             </div>
-            
+
             <!-- Customer Acquisition Chart -->
             <div class="stats-chart-container animate-in animate-delay-1">
                 <div class="stats-chart-header">
@@ -2666,16 +2938,18 @@
                         <i class="fas fa-chart-line"></i> Acquisizione Clienti
                     </div>
                     <div class="stats-chart-filters" id="acquisition-filters">
-                        <button class="chart-filter-btn active" data-chart="acquisition" data-filter="month">Mensile</button>
-                        <button class="chart-filter-btn" data-chart="acquisition" data-filter="quarter">Trimestrale</button>
+                        <button class="chart-filter-btn active" data-chart="acquisition"
+                            data-filter="month">Mensile</button>
+                        <button class="chart-filter-btn" data-chart="acquisition"
+                            data-filter="quarter">Trimestrale</button>
                         <button class="chart-filter-btn" data-chart="acquisition" data-filter="year">Annuale</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
-                    <canvas id="acquisition-chart"></canvas>
+                    <canvas id="acquisition-chart"></canvas> <!-- Colori rossi per barre/linee -->
                 </div>
             </div>
-            
+
             <!-- Ordering Habits Chart -->
             <div class="stats-chart-container animate-in animate-delay-2">
                 <div class="stats-chart-header">
@@ -2683,16 +2957,17 @@
                         <i class="fas fa-utensils"></i> Abitudini Ordini
                     </div>
                     <div class="stats-chart-filters" id="habits-filters">
-                        <button class="chart-filter-btn active" data-chart="habits" data-filter="category">Categoria</button>
+                        <button class="chart-filter-btn active" data-chart="habits"
+                            data-filter="category">Categoria</button>
                         <button class="chart-filter-btn" data-chart="habits" data-filter="time">Ora</button>
                         <button class="chart-filter-btn" data-chart="habits" data-filter="day">Giorno</button>
                     </div>
                 </div>
                 <div class="chart-wrapper">
-                    <canvas id="habits-chart"></canvas>
+                    <canvas id="habits-chart"></canvas> <!-- Colori rossi/arancio per radar -->
                 </div>
             </div>
-            
+
             <!-- Customer Retention Rate -->
             <div class="stats-chart-container animate-in animate-delay-3">
                 <div class="stats-chart-header">
@@ -2706,71 +2981,72 @@
                     </div>
                 </div>
                 <div class="chart-wrapper">
-                    <canvas id="retention-chart"></canvas>
+                    <canvas id="retention-chart"></canvas> <!-- Mantenere verde per retention? O rosso? -->
                 </div>
             </div>
         </div>
-        
+
         <!-- Pagination -->
         <div class="pagination" id="pagination-controls">
             <!-- I controlli di paginazione verranno generati qui da JavaScript -->
         </div>
     </div>
-    
+
     <!-- Customer Profile Modal (Hidden) -->
     <div class="modal-overlay customer-profile-modal" id="customerProfileModal">
         <div class="modal">
-            <div class="profile-header">
+            <div class="profile-header"> <!-- Rosso -->
                 <div class="profile-header-content">
-                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Nome Cliente" class="profile-avatar" id="modal-profile-avatar">
+                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Nome Cliente" class="profile-avatar"
+                        id="modal-profile-avatar">
                     <div class="profile-info">
                         <h3 id="modal-profile-name">Nome Cliente</h3>
                         <p id="modal-profile-member-since">Cliente dal DD/MM/YYYY</p>
                         <div class="profile-meta" id="modal-profile-meta">
-                            <!-- Meta info verranno popolate da JS -->
+                            <!-- Meta info (badge VIP giallo) -->
                         </div>
                     </div>
                 </div>
-                <button class="modal-close" id="customerProfileModalClose">&times;</button>
+                <button class="modal-close" id="customerProfileModalClose">&times;</button> <!-- Hover arancio -->
             </div>
-            
+
             <div class="profile-tabs" id="profile-tabs-container">
-                <div class="profile-tab active" data-tab="info">Informazioni</div>
+                <div class="profile-tab active" data-tab="info">Informazioni</div> <!-- Rosso -->
                 <div class="profile-tab" data-tab="orders">Ordini</div>
                 <div class="profile-tab" data-tab="stats_individual">Statistiche</div>
                 <div class="profile-tab" data-tab="notes">Note</div>
             </div>
-            
+
             <div class="profile-content">
                 <div class="profile-section profile-tab-content" data-tab="info" id="profile-tab-info">
                     <div class="profile-section-title"><i class="fas fa-user"></i> Dettagli Personali</div>
                     <p><strong>Email:</strong> <span id="modal-info-email">-</span></p>
                     <p><strong>Telefono:</strong> <span id="modal-info-phone">-</span></p>
-                    <p><strong>Indirizzo:</strong> <span id_:"modal-info-address">-</span></p>
+                    <p><strong>Indirizzo:</strong> <span id="modal-info-address">-</span></p>
                     <p><strong>Data Registrazione:</strong> <span id="modal-info-registration-date">-</span></p>
                     <p><strong>Ultimo Ordine:</strong> <span id="modal-info-last-order">-</span></p>
                 </div>
                 <div class="profile-section profile-tab-content" data-tab="orders" id="profile-tab-orders">
                     <div class="profile-section-title"><i class="fas fa-shopping-bag"></i> Cronologia Ordini</div>
                     <div class="profile-order-list" id="modal-orders-list">
-                         <!-- Ordini verranno popolati qui -->
-                         <p class="no-data-message">Nessun ordine trovato.</p>
+                        <p class="no-data-message">Nessun ordine trovato.</p>
                     </div>
                 </div>
                 <div class="profile-section profile-tab-content" data-tab="stats_individual" id="profile-tab-stats">
                     <div class="profile-section-title"><i class="fas fa-chart-bar"></i> Statistiche Cliente</div>
-                     <div class="profile-stats" id="modal-stats-cards">
-                        <!-- Statistiche card verranno popolate qui -->
-                         <p class="no-data-message">Nessuna statistica disponibile.</p>
+                    <div class="profile-stats" id="modal-stats-cards">
+                        <p class="no-data-message">Nessuna statistica disponibile.</p>
                     </div>
                     <div class="chart-wrapper" style="height: 250px; margin-top: 20px;">
-                         <canvas id="modal-customer-spend-chart"></canvas>
+                        <canvas id="modal-customer-spend-chart"></canvas> <!-- Rosso -->
                     </div>
                 </div>
                 <div class="profile-section profile-tab-content" data-tab="notes" id="profile-tab-notes">
                     <div class="profile-section-title"><i class="fas fa-sticky-note"></i> Note Cliente</div>
-                    <textarea class="form-control" id="modal-customer-notes" rows="5" placeholder="Aggiungi note su questo cliente..."></textarea>
+                    <textarea class="form-control" id="modal-customer-notes" rows="5"
+                        placeholder="Aggiungi note su questo cliente..."></textarea>
                     <button class="action-btn add-customer-btn" style="margin-top:15px;" id="save-customer-notes-btn">
+                        <!-- Rosso -->
                         <i class="fas fa-save"></i> Salva Note
                     </button>
                 </div>
@@ -2779,25 +3055,27 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Populate username in header if placeholder exists
+        document.addEventListener('DOMContentLoaded', function () {
+            // Imposta username (se disponibile)
+            const currentUser = { username: "Admin" }; // Placeholder
             const usernameSpan = document.querySelector('.user-controls .username');
-            if (usernameSpan && usernameSpan.textContent.includes('{{user.username}}')) {
+            if (usernameSpan && usernameSpan.textContent === '{{user.username}}') {
                 usernameSpan.textContent = currentUser.username;
             }
-            
+
             // Constants
             const ITEMS_PER_PAGE = 6;
-            
+
             // State
             let currentPage = 1;
-            let currentCustomers = [];
+            let allCustomersData = []; // Sarà popolato
+            let currentCustomers = []; // Clienti filtrati/ordinati
             let currentView = 'cards'; // 'cards', 'table', 'map', 'stats'
             let activeChartInstances = {};
 
 
             // --- DEMO DATA ---
-            const allCustomersData = [
+            allCustomersData = [
                 { id: 1, name: "Marco Rossi", email: "marco.rossi@email.com", avatar: "https://randomuser.me/api/portraits/men/11.jpg", orders: 12, loyaltyPoints: 250, totalSpend: 320, monthsActive: 8, status: "active", isVip: true, phone: "+39 333 1234567", address: "Via Roma 1, Milano", registrationDate: "2023-03-15", lastOrderDate: "2024-07-10", mapX: 25, mapY: 30, notes: "Preferisce Coca-Cola Zero." },
                 { id: 2, name: "Laura Bianchi", email: "laura.bianchi@email.com", avatar: "https://randomuser.me/api/portraits/women/22.jpg", orders: 8, loyaltyPoints: 180, totalSpend: 210, monthsActive: 5, status: "active", isVip: false, phone: "+39 333 2345678", address: "Corso Garibaldi 10, Milano", registrationDate: "2023-10-01", lastOrderDate: "2024-07-05", mapX: 35, mapY: 38, notes: "" },
                 { id: 3, name: "Giuseppe Verdi", email: "g.verdi@email.com", avatar: "https://randomuser.me/api/portraits/men/33.jpg", orders: 15, loyaltyPoints: 320, totalSpend: 420, monthsActive: 10, status: "active", isVip: true, phone: "+39 333 3456789", address: "Piazza Duomo 5, Milano", registrationDate: "2023-01-20", lastOrderDate: "2024-07-12", mapX: 42, mapY: 60, notes: "Allergico alle noci." },
@@ -2817,8 +3095,7 @@
                 { id: 17, name: "Federico Barbieri", email: "fede.barbieri@email.it", avatar: "https://randomuser.me/api/portraits/men/71.jpg", orders: 5, loyaltyPoints: 100, totalSpend: 120, monthsActive: 4, status: "active", isVip: false, phone: "+39 338 1010101", address: "Via Mecenate 22, Milano", registrationDate: "2024-03-20", lastOrderDate: "2024-06-25", mapX: 90, mapY: 50, notes: "Vegetariano." },
                 { id: 18, name: "Silvia Pellegrini", email: "silvia.pelle@email.com", avatar: "https://randomuser.me/api/portraits/women/81.jpg", orders: 20, loyaltyPoints: 410, totalSpend: 550, monthsActive: 11, status: "active", isVip: true, phone: "+39 338 2020202", address: "Piazza Gae Aulenti 4, Milano", registrationDate: "2022-09-01", lastOrderDate: "2024-07-15", mapX: 48, mapY: 48, notes: "Preferisce tavoli all'aperto se disponibili." }
             ];
-            currentCustomers = [...allCustomersData]; // Start with all customers
-
+            currentCustomers = [...allCustomersData];
 
             // --- UI ELEMENTS ---
             const customersGridContainer = document.getElementById('customers-grid-container');
@@ -2827,445 +3104,107 @@
             const searchInput = document.getElementById('customer-search-input');
             const statusFilterSelect = document.getElementById('status-filter');
             const sortFilterSelect = document.getElementById('sort-filter');
-            
             const totalCustomersValueEl = document.getElementById('total-customers-value');
             const activeCustomersValueEl = document.getElementById('active-customers-value');
             const vipCustomersValueEl = document.getElementById('vip-customers-value');
-
             const mapCanvasMarkers = document.getElementById('map-canvas-markers');
             const mapNoDataMessage = document.getElementById('map-no-data-message');
             const cardsNoDataMessage = customersGridContainer.querySelector('.no-data-message');
             const tableNoDataMessage = document.getElementById('table-no-data-message');
 
-
             // --- INITIALIZATION ---
             createParticles();
             setActiveNavLink();
-            loadNotifications(); // Simulated
+            loadNotifications();
             updateOverviewStats();
-            applyFiltersAndSort(); // This will also call renderCurrentPageData and renderPagination
+            applyFiltersAndSort();
             setupViewSwitcher();
             initializeAllCharts();
-            setupActionButtons();
+            setupActionButtons(); // Sets up delegation for card/table/map buttons
             setupMap();
             setupModals();
 
-            setTimeout(() => {
-                showToast('Clienti caricati', 'Gestione clienti pronta!', 'success');
-            }, 1000);
+            setTimeout(() => { showToast('Clienti caricati', 'Gestione clienti pronta!', 'success'); }, 1000);
 
             // --- EVENT LISTENERS ---
             searchInput.addEventListener('input', debounce(applyFiltersAndSort, 300));
             statusFilterSelect.addEventListener('change', applyFiltersAndSort);
             sortFilterSelect.addEventListener('change', applyFiltersAndSort);
 
-            // Chart filter buttons
             document.querySelectorAll('.stats-chart-filters .chart-filter-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const chartName = this.dataset.chart;
-                    const filterType = this.dataset.filter;
-                    
-                    // Update active button style for this specific chart's filters
+                button.addEventListener('click', function () {
+                    const chartName = this.dataset.chart; const filterType = this.dataset.filter;
                     this.parentElement.querySelectorAll('.chart-filter-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    updateChart(chartName, filterType);
+                    this.classList.add('active'); updateChart(chartName, filterType);
                 });
             });
-            
-            //Map filter buttons
+
             document.querySelectorAll('.map-filters .map-filter-btn').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     document.querySelectorAll('.map-filters .map-filter-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    const filter = this.dataset.mapFilter;
-                    renderMapMarkers(currentCustomers, filter); // Re-render map markers with new filter
+                    this.classList.add('active'); const filter = this.dataset.mapFilter;
+                    renderMapMarkers(currentCustomers, filter); // Render ALL filtered customers on map, not just paginated
                 });
             });
 
             // --- FUNCTIONS ---
-            function debounce(func, delay) {
-                let timeout;
-                return function(...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), delay);
-                };
-            }
-            
-            function applyFiltersAndSort() {
-                let filtered = [...allCustomersData];
-                const searchTerm = searchInput.value.toLowerCase();
-                const statusFilter = statusFilterSelect.value;
-                const sortFilter = sortFilterSelect.value;
+            function debounce(func, delay) { let timeout; return function (...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; }
 
-                // Filter by search term
-                if (searchTerm) {
-                    filtered = filtered.filter(c => 
-                        c.name.toLowerCase().includes(searchTerm) ||
-                        c.email.toLowerCase().includes(searchTerm)
-                    );
-                }
 
-                // Filter by status
-                if (statusFilter !== "all") {
-                    if (statusFilter === "vip") {
-                        filtered = filtered.filter(c => c.isVip);
-                    } else {
-                        filtered = filtered.filter(c => c.status === statusFilter);
+            function setActiveNavLink() {
+                const navLinks = document.querySelectorAll('.header-nav a');
+                const currentPath = window.location.pathname; // Get the current page path
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active'); // Remove active from all links first
+                    // Check if the link's href matches the current path
+                    // Or specifically check for the '/clienti' link for this page
+                    if (link.getAttribute('href') === '/clienti') {
+                        link.classList.add('active');
                     }
-                }
-
-                // Sort
+                    // Optional: More robust matching if needed
+                    // else if (currentPath === link.getAttribute('href')) {
+                    //    link.classList.add('active');
+                    // }
+                });
+            }
+            function applyFiltersAndSort() {
+                let filtered = [...allCustomersData]; const searchTerm = searchInput.value.toLowerCase(); const statusFilter = statusFilterSelect.value; const sortFilter = sortFilterSelect.value;
+                if (searchTerm) { filtered = filtered.filter(c => c.name.toLowerCase().includes(searchTerm) || c.email.toLowerCase().includes(searchTerm)); }
+                if (statusFilter !== "all") { if (statusFilter === "vip") { filtered = filtered.filter(c => c.isVip); } else { filtered = filtered.filter(c => c.status === statusFilter); } }
                 switch (sortFilter) {
-                    case 'newest': // by ID desc
-                        filtered.sort((a, b) => b.id - a.id);
-                        break;
-                    case 'spend-high':
-                        filtered.sort((a, b) => b.totalSpend - a.totalSpend);
-                        break;
-                    case 'spend-low':
-                        filtered.sort((a, b) => a.totalSpend - b.totalSpend);
-                        break;
-                    case 'orders-high':
-                        filtered.sort((a, b) => b.orders - a.orders);
-                        break;
-                    case 'loyalty-high':
-                        filtered.sort((a, b) => b.loyaltyPoints - b.loyaltyPoints);
-                        break;
-                    case 'name-asc':
-                        filtered.sort((a, b) => a.name.localeCompare(b.name));
-                        break;
+                    case 'newest': filtered.sort((a, b) => b.id - a.id); break; case 'spend-high': filtered.sort((a, b) => b.totalSpend - a.totalSpend); break; case 'spend-low': filtered.sort((a, b) => a.totalSpend - b.totalSpend); break;
+                    case 'orders-high': filtered.sort((a, b) => b.orders - a.orders); break; case 'loyalty-high': filtered.sort((a, b) => b.loyaltyPoints - a.loyaltyPoints); break; case 'name-asc': filtered.sort((a, b) => a.name.localeCompare(b.name)); break;
                 }
-                
-                currentCustomers = filtered;
-                currentPage = 1; // Reset to first page after filtering/sorting
-                renderCurrentPageData();
-                renderPagination();
-                renderMapMarkers(getPaginatedData(), 'all'); // Update map with currently displayed customers
+                currentCustomers = filtered; currentPage = 1;
+                renderCurrentPageData(); renderPagination();
+                // Render map with ALL filtered customers, not just paginated ones
+                renderMapMarkers(currentCustomers, document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
             }
 
-            function getPaginatedData() {
-                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-                const endIndex = startIndex + ITEMS_PER_PAGE;
-                return currentCustomers.slice(startIndex, endIndex);
-            }
+            function getPaginatedData() { const startIndex = (currentPage - 1) * ITEMS_PER_PAGE; const endIndex = startIndex + ITEMS_PER_PAGE; return currentCustomers.slice(startIndex, endIndex); }
 
             function renderCurrentPageData() {
                 const customersToDisplay = getPaginatedData();
+                const noData = customersToDisplay.length === 0;
                 if (currentView === 'cards') {
                     renderCustomerCards(customersToDisplay);
+                    cardsNoDataMessage.style.display = noData ? 'block' : 'none';
+                    if (noData) customersGridContainer.innerHTML = cardsNoDataMessage.outerHTML;
                 } else if (currentView === 'table') {
                     renderCustomerTable(customersToDisplay);
+                    tableNoDataMessage.style.display = noData ? 'block' : 'none';
+                    if (noData) customersTableBody.innerHTML = ''; // Clear if no data, message is separate
                 }
-                // Map is updated separately on view switch or filter change
             }
 
-            function renderCustomerCards(customers) {
-                customersGridContainer.innerHTML = ''; // Clear existing cards
-                if (customers.length === 0) {
-                    customersGridContainer.innerHTML = '<p class="no-data-message">Nessun cliente trovato per i filtri selezionati.</p>';
-                    return;
-                }
 
-                customers.forEach(customer => {
-                    const card = document.createElement('div');
-                    card.className = 'customer-card card-hover-effect animate-in';
-                    card.dataset.customerId = customer.id;
-                    
-                    let vipBadgeHtml = customer.isVip ? `
-                        <div class="vip-badge">
-                            <i class="fas fa-crown"></i> VIP
-                        </div>` : '';
-
-                    card.innerHTML = `
-                        <div class="customer-card-inner">
-                            <div class="customer-card-front">
-                                ${vipBadgeHtml}
-                                <div class="customer-card-header"></div>
-                                <div class="customer-avatar-container">
-                                    <img src="${customer.avatar}" alt="${customer.name}" class="customer-avatar">
-                                </div>
-                                <div class="customer-card-body">
-                                    <div class="customer-info">
-                                        <h3 class="customer-name">${customer.name}</h3>
-                                        <p class="customer-email">${customer.email}</p>
-                                        <div class="customer-stats">
-                                            <div class="customer-stat"><div class="stat-value">${customer.orders}</div><div class="stat-label">Ordini</div></div>
-                                            <div class="customer-stat"><div class="stat-value">${customer.loyaltyPoints}</div><div class="stat-label">Punti</div></div>
-                                            <div class="customer-stat"><div class="stat-value">€${customer.totalSpend.toFixed(2)}</div><div class="stat-label">Totale</div></div>
-                                            <div class="customer-stat"><div class="stat-value">${customer.monthsActive}</div><div class="stat-label">Mesi</div></div>
-                                        </div>
-                                    </div>
-                                    <div class="customer-actions">
-                                        <button class="flip-btn"><i class="fas fa-chart-line"></i> Statistiche</button>
-                                        <button class="detail-btn"><i class="fas fa-user"></i> Profilo</button>
-                                        <button class="edit-btn"><i class="fas fa-edit"></i> Modifica</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="customer-card-back">
-                                <div class="card-back-header">
-                                    <h3>${customer.name}</h3>
-                                    <p>Statistiche del cliente</p>
-                                </div>
-                                <div class="stats-chart-container-card">
-                                    <canvas id="customer-chart-${customer.id}"></canvas>
-                                </div>
-                                <div class="loyalty-progress">
-                                    <div class="loyalty-title">
-                                        <span>Programma Fedeltà</span>
-                                        <span>${customer.loyaltyPoints}/500 punti</span>
-                                    </div>
-                                    <div class="loyalty-bar">
-                                        <div class="loyalty-progress-bar" style="width: ${(customer.loyaltyPoints / 500 * 100).toFixed(0)}%"></div>
-                                    </div>
-                                    <div class="loyalty-rewards">
-                                        ${[...Array(5)].map((_, i) => `<span class="loyalty-point ${i < Math.floor(customer.loyaltyPoints / 100) ? 'active' : ''}"></span>`).join('')}
-                                    </div>
-                                </div>
-                                <div class="card-back-footer">
-                                    <button class="back-to-front-btn"><i class="fas fa-arrow-left"></i> Indietro</button>
-                                </div>
-                            </div>
-                        </div>`;
-                    customersGridContainer.appendChild(card);
-                });
-                setupDynamicCardButtons();
-            }
-            
-            function renderCustomerTable(customers) {
-                customersTableBody.innerHTML = ''; // Clear existing rows
-                 if (customers.length === 0) {
-                    tableNoDataMessage.style.display = 'block';
-                    customersTableBody.innerHTML = ''; // Make sure it's empty
-                    return;
-                }
-                tableNoDataMessage.style.display = 'none';
-
-                customers.forEach(customer => {
-                    const row = customersTableBody.insertRow();
-                    row.className = 'animate-in';
-                    row.dataset.customerId = customer.id;
-
-                    let statusClass = customer.status === 'active' ? 'status-active' : 'status-inactive';
-                    if (customer.isVip) statusClass = 'status-vip';
-                    let statusText = customer.status.charAt(0).toUpperCase() + customer.status.slice(1);
-                    if(customer.isVip) statusText = "VIP";
-
-
-                    row.innerHTML = `
-                        <td>
-                            <div class="customer-table-info">
-                                <img src="${customer.avatar}" alt="${customer.name}" class="table-customer-avatar">
-                                <div>
-                                    <div class="table-customer-name">${customer.name}</div>
-                                    <div class="table-customer-email">${customer.email}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>${customer.phone || '-'}</td>
-                        <td>${customer.orders} ordini - €${customer.totalSpend.toFixed(2)}</td>
-                        <td><span class="table-loyalty-points"><i class="fas fa-star"></i> ${customer.loyaltyPoints} punti</span></td>
-                        <td><span class="customer-status ${statusClass}"><i class="fas ${customer.isVip ? 'fa-crown' : 'fa-circle'}"></i> ${statusText}</span></td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="table-action-btn table-view-btn" title="Visualizza profilo"><i class="fas fa-user"></i></button>
-                                <button class="table-action-btn table-edit-btn" title="Modifica cliente"><i class="fas fa-edit"></i></button>
-                                <button class="table-action-btn table-delete-btn" title="Elimina cliente"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    `;
-                });
-                setupDynamicTableButtons();
-            }
-
-            function renderPagination() {
-                paginationControls.innerHTML = ''; // Clear existing controls
-                const totalPages = Math.ceil(currentCustomers.length / ITEMS_PER_PAGE);
-
-                if (totalPages <= 1) return; // No pagination needed for 1 or 0 pages
-
-                // Previous button
-                const prevButton = document.createElement('a');
-                prevButton.href = '#';
-                prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
-                if (currentPage === 1) {
-                    prevButton.classList.add('disabled');
-                } else {
-                    prevButton.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (currentPage > 1) {
-                            currentPage--;
-                            renderCurrentPageData();
-                            renderPagination();
-                             renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
-                        }
-                    });
-                }
-                paginationControls.appendChild(prevButton);
-
-                // Page numbers
-                // Show ellipsis logic for many pages (simplified for now)
-                let startPage = Math.max(1, currentPage - 1);
-                let endPage = Math.min(totalPages, currentPage + 1);
-                if (currentPage === 1) endPage = Math.min(totalPages, 3);
-                if (currentPage === totalPages) startPage = Math.max(1, totalPages - 2);
-
-
-                if (startPage > 1) {
-                    const firstPageLink = document.createElement('a');
-                    firstPageLink.href = '#';
-                    firstPageLink.textContent = '1';
-                    firstPageLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        currentPage = 1;
-                        renderCurrentPageData();
-                        renderPagination();
-                         renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
-                    });
-                    paginationControls.appendChild(firstPageLink);
-                    if (startPage > 2) {
-                        const ellipsis = document.createElement('span');
-                        ellipsis.textContent = '...';
-                        paginationControls.appendChild(ellipsis);
-                    }
-                }
-                
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageLink = document.createElement('a');
-                    pageLink.href = '#';
-                    pageLink.textContent = i;
-                    if (i === currentPage) {
-                        pageLink.classList.add('active');
-                    }
-                    pageLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        currentPage = i;
-                        renderCurrentPageData();
-                        renderPagination();
-                         renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
-                    });
-                    paginationControls.appendChild(pageLink);
-                }
-
-                if (endPage < totalPages) {
-                    if (endPage < totalPages -1) {
-                         const ellipsis = document.createElement('span');
-                        ellipsis.textContent = '...';
-                        paginationControls.appendChild(ellipsis);
-                    }
-                    const lastPageLink = document.createElement('a');
-                    lastPageLink.href = '#';
-                    lastPageLink.textContent = totalPages;
-                    lastPageLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        currentPage = totalPages;
-                        renderCurrentPageData();
-                        renderPagination();
-                        renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
-                    });
-                    paginationControls.appendChild(lastPageLink);
-                }
-
-
-                // Next button
-                const nextButton = document.createElement('a');
-                nextButton.href = '#';
-                nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                if (currentPage === totalPages) {
-                    nextButton.classList.add('disabled');
-                } else {
-                    nextButton.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (currentPage < totalPages) {
-                            currentPage++;
-                            renderCurrentPageData();
-                            renderPagination();
-                            renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
-                        }
-                    });
-                }
-                paginationControls.appendChild(nextButton);
-            }
-            
-            function setupDynamicCardButtons() {
-                document.querySelectorAll('.customer-card .flip-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const card = this.closest('.customer-card');
-                        card.classList.add('flipped');
-                        const customerId = parseInt(card.dataset.customerId);
-                        initializeCustomerCardChart(customerId);
-                    });
-                });
-
-                document.querySelectorAll('.customer-card .back-to-front-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        this.closest('.customer-card').classList.remove('flipped');
-                    });
-                });
-                 document.querySelectorAll('.customer-card .detail-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const customerId = parseInt(this.closest('.customer-card').dataset.customerId);
-                        showProfileModal(customerId);
-                    });
-                });
-                 document.querySelectorAll('.customer-card .edit-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const customerId = parseInt(this.closest('.customer-card').dataset.customerId);
-                        const customer = allCustomersData.find(c => c.id === customerId);
-                        // For demo: log to console or show a toast
-                        console.log("Modifica cliente (card):", customer);
-                        showToast('Modifica Cliente', `Apertura editor per ${customer.name}`, 'info');
-                    });
-                });
-
-            }
-
-            function setupDynamicTableButtons() {
-                 document.querySelectorAll('.customers-table .table-view-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const customerId = parseInt(this.closest('tr').dataset.customerId);
-                         showProfileModal(customerId);
-                    });
-                });
-                document.querySelectorAll('.customers-table .table-edit-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const customerId = parseInt(this.closest('tr').dataset.customerId);
-                        const customer = allCustomersData.find(c => c.id === customerId);
-                        console.log("Modifica cliente (tabella):", customer);
-                        showToast('Modifica Cliente', `Apertura editor per ${customer.name}`, 'info');
-                    });
-                });
-                document.querySelectorAll('.customers-table .table-delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const customerId = parseInt(this.closest('tr').dataset.customerId);
-                        const customer = allCustomersData.find(c => c.id === customerId);
-                        if (confirm(`Sei sicuro di voler eliminare ${customer.name}? Questa azione non è reversibile.`)) {
-                            allCustomersData = allCustomersData.filter(c => c.id !== customerId); // Remove from main data
-                            applyFiltersAndSort(); // Re-filter and re-render
-                            updateOverviewStats();
-                            showToast('Cliente Eliminato', `${customer.name} è stato eliminato.`, 'success');
-                        }
-                    });
-                });
-            }
-            
-            function updateOverviewStats() {
-                totalCustomersValueEl.textContent = allCustomersData.length;
-                activeCustomersValueEl.textContent = allCustomersData.filter(c => c.status === 'active').length;
-                vipCustomersValueEl.textContent = allCustomersData.filter(c => c.isVip).length;
-                // Average spend would require summing up totalSpend and dividing.
-                const totalSpendAll = allCustomersData.reduce((sum, c) => sum + c.totalSpend, 0);
-                const avgSpend = allCustomersData.length > 0 ? (totalSpendAll / allCustomersData.length) : 0;
-                document.getElementById('average-spend-value').textContent = `€${avgSpend.toFixed(2)}`;
-            }
-
-            // --- PARTICLE, NAV, NOTIFICATIONS (unchanged but kept) ---
-            function createParticles() { /* ... as before ... */ 
+            function createParticles() {
                 const particles = document.getElementById('particles');
                 if (!particles) return;
-                particles.innerHTML = '';
-                const particleCount = 50;
+                particles.innerHTML = ''; // Clear existing
+                const particleCount = 50; // Or your desired number
+
                 for (let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
@@ -3274,438 +3213,303 @@
                     const size = Math.random() * 10 + 2;
                     const opacity = Math.random() * 0.5 + 0.1;
                     const duration = Math.random() * 60 + 30;
+
                     particle.style.left = `${posX}%`;
                     particle.style.top = `${posY}%`;
                     particle.style.width = `${size}px`;
                     particle.style.height = `${size}px`;
                     particle.style.opacity = opacity;
-                    if (i % 2 === 0) particle.style.backgroundColor = 'rgba(94, 96, 206, 0.15)';
-                    else particle.style.backgroundColor = 'rgba(72, 191, 227, 0.15)';
-                    particle.style.animation = `particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s, particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s`;
+
+                    // Use the updated red colors for particles
+                    if (i % 2 === 0) {
+                        particle.style.backgroundColor = 'rgba(238, 27, 27, 0.15)'; // Main red tone
+                    } else {
+                        particle.style.backgroundColor = 'rgba(212, 16, 16, 0.15)'; // Darker red tone
+                    }
+
+                    particle.style.animation = `
+            particleFloat ${duration}s infinite alternate ease-in-out ${Math.random() * 10}s,
+            particleFade ${duration * 1.5}s infinite alternate ease-in-out ${Math.random() * 10}s
+        `;
                     particles.appendChild(particle);
                 }
             }
-            function setActiveNavLink() { /* ... as before ... */ 
-                const currentPath = window.location.pathname;
-                const navLinks = document.querySelectorAll('.header-nav a');
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (currentPath === link.getAttribute('href') || (currentPath.startsWith(link.getAttribute('href')) && link.getAttribute('href') !== '/')) {
-                         if(link.getAttribute('href') === "/clienti") link.classList.add('active'); // Make sure this page is active
-                    }
-                });
-                 // Ensure 'Clienti' is active for this page regardless of sub-paths
-                document.querySelector('.header-nav a[href="/clienti"]').classList.add('active');
+
+
+
+
+            function loadNotifications() {
+    try {
+        // Qui andrebbe una fetch reale a '/notifiche' o simile
+        // fetch('/notifiche').then(response => response.json())...
+
+        // Simulazione per demo:
+        console.log("Simulazione caricamento notifiche...");
+        setTimeout(() => {
+            const badge = document.getElementById('notification-badge');
+            if (badge) {
+                const unreadCount = Math.floor(Math.random() * 5); // Numero casuale per demo
+                badge.textContent = unreadCount;
+                badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                /*if (unreadCount > 0) {
+                    // Potresti voler evitare un toast qui se disturba troppo
+                    // showToast('Nuove notifiche', `Hai ${unreadCount} notifiche non lette`, 'warning');
+                }*/
+                console.log(`Badge notifiche aggiornato a: ${unreadCount}`);
             }
-             function loadNotifications() { /* ... as before, with demo data ... */ 
-                try {
-                    // fetch('/notifiche').then... (simulated)
-                    setTimeout(() => {
-                        const badge = document.getElementById('notification-badge');
-                        if (badge) {
-                            badge.textContent = "3"; // Demo count
-                            badge.style.display = 'flex';
-                           // showToast('Nuove notifiche', `Hai 3 notifiche non lette`, 'warning');
+        }, 1500); // Simula un ritardo di rete
+    } catch (e) {
+        console.error('Errore in loadNotifications (o funzione non implementata):', e);
+    }
+}
+
+            function renderCustomerCards(customers) {
+                customersGridContainer.innerHTML = ''; // Clear first
+                if (customers.length === 0) {
+                    customersGridContainer.innerHTML = '<p class="no-data-message">Nessun cliente trovato.</p>';
+                    return;
+                }
+                customers.forEach(customer => { /* ... card creation logic as before ... */
+                    const card = document.createElement('div');
+                    card.className = 'customer-card card-hover-effect animate-in';
+                    card.dataset.customerId = customer.id;
+                    let vipBadgeHtml = customer.isVip ? `<div class="vip-badge"><i class="fas fa-crown"></i> VIP</div>` : '';
+                    card.innerHTML = `<div class="customer-card-inner"><div class="customer-card-front">${vipBadgeHtml}<div class="customer-card-header"></div><div class="customer-avatar-container"><img src="${customer.avatar}" alt="${customer.name}" class="customer-avatar"></div><div class="customer-card-body"><div class="customer-info"><h3 class="customer-name">${customer.name}</h3><p class="customer-email">${customer.email}</p><div class="customer-stats"><div class="customer-stat"><div class="stat-value">${customer.orders}</div><div class="stat-label">Ordini</div></div><div class="customer-stat"><div class="stat-value">${customer.loyaltyPoints}</div><div class="stat-label">Punti</div></div><div class="customer-stat"><div class="stat-value">€${customer.totalSpend.toFixed(2)}</div><div class="stat-label">Totale</div></div><div class="customer-stat"><div class="stat-value">${customer.monthsActive}</div><div class="stat-label">Mesi</div></div></div></div><div class="customer-actions"><button class="flip-btn"><i class="fas fa-chart-line"></i> Statistiche</button><button class="detail-btn"><i class="fas fa-user"></i> Profilo</button><button class="edit-btn"><i class="fas fa-edit"></i> Modifica</button></div></div></div><div class="customer-card-back"><div class="card-back-header"><h3>${customer.name}</h3><p>Statistiche del cliente</p></div><div class="stats-chart-container-card"><canvas id="customer-chart-${customer.id}"></canvas></div><div class="loyalty-progress"><div class="loyalty-title"><span>Programma Fedeltà</span><span>${customer.loyaltyPoints}/500 punti</span></div><div class="loyalty-bar"><div class="loyalty-progress-bar" style="width: ${(customer.loyaltyPoints / 500 * 100).toFixed(0)}%"></div></div><div class="loyalty-rewards">${[...Array(5)].map((_, i) => `<span class="loyalty-point ${i < Math.floor(customer.loyaltyPoints / 100) ? 'active' : ''}"></span>`).join('')}</div></div><div class="card-back-footer"><button class="back-to-front-btn"><i class="fas fa-arrow-left"></i> Indietro</button></div></div></div>`;
+                    customersGridContainer.appendChild(card);
+                });
+                // setupDynamicCardButtons(); // Actions handled by delegation now
+            }
+
+            function renderCustomerTable(customers) {
+                customersTableBody.innerHTML = ''; // Clear first
+                if (customers.length === 0) {
+                    tableNoDataMessage.style.display = 'block';
+                    return;
+                }
+                tableNoDataMessage.style.display = 'none';
+                customers.forEach(customer => { /* ... row creation logic as before ... */
+                    const row = customersTableBody.insertRow(); row.className = 'animate-in'; row.dataset.customerId = customer.id;
+                    let statusClass = customer.status === 'active' ? 'status-active' : 'status-inactive'; if (customer.isVip) statusClass = 'status-vip'; let statusText = customer.status.charAt(0).toUpperCase() + customer.status.slice(1); if (customer.isVip) statusText = "VIP";
+                    row.innerHTML = `<td><div class="customer-table-info"><img src="${customer.avatar}" alt="${customer.name}" class="table-customer-avatar"><div><div class="table-customer-name">${customer.name}</div><div class="table-customer-email">${customer.email}</div></div></div></td><td>${customer.phone || '-'}</td><td>${customer.orders} ordini - €${customer.totalSpend.toFixed(2)}</td><td><span class="table-loyalty-points"><i class="fas fa-star"></i> ${customer.loyaltyPoints} punti</span></td><td><span class="customer-status ${statusClass}"><i class="fas ${customer.isVip ? 'fa-crown' : 'fa-circle'}"></i> ${statusText}</span></td><td><div class="table-actions"><button class="table-action-btn table-view-btn" title="Visualizza profilo"><i class="fas fa-user"></i></button><button class="table-action-btn table-edit-btn" title="Modifica cliente"><i class="fas fa-edit"></i></button><button class="table-action-btn table-delete-btn" title="Elimina cliente"><i class="fas fa-trash-alt"></i></button></div></td>`;
+                });
+                // setupDynamicTableButtons(); // Actions handled by delegation now
+            }
+
+            function renderPagination() { /* ... as before ... */
+                paginationControls.innerHTML = ''; const totalPages = Math.ceil(currentCustomers.length / ITEMS_PER_PAGE); if (totalPages <= 1) return;
+                const prevButton = document.createElement('a'); prevButton.href = '#'; prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>'; if (currentPage === 1) { prevButton.classList.add('disabled'); } else { prevButton.addEventListener('click', (e) => { e.preventDefault(); if (currentPage > 1) { currentPage--; renderCurrentPageData(); renderPagination(); renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all'); } }); } paginationControls.appendChild(prevButton);
+                let startPage = Math.max(1, currentPage - 1); let endPage = Math.min(totalPages, currentPage + 1); if (currentPage === 1) endPage = Math.min(totalPages, 3); if (currentPage === totalPages) startPage = Math.max(1, totalPages - 2);
+                if (startPage > 1) { const firstPageLink = document.createElement('a'); firstPageLink.href = '#'; firstPageLink.textContent = '1'; firstPageLink.addEventListener('click', (e) => { e.preventDefault(); currentPage = 1; renderCurrentPageData(); renderPagination(); renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all'); }); paginationControls.appendChild(firstPageLink); if (startPage > 2) { const ellipsis = document.createElement('span'); ellipsis.textContent = '...'; paginationControls.appendChild(ellipsis); } }
+                for (let i = startPage; i <= endPage; i++) { const pageLink = document.createElement('a'); pageLink.href = '#'; pageLink.textContent = i; if (i === currentPage) { pageLink.classList.add('active'); } pageLink.addEventListener('click', (e) => { e.preventDefault(); currentPage = i; renderCurrentPageData(); renderPagination(); renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all'); }); paginationControls.appendChild(pageLink); }
+                if (endPage < totalPages) { if (endPage < totalPages - 1) { const ellipsis = document.createElement('span'); ellipsis.textContent = '...'; paginationControls.appendChild(ellipsis); } const lastPageLink = document.createElement('a'); lastPageLink.href = '#'; lastPageLink.textContent = totalPages; lastPageLink.addEventListener('click', (e) => { e.preventDefault(); currentPage = totalPages; renderCurrentPageData(); renderPagination(); renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all'); }); paginationControls.appendChild(lastPageLink); }
+                const nextButton = document.createElement('a'); nextButton.href = '#'; nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>'; if (currentPage === totalPages) { nextButton.classList.add('disabled'); } else { nextButton.addEventListener('click', (e) => { e.preventDefault(); if (currentPage < totalPages) { currentPage++; renderCurrentPageData(); renderPagination(); renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all'); } }); } paginationControls.appendChild(nextButton);
+            }
+
+            function setupActionButtons() {
+                const containers = [customersGridContainer, customersTableBody, mapCanvasMarkers]; // Add map container
+                containers.forEach(container => {
+                    if (!container) return;
+                    container.addEventListener('click', function (e) {
+                        const target = e.target;
+
+                        // Card Flip Buttons
+                        if (target.closest('.flip-btn')) {
+                            const card = target.closest('.customer-card');
+                            if (card) {
+                                card.classList.add('flipped');
+                                const customerId = parseInt(card.dataset.customerId);
+                                initializeCustomerCardChart(customerId);
+                            }
+                        } else if (target.closest('.back-to-front-btn')) {
+                            const card = target.closest('.customer-card');
+                            if (card) card.classList.remove('flipped');
                         }
-                    }, 2500);
-                } catch (e) { console.log('Notifiche non disponibili (demo).'); }
+                        // Profile Detail Buttons (Card, Table, Map)
+                        else if (target.closest('.detail-btn') || target.closest('.table-view-btn') || target.closest('.profile-map-btn')) {
+                            const cardOrRow = target.closest('[data-customer-id]');
+                            if (cardOrRow) {
+                                const customerId = parseInt(cardOrRow.dataset.customerId);
+                                showProfileModal(customerId);
+                            }
+                        }
+                        // Edit Buttons (Card, Table)
+                        else if (target.closest('.edit-btn') || target.closest('.table-edit-btn')) {
+                            const cardOrRow = target.closest('[data-customer-id]');
+                            if (cardOrRow) {
+                                const customerId = parseInt(cardOrRow.dataset.customerId);
+                                const customer = allCustomersData.find(c => c.id === customerId);
+                                if (customer) showToast('Modifica Cliente', `Apertura editor per ${customer.name}`, 'info');
+                            }
+                        }
+                        // Delete Buttons (Table)
+                        else if (target.closest('.table-delete-btn')) {
+                            const row = target.closest('tr');
+                            if (row) {
+                                const customerId = parseInt(row.dataset.customerId);
+                                const customer = allCustomersData.find(c => c.id === customerId);
+                                if (customer && confirm(`Sei sicuro di voler eliminare ${customer.name}? Questa azione non è reversibile.`)) {
+                                    allCustomersData = allCustomersData.filter(c => c.id !== customerId);
+                                    applyFiltersAndSort();
+                                    updateOverviewStats();
+                                    showToast('Cliente Eliminato', `${customer.name} è stato eliminato.`, 'success');
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+
+            function updateOverviewStats() { /* ... as before ... */
+                totalCustomersValueEl.textContent = allCustomersData.length; activeCustomersValueEl.textContent = allCustomersData.filter(c => c.status === 'active').length; vipCustomersValueEl.textContent = allCustomersData.filter(c => c.isVip).length; const totalSpendAll = allCustomersData.reduce((sum, c) => sum + c.totalSpend, 0); const avgSpend = allCustomersData.length > 0 ? (totalSpendAll / allCustomersData.length) : 0; document.getElementById('average-spend-value').textContent = `€${avgSpend.toFixed(2)}`;
             }
 
             // --- VIEW SWITCHER ---
-            function setupViewSwitcher() {
-                const viewButtons = document.querySelectorAll('.view-btn');
-                const viewContents = document.querySelectorAll('.view-content');
-                
-                viewButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        currentView = this.dataset.view;
-                        
-                        viewButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        viewContents.forEach(content => content.style.display = 'none');
-                        
-                        const selectedView = document.getElementById(`${currentView}-view`);
-                        if (selectedView) {
-                            selectedView.style.display = 'block';
-                             if (currentView === 'cards' || currentView === 'table') {
-                                applyFiltersAndSort(); // This re-renders paginated data
-                            } else if (currentView === 'map') {
-                                renderMapMarkers(getPaginatedData(), document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all');
-                            } else if (currentView === 'stats') {
-                                initializeAllCharts(); // Re-initialize or refresh all charts
-                            }
-                        }
-                        showToast('Vista cambiata', `Visualizzazione: ${getViewName(currentView)}`, 'success');
-                    });
-                });
+            function setupViewSwitcher() { /* ... as before ... */
+                const viewButtons = document.querySelectorAll('.view-btn'); const viewContents = document.querySelectorAll('.view-content');
+                viewButtons.forEach(button => { button.addEventListener('click', function () { currentView = this.dataset.view; viewButtons.forEach(btn => btn.classList.remove('active')); this.classList.add('active'); viewContents.forEach(content => content.style.display = 'none'); const selectedView = document.getElementById(`${currentView}-view`); if (selectedView) { selectedView.style.display = 'block'; if (currentView === 'cards' || currentView === 'table') { applyFiltersAndSort(); } else if (currentView === 'map') { renderMapMarkers(currentCustomers, document.querySelector('.map-filters .active')?.dataset.mapFilter || 'all'); } else if (currentView === 'stats') { initializeAllCharts(); } } showToast('Vista cambiata', `Visualizzazione: ${getViewName(currentView)}`, 'success'); }); });
+            }
+            function getViewName(view) { /* ... as before ... */
+                switch (view) { case 'cards': return 'Schede Cliente'; case 'table': return 'Tabella Cliente'; case 'map': return 'Mappa Distribuzione'; case 'stats': return 'Statistiche Cliente'; default: return view; }
             }
 
-            function getViewName(view) { /* ... as before ... */ 
-                switch(view){case 'cards':return 'Schede Cliente';case 'table':return 'Tabella Cliente';case 'map':return 'Mappa Distribuzione';case 'stats':return 'Statistiche Cliente';default:return view;}
-            }
-            
             // --- CHARTS (Card and Stats View) ---
-            function initializeCustomerCardChart(customerId) {
-                const chartCanvasId = `customer-chart-${customerId}`;
-                const ctx = document.getElementById(chartCanvasId);
-                if (!ctx) return;
-
-                const customer = allCustomersData.find(c => c.id === customerId);
-                if (!customer) return;
-                
-                if (activeChartInstances[chartCanvasId]) {
-                    activeChartInstances[chartCanvasId].destroy();
-                }
-
-                const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu']; // Example labels
-                const data = months.map(() => Math.floor(Math.random() * (customer.totalSpend / 3) ) + 10); // Spend over 6 months
-
+            function initializeCustomerCardChart(customerId) { /* ... as before, but maybe use orange/red colors? */
+                const chartCanvasId = `customer-chart-${customerId}`; const ctx = document.getElementById(chartCanvasId); if (!ctx) return; const customer = allCustomersData.find(c => c.id === customerId); if (!customer) return; if (activeChartInstances[chartCanvasId]) { activeChartInstances[chartCanvasId].destroy(); }
+                const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu']; const data = months.map(() => Math.floor(Math.random() * (customer.totalSpend / 3)) + 10);
                 activeChartInstances[chartCanvasId] = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: months,
-                        datasets: [{
-                            label: 'Spesa Mensile', data: data,
-                            borderColor: 'rgba(255, 255, 255, 0.8)', tension: 0.4, fill: true,
-                            backgroundColor: 'rgba(255, 255, 255, 0.2)', pointBackgroundColor: '#ffffff',
-                            pointBorderColor: 'rgba(255, 255, 255, 0.8)', pointRadius: 4, pointHoverRadius: 6
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false,
-                        scales: { x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'rgba(255,255,255,0.7)' } },
-                                  y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'rgba(255,255,255,0.7)', callback: value => '€' + value } } },
-                        plugins: { legend: { display: false } }
-                    }
+                    type: 'line', data: { labels: months, datasets: [{ label: 'Spesa Mensile', data: data, borderColor: 'rgba(255, 255, 255, 0.8)', tension: 0.4, fill: true, backgroundColor: 'rgba(255, 255, 255, 0.2)', pointBackgroundColor: '#ffffff', pointBorderColor: 'rgba(255, 255, 255, 0.8)', pointRadius: 4, pointHoverRadius: 6 }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'rgba(255,255,255,0.7)' } }, y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'rgba(255,255,255,0.7)', callback: value => '€' + value } } }, plugins: { legend: { display: false } } }
                 });
             }
 
-            function initializeAllCharts() {
-                // Clear previous instances if any
-                Object.values(activeChartInstances).forEach(chart => { if(chart.canvas.id.startsWith('customer-chart-')) return; chart.destroy(); });
-                activeChartInstances = {}; // Reset specific for main stats charts
-                
-                updateChart('demographics', 'age');
-                updateChart('acquisition', 'month');
-                updateChart('habits', 'category');
-                updateChart('retention', '3m');
+            function initializeAllCharts() { /* ... as before, but adjust colors ... */
+                Object.values(activeChartInstances).forEach(chart => { if (chart.canvas.id.startsWith('customer-chart-')) return; chart.destroy(); }); activeChartInstances = {};
+                updateChart('demographics', 'age'); updateChart('acquisition', 'month'); updateChart('habits', 'category'); updateChart('retention', '3m');
             }
-            
-            function updateChart(chartName, filterType) {
-                const ctx = document.getElementById(`${chartName}-chart`)?.getContext('2d');
-                if (!ctx) return;
 
-                if (activeChartInstances[chartName]) {
-                    activeChartInstances[chartName].destroy();
-                }
-
-                let chartData = {};
-                let chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {font: {family:'Montserrat'}}}}, animation: {duration: 800, easing: 'easeOutBounce'} };
-                let chartType = 'pie';
+            function updateChart(chartName, filterType) { /* ... as before, adjust colors below ... */
+                const ctx = document.getElementById(`${chartName}-chart`)?.getContext('2d'); if (!ctx) return; if (activeChartInstances[chartName]) { activeChartInstances[chartName].destroy(); }
+                let chartData = {}; let chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { family: 'Montserrat' } } } }, animation: { duration: 800, easing: 'easeOutBounce' } }; let chartType = 'pie';
+                // Example Color Palette for Charts: Main Red, Dark Red, Orange, Yellow, Green (for contrast if needed)
+                const redColors = ['#EE1B1B', '#D41010', '#f39c12', '#f1c40f', '#2ecc71', '#9b59b6'];
 
                 if (chartName === 'demographics') {
-                    chartType = 'pie';
-                    if (filterType === 'age') {
-                        chartData = { labels: ['18-25', '26-35', '36-45', '46-55', '56+'], datasets: [{ data: [25, 35, 20, 15, 5], backgroundColor: ['#5e60ce', '#5390d9', '#4ea8de', '#48bfe3', '#56cfe1'], borderColor: '#fff', borderWidth: 2 }] };
-                        chartOptions.plugins.title = { display: true, text: 'Distribuzione Clienti per Età', font: {size: 16, family:'Montserrat', weight:'bold'}};
-                    } else if (filterType === 'gender') {
-                        chartData = { labels: ['Uomini', 'Donne', 'Altro'], datasets: [{ data: [48, 45, 7], backgroundColor: ['#5390d9', '#ff8fab', '#80ffdb'], borderColor: '#fff', borderWidth: 2 }] };
-                        chartOptions.plugins.title = { display: true, text: 'Distribuzione Clienti per Genere', font: {size: 16, family:'Montserrat', weight:'bold'}};
-                    } else if (filterType === 'location') {
-                         chartData = { labels: ['Milano', 'Hinterland', 'Fuori Provincia'], datasets: [{ data: [60, 25, 15], backgroundColor: ['#48bfe3', '#9b59b6', '#f39c12'], borderColor: '#fff', borderWidth: 2 }] };
-                         chartOptions.plugins.title = { display: true, text: 'Provenienza Clienti', font: {size: 16, family:'Montserrat', weight:'bold'}};
-                    }
+                    chartType = 'pie'; chartOptions.plugins.legend.position = 'bottom';
+                    if (filterType === 'age') { chartData = { labels: ['18-25', '26-35', '36-45', '46-55', '56+'], datasets: [{ data: [25, 35, 20, 15, 5], backgroundColor: [redColors[0], redColors[2], redColors[3], redColors[4], redColors[1]], borderColor: '#fff', borderWidth: 2 }] }; chartOptions.plugins.title = { display: true, text: 'Distribuzione Clienti per Età', font: { size: 16, family: 'Montserrat', weight: 'bold' } }; }
+                    else if (filterType === 'gender') { chartData = { labels: ['Uomini', 'Donne', 'Altro'], datasets: [{ data: [48, 45, 7], backgroundColor: [redColors[1], redColors[2], redColors[0]], borderColor: '#fff', borderWidth: 2 }] }; chartOptions.plugins.title = { display: true, text: 'Distribuzione Clienti per Genere', font: { size: 16, family: 'Montserrat', weight: 'bold' } }; }
+                    else if (filterType === 'location') { chartData = { labels: ['Milano', 'Hinterland', 'Fuori Provincia'], datasets: [{ data: [60, 25, 15], backgroundColor: [redColors[0], redColors[2], redColors[3]], borderColor: '#fff', borderWidth: 2 }] }; chartOptions.plugins.title = { display: true, text: 'Provenienza Clienti', font: { size: 16, family: 'Montserrat', weight: 'bold' } }; }
                 } else if (chartName === 'acquisition') {
-                    chartType = 'bar';
-                    let labels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'];
-                    let data = [12, 19, 14, 15, 22, 18];
-                    if (filterType === 'quarter') { labels = ['T1', 'T2']; data = [45, 55]; }
-                    else if (filterType === 'year') { labels = ['2023']; data = [248]; } // Assuming total of the year
-                    chartData = { labels: labels, datasets: [{ label: 'Nuovi Clienti', data: data, backgroundColor: 'rgba(94, 96, 206, 0.7)', borderColor: '#5e60ce', borderWidth: 1, borderRadius:5 }]};
-                    chartOptions.scales = { y: { beginAtZero: true }};
-                    chartOptions.plugins.title = { display: true, text: `Acquisizione Clienti (${filterType})`, font: {size: 16, family:'Montserrat', weight:'bold'}};
-                     chartOptions.plugins.legend.display = false;
+                    chartType = 'bar'; let labels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu']; let data = [12, 19, 14, 15, 22, 18]; if (filterType === 'quarter') { labels = ['T1', 'T2']; data = [45, 55]; } else if (filterType === 'year') { labels = ['2023']; data = [248]; }
+                    chartData = {
+                        labels: labels, datasets: [{
+                            label: 'Nuovi Clienti', data: data,
+                            backgroundColor: 'rgba(238, 27, 27, 0.7)', /* Rosso */
+                            borderColor: '#D41010', /* Rosso Scuro */
+                            borderWidth: 1, borderRadius: 5
+                        }]
+                    }; chartOptions.scales = { y: { beginAtZero: true } }; chartOptions.plugins.title = { display: true, text: `Acquisizione Clienti (${filterType})`, font: { size: 16, family: 'Montserrat', weight: 'bold' } }; chartOptions.plugins.legend.display = false;
                 } else if (chartName === 'habits') {
-                    chartType = 'radar';
-                    let labels = ['Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert'];
-                    let data = [65, 75, 45, 80, 32];
-                     if (filterType === 'time') { labels = ['Pranzo', 'Pomeriggio', 'Cena', 'Notte']; data = [30,10,50,10];}
-                     else if (filterType === 'day') { labels = ['Lun-Gio', 'Ven', 'Sab', 'Dom']; data = [40, 25, 25, 10];}
-                    chartData = { labels: labels, datasets: [{ label: 'Popolarità', data: data, backgroundColor: 'rgba(72, 191, 227, 0.3)', borderColor: '#48bfe3', borderWidth: 2, pointBackgroundColor: '#48bfe3' }]};
-                    chartOptions.scales = { r: { angleLines: {color: 'rgba(0,0,0,0.1)'}, grid: {color: 'rgba(0,0,0,0.1)'}, ticks: {backdropColor: 'transparent',font:{size:10}} }};
-                    chartOptions.plugins.title = { display: true, text: `Abitudini Ordini (${filterType})`, font: {size: 16, family:'Montserrat', weight:'bold'}};
-                     chartOptions.plugins.legend.display = true;
+                    chartType = 'radar'; let labels = ['Panini', 'Pizze', 'Patatine', 'Bevande', 'Dessert']; let data = [65, 75, 45, 80, 32]; if (filterType === 'time') { labels = ['Pranzo', 'Pomeriggio', 'Cena', 'Notte']; data = [30, 10, 50, 10]; } else if (filterType === 'day') { labels = ['Lun-Gio', 'Ven', 'Sab', 'Dom']; data = [40, 25, 25, 10]; }
+                    chartData = {
+                        labels: labels, datasets: [{
+                            label: 'Popolarità', data: data,
+                            backgroundColor: 'rgba(238, 27, 27, 0.3)', /* Rosso trasparente */
+                            borderColor: '#EE1B1B', /* Rosso pieno */
+                            borderWidth: 2, pointBackgroundColor: '#EE1B1B'
+                        }]
+                    }; chartOptions.scales = { r: { angleLines: { color: 'rgba(0,0,0,0.1)' }, grid: { color: 'rgba(0,0,0,0.1)' }, ticks: { backdropColor: 'transparent', font: { size: 10 } } } }; chartOptions.plugins.title = { display: true, text: `Abitudini Ordini (${filterType})`, font: { size: 16, family: 'Montserrat', weight: 'bold' } }; chartOptions.plugins.legend.display = true;
                 } else if (chartName === 'retention') {
-                    chartType = 'line';
-                    let labels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu'];
-                    let data = [85, 82, 88, 90, 92, 95];
-                    if (filterType === '6m') { data = [70, 75, 72, 78, 80, 82]; }
-                    else if (filterType === '1y') { data = [60,62,65,63,68,70,72,75,73,77,79,80].slice(0,12); labels = ['G', 'F', 'M', 'A', 'M', 'G', 'L', 'A', 'S', 'O', 'N', 'D'];}
-                    chartData = { labels: labels, datasets: [{ label: 'Tasso Fidelizzazione %', data: data, backgroundColor: 'rgba(46, 204, 113, 0.2)', borderColor: '#2ecc71', tension: 0.3, fill: true }]};
-                    chartOptions.scales = { y: { suggestedMin: 50, suggestedMax: 100, ticks: {callback: v => v + "%"} }};
-                    chartOptions.plugins.title = { display: true, text: `Tasso di Fidelizzazione (${filterType})`, font: {size: 16, family:'Montserrat', weight:'bold'}};
-                     chartOptions.plugins.legend.display = false;
+                    chartType = 'line'; let labels = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu']; let data = [85, 82, 88, 90, 92, 95]; if (filterType === '6m') { data = [70, 75, 72, 78, 80, 82]; } else if (filterType === '1y') { data = [60, 62, 65, 63, 68, 70, 72, 75, 73, 77, 79, 80].slice(0, 12); labels = ['G', 'F', 'M', 'A', 'M', 'G', 'L', 'A', 'S', 'O', 'N', 'D']; }
+                    chartData = {
+                        labels: labels, datasets: [{
+                            label: 'Tasso Fidelizzazione %', data: data,
+                            backgroundColor: 'rgba(46, 204, 113, 0.2)', borderColor: '#2ecc71', /* Mantenuto verde per positivo? */
+                            tension: 0.3, fill: true
+                        }]
+                    }; chartOptions.scales = { y: { suggestedMin: 50, suggestedMax: 100, ticks: { callback: v => v + "%" } } }; chartOptions.plugins.title = { display: true, text: `Tasso di Fidelizzazione (${filterType})`, font: { size: 16, family: 'Montserrat', weight: 'bold' } }; chartOptions.plugins.legend.display = false;
                 }
-                
-                if (Object.keys(chartData).length > 0) {
-                     activeChartInstances[chartName] = new Chart(ctx, { type: chartType, data: chartData, options: chartOptions });
-                }
+                if (Object.keys(chartData).length > 0) { activeChartInstances[chartName] = new Chart(ctx, { type: chartType, data: chartData, options: chartOptions }); }
             }
 
             // --- MAP FUNCTIONS ---
-            function setupMap() {
-                // Map filters are handled in main event listeners
-                renderMapMarkers(getPaginatedData(), 'all'); // Initial render
-            }
-            
-            function renderMapMarkers(customers, filter = 'all') {
-                mapCanvasMarkers.innerHTML = ''; // Clear existing markers
-                if(customers.length === 0){
-                    mapNoDataMessage.style.display = 'block';
-                    return;
-                }
-                mapNoDataMessage.style.display = 'none';
-
-                const mapWidth = mapCanvasMarkers.offsetWidth;
-                const mapHeight = mapCanvasMarkers.offsetHeight;
-
-                customers.forEach(customer => {
-                    let isVisible = true;
-                    if (filter !== 'all') {
-                        if (filter === 'active' && customer.status !== 'active') isVisible = false;
-                        if (filter === 'inactive' && customer.status !== 'inactive') isVisible = false;
-                        if (filter === 'vip' && !customer.isVip) isVisible = false;
-                    }
-
-                    const marker = document.createElement('div');
-                    marker.className = 'customer-marker animate-in';
-                    if (customer.isVip) marker.classList.add('marker-vip');
-                    if (!isVisible) marker.classList.add('filtered-out');
-                    
-                    // Use customer's mapX, mapY which are percentages
-                    // Adjusting for marker size to center it approx.
-                    marker.style.top = `calc(${customer.mapY}% - 20px)`; 
-                    marker.style.left = `calc(${customer.mapX}% - 20px)`;
-                    marker.dataset.customerId = customer.id;
-
-                    marker.innerHTML = `
-                        <img src="${customer.avatar}" alt="${customer.name}">
-                        <div class="marker-info">
-                            <h3>${customer.name}</h3>
-                            <p>${customer.address || 'Indirizzo non disponibile'}</p>
-                            <div class="marker-info-actions">
-                                <button class="marker-info-btn profile-map-btn"><i class="fas fa-user"></i> Profilo</button>
-                                <!-- <button class="marker-info-btn"><i class="fas fa-route"></i> Indicazioni</button> -->
-                            </div>
-                        </div>`;
-                    mapCanvasMarkers.appendChild(marker);
-                });
-                 // Add event listeners to new profile buttons on map markers
-                document.querySelectorAll('.profile-map-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation(); // Prevents map click if any
-                        const customerId = parseInt(this.closest('.customer-marker').dataset.customerId);
-                        showProfileModal(customerId);
-                    });
-                });
+            function setupMap() { /* ... as before ... */ renderMapMarkers(getPaginatedData(), 'all'); }
+            function renderMapMarkers(customers, filter = 'all') { /* ... as before ... */
+                mapCanvasMarkers.innerHTML = ''; if (customers.length === 0) { mapNoDataMessage.style.display = 'block'; return; } mapNoDataMessage.style.display = 'none';
+                customers.forEach(customer => { let isVisible = true; if (filter !== 'all') { if (filter === 'active' && customer.status !== 'active') isVisible = false; if (filter === 'inactive' && customer.status !== 'inactive') isVisible = false; if (filter === 'vip' && !customer.isVip) isVisible = false; } const marker = document.createElement('div'); marker.className = 'customer-marker animate-in'; if (customer.isVip) marker.classList.add('marker-vip'); if (!isVisible) marker.classList.add('filtered-out'); marker.style.top = `calc(${customer.mapY}% - 20px)`; marker.style.left = `calc(${customer.mapX}% - 20px)`; marker.dataset.customerId = customer.id; marker.innerHTML = `<img src="${customer.avatar}" alt="${customer.name}"><div class="marker-info"><h3>${customer.name}</h3><p>${customer.address || 'Indirizzo non disponibile'}</p><div class="marker-info-actions"><button class="marker-info-btn profile-map-btn"><i class="fas fa-user"></i> Profilo</button></div></div>`; mapCanvasMarkers.appendChild(marker); });
+                // setupActionButtons() now handles delegation, no need to re-add listeners here.
             }
 
             // --- MODALS ---
-            function setupModals() {
-                const modalOverlay = document.getElementById('customerProfileModal');
-                const closeBtn = document.getElementById('customerProfileModalClose');
-                const profileTabsContainer = document.getElementById('profile-tabs-container');
-
-                closeBtn.addEventListener('click', () => closeModal(modalOverlay));
-                modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(modalOverlay); });
-
-                profileTabsContainer.addEventListener('click', function(e) {
-                    if (e.target.classList.contains('profile-tab')) {
-                        const tabId = e.target.dataset.tab;
-                        profileTabsContainer.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
-                        e.target.classList.add('active');
-                        
-                        modalOverlay.querySelectorAll('.profile-tab-content').forEach(content => content.style.display = 'none');
-                        const selectedContent = modalOverlay.querySelector(`.profile-tab-content[data-tab="${tabId}"]`);
-                        if (selectedContent) selectedContent.style.display = 'block';
-                    }
-                });
-                 document.getElementById('save-customer-notes-btn').addEventListener('click', function() {
-                    const customerId = parseInt(modalOverlay.dataset.customerId);
-                    const notes = document.getElementById('modal-customer-notes').value;
-                    const customer = allCustomersData.find(c => c.id === customerId);
-                    if(customer) {
-                        customer.notes = notes;
-                        showToast('Note salvate', `Note per ${customer.name} aggiornate.`, 'success');
-                    }
-                });
+            function setupModals() { /* ... as before ... */
+                const modalOverlay = document.getElementById('customerProfileModal'); const closeBtn = document.getElementById('customerProfileModalClose'); const profileTabsContainer = document.getElementById('profile-tabs-container');
+                closeBtn.addEventListener('click', () => closeModal(modalOverlay)); modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(modalOverlay); });
+                profileTabsContainer.addEventListener('click', function (e) { if (e.target.classList.contains('profile-tab')) { const tabId = e.target.dataset.tab; profileTabsContainer.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active')); e.target.classList.add('active'); modalOverlay.querySelectorAll('.profile-tab-content').forEach(content => content.style.display = 'none'); const selectedContent = modalOverlay.querySelector(`.profile-tab-content[data-tab="${tabId}"]`); if (selectedContent) selectedContent.style.display = 'block'; } });
+                document.getElementById('save-customer-notes-btn').addEventListener('click', function () { const customerId = parseInt(modalOverlay.dataset.customerId); const notes = document.getElementById('modal-customer-notes').value; const customer = allCustomersData.find(c => c.id === customerId); if (customer) { customer.notes = notes; showToast('Note salvate', `Note per ${customer.name} aggiornate.`, 'success'); } });
             }
-
-            function showProfileModal(customerId) {
-                const modal = document.getElementById('customerProfileModal');
-                const customer = allCustomersData.find(c => c.id === customerId);
-                if (!customer || !modal) return;
-
-                modal.dataset.customerId = customerId; // Store customerId on the modal itself
-
-                document.getElementById('modal-profile-avatar').src = customer.avatar;
-                document.getElementById('modal-profile-avatar').alt = customer.name;
-                document.getElementById('modal-profile-name').textContent = customer.name;
-                document.getElementById('modal-profile-member-since').textContent = `Cliente dal ${new Date(customer.registrationDate).toLocaleDateString('it-IT')}`;
-
-                const metaContainer = document.getElementById('modal-profile-meta');
-                metaContainer.innerHTML = '';
-                if (customer.isVip) metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-crown"></i> VIP</div>`;
-                metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-star"></i> ${customer.loyaltyPoints} Punti</div>`;
-                metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-shopping-bag"></i> ${customer.orders} Ordini</div>`;
-
-                // Info Tab
-                document.getElementById('modal-info-email').textContent = customer.email;
-                document.getElementById('modal-info-phone').textContent = customer.phone || '-';
-                document.getElementById('modal-info-address').textContent = customer.address || '-';
-                document.getElementById('modal-info-registration-date').textContent = new Date(customer.registrationDate).toLocaleDateString('it-IT');
-                document.getElementById('modal-info-last-order').textContent = customer.lastOrderDate ? new Date(customer.lastOrderDate).toLocaleDateString('it-IT') : '-';
-                
-                // Orders Tab (dummy example)
-                const ordersList = document.getElementById('modal-orders-list');
-                ordersList.innerHTML = ''; // Clear previous
-                if (customer.orders > 0) {
-                    for (let i = 1; i <= Math.min(customer.orders, 5) ; i++) { // Show max 5 dummy orders
-                        const randomAmount = (Math.random() * 50 + 15).toFixed(2);
-                        const randomDate = new Date(new Date(customer.lastOrderDate) - (i * 15 * 24*60*60*1000)).toLocaleDateString('it-IT');
-                        const orderItem = `
-                            <div class="profile-order-item">
-                                <div class="profile-order-info">
-                                    <span class="profile-order-id">Ordine #${Math.floor(Math.random()*10000 + customer.id * 1000 + i)}</span>
-                                    <span class="profile-order-date">Data: ${randomDate}</span>
-                                </div>
-                                <div class="profile-order-amount">€${randomAmount}</div>
-                                <span class="profile-order-status status-active" style="background-color: rgba(46,204,113,0.15); color: var(--accent-green);">Completato</span>
-                            </div>`;
-                        ordersList.innerHTML += orderItem;
-                    }
-                } else {
-                    ordersList.innerHTML = '<p class="no-data-message">Nessun ordine trovato per questo cliente.</p>';
-                }
-
-                // Stats Tab (dummy example)
-                const statsCardsContainer = document.getElementById('modal-stats-cards');
-                statsCardsContainer.innerHTML = `
-                    <div class="profile-stat-card"><div class="profile-stat-value">€${(customer.totalSpend / customer.orders || 0).toFixed(2)}</div><div class="profile-stat-label">Spesa Media/Ordine</div></div>
-                    <div class="profile-stat-card"><div class="profile-stat-value">${customer.monthsActive}</div><div class="profile-stat-label">Mesi Attività</div></div>
-                    <div class="profile-stat-card"><div class="profile-stat-value">${(customer.loyaltyPoints / (customer.monthsActive||1)).toFixed(1)}</div><div class="profile-stat-label">Punti/Mese</div></div>
-                `;
-                 initializeModalCustomerSpendChart(customer);
-
-                // Notes Tab
+            function showProfileModal(customerId) { /* ... as before, maybe adjust chart colors ... */
+                const modal = document.getElementById('customerProfileModal'); const customer = allCustomersData.find(c => c.id === customerId); if (!customer || !modal) return; modal.dataset.customerId = customerId;
+                document.getElementById('modal-profile-avatar').src = customer.avatar; document.getElementById('modal-profile-avatar').alt = customer.name; document.getElementById('modal-profile-name').textContent = customer.name; document.getElementById('modal-profile-member-since').textContent = `Cliente dal ${new Date(customer.registrationDate).toLocaleDateString('it-IT')}`;
+                const metaContainer = document.getElementById('modal-profile-meta'); metaContainer.innerHTML = ''; if (customer.isVip) metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-crown"></i> VIP</div>`; metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-star"></i> ${customer.loyaltyPoints} Punti</div>`; metaContainer.innerHTML += `<div class="profile-meta-item"><i class="fas fa-shopping-bag"></i> ${customer.orders} Ordini</div>`;
+                document.getElementById('modal-info-email').textContent = customer.email; document.getElementById('modal-info-phone').textContent = customer.phone || '-'; document.getElementById('modal-info-address').textContent = customer.address || '-'; document.getElementById('modal-info-registration-date').textContent = new Date(customer.registrationDate).toLocaleDateString('it-IT'); document.getElementById('modal-info-last-order').textContent = customer.lastOrderDate ? new Date(customer.lastOrderDate).toLocaleDateString('it-IT') : '-';
+                const ordersList = document.getElementById('modal-orders-list'); ordersList.innerHTML = ''; if (customer.orders > 0) { for (let i = 1; i <= Math.min(customer.orders, 5); i++) { const randomAmount = (Math.random() * 50 + 15).toFixed(2); const randomDate = new Date(new Date(customer.lastOrderDate || Date.now()) - (i * 15 * 24 * 60 * 60 * 1000)).toLocaleDateString('it-IT'); const orderItem = `<div class="profile-order-item"><div class="profile-order-info"><span class="profile-order-id">Ordine #${Math.floor(Math.random() * 10000 + customer.id * 1000 + i)}</span><span class="profile-order-date">Data: ${randomDate}</span></div><div class="profile-order-amount">€${randomAmount}</div><span class="profile-order-status status-active" style="background-color: rgba(46,204,113,0.15); color: var(--accent-green);">Completato</span></div>`; ordersList.innerHTML += orderItem; } } else { ordersList.innerHTML = '<p class="no-data-message">Nessun ordine trovato.</p>'; }
+                const statsCardsContainer = document.getElementById('modal-stats-cards'); statsCardsContainer.innerHTML = `<div class="profile-stat-card"><div class="profile-stat-value">€${(customer.totalSpend / customer.orders || 0).toFixed(2)}</div><div class="profile-stat-label">Spesa Media/Ordine</div></div><div class="profile-stat-card"><div class="profile-stat-value">${customer.monthsActive}</div><div class="profile-stat-label">Mesi Attività</div></div><div class="profile-stat-card"><div class="profile-stat-value">${(customer.loyaltyPoints / (customer.monthsActive || 1)).toFixed(1)}</div><div class="profile-stat-label">Punti/Mese</div></div>`; initializeModalCustomerSpendChart(customer);
                 document.getElementById('modal-customer-notes').value = customer.notes || '';
-
-
-                // Reset to info tab
-                modal.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
-                modal.querySelector('.profile-tab[data-tab="info"]').classList.add('active');
-                modal.querySelectorAll('.profile-tab-content').forEach(c => c.style.display = 'none');
-                modal.querySelector('.profile-tab-content[data-tab="info"]').style.display = 'block';
-
-                modal.classList.add('open');
+                modal.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active')); modal.querySelector('.profile-tab[data-tab="info"]').classList.add('active'); modal.querySelectorAll('.profile-tab-content').forEach(c => c.style.display = 'none'); modal.querySelector('.profile-tab-content[data-tab="info"]').style.display = 'block'; modal.classList.add('open');
             }
-            
-            function initializeModalCustomerSpendChart(customer) {
-                const chartId = 'modal-customer-spend-chart';
-                const ctx = document.getElementById(chartId)?.getContext('2d');
-                if (!ctx) return;
-
-                if (activeChartInstances[chartId]) activeChartInstances[chartId].destroy();
-
-                const spendData = [
-                    (Math.random() * customer.totalSpend * 0.1).toFixed(0), (Math.random() * customer.totalSpend * 0.2).toFixed(0),
-                    (Math.random() * customer.totalSpend * 0.15).toFixed(0), (Math.random() * customer.totalSpend * 0.25).toFixed(0),
-                    (Math.random() * customer.totalSpend * 0.1).toFixed(0), (Math.random() * customer.totalSpend * 0.2).toFixed(0)
-                ]; // Dummy spend over 6 months
-
+            function initializeModalCustomerSpendChart(customer) { /* ... as before, maybe change colors */
+                const chartId = 'modal-customer-spend-chart'; const ctx = document.getElementById(chartId)?.getContext('2d'); if (!ctx) return; if (activeChartInstances[chartId]) activeChartInstances[chartId].destroy();
+                const spendData = [(Math.random() * customer.totalSpend * 0.1).toFixed(0), (Math.random() * customer.totalSpend * 0.2).toFixed(0), (Math.random() * customer.totalSpend * 0.15).toFixed(0), (Math.random() * customer.totalSpend * 0.25).toFixed(0), (Math.random() * customer.totalSpend * 0.1).toFixed(0), (Math.random() * customer.totalSpend * 0.2).toFixed(0)];
                 activeChartInstances[chartId] = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Mese 1', 'Mese 2', 'Mese 3', 'Mese 4', 'Mese 5', 'Mese 6'],
-                        datasets: [{
+                    type: 'bar', data: {
+                        labels: ['Mese 1', 'Mese 2', 'Mese 3', 'Mese 4', 'Mese 5', 'Mese 6'], datasets: [{
                             label: 'Spesa Mensile', data: spendData,
-                            backgroundColor: 'rgba(94, 96, 206, 0.7)', borderColor: '#5e60ce', borderWidth: 1
+                            backgroundColor: 'rgba(238, 27, 27, 0.7)', borderColor: '#D41010', /* Rosso */
+                            borderWidth: 1
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value }}}, plugins: { legend: { display: false }, title: { display: true, text: 'Spesa ultimi 6 mesi (Esempio)'}}}
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: value => '€' + value } } }, plugins: { legend: { display: false }, title: { display: true, text: 'Spesa ultimi 6 mesi (Esempio)' } } }
                 });
             }
-
-
-            function closeModal(modal) {
-                modal.classList.remove('open');
-                 // Destroy chart in modal if it exists to free resources
-                if (activeChartInstances['modal-customer-spend-chart']) {
-                    activeChartInstances['modal-customer-spend-chart'].destroy();
-                    delete activeChartInstances['modal-customer-spend-chart'];
-                }
+            function closeModal(modal) { /* ... as before ... */
+                modal.classList.remove('open'); if (activeChartInstances['modal-customer-spend-chart']) { activeChartInstances['modal-customer-spend-chart'].destroy(); delete activeChartInstances['modal-customer-spend-chart']; }
             }
 
             // --- GENERIC ACTION BUTTONS (Add, Export) & TOAST ---
-            function setupActionButtons() {
-                // Main 'Add Customer' and 'Export' are general, not per-item
-                document.querySelector('.add-customer-btn.action-btn').addEventListener('click', () => {
-                     const newId = Math.max(...allCustomersData.map(c => c.id), 0) + 1;
-                     const newCustomer = {
-                        id: newId, name: "Nuovo Cliente " + newId, email: `cliente${newId}@email.com`, avatar: `https://randomuser.me/api/portraits/${newId % 2 === 0 ? 'women' : 'men'}/${newId % 99}.jpg`,
-                        orders: 0, loyaltyPoints: 0, totalSpend: 0, monthsActive: 0, status: "active", isVip: false,
-                        phone: "", address: "", registrationDate: new Date().toISOString().split('T')[0], lastOrderDate: null,
-                        mapX: Math.floor(Math.random()*80+10), mapY: Math.floor(Math.random()*80+10), notes: ""
-                     };
-                     allCustomersData.unshift(newCustomer); // Add to beginning for immediate visibility
-                     applyFiltersAndSort();
-                     updateOverviewStats();
-                     showToast('Nuovo Cliente', `${newCustomer.name} aggiunto con successo!`, 'success');
-                     showProfileModal(newId); // Open profile for the new customer
-                });
-                document.querySelector('.export-btn').addEventListener('click', () => {
-                    showToast('Esporta Dati', 'Esportazione in CSV (simulata)...', 'info');
-                    setTimeout(() => {
-                        // Simulate CSV creation
-                        let csvContent = "data:text/csv;charset=utf-8,ID,Nome,Email,Ordini,Punti,Spesa Totale,Stato,VIP\n";
-                        currentCustomers.forEach(c => {
-                            csvContent += `${c.id},"${c.name}","${c.email}",${c.orders},${c.loyaltyPoints},${c.totalSpend},${c.status},${c.isVip}\n`;
-                        });
-                        const encodedUri = encodeURI(csvContent);
-                        const link = document.createElement("a");
-                        link.setAttribute("href", encodedUri);
-                        link.setAttribute("download", "clienti_yourbite.csv");
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        showToast('Esportazione Completata', 'Dati clienti esportati in CSV.', 'success');
-                    }, 1500);
-                });
+            function setupActionButtons() { /* ... Updated logic using delegation ... */
+                const containers = [document.getElementById('customers-grid-container'), document.getElementById('customers-table-body'), document.getElementById('map-canvas-markers')];
+                containers.forEach(container => { if (!container) return; container.addEventListener('click', handleActionClick); });
+                document.querySelector('.add-customer-btn.action-btn').addEventListener('click', handleAddCustomer);
+                document.querySelector('.export-btn').addEventListener('click', handleExport);
+            }
+            function handleActionClick(e) { /* ... Logic from setupDynamicCardButtons/setupDynamicTableButtons moved here ... */
+                const target = e.target;
+                const card = target.closest('.customer-card'); const row = target.closest('tr[data-customer-id]'); const marker = target.closest('.customer-marker');
+                const cardOrRow = card || row || marker;
+                if (!cardOrRow && !target.closest('.add-customer-btn') && !target.closest('.export-btn')) return; // Exit if not relevant click
+
+                if (target.closest('.flip-btn') && card) { card.classList.add('flipped'); const customerId = parseInt(card.dataset.customerId); initializeCustomerCardChart(customerId); }
+                else if (target.closest('.back-to-front-btn') && card) { card.classList.remove('flipped'); }
+                else if (target.closest('.detail-btn') || target.closest('.table-view-btn') || target.closest('.profile-map-btn')) { if (cardOrRow) { const customerId = parseInt(cardOrRow.dataset.customerId); showProfileModal(customerId); } }
+                else if (target.closest('.edit-btn') || target.closest('.table-edit-btn')) { if (cardOrRow) { const customerId = parseInt(cardOrRow.dataset.customerId); const customer = allCustomersData.find(c => c.id === customerId); if (customer) showToast('Modifica Cliente', `Apertura editor per ${customer.name}`, 'info'); } }
+                else if (target.closest('.table-delete-btn') && row) { const customerId = parseInt(row.dataset.customerId); const customer = allCustomersData.find(c => c.id === customerId); if (customer && confirm(`Sei sicuro di voler eliminare ${customer.name}?`)) { allCustomersData = allCustomersData.filter(c => c.id !== customerId); applyFiltersAndSort(); updateOverviewStats(); showToast('Cliente Eliminato', `${customer.name} è stato eliminato.`, 'success'); } }
+            }
+            function handleAddCustomer() { /* ... Logic from previous setupActionButtons ... */
+                const newId = Math.max(...allCustomersData.map(c => c.id), 0) + 1; const newCustomer = { id: newId, name: "Nuovo Cliente " + newId, email: `cliente${newId}@email.com`, avatar: `https://randomuser.me/api/portraits/${newId % 2 === 0 ? 'women' : 'men'}/${newId % 99}.jpg`, orders: 0, loyaltyPoints: 0, totalSpend: 0, monthsActive: 0, status: "active", isVip: false, phone: "", address: "", registrationDate: new Date().toISOString().split('T')[0], lastOrderDate: null, mapX: Math.floor(Math.random() * 80 + 10), mapY: Math.floor(Math.random() * 80 + 10), notes: "" }; allCustomersData.unshift(newCustomer); applyFiltersAndSort(); updateOverviewStats(); showToast('Nuovo Cliente', `${newCustomer.name} aggiunto!`, 'success'); showProfileModal(newId);
+            }
+            function handleExport() { /* ... Logic from previous setupActionButtons ... */
+                showToast('Esporta Dati', 'Esportazione in CSV (simulata)...', 'info'); setTimeout(() => { let csvContent = "data:text/csv;charset=utf-8,ID,Nome,Email,Ordini,Punti,Spesa Totale,Stato,VIP\n"; currentCustomers.forEach(c => { csvContent += `${c.id},"${c.name}","${c.email}",${c.orders},${c.loyaltyPoints},${c.totalSpend},${c.status},${c.isVip}\n`; }); const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "clienti_yourbite.csv"); document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('Esportazione Completata', 'Dati clienti esportati.', 'success'); }, 1500);
+            }
+            function showToast(title, message, type = 'success') { /* ... as before, with red 'info' ... */
+                const existingToasts = document.querySelectorAll('.toast-notification'); existingToasts.forEach(toast => toast.remove()); const toast = document.createElement('div'); toast.className = `toast-notification toast-${type}`; let icon = 'info-circle'; if (type === 'success') icon = 'check-circle'; if (type === 'error') icon = 'exclamation-circle'; if (type === 'warning') icon = 'exclamation-triangle'; let iconBgColor = ''; let iconColor = ''; if (type === 'success') { iconBgColor = 'rgba(46, 204, 113, 0.15)'; iconColor = 'var(--accent-green)'; } else if (type === 'error') { iconBgColor = 'rgba(231, 76, 60, 0.15)'; iconColor = 'var(--accent-red)'; } else if (type === 'warning') { iconBgColor = 'rgba(243, 156, 18, 0.15)'; iconColor = 'var(--accent-orange)'; } else { iconBgColor = 'rgba(238, 27, 27, 0.15)'; iconColor = 'var(--navbar-red-main)'; } toast.innerHTML = `<div class="toast-icon" style="background-color:${iconBgColor}; color:${iconColor};"><i class="fas fa-${icon}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><div class="toast-close"><i class="fas fa-times"></i></div>`; document.body.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10); toast.querySelector('.toast-close').addEventListener('click', () => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }); setTimeout(() => { if (document.body.contains(toast)) { toast.classList.remove('show'); setTimeout(() => { if (document.body.contains(toast)) toast.remove(); }, 300); } }, 5000);
             }
 
-            function showToast(title, message, type = 'success') { /* ... as before ... */ 
-                const existingToasts = document.querySelectorAll('.toast-notification');
-                existingToasts.forEach(toast => toast.remove());
-                const toast = document.createElement('div');
-                toast.className = `toast-notification toast-${type}`;
-                let icon = 'info-circle';
-                if (type === 'success') icon = 'check-circle'; if (type === 'error') icon = 'exclamation-circle'; if (type === 'warning') icon = 'exclamation-triangle';
-                toast.innerHTML = `<div class="toast-icon"><i class="fas fa-${icon}"></i></div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><div class="toast-close"><i class="fas fa-times"></i></div>`;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.classList.add('show'), 10);
-                toast.querySelector('.toast-close').addEventListener('click', () => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); });
-                setTimeout(() => { if (document.body.contains(toast)) { toast.classList.remove('show'); setTimeout(() => { if (document.body.contains(toast)) toast.remove(); }, 300); } }, 5000);
-            }
-            
-            // Logout Function (simplified from previous)
-            function logout() {
-                showToast('Logout', 'Logout in corso...', 'info');
-                 fetch('/logout', { method: 'POST', headers: {'Content-Type': 'application/json'} })
-                .then(response => { if (response.ok) window.location.href = '/login'; else throw new Error('Errore logout'); })
-                .catch(error => { console.error('Errore:', error); showToast('Errore Logout', 'Impossibile effettuare il logout.', 'error'); });
+            // Logout Function (simplified)
+            function logout() { /* ... as before, with red colors ... */
+                const loadingOverlay = document.createElement('div'); loadingOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(255,255,255,0.8);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2000;backdrop-filter:blur(5px);'; const spinnerContainer = document.createElement('div'); spinnerContainer.style.cssText = 'width:60px;height:60px;position:relative;'; const spinner = document.createElement('div'); spinner.style.cssText = 'border:4px solid rgba(0,0,0,0.1);border-top-color:var(--navbar-red-main);border-radius:50%;width:100%;height:100%;animation:spin 1s linear infinite;'; const style = document.createElement('style'); style.textContent = `@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`; document.head.appendChild(style); spinnerContainer.appendChild(spinner); const loadingText = document.createElement('p'); loadingText.textContent = 'Logout in corso...'; loadingText.style.cssText = 'margin-top:20px;color:var(--navbar-red-main);font-weight:500;'; loadingOverlay.appendChild(spinnerContainer); loadingOverlay.appendChild(loadingText); document.body.appendChild(loadingOverlay); fetch('/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(response => { if (response.ok) { loadingText.textContent = 'Reindirizzamento...'; setTimeout(() => { window.location.href = '/login'; }, 800); } else { throw new Error('Errore logout'); } }).catch(error => { console.error('Errore:', error); loadingText.textContent = 'Si è verificato un errore.'; const retryButton = document.createElement('button'); retryButton.textContent = 'Riprova'; retryButton.style.cssText = 'margin-top:15px;padding:8px 20px;background:var(--navbar-red-main);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;'; retryButton.onclick = function () { document.body.removeChild(loadingOverlay); logout(); }; loadingOverlay.appendChild(retryButton); });
             }
 
         }); // END DOMContentLoaded
     </script>
 </body>
+
 </html>
